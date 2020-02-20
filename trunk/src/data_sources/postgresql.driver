@@ -1,0 +1,1 @@
+mgui.datasources.postgresql.PostgreSQLDriver jdbc:postgresql://localhost PostgreSQL login password

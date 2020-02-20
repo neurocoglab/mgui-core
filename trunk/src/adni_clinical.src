@@ -1,0 +1,251 @@
+<PipelineProcessLibrary name = 'fsl'>
+	<Processes>
+		<NativeProcess name ='fsl_probtrackx' command = 'probtrackx' input_parameter = '-samples' output_parameter = '-out' path = '/mnt/LaCie/areid/usr/local/fsl/bin' set_operator = ' =' >
+			<TaskParameter
+				name = '-samples'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-mask'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-seed'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-mode'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-targetmasks'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-mask2'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-waypoints'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-network'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-mesh'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-seedref'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-dir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-forcedir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-opd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-pd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-os2t'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-out'
+				optional = 'true'
+				default_value = 'fdt_paths'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-avoid'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-stop'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-xfm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-invxfm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-nsamples'
+				optional = 'true'
+				default_value = '5000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-nsteps'
+				optional = 'true'
+				default_value = '2000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-distthresh'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-cthr'
+				optional = 'true'
+				default_value = '0.2'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-fibthresh'
+				optional = 'true'
+				default_value = '0.01'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-sampvox'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-steplength'
+				optional = 'true'
+				default_value = '0.5'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-loopcheck'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-usef'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-randfib'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-fibst'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-modeuler'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-rseed'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-s2tastext'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</NativeProcess>
+	</Processes>
+</PipelineProcessLibrary>

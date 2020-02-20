@@ -1,0 +1,2309 @@
+<PipelineProcessLibrary name = 'fsl'>
+	<Processes>
+		<NativeProcess name ='eddy_correct' command = 'eddy_correct' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '--help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = '4d_input'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = '4d_output'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'reference_no'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslswapdim' command = 'fslswapdim' input_parameter = 'invol' output_parameter = 'outvol' help_parameter = '--help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'invol'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'abc'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outvol'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslmerge' command = 'fslmerge' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = 'help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'x'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'y'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'z'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'a'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tr'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslfft' command = 'fslfft' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '-help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'inv'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslmaths' command = 'fslmaths' input_parameter = 'first_input' output_parameter = 'output' help_parameter = '--help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'dt'
+				optional = 'true'
+				default_value = 'float'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'first_input'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'pipeline'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'add'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sub'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'mul'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'div'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'rem'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'mas'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'thr'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'thrp'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'thrP'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'uthrp'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'uthrP'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'max'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'min'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'seed'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'restart'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'save'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'exp'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'log'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'cos'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tan'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'asin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'acos'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'atan'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sqr'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sqrt'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'recip'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'abs'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'bin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'binv'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fillh'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fillh26'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'index'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'grid'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'edge'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tfce'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tfceS'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nan'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nanm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'rand'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'randn'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'inm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ing'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tensor_decomp'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'kernel 3D'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'kernel 2D'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'kernel box'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'kernel boxv'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'kernel gauss'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'kernel sphere'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'kernel file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dilM'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dilD'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dilF'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dilall'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ero'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'eroF'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fmedian'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fmean'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fmeanu'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 's'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subsamp2'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subsamp2offc'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Tmean'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Tstd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Tmax'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Tmaxn'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Tmin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Tmedian'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Tperc'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Tar1'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Xmean'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Xmax'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Xmaxn'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Xmin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Xmedian'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Xperc'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Xar1'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Ymean'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Ymax'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Ymaxn'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Ymin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Ymedian'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Yperc'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Yar1'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Zmean'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Zmax'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Zmaxn'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Zmin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Zmedian'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Zperc'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Zar1'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pval'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'cpval'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ztop'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ptoz'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'rank'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ranknorm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'roi'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'bptf'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'roc'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'odt'
+				optional = 'true'
+				default_value = 'float'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslstats' command = 'fslstats' input_parameter = 'input' output_parameter = 'output' help_parameter = '-help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'input'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pipeline'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'l'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'u'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'r'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'R'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'e'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'E'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'V'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'M'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 's'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'S'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'w'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'x'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'X'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'c'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'C'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'p'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'P'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'a'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'n'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'k'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'h'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'H'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output'
+				optional = 'true'
+				default_value = '> out'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslslice' command = 'fslslice' input_parameter = 'inputfile' output_parameter = 'output_basename' help_parameter = '' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'output_basename'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslcc' command = 'fslcc' input_parameter = 'first_input' output_parameter = 'output' help_parameter = '--help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'first_input'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'second_input'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-noabs'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-nodemean'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = '0.1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'p'
+				optional = 'true'
+				default_value = '2'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output'
+				optional = 'true'
+				default_value = '> out'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslreorient2std' command = 'fslreorient2std' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='flirt' command = 'flirt' input_parameter = 'in' output_parameter = 'out' help_parameter = '-help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'in'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'datatype'
+				optional = 'true'
+				default_value = 'float'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'cost'
+				optional = 'true'
+				default_value = 'corratio'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'searchcost'
+				optional = 'true'
+				default_value = 'corratio'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'usesqform'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'displayinit'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'anglerep'
+				optional = 'true'
+				default_value = 'euler'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'interp'
+				optional = 'true'
+				default_value = 'triliinear'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sincwidth'
+				optional = 'true'
+				default_value = '7'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sincwindow'
+				optional = 'true'
+				default_value = 'rectangular'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'bins'
+				optional = 'true'
+				default_value = '256'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dofs'
+				optional = 'true'
+				default_value = '12'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'noresample'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'forcescaling'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'minsampling'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'applyisoxfm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'paddingsize'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'searchrx'
+				optional = 'true'
+				default_value = '-90 90'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'searchry'
+				optional = 'true'
+				default_value = '-90 90'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'searchrz'
+				optional = 'true'
+				default_value = '-90 90'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nosearch'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'coarsesearch'
+				optional = 'true'
+				default_value = '60'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'finesearch'
+				optional = 'true'
+				default_value = '18'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'schedule'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'refweight'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'inweight'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'wmseg'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'wmcoords'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'wmnorms'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fieldmap'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fieldmapmask'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pedir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'echospacing'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'bbrtype'
+				optional = 'true'
+				default_value = 'signed'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'bbrslope'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'setbackground'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'noclamp'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'noresampblur'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '2D'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'verbose'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'i'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'applyxfm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ref'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'applyxfm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'init'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'out'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'omat'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslmeants' command = 'fslmeants' input_parameter = 'i' output_parameter = 'outputfile' help_parameter = '--help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'i'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'o'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'c'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-usemm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-showall'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-eig'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-order'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no_bin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-label'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-transpose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'w'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output'
+				optional = 'true'
+				default_value = '> out'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='bet' command = 'bet' input_parameter = 'input' output_parameter = 'output' help_parameter = '--help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'input'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'output'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'o'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 's'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'n'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'f'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'g'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'r'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'c'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'e'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'R'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'S'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'B'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'Z'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'F'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'A'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'A2'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'h'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslroi' command = 'fslroi' input_parameter = 'input' output_parameter = 'output' help_parameter = '--help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'input'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'output'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'xmin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'xsize'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'ymin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'ysize'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'zmin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'zsize'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'tmin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'tsize'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslorient' command = 'fslorient' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'getorient'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'getsform'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'getqform'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'setsform'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'setqform'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'getsformcode'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'getqformcode'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'setsformcode'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'setqformcode'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'copysform2qform'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'copyqform2sform'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'deleteorient'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'forceradiological'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'forceneurological'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'swaporient'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fnirt' command = 'fnirt' input_parameter = '-in' output_parameter = '-iout' help_parameter = '-help' path = '' set_operator = '=' >
+			<TaskParameter
+				name = '-ref'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-in'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-infwhm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-subsamp'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-warpres'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-aff'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-inwarp'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-intin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-iout'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-fout'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-jout'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-refout'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-intout'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-logout'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-config'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-refmask'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-inmask'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-applyrefmask'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-applyinmask'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-imprefm'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-impinm'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-imprefval'
+				optional = 'true'
+				default_value = '0.0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-impinval'
+				optional = 'true'
+				default_value = '0.0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-minmet'
+				optional = 'true'
+				default_value = 'lm'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-miter'
+				optional = 'true'
+				default_value = '5,5,5,5'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-subsamp'
+				optional = 'true'
+				default_value = '4,2,1,1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-warpres'
+				optional = 'true'
+				default_value = '10,10,10'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-splineorder'
+				optional = 'true'
+				default_value = '3'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-infwhm'
+				optional = 'true'
+				default_value = '6,4,2,2'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-reffwhm'
+				optional = 'true'
+				default_value = '4,2,0,0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-regmod'
+				optional = 'true'
+				default_value = 'bending_energy'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-lambda'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-ssqlambda'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-jacrange'
+				optional = 'true'
+				default_value = '.01,100'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-refderiv'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-intmod'
+				optional = 'true'
+				default_value = 'none'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-intorder'
+				optional = 'true'
+				default_value = '5'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-biasres'
+				optional = 'true'
+				default_value = '50,50,50'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-biaslambda'
+				optional = 'true'
+				default_value = '10000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-estint'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-numprec'
+				optional = 'true'
+				default_value = 'double'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-interp'
+				optional = 'true'
+				default_value = 'linear'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='fslsplit' command = 'fslsplit' input_parameter = 'input' output_parameter = 'output_basename' help_parameter = '' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'input'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'output_basename'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'x'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'y'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'z'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</NativeProcess>
+	</Processes>
+	<Environment>
+		<Element name='FSLBROWSER' value='/etc/alternatives/x-www-browser' />
+		<Element name='FSLCLUSTER_MAILOPTS' value='n' />
+		<Element name='FSLDIR' value='/usr/share/fsl/5.0' />
+		<Element name='FSLMULTIFILEQUIT' value='TRUE' />
+		<Element name='FSLOUTPUTTYPE' value='NIFTI_GZ' />
+		<Element name='FSLTCLSH' value='/usr/bin/tclsh' />
+		<Element name='FSLWISH' value='/usr/bin/wish' />
+		<Element name='LD_LIBRARY_PATH' value='/usr/lib/fsl/5.0' />
+		<Element name='PATH' value='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/fsl/5.0' />
+		<Element name='POSSUMDIR' value='/usr/share/fsl/5.0' />
+	</Environment>
+</PipelineProcessLibrary>

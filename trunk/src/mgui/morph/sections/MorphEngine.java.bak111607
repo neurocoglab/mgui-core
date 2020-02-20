@@ -1,0 +1,231 @@
+
+	public MappedPolygon2D MapToPolyRadialRep(MappedPolygon2D prevMap, Polygon2D A, Polygon2D B, int sectA, int sectB){
+		MappedPolygon2D thisPolyMap = new MappedPolygon2D(A, B);
+		Polygon2D origA = A;
+		Polygon2D origB = B;
+		A = thisPolyMap.getA();
+		B = thisPolyMap.getB();
+		int nA = A.nodes.size();
+		int nB = B.nodes.size();
+		
+		//We want to map from A to B (where nA >= nB, see MappedPolygon2D)
+		//based upon node weights obtained from Radial Representations
+		
+		//obtain radial reps
+		RadialRep2D repA = new RadialRep2D(A);
+		RadialRep2D repB = new RadialRep2D(B);
+		
+		//set weights with radial reps
+		double[][] weights = new double[A.nodes.size()][B.nodes.size()];
+		for (int i = 0; i < repA.radii.size(); i++)
+			for (int j = 0; j < repB.radii.size(); j++)
+				weights[i][j] = (1 - (repA.getRadiusAtNode(i).getAngleDiff(repB.getRadiusAtNode(j)))
+																						/ (Math.PI));
+		
+		//for each node N_A(i), map to a node N_B(j) based upon weights
+		//first, ensure all B nodes have at least one source
+		double thisMax;
+		int sourceNode;
+		
+		//array to record source nodes that have been mapped
+		boolean[] mapped = new boolean[A.nodes.size()];
+		
+		for (int j = 0; j < nB; j++){
+			thisMax = Double.MIN_VALUE;
+			sourceNode = -1;
+			for (int i = 0; i < nA; i++)
+				if (weights[i][j] > thisMax){
+					thisMax = weights[i][j];
+					sourceNode = i;
+					}
+			//set source node and increment source count
+			
+			thisPolyMap.nodeMaps.get(sourceNode).source.thisPt = A.nodes.get(sourceNode);
+			thisPolyMap.nodeMaps.get(sourceNode).target.thisPt = B.nodes.get(j);
+				
+			thisPolyMap.sourceCounts.get(j).value++;
+			mapped[sourceNode] = true;
+			}
+		
+		//for all unmapped nodes in A, map to B
+		int targetNode;
+		for (int i = 0; i < nA; i++){
+			if (!mapped[i]){
+				thisMax = Double.MIN_VALUE;
+				targetNode = -1;
+				for (int j = 0; j < nB; j++)
+					if (weights[i][j] > thisMax){
+						thisMax = weights[i][j];
+						targetNode = j;
+						}
+				//set source node and increment source count
+				thisPolyMap.nodeMaps.get(i).source.thisPt = A.nodes.get(i);
+				thisPolyMap.nodeMaps.get(i).target.thisPt = B.nodes.get(targetNode);
+				thisPolyMap.sourceCounts.get(targetNode).value++;
+			}
+		}
+		
+		return thisPolyMap;
+	} **/
+	
+	/**
+	public MappedPolygon2D MapToPolyRadialRep_bak(Polygon2D A, Polygon2D B, int sectA, int sectB){
+		//for sorting map nodes
+		//NodeMapComparator c = new NodeMapComparator();
+		boolean isReversed = false;
+		
+		if (A.nodes.size() < B.nodes.size()){
+			Polygon2D T = B;
+			B = A;
+			A = T;
+			isReversed = true;
+		}
+		
+		//obtain radial reps
+		RadialRep2D repA = new RadialRep2D(A);
+		RadialRep2D repB = new RadialRep2D(B);
+		
+		//set weights with radial reps
+		double[][] weights = new double[A.nodes.size()][B.nodes.size()];
+		
+		//for each source node, assign weights for all of target nodes
+		//InterfaceSession.log("Weight matrix, P" + sectA + " to P" + (sectB) + ":");
+		//for (int i = 0; i < repB.radii.size(); i++)
+			//System.out.print("P2.N" + i + " ");
+		//InterfaceSession.log();
+		for (int i = 0; i < repA.radii.size(); i++){
+			//System.out.print("\nP1.N" + i + " ");
+			for (int j = 0; j < repB.radii.size(); j++){
+				weights[i][j] = (1 - (repA.getRadiusAtNode(i).getAngleDiff(repB.getRadiusAtNode(j))) / (Math.PI));
+				//System.out.print(arDouble.getString(weights[i][j], "#0.000") + " ");
+			}
+		}
+		
+		//InterfaceSession.log();
+		//for (int i = 0; i < repA.radii.size(); i++)
+			//for (int j = 0; j < repB.radii.size(); j++)
+		//InterfaceSession.log("Angle A (N" + i + "): " + arDouble.getString(repA.getRadiusAtNode(i).angle, "#0.000") + ", " + 
+		//		   "Angle B (N" + j + "): " + arDouble.getString(repB.getRadiusAtNode(j).angle, "#0.000") + " -> diff: " +
+		//		   arDouble.getString(repA.getRadiusAtNode(i).getAngleDiff(repB.getRadiusAtNode(j)), "#0.000"));
+		
+		//map nodes
+		double thisMax;
+		int targetNode;
+		int sourceNode;
+		MappedPolygon2D thisMap = new MappedPolygon2D(A, B, sectA, sectB, sectA);
+		thisMap.isReversed = isReversed;
+		
+		MorphNode2D thisNode;
+		
+		//for each node in A, set first targets
+		int nA = A.nodes.size();
+		int nB = B.nodes.size();
+		
+		//since nA >= nB, for each nA, assign a target node
+		//this is O(n^2)?
+		for (int i = 0; i < nA; i++){
+			thisMax = Double.MIN_VALUE;
+			targetNode = -1;
+			for (int j = 0; j < nB; j++)
+				if (weights[i][j] > thisMax && !thisMap.nodeMaps.get(i).hasTarget(j)){
+					thisMax = weights[i][j];
+					targetNode = j;
+				}
+				
+			thisNode = new MorphNode2D(B.nodes.get(targetNode), targetNode, sectB);
+			thisNode.attributes.setValue("TargetNode", targetNode);
+			thisMap.nodeMaps.get(i).addNode(thisNode, new MapWeight(thisMax, i, targetNode));
+			thisMap.nodeMaps.get(i).attributes.setValue("SourceNode", i);
+			thisMap.addTarget(targetNode);
+		}
+		
+		
+		//nA = A.nodes.size();
+		//nB = B.nodes.size();
+			
+		//int nMin = Math.min(nA, nB);
+		
+		/**
+		for (int j = 0; j < nB; j++){
+			thisMax = Double.MIN_VALUE;
+			//targetNode = -1;
+			sourceNode = -1;
+			for (int i = 0; i < nA; i++)
+				if (weights[i][j] > thisMax && !thisMap.nodeMaps.get(i).hasTarget(j)){
+					thisMax = weights[i][j];
+					//targetNode = j;
+					sourceNode = i;
+					}
+			thisNode = new MorphNode2D(B.nodes.get(j), j, sectB);
+			//thisNode.attributes.setValue("Weight", thisMax);
+			thisNode.attributes.setValue("TargetNode", j);
+			//thisNode.attributes.setValue("SourceNode", i);
+			thisMap.nodeMaps.get(sourceNode).addNode(thisNode, new MapWeight(thisMax, sourceNode, j));
+			thisMap.nodeMaps.get(sourceNode).attributes.setValue("SourceNode", sourceNode);
+			}
+		
+		//if nA > nB, map remaining nodes
+		int targetNode;
+		for (int i = 0; i < nA; i++){
+			if (thisMap.nodeMaps.get(i).nodes.size() == 0){
+				thisMax = Double.MIN_VALUE;
+				targetNode = -1;
+				for (int j = 0; j < nB; j++)
+					if (weights[i][j] > thisMax){
+						thisMax = weights[i][j];
+						targetNode = j;
+					}
+				thisNode = new MorphNode2D(B.nodes.get(targetNode), targetNode, sectB);
+				thisNode.attributes.setValue("TargetNode", targetNode);
+				thisMap.nodeMaps.get(i).addNode(thisNode, new MapWeight(thisMax, i, targetNode));
+				thisMap.nodeMaps.get(i).attributes.setValue("SourceNode", i);
+			}
+		} 
+		
+		//add nodes if nA < nB (nodes have been added above, for the case nA > nB)
+		
+		if (nA < nB){
+			//sort ascending by node weights
+			//lowest weighted node should be assigned a new node first, etc.
+			//thisMap.setNodeSortAttribute("Weight");
+			//Collections.sort(thisMap.nodeMaps, c);
+			
+			//add target nodes to remaining source node maps
+			int i = 0;
+			int count = 1;
+			int aNode;
+			MapWeight thisWeight;
+			
+			while (count * nA + i < nB){
+				thisMap.setWeightArray();
+				thisMax = Double.MIN_VALUE;
+				targetNode = -1;
+				thisWeight = thisMap.getNextWeight();
+				aNode = thisWeight.source;
+				//aNode = ((arInteger)thisMap.nodeMaps.get(i).attributes.getValue("SourceNode")).value;
+				for (int j = 0; j < nB; j++)//{
+					if (weights[aNode][j] > thisMax && !thisMap.nodeMaps.get(aNode).hasTarget(j)) {
+						thisMax = weights[aNode][j];
+						targetNode = j;
+						}
+					thisNode = new MorphNode2D(B.nodes.get(targetNode), targetNode, section + 1);
+					//thisNode.attributes.setValue("Weight", thisMax);
+					thisNode.attributes.setValue("TargetNode", targetNode);
+					//thisNode.attributes.setValue("SourceNode", i);
+					thisMap.nodeMaps.get(aNode).addNode(thisNode, new MapWeight(thisMax, aNode, targetNode));
+					//thisMap.nodeMaps.get(aNode).attributes.setValue("SourceNode", aNode);
+					//}
+				i++;
+				if (i == nA){
+					i = 0;
+					count++;
+					}
+				
+				}
+			}//nA < nB 
+		
+		//resort by source node (so polygon and node map match)
+		//thisMap.setSortAttribute("SourceNode");
+		//Collections.sort(thisMap.nodeMaps, c);
+		return thisMap;
+	}

@@ -1,0 +1,394 @@
+package ar.interfaces.shapes.util;
+
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.BandedSampleModel;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.ComponentSampleModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferUShort;
+import java.awt.image.IndexColorModel;
+import java.awt.image.Raster;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
+
+import ar.datasource.DataTypes;
+import ar.interfaces.maps.ColourMap;
+import ar.interfaces.maps.ContinuousColourMap;
+import ar.interfaces.maps.DiscreteColourMap;
+
+/************************************************
+ * Colour model useful for representing medical images. Values are scaled and translated
+ * to fit scale and intercept parameters, and windowed to a specified window width
+ * (contrast) and window middle (brightness). Colours are indexed to a specified colour 
+ * map.
+ * 
+ * NB: an alpha of zero will always map to zero; this is necessary for the current
+ * implementation of Volume3DTexture, which requires a power-of-two volume, part of which
+ * will be outside the bounds of any non-power-of-two volume, and thus should be always
+ * invisible.
+ * 
+ * @author Andrew Reid
+ *
+ */
+public class WindowedColourModel extends ColorModel implements Cloneable{
+
+	//Would be better to extend IndexColorModel but its getRed etc. methods are idiotically final and rgb
+	//is idiotically private...
+	
+	byte[] rgba;
+	public ColourMap colourMap;
+	public int channels;
+	public int data_size = 256;
+	public int map_size = 256;
+	public double scale = 1, intercept = 0;
+	public double window_mid = 0.5, window_width = 1.0;		//windowing, in normalized units
+	//public boolean setAlpha;
+	public boolean has_alpha = true;
+	public double alphaMin = 0, alphaMax = 1.0;
+	public boolean is_discrete;
+	public double alpha = 1.0;
+	
+	public WindowedColourModel(ColourMap cm,
+							   double scale,
+							   double intercept,
+							   double window_mid,
+							   double window_width,
+							   boolean has_alpha,
+							   int transferType) {
+		
+		super(8, 
+			  getBits(true, 8), ColorSpace.getInstance(ColorSpace.CS_sRGB),
+			  true, false, 
+			  Transparency.TRANSLUCENT,
+			  transferType);
+		
+		/*
+		super(8, 
+				  getBits(hasAlpha, 8), ColorSpace.getInstance(ColorSpace.CS_sRGB),
+				  hasAlpha, false, 
+				  hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE,
+				  transferType);
+		
+		*/
+		//if (transferType != DataBuffer.TYPE_BYTE &&
+		//	transferType != DataBuffer.TYPE_USHORT)
+		//		throw new IllegalArgumentException("Invalid transfer type: " + transferType);
+		
+		//this.colourMap = cm;
+		
+		this.scale = scale;
+		this.intercept = intercept;
+		this.window_mid = window_mid;
+		this.window_width = window_width;
+		
+		this.has_alpha = has_alpha;
+		//this.channels = hasAlpha ? 4 : 3;
+		this.channels = 4;
+		this.data_size = 256;
+		setColourMap(cm, has_alpha);
+		/*
+		if (cm instanceof ContinuousColourMap){
+			this.data_size = 256; // transferType == DataBuffer.TYPE_BYTE ? 256 : 65536;
+			this.rgba = cm.getDiscreteMap(data_size, channels, setAlpha);
+		}else{
+			this.data_size = ((DiscreteColourMap)cm).getSize();
+			is_discrete = true;
+			this.rgba = cm.getDiscreteMap(data_size, channels, false);
+			}
+		*/
+		
+		
+	}
+	
+	public void printToConsole(){
+		InterfaceSession.log("WindowedColourModel");
+		InterfaceSession.log("Colour map - min: " + colourMap.mapMin + ", max: " + colourMap.mapMax);
+		InterfaceSession.log("Window mid: " + window_mid + ", width: " + window_width);
+		InterfaceSession.log("Transfer type: " + DataTypes.getDataBufferTypeStr(getTransferType()));
+	}
+	
+	static int[] getBits(boolean hasAlpha, int transferType){
+		int a = hasAlpha ? 4 : 3;
+		int b = 8; // transferType == DataBuffer.TYPE_BYTE ? 8 : 16;
+		int[] bits = new int[a];
+		for (int i = 0; i < a; i++)
+			bits[i] = b;
+		return bits;
+	}
+	
+	//TODO: necessary?
+	public int getRedIndex(){
+		return 0;
+	}
+	
+	public int getGreenIndex(){
+		return 1;
+	}
+	
+	public int getBlueIndex(){
+		return 2;
+	}
+	
+	public int getAlphaIndex(){
+		return 3;
+	}
+	
+	//******Stuff from IndexColorModel********
+	
+	public WritableRaster createCompatibleWritableRaster(int w, int h) {
+		
+		//BandedSampleModel sm = new BandedSampleModel(transferType, w, h, 1);
+		SampleModel sm = createCompatibleSampleModel(w, h);
+		
+		DataBuffer db = null;
+		
+		switch (transferType){
+			case DataBuffer.TYPE_BYTE:
+				db = new DataBufferByte(w * h, 1);
+				break;
+			case DataBuffer.TYPE_USHORT:
+				db = new DataBufferUShort(w * h, 1);
+				break;
+			case DataBuffer.TYPE_INT:
+				db = new DataBufferInt(w * h, 1);
+				break;
+			case DataBuffer.TYPE_FLOAT:
+				db = new DataBufferFloat(w * h, 1);
+				break;
+			case DataBuffer.TYPE_DOUBLE:
+				db = new DataBufferDouble(w * h, 1);
+				break;
+			}
+		
+		return Raster.createWritableRaster(sm, db, null);
+		
+    }
+	
+	public SampleModel createCompatibleSampleModel(int w, int h) {
+		
+		return new GridSampleModel(transferType, w, h, 1);
+		
+	}
+	
+	public boolean isCompatibleRaster(Raster raster) {
+		int size = raster.getSampleModel().getSampleSize(0);
+		
+		int t = raster.getTransferType();
+		int b = raster.getNumBands();
+		int hm = 1 << size;
+		
+	    return ((raster.getTransferType() == transferType) &&
+			(raster.getNumBands() == 1)); // && ((1 << size) >= map_size));
+	    }
+	
+	 public int getRGB(int pixel) {
+		 if (hasAlpha())
+			return (getAlpha(pixel) << 24)
+			    | (getRed(pixel) << 16)
+			    | (getGreen(pixel) << 8)
+			    | (getBlue(pixel) << 0);
+		 return (255 << 24)
+		 	| (getRed(pixel) << 16)
+		    | (getGreen(pixel) << 8)
+		    | (getBlue(pixel) << 0);
+	 
+	 }
+	 
+	 public int getRGB(Object inData) {
+		 if (hasAlpha())
+	        return (getAlpha(inData) << 24)
+	            | (getRed(inData) << 16)
+	            | (getGreen(inData) << 8)
+	            | (getBlue(inData) << 0);
+		 return (255 << 24)
+		 		 | (getRed(inData) << 16)
+		         | (getGreen(inData) << 8)
+		         | (getBlue(inData) << 0);
+	    }
+	 
+	
+	//*******End of stuff from IndexColorModel*********
+	
+	public int getRed(Object inData){
+		double pixel = 0;
+
+		int i = 0; // getRedIndex();
+		
+	      // Get the pixel value
+	      if (inData instanceof byte[]) { pixel = ((byte[])inData)[i]; }
+	      else if (inData instanceof short[]) { pixel = ((short[])inData)[i]; }
+	      else if (inData instanceof int[]) { pixel = ((int[])inData)[i]; }
+	      else if (inData instanceof float[]) { pixel = ((float[])inData)[i]; }
+	      else if (inData instanceof double[]) { pixel = ((double[])inData)[i]; }
+	      else { throw new ClassCastException("Unsupported pixel type"); }
+		
+	      return getRed((int)getMappedValue(pixel));
+	}
+	
+	public int getRed(int pixel){
+		if (pixel < 0) pixel = 0;
+		if (pixel * channels + getRedIndex() > rgba.length - 1)
+			pixel += 0;
+		return (int)rgba[pixel * channels + getRedIndex()] & 0xFF;
+		//return ((int)rgb[pixel * channels + getRedIndex()] & 0xFF) * data_size / 255;
+	}
+	
+	
+	public int getGreen(Object inData){
+		double pixel = 0;
+
+		int i = 0; // getGreenIndex();
+		
+	      // Get the pixel value
+		if (inData instanceof byte[]) { pixel = ((byte[])inData)[i]; }
+	      else if (inData instanceof short[]) { pixel = ((short[])inData)[i]; }
+	      else if (inData instanceof int[]) { pixel = ((int[])inData)[i]; }
+	      else if (inData instanceof float[]) { pixel = ((float[])inData)[i]; }
+	      else if (inData instanceof double[]) { pixel = ((double[])inData)[i]; }
+	      else { throw new ClassCastException("Unsupported pixel type"); }
+		
+		return getGreen((int)getMappedValue(pixel));
+	}
+	
+	public int getGreen(int pixel){
+		if (pixel < 0) pixel = 0;
+		return (int)rgba[pixel * channels + getGreenIndex()] & 0xFF;
+		//return ((int)rgb[pixel * channels + getGreenIndex()] & 0xFF) * data_size / 255;
+	}
+	
+	public int getBlue(Object inData){
+		double pixel = 0;
+
+		int i = 0; // getBlueIndex();
+		
+	      // Get the pixel value
+		if (inData instanceof byte[]) { pixel = ((byte[])inData)[i]; }
+	      else if (inData instanceof short[]) { pixel = ((short[])inData)[i]; }
+	      else if (inData instanceof int[]) { pixel = ((int[])inData)[i]; }
+	      else if (inData instanceof float[]) { pixel = ((float[])inData)[i]; }
+	      else if (inData instanceof double[]) { pixel = ((double[])inData)[i]; }
+	      else { throw new ClassCastException("Unsupported pixel type"); }
+		
+		return getBlue((int)getMappedValue(pixel));
+	}
+	
+	public int getBlue(int pixel){
+		if (pixel < 0) pixel = 0;
+		return (int)rgba[pixel * channels + getBlueIndex()] & 0xFF;
+		//return ((int)rgb[pixel * channels + getBlueIndex()] & 0xFF) * data_size / 255;
+	}
+	
+	
+	public int getAlpha(Object inData){
+		//if (!has_alpha) return super.getAlpha(inData);
+		
+		double pixel = Double.NaN;
+		
+		int i = 0; // getAlphaIndex();
+		
+		 // Get the pixel value
+		if (inData instanceof byte[]) { pixel = ((byte[])inData)[i]; }
+	      else if (inData instanceof short[]) { pixel = ((short[])inData)[i]; }
+	      else if (inData instanceof int[]) { pixel = ((int[])inData)[i]; }
+	      else if (inData instanceof float[]) { pixel = ((float[])inData)[i]; }
+	      else if (inData instanceof double[]) { pixel = ((double[])inData)[i]; }
+	      else { throw new ClassCastException("Unsupported pixel type"); }
+						
+		return getAlpha((int)getMappedValue(pixel));
+		//return getAlpha((int)pixel);
+	}
+	
+	public int getAlpha(int pixel){
+		if (pixel < 0) return 0 & 0xFF;
+		if (!has_alpha) return data_size - 1;
+		//if (pixel == 0) return 0 & 0xFF;
+		if (pixel < alphaMin * (data_size - 1)) pixel = 0;
+		if (pixel > alphaMax * (data_size - 1)) pixel = (data_size - 1);
+		pixel = (int)((double)pixel * alpha);	//apply general alpha
+		return (int)rgba[pixel * channels + getAlphaIndex()] & 0xFF;
+	}
+	
+	public double getMappedValue(double value){
+		
+		if (Double.isNaN(value)) return -1;
+		//if (value < 0) return 0;
+		
+		if (is_discrete){
+			if (value < 0) value = 0;
+			if (value > data_size - 1) value = data_size - 1;
+			return value;
+			}
+		
+		//scale and translate
+		value -= this.intercept;
+		value *= this.scale;
+		
+		//move value based on window (shift and scale)
+		/*
+		value += (window_mid - 0.5) * data_size;
+		value *= window_width;
+		value += window_width * 0.5;
+		*/
+		
+		double width = window_width * data_size;
+		double mid = window_mid * data_size;
+		
+		double m = data_size / width;
+		double b = (data_size * 0.5) - (m * mid);
+		
+		value = m * value + b;
+		
+		//value = (1.0 / window_width * value) + window_mid * data_size - (window_width * data_size) / 2.0;
+		
+		if (value < 0) value = 0;
+		if (value > data_size - 1) value = data_size - 1;
+		
+		return value;
+	}
+	
+	public boolean setColourMap(ColourMap cm, boolean setAlphaFromIntensity){
+		//if (cm.equals(colourMap)) return false;
+		is_discrete = (cm instanceof DiscreteColourMap);
+		colourMap = cm;
+		rgba = cm.getDiscreteMap(data_size, channels, setAlphaFromIntensity);
+		return true;
+	}
+	
+	public ColourMap getColourMap(){
+		return colourMap;
+	}
+	
+	public void setFromColourModel(WindowedColourModel model, boolean setAlphaFromIntensity){
+		this.scale = model.scale;
+		this.intercept = model.intercept;
+		this.alphaMin = model.alphaMin;
+		this.alphaMax = model.alphaMax;
+		this.window_mid = model.window_mid;
+		this.window_width = model.window_width;
+		this.alpha = model.alpha;
+		setColourMap(model.colourMap, setAlphaFromIntensity);
+	}
+	
+	public Object clone(){
+		WindowedColourModel model = new WindowedColourModel(colourMap,
+															scale,
+															intercept,
+															window_mid,
+															window_width,
+															has_alpha,
+															transferType);
+		model.alphaMin = alphaMin;
+		model.alphaMax = alphaMax;
+		return model;
+	}
+	
+}

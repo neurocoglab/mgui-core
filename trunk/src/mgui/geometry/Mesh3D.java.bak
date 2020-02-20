@@ -1,0 +1,105 @@
+package ar.Geometry;
+
+import java.util.ArrayList;
+
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
+/*******************
+ * Geometry class to represent a 3D triangular mesh. This is implemented as an array
+ * of nodes and an array of MeshFace3D objects, which hold the indices of the three nodes
+ * of the triangular face. Normals are generated here, as in Java3D, by the policy that
+ * clockwise triangles have up-facing normals.
+ * @author Andrew Reid
+ * @date 10.17.06
+ * @version 1.0
+ */
+
+public class Mesh3D extends Shape3D {
+
+	public ArrayList<Point3f> nodes = new ArrayList<Point3f>();
+	public ArrayList<MeshFace3D> faces = new ArrayList<MeshFace3D>();
+	
+	public Mesh3D(){
+		
+	}
+	
+	public int addNode(Point3f n){
+		nodes.add(n);
+		return nodes.size();
+	}
+	
+	public void addNode(Point3f n, int i){
+		nodes.add(i, n);
+	}
+	
+	public boolean addFace(int a, int b, int c){
+		if (a >= nodes.size() || b >= nodes.size() || c >= nodes.size()) return false;
+		return faces.add(new MeshFace3D(a, b, c));
+	}
+	
+	public void removeNode(int i){
+		//complication is we need to find and remove all faces with i as nodes
+		//plus decrement all indices >= i
+		nodes.remove(i);
+		for (int a = 0; a < faces.size(); a++){
+			if (faces.get(a).hasNode(i)){ 
+				faces.remove(a);
+				a--;
+				}else{
+				if (faces.get(a).A > i) faces.get(a).A--;
+				if (faces.get(a).B > i) faces.get(a).B--;
+				if (faces.get(a).C > i) faces.get(a).C--;
+				}
+			}
+	}
+	
+	public void removeFace(int i){
+		faces.remove(i);
+	}
+	
+	public ArrayList<Point3f> getNodes(){
+		return nodes;
+	}
+	
+	public int[] getFaceIndexArray(){
+		int[] retArray = new int[faces.size() * 3];
+		for (int i = 0; i < faces.size(); i++){
+			retArray[i * 3] = faces.get(i).A;
+			retArray[i * 3 + 1] = faces.get(i).B;
+			retArray[i * 3 + 2] = faces.get(i).C;
+			}
+		return retArray;
+	}
+	
+	
+	//class to define a triangular mesh face
+	public class MeshFace3D{
+		//indices of this face's nodes, in clockwise order of A, B, C
+		public int A, B, C;
+		
+		public MeshFace3D(int a, int b, int c){
+			A = a;
+			B = b;
+			C = c;
+			}
+		
+		public Vector3f getNormal(){
+			/**@TODO implement GeometryFunctions method to get normal from nodes **/
+			return null;
+		}
+		
+		public boolean hasNode(int i){
+			return A == i || B == i || C == i;
+		}
+		
+		//reverse clockwise direction of this triangle
+		public void reverse(){
+			int T = A;
+			A = B;
+			B = T;
+		}
+		
+	}
+	
+}

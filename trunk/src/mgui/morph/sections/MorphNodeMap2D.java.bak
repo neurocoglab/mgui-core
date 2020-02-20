@@ -1,0 +1,193 @@
+package ar.MorphSections;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+import javax.vecmath.Point2d;
+import javax.vecmath.Point2f;
+
+import ar.Interface.Attribute;
+import ar.Interface.AttributeList;
+import ar.Numbers.*;
+
+public class MorphNodeMap2D extends NodeMap2D {
+	
+	MorphNode2D thisNode;
+	public ArrayList<MapWeight> weights = new ArrayList<MapWeight>();
+	public ArrayList<MorphNode2D> nodes = new ArrayList<MorphNode2D>();
+	
+	public MorphNodeMap2D(){
+		super();
+		init();
+	}
+	
+	public MorphNodeMap2D(int sect){
+		super();
+		init();
+		attributes.setValue("SectionNo", new arInteger(sect));
+	}
+	
+	public MorphNodeMap2D(int sect, MorphNode2D node){
+		super();
+		init();
+		attributes.setValue("SectionNo", new arInteger(sect));
+		thisNode = node;
+	}
+	
+	private void init(){
+		//attributes
+		attributes.add(new Attribute("SectionNo", new arInteger(0)));
+		attributes.add(new Attribute("SourceNode", new arInteger(0)));
+	}
+	
+	public void addNode(MorphNode2D newNode, MapWeight weight){
+		//order by source
+		//boolean blnDone = false;
+		//for (int i = 0; i < nodes.size(); i ++)
+		//	if (weight.source > weights.get(i).source && !blnDone){
+		//		nodes.add(i, newNode);
+		//		blnDone = true;
+		//	}
+		//if (!blnDone)
+		nodes.add(newNode);
+		weight.source = weights.size();
+		weights.add(weight);
+		//nodes.add(newNode);
+	}
+	
+	public MorphNode2D getLastNode(){
+		if (nodes.size() == 0)
+			return null;
+		return nodes.get(nodes.size() - 1);
+	}
+	
+	public MorphNode2D getFirstNode(){
+		if (nodes.size() == 0)
+			return null;
+		return nodes.get(0);
+	}
+	
+	public MorphNode2D getAverageNode(){
+		if (nodes.size() == 0)
+			return null;
+		MorphNode2D avNode = new MorphNode2D(new Point2f(0,0));
+		double weightSum = 0;
+		for (int i = 0; i < nodes.size(); i++){
+			avNode.point.x += nodes.get(i).point.x * weights.get(i).weight;
+			avNode.point.y += nodes.get(i).point.y * weights.get(i).weight;
+			weightSum += weights.get(i).weight;
+		}
+		avNode.point.x = (float)(avNode.point.x /(weightSum * nodes.size()));
+		avNode.point.y = (float)(avNode.point.y /(weightSum * nodes.size()));
+		return avNode;
+	}
+	
+	
+	
+	public boolean hasTarget(int node){
+		for (int i = 0; i < weights.size(); i++)
+			if (weights.get(i).target == node) return true;
+			//if ((nodes.get(i)).hasTarget(node)) return true;
+		return false;
+	}
+	
+	public void setWeightArray(){
+		Collections.sort(weights, new MapWeightComparator());
+	}
+	
+	public MorphNodeMap2D popNodeByTarget(boolean switchOrder){
+		int index = 0;
+		if (!switchOrder)
+			index = nodes.size() - 1;
+		int thisSect = ((arInteger)attributes.getValue("SectionNo")).value;
+		MorphNodeMap2D thisMap = new MorphNodeMap2D(thisSect, (MorphNode2D)thisNode.clone());
+		thisMap.addNode(nodes.get(index), weights.get(index));
+		nodes.remove(index);
+		weights.remove(index);
+
+		//return node map
+		return thisMap;
+		
+	}
+	
+	public MorphNodeMap2D popNodeByWeight(){
+		//get node with max node count
+		double thisMin = Double.MAX_VALUE;
+		//double thisMax = Double.MIN_VALUE;
+		int minNode = -1;
+		//int maxNode = -1;
+		for (int i = 0; i < nodes.size(); i++)
+			if (weights.get(i).weight < thisMin){
+				minNode = i;
+				thisMin = weights.get(i).weight;
+				}
+		
+		//for (int i = 0; i < nodes.size(); i++)
+		//	if (weights.get(i).weight > thisMax){
+		//		maxNode = i;
+		//		thisMax = weights.get(i).weight;
+		//		}
+		
+		int thisSect = ((arInteger)attributes.getValue("SectionNo")).value;
+		MorphNodeMap2D thisMap = new MorphNodeMap2D(thisSect, (MorphNode2D)thisNode.clone());
+		thisMap.addNode(nodes.get(minNode), weights.get(minNode));
+		//thisMap.addNode(nodes.get(maxNode), weights.get(maxNode));
+		
+		//thisMap.weights = remWeights;
+		nodes.remove(minNode);
+		weights.remove(minNode);
+		//nodes.remove(maxNode);
+		//weights.remove(maxNode);
+		//return node map
+		return thisMap;
+	}
+	
+	public double getWeight(){
+		double retVal = 0;
+		for (int i = 0; i < weights.size(); i++)
+			retVal += weights.get(i).weight;
+		return retVal;
+	}
+	
+	public double getWeight(int src){
+		for (int i = 0; i < weights.size(); i++)
+			if (weights.get(i).source == src)
+				return weights.get(i).weight;
+		return -1;
+	}
+	
+	public MapWeight getMapWeight(int src){
+		for (int i = 0; i < weights.size(); i++)
+			if (weights.get(i).source == src)
+				return weights.get(i);
+		return null;
+	}
+	
+	public int getCount(){
+		return nodes.size();
+	}
+	
+	public Object clone(){
+		ArrayList<MorphNode2D> newNodes = new ArrayList<MorphNode2D>();
+		ArrayList<MapWeight> newWeights = new ArrayList<MapWeight>();
+		for (int i = 0; i < nodes.size(); i++){
+			newNodes.add((MorphNode2D)nodes.get(i).clone());
+			newWeights.add((MapWeight)weights.get(i).clone());
+			}
+		MorphNodeMap2D retObj = new MorphNodeMap2D();
+		retObj.nodes = newNodes;
+		retObj.weights = newWeights;
+		//MorphNodeMap2D retObj = (MorphNodeMap2D)super.clone();
+		retObj.attributes = (AttributeList)attributes.clone();
+		retObj.thisNode = (MorphNode2D)thisNode.clone();
+		return retObj;
+	}
+	
+	public void printMap(){
+		InterfaceSession.log(thisNode.idStr + " maps to:");
+		for (int i = 0; i < nodes.size(); i ++)
+			InterfaceSession.log(nodes.get(i).idStr);
+			
+	}
+	
+}

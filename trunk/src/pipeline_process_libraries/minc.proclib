@@ -1,0 +1,1167 @@
+<PipelineProcessLibrary name = 'minc'>
+	<Processes>
+		<NativeProcess name ='minc_modify_header' command = 'minc_modify_header' input_parameter = 'input_file' output_parameter = 'input_file' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'sinsert'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dinsert'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'delete'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sappend'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dappend'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'input_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='minc_nii2mnc' command = '' input_parameter = 'inputfile' output_parameter = 'outputfile' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'input_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='xfminvert' command = 'xfminvert' input_parameter = 'xfm_in' output_parameter = 'xfm_out' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'xfm_in'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'xfm_out'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<Environment>
+				<Element name='COLORTERM' value='Terminal' />
+				<Element name='DBUS_SESSION_BUS_ADDRESS' value='unix:abstract=/tmp/dbus-nzUbyfgvEv,guid=d6c87765e35d89a07479fc9350992b20' />
+				<Element name='DISPLAY' value=':0.0' />
+				<Element name='FREESURFER_HOME' value='/mnt/LaCie/areid/usr/local/freesurfer' />
+				<Element name='FSLDIR' value='/mnt/LaCie/areid/usr/local/fsl' />
+				<Element name='GROUP' value='pet' />
+				<Element name='HOME' value='/home/bic/areid' />
+				<Element name='HOST' value='pandarus' />
+				<Element name='HOSTTYPE' value='x86_64-linux' />
+				<Element name='LANG' value='en_CA.ISO-8859-1' />
+				<Element name='LC_ALL' value='en_CA.ISO-8859-1' />
+				<Element name='LD_LIBRARY_PATH' value='/export02/data/java/jdk1.6.0_23/jre/lib/amd64/server:/export02/data/java/jdk1.6.0_23/jre/lib/amd64:/export02/data/java/jdk1.6.0_23/jre/../lib/amd64' />
+				<Element name='LOGNAME' value='areid' />
+				<Element name='MACHTYPE' value='x86_64' />
+				<Element name='MATLAB_JAVA' value='/usr/lib/jvm/java-6-sun-1.6.0.26/jre' />
+				<Element name='MOZILLA_FIVE_HOME' value='/usr/lib64/xulrunner-1.9' />
+				<Element name='MYSQL_HOME' value='/export01/data/usr/local/mysql' />
+				<Element name='NLSPATH' value='/usr/dt/lib/nls/msg/%L/%N.cat' />
+				<Element name='OSTYPE' value='linux' />
+				<Element name='PATH' value='/mnt/LaCie/areid/usr/bin:/mnt/LaCie/areid/rar/rar:/mnt/LaCie/areid/usr/local/fsl/bin:/mnt/LaCie/areid/usr/local/freesurfer/bin:/mnt/LaCie/areid/usr/lib:/export01/data/postgresql-9.0.3/bin:/export01/data/usr/local/pgsql/bin:/export01/data/usr/local:/export01/data/usr/local/mysql/bin:/export01/data/usr/local/mysql/scripts:/export02/data/java/jdk1.6.0_23/bin:/export01/data/bin:/export01/data/mricro/mricron:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/X11R6/bin:/usr/local/bin:/usr/local/mni/bin:/usr/local/matlab/bin:/opt/bin' />
+				<Element name='PGDATA' value='/export01/data/usr/local/pgsql/data' />
+				<Element name='PWD' value='/mnt/LaCie/areid/java/eclipse' />
+				<Element name='PYTHONPATH' value='/export01/data/lib/python' />
+				<Element name='SESSION_MANAGER' value='local/pandarus:/tmp/.ICE-unix/30133' />
+				<Element name='SGE_CELL' value='default' />
+				<Element name='SGE_QMASTER_PORT' value='6444' />
+				<Element name='SGE_ROOT' value='/var/lib/gridengine' />
+				<Element name='SGE_SETTINGS' value='/var/lib/gridengine/default/common/settings.csh' />
+				<Element name='SGE_def' value='/var/lib/gridengine' />
+				<Element name='SHELL' value='/bin/tcsh' />
+				<Element name='SHLVL' value='2' />
+				<Element name='SSH_AGENT_PID' value='30121' />
+				<Element name='SSH_AUTH_SOCK' value='/tmp/ssh-QAWXH30082/agent.30082' />
+				<Element name='TERM' value='xterm' />
+				<Element name='USER' value='areid' />
+				<Element name='VENDOR' value='unknown' />
+				<Element name='VOLUME_CACHE_THRESHOLD' value='-1' />
+				<Element name='WINDOWID' value='29362457' />
+				<Element name='XDG_SESSION_COOKIE' value='8672fc1d83aa6f2e50e73dbd4cee8c3b-1352215327.851854-2120485130' />
+				<Element name='XFILESEARCHPATH' value='/usr/dt/app-defaults/%L/Dt' />
+				<Element name='XPSERVERLIST' value=':64 ' />
+				<Element name='_' value='/usr/bin/exo-open' />
+			</Environment>
+		</NativeProcess>
+		<NativeProcess name ='cortical_thickness' command = 'cortical_thickness' input_parameter = 'white' output_parameter = 'output' path = '/data/aces/aces1/quarantines/Linux-i686/Oct-10-2007/bin' set_operator = ' ' >
+			<TaskParameter
+				name = 'verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'quiet'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'execute'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'noexecute'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'clobber'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'noclobber'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'debug'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nodebug'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tmpdir'
+				optional = 'true'
+				default_value = '/usr/tmp/cortical_thickness_30388/'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'keeptmp'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'cleanup'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fwhm'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tlink'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'notlink'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tnear'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'notnear'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tnormal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'notnormal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tlaplace'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'notlaplace'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'transform'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'white'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'gray'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'output'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<Environment>
+				<Element name='COLORTERM' value='Terminal' />
+				<Element name='DBUS_SESSION_BUS_ADDRESS' value='unix:abstract=/tmp/dbus-nzUbyfgvEv,guid=d6c87765e35d89a07479fc9350992b20' />
+				<Element name='DISPLAY' value=':0.0' />
+				<Element name='FREESURFER_HOME' value='/mnt/LaCie/areid/usr/local/freesurfer' />
+				<Element name='FSLDIR' value='/mnt/LaCie/areid/usr/local/fsl' />
+				<Element name='GROUP' value='pet' />
+				<Element name='HOME' value='/home/bic/areid' />
+				<Element name='HOST' value='pandarus' />
+				<Element name='HOSTTYPE' value='x86_64-linux' />
+				<Element name='LANG' value='en_CA.ISO-8859-1' />
+				<Element name='LC_ALL' value='en_CA.ISO-8859-1' />
+				<Element name='LD_LIBRARY_PATH' value='/export02/data/java/jdk1.6.0_23/jre/lib/amd64/server:/export02/data/java/jdk1.6.0_23/jre/lib/amd64:/export02/data/java/jdk1.6.0_23/jre/../lib/amd64' />
+				<Element name='LOGNAME' value='areid' />
+				<Element name='MACHTYPE' value='x86_64' />
+				<Element name='MATLAB_JAVA' value='/usr/lib/jvm/java-6-sun-1.6.0.26/jre' />
+				<Element name='MOZILLA_FIVE_HOME' value='/usr/lib64/xulrunner-1.9' />
+				<Element name='MYSQL_HOME' value='/export01/data/usr/local/mysql' />
+				<Element name='NLSPATH' value='/usr/dt/lib/nls/msg/%L/%N.cat' />
+				<Element name='OSTYPE' value='linux' />
+				<Element name='PATH' value='/mnt/LaCie/areid/usr/bin:/mnt/LaCie/areid/rar/rar:/mnt/LaCie/areid/usr/local/fsl/bin:/mnt/LaCie/areid/usr/local/freesurfer/bin:/mnt/LaCie/areid/usr/lib:/export01/data/postgresql-9.0.3/bin:/export01/data/usr/local/pgsql/bin:/export01/data/usr/local:/export01/data/usr/local/mysql/bin:/export01/data/usr/local/mysql/scripts:/export02/data/java/jdk1.6.0_23/bin:/export01/data/bin:/export01/data/mricro/mricron:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/X11R6/bin:/usr/local/bin:/usr/local/mni/bin:/usr/local/matlab/bin:/opt/bin' />
+				<Element name='PGDATA' value='/export01/data/usr/local/pgsql/data' />
+				<Element name='PWD' value='/mnt/LaCie/areid/java/eclipse' />
+				<Element name='PYTHONPATH' value='/export01/data/lib/python' />
+				<Element name='SESSION_MANAGER' value='local/pandarus:/tmp/.ICE-unix/30133' />
+				<Element name='SGE_CELL' value='default' />
+				<Element name='SGE_QMASTER_PORT' value='6444' />
+				<Element name='SGE_ROOT' value='/var/lib/gridengine' />
+				<Element name='SGE_SETTINGS' value='/var/lib/gridengine/default/common/settings.csh' />
+				<Element name='SGE_def' value='/var/lib/gridengine' />
+				<Element name='SHELL' value='/bin/tcsh' />
+				<Element name='SHLVL' value='2' />
+				<Element name='SSH_AGENT_PID' value='30121' />
+				<Element name='SSH_AUTH_SOCK' value='/tmp/ssh-QAWXH30082/agent.30082' />
+				<Element name='TERM' value='xterm' />
+				<Element name='USER' value='areid' />
+				<Element name='VENDOR' value='unknown' />
+				<Element name='VOLUME_CACHE_THRESHOLD' value='-1' />
+				<Element name='WINDOWID' value='29362457' />
+				<Element name='XDG_SESSION_COOKIE' value='8672fc1d83aa6f2e50e73dbd4cee8c3b-1352215327.851854-2120485130' />
+				<Element name='XFILESEARCHPATH' value='/usr/dt/app-defaults/%L/Dt' />
+				<Element name='XPSERVERLIST' value=':64 ' />
+				<Element name='_' value='/usr/bin/exo-open' />
+			</Environment>
+		</NativeProcess>
+		<NativeProcess name ='minc_xfmtool' command = 'xfmtool' input_parameter = 'inputfile' output_parameter = 'outputfile' path = '/data/aces/aces1/quarantines/Linux-i686/Oct-10-2007/bin/' set_operator = ' ' >
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='minc_reshape' command = 'mincreshape' input_parameter = 'input_file' output_parameter = 'output_file' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'clobber'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'noclobber'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'quiet'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'max_chunk_size_in_kb'
+				optional = 'true'
+				default_value = '4096'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '2'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'filetype'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'byte'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'short'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'int'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'long'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'float'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'double'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'signed'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'unsigned'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'valid_range'
+				optional = 'true'
+				default_value = '1.79769e+308 1.79769e+308'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'image_range'
+				optional = 'true'
+				default_value = '1.79769e+308 1.79769e+308'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'normalize'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nonormalize'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nopixfill'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pixfill'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pixfillvalue'
+				optional = 'true'
+				default_value = '1.79769e+308'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'scalar'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'noscalar'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'direction'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pos_direction'
+				optional = 'true'
+				default_value = '+direction'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'xdirection'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pos_xdirection'
+				optional = 'true'
+				default_value = '+xdirection'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'ydirection'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pos_ydirection'
+				optional = 'true'
+				default_value = '+ydirection'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'zdirection'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pos_zdirection'
+				optional = 'true'
+				default_value = '+zdirection'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'xanydirection'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'yanydirection'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'zanydirection'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'keepaspect'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nokeepaspect'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'imgsize'
+				optional = 'true'
+				default_value = '-1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'rowsize'
+				optional = 'true'
+				default_value = '-1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'colsize'
+				optional = 'true'
+				default_value = '-1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'transverse'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'coronal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sagittal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dimorder'
+				optional = 'true'
+				default_value = 'zspace,yspace,xspace'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dimrange'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'start'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'count'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nofill'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fill'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fillvalue'
+				optional = 'true'
+				default_value = '1.79769e+308'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'input_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='transform_objects' command = 'transform_objects' input_parameter = 'input_file' output_parameter = 'output_file' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'input_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'xfm_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<Environment>
+				<Element name='COLORTERM' value='Terminal' />
+				<Element name='DBUS_SESSION_BUS_ADDRESS' value='unix:abstract=/tmp/dbus-nzUbyfgvEv,guid=d6c87765e35d89a07479fc9350992b20' />
+				<Element name='DISPLAY' value=':0.0' />
+				<Element name='FREESURFER_HOME' value='/mnt/LaCie/areid/usr/local/freesurfer' />
+				<Element name='FSLDIR' value='/mnt/LaCie/areid/usr/local/fsl' />
+				<Element name='GROUP' value='pet' />
+				<Element name='HOME' value='/home/bic/areid' />
+				<Element name='HOST' value='pandarus' />
+				<Element name='HOSTTYPE' value='x86_64-linux' />
+				<Element name='LANG' value='en_CA.ISO-8859-1' />
+				<Element name='LC_ALL' value='en_CA.ISO-8859-1' />
+				<Element name='LD_LIBRARY_PATH' value='/export02/data/java/jdk1.6.0_23/jre/lib/amd64/server:/export02/data/java/jdk1.6.0_23/jre/lib/amd64:/export02/data/java/jdk1.6.0_23/jre/../lib/amd64' />
+				<Element name='LOGNAME' value='areid' />
+				<Element name='MACHTYPE' value='x86_64' />
+				<Element name='MATLAB_JAVA' value='/usr/lib/jvm/java-6-sun-1.6.0.26/jre' />
+				<Element name='MOZILLA_FIVE_HOME' value='/usr/lib64/xulrunner-1.9' />
+				<Element name='MYSQL_HOME' value='/export01/data/usr/local/mysql' />
+				<Element name='NLSPATH' value='/usr/dt/lib/nls/msg/%L/%N.cat' />
+				<Element name='OSTYPE' value='linux' />
+				<Element name='PATH' value='/mnt/LaCie/areid/usr/bin:/mnt/LaCie/areid/rar/rar:/mnt/LaCie/areid/usr/local/fsl/bin:/mnt/LaCie/areid/usr/local/freesurfer/bin:/mnt/LaCie/areid/usr/lib:/export01/data/postgresql-9.0.3/bin:/export01/data/usr/local/pgsql/bin:/export01/data/usr/local:/export01/data/usr/local/mysql/bin:/export01/data/usr/local/mysql/scripts:/export02/data/java/jdk1.6.0_23/bin:/export01/data/bin:/export01/data/mricro/mricron:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/X11R6/bin:/usr/local/bin:/usr/local/mni/bin:/usr/local/matlab/bin:/opt/bin' />
+				<Element name='PGDATA' value='/export01/data/usr/local/pgsql/data' />
+				<Element name='PWD' value='/mnt/LaCie/areid/java/eclipse' />
+				<Element name='PYTHONPATH' value='/export01/data/lib/python' />
+				<Element name='SESSION_MANAGER' value='local/pandarus:/tmp/.ICE-unix/30133' />
+				<Element name='SGE_CELL' value='default' />
+				<Element name='SGE_QMASTER_PORT' value='6444' />
+				<Element name='SGE_ROOT' value='/var/lib/gridengine' />
+				<Element name='SGE_SETTINGS' value='/var/lib/gridengine/default/common/settings.csh' />
+				<Element name='SGE_def' value='/var/lib/gridengine' />
+				<Element name='SHELL' value='/bin/tcsh' />
+				<Element name='SHLVL' value='2' />
+				<Element name='SSH_AGENT_PID' value='30121' />
+				<Element name='SSH_AUTH_SOCK' value='/tmp/ssh-QAWXH30082/agent.30082' />
+				<Element name='TERM' value='xterm' />
+				<Element name='USER' value='areid' />
+				<Element name='VENDOR' value='unknown' />
+				<Element name='VOLUME_CACHE_THRESHOLD' value='-1' />
+				<Element name='WINDOWID' value='29362457' />
+				<Element name='XDG_SESSION_COOKIE' value='8672fc1d83aa6f2e50e73dbd4cee8c3b-1352215327.851854-2120485130' />
+				<Element name='XFILESEARCHPATH' value='/usr/dt/app-defaults/%L/Dt' />
+				<Element name='XPSERVERLIST' value=':64 ' />
+				<Element name='_' value='/usr/bin/exo-open' />
+			</Environment>
+		</NativeProcess>
+		<NativeProcess name ='minc_resample' command = 'mincresample' input_parameter = 'inputfile' output_parameter = 'outputfile' path = '/data/aces/aces1/quarantines/Linux-i686/Oct-10-2007/bin/' set_operator = ' ' >
+			<TaskParameter
+				name = '2'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'clobber'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'quiet'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'transformation'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'invert_transformation'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tfm_input_sampling'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'use_input_sampling'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'like'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'standard_sampling'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'spacetype'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'talairach'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'units'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nelements'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'xnelements'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ynelements'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'znelements'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'step'
+				optional = 'true'
+				default_value = '0 0 0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'xstep'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ystep'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'zstep'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'start'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'xstart'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ystart'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'zstart'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dircos'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'xdircos'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'ydircos'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'zdircos'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'origin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'transverse'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sagittal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'coronal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'byte'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'short'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'int'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'long'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'float'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'double'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'signed'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'unsigned'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'range'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'keep_real_range'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nofill'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fill'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fillvalue'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'trilinear'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tricubic'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nearest_neighbour'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sinc'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'width'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'hanning'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'hamming'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+	</Processes>
+</PipelineProcessLibrary>

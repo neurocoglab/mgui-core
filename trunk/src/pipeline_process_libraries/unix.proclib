@@ -1,0 +1,1329 @@
+<PipelineProcessLibrary name = 'unix'>
+	<Processes>
+		<NativeProcess name ='gzip' command = 'gzip' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '-help' path = '' set_operator = '=' >
+			<TaskParameter
+				name = 'c'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-stdout'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-decompress'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'f'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-force'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'k'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-keep'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'l'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-list'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'L'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-license'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'n'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no-name'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'q'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-quiet'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'r'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-recursive'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'S'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-suffix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-test'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'V'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-version'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '1'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-fast'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '9'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-best'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-rsyncable'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'true'
+				default_value = '> {filename.gz}'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='gunzip' command = 'gunzip' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '-help' path = '' set_operator = '=' >
+			<TaskParameter
+				name = 'c'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-stdout'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-decompress'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'f'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-force'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'k'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-keep'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'l'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-list'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'L'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-license'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'n'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no-name'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'q'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-quiet'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'r'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-recursive'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'S'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-suffix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-test'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'V'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-version'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '1'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-fast'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '9'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-best'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-rsyncable'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'true'
+				default_value = '> {filename.gz}'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='cat' command = 'cat' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '--help' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'A'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-show-all'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'b'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-number-nonblank'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'e'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-show-ends'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'n'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-number'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 's'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-squeeze-blank'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'T'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-show-tabs'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'u'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-show-nonprinting'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='cp' command = 'cp' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '--help' path = '' set_operator = '=' >
+			<TaskParameter
+				name = 'a'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-archive'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-attributes-only'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-backup'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'b'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-copy-contents'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'f'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-force'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'H'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'l'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-link'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'L'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-dereference'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'n'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no-clobber'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'p'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no-dereference'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'P'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-preserve'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no-preserve'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-parents'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'R'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'r'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-recursive'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-reflink'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-remove-destination'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-sparse'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-strip-trailing-slashes'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 's'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-symbolic-link'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'S'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-suffix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-target-directory'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'T'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no-target-directory'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'u'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-update'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'x'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-one-file-system'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='rm' command = 'rm' input_parameter = 'rmfile' output_parameter = 'outputfile' help_parameter = '--help' path = '' set_operator = '=' >
+			<TaskParameter
+				name = 'f'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-force'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-one-file-system'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no-preserve-root'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-preserve-root'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'r'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'R'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-recursive'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-dir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'rmfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='mv' command = 'mv' input_parameter = 'source' output_parameter = 'destination' help_parameter = '--help' path = '' set_operator = '=' >
+			<TaskParameter
+				name = '-backup'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'b'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'f'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-force'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'n'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no-clobber'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-strip-trailing-slashes'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'S'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-suffix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 't'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-target-directory'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'T'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-no-target-directory'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'u'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-update'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'destination'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='mkdir' command = 'mkdir' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '--help' path = '' set_operator = '=' >
+			<TaskParameter
+				name = 'newdir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = '-mode'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-parents'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-context'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</NativeProcess>
+		<NativeProcess name ='split' command = 'split' input_parameter = 'input' output_parameter = 'prefix' help_parameter = '--help' path = '' set_operator = '=' >
+			<TaskParameter
+				name = 'a'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-suffix-length'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-additional-suffix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'b'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-bytes'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'C'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-line-bytes'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-numeric-suffixes'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'e'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-elide-empty-files'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-filter'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'l'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-lines'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'n'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-number'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'u'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-unbuffered'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = '-verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'input'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'prefix'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+		</NativeProcess>
+	</Processes>
+</PipelineProcessLibrary>

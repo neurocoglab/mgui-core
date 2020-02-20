@@ -1,0 +1,4 @@
+# Default shapes for graph & shape nodes
+# Specified as: <name> <qualified-class-name> <space delimited parameter list>
+circle java.awt.geom.Ellipse2D$Float -10 -10 20 20
+square java.awt.geom.Rectangle2D$Float -10 -10 20 20

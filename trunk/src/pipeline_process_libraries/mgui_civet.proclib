@@ -1,0 +1,1554 @@
+<PipelineProcessLibrary name = 'mgui-civet'>
+	<Processes>
+		<JavaProcess name ='move_no_log_images' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'civet_move_no_logs'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'civet_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'image_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'copy'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'prefix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'suffix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='average-surface-data' main_class = 'mgui.command.CivetFunctions' input_parameter = 'inputfile' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'function'
+				optional = 'false'
+				default_value = 'average-surface-data'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'log_file'
+				optional = 'true'
+				default_value = 'civet_functions.log'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'instance_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'input_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'instance_list_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'number_format'
+				optional = 'true'
+				default_value = '"#0.000000"'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<NativeProcess name ='cortical_thickness' command = 'cortical_thickness' input_parameter = 'input_file' output_parameter = 'output_file' path = '' set_operator = ' ' >
+			<TaskParameter
+				name = 'tlink'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tlaplace'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tnear'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'tnormal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'transform'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fwhm'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'clobber'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'quiet'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'debug'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'keeptmp'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'white_surface'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'gray_surface'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<Environment>
+				<Element name='CIVET_JOB_SCHEDULER' value='MNIBIC' />
+				<Element name='COLORTERM' value='Terminal' />
+				<Element name='DBUS_SESSION_BUS_ADDRESS' value='unix:abstract=/tmp/dbus-gGsYes9HBj,guid=a2f8a1d6a03343f4a86b1a7e4f7de684' />
+				<Element name='DISPLAY' value=':0.0' />
+				<Element name='FREESURFER_HOME' value='/export01/data/freesurfer/freesurfer' />
+				<Element name='FSLDIR' value='/mnt/LaCie/areid/usr/local/fsl' />
+				<Element name='GROUP' value='pet' />
+				<Element name='HOME' value='/home/bic/areid' />
+				<Element name='HOST' value='pandarus' />
+				<Element name='HOSTTYPE' value='x86_64-linux' />
+				<Element name='LANG' value='en_CA.ISO-8859-1' />
+				<Element name='LC_ALL' value='en_CA.ISO-8859-1' />
+				<Element name='LD_LIBRARY_PATH' value='/export02/data/java/jdk1.6.0_23/jre/lib/amd64/server:/export02/data/java/jdk1.6.0_23/jre/lib/amd64:/export02/data/java/jdk1.6.0_23/jre/../lib/amd64:/usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/amd64/server:/usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/amd64:/usr/lib/jvm/java-6-sun-1.6.0.26/jre/../lib/amd64:/data/aces/aces1/quarantines/Linux-x86_64/Oct-2010/lib' />
+				<Element name='LOGNAME' value='areid' />
+				<Element name='MACHTYPE' value='x86_64' />
+				<Element name='MATLAB_JAVA' value='/usr/lib/jvm/java-6-sun-1.6.0.26/jre' />
+				<Element name='MINC_COMPRESS' value='4' />
+				<Element name='MINC_FORCE_V2' value='1' />
+				<Element name='MNI_DATAPATH' value='/data/aces/aces1/quarantines/Linux-x86_64/Oct-2010/share' />
+				<Element name='MOZILLA_FIVE_HOME' value='/usr/lib64/xulrunner-1.9' />
+				<Element name='MYSQL_HOME' value='/export01/data/usr/local/mysql' />
+				<Element name='NLSPATH' value='/usr/dt/lib/nls/msg/%L/%N.cat' />
+				<Element name='OSTYPE' value='linux' />
+				<Element name='PATH' value='/data/aces/aces1/quarantines/Linux-x86_64/Oct-2010/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/X11/bin' />
+				<Element name='PERL5LIB' value='/data/aces/aces1/quarantines/Linux-x86_64/Oct-2010/perl:/data/aces/aces1/quarantines/Linux-x86_64/Oct-2010/lib/mni-models' />
+				<Element name='PGDATA' value='/export01/data/usr/local/pgsql/data' />
+				<Element name='PWD' value='/mnt/LaCie/areid/java/eclipse' />
+				<Element name='PYTHONPATH' value='/export01/data/lib/python' />
+				<Element name='R_LIBS' value='/data/aces/aces1/quarantines/Linux-x86_64/Oct-2010/R_LIBS' />
+				<Element name='SESSION_MANAGER' value='local/pandarus:/tmp/.ICE-unix/8160' />
+				<Element name='SGE_CELL' value='default' />
+				<Element name='SGE_QMASTER_PORT' value='6444' />
+				<Element name='SGE_ROOT' value='/var/lib/gridengine' />
+				<Element name='SGE_SETTINGS' value='/var/lib/gridengine/default/common/settings.csh' />
+				<Element name='SGE_def' value='/var/lib/gridengine' />
+				<Element name='SHELL' value='/bin/tcsh' />
+				<Element name='SHLVL' value='1' />
+				<Element name='SSH_AGENT_PID' value='8148' />
+				<Element name='SSH_AUTH_SOCK' value='/tmp/ssh-eBMaND8104/agent.8104' />
+				<Element name='TERM' value='xterm' />
+				<Element name='USER' value='areid' />
+				<Element name='VENDOR' value='unknown' />
+				<Element name='VOLUME_CACHE_THRESHOLD' value='-1' />
+				<Element name='WINDOWID' value='29360250' />
+				<Element name='XDG_SESSION_COOKIE' value='8672fc1d83aa6f2e50e73dbd4cee8c3b-1333651076.554629-444879492' />
+				<Element name='XFILESEARCHPATH' value='/usr/dt/app-defaults/%L/Dt' />
+				<Element name='XPSERVERLIST' value=':64 ' />
+			</Environment>
+		</NativeProcess>
+		<JavaProcess name ='civet_average_image' main_class = 'minc.MincFunctions' input_parameter = 'subject_ids' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'civet_average_image'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'subject_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'image_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'image_suffix'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'image_prefix'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_ids'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'minc_library'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='create_volume_atlas_masks' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'create_volume_atlas_masks'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'subject_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'name_map_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'atlas_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'gzip'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='civet_surface_atlas_to_volume' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'civet_surface_atlas_to_volume'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'subject_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'surface_dir'
+				optional = 'true'
+				default_value = 'surfaces'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'surface_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'merge_surfaces'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'atlas_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'template_image'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'param_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_dir'
+				optional = 'true'
+				default_value = 'atlases'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'skip_existing'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='civet_failure_report' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'civet_failures'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='surface_intersections_report' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'report_file' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'surface_intersections_report'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'civet_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'report_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'surface_pattern_1'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'surface_pattern_2'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'search_max'
+				optional = 'true'
+				default_value = '10'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_report_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'levels_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'roi_report_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'name_1'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'name_2'
+				optional = 'true'
+				default_value = '2'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'roi_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'roi_name_map'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'frequency_file_pattern'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'no_self'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'no_surf'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_intersection_file_pattern'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_list'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='stdev-surface-data' main_class = 'mgui.command.CivetFunctions' input_parameter = 'average_data_file' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'function'
+				optional = 'false'
+				default_value = 'stdev-surface-data'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'instance_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'log_dir'
+				optional = 'true'
+				default_value = '{root}/mgui_civet_log.txt'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'input_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'average_data_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'instance_list_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'number_format'
+				optional = 'true'
+				default_value = '"#0.0000000"'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='project_pet_to_surface' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'project_pet_to_surface'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'pet_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'civet_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pet_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'surface_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file_pattern'
+				optional = 'true'
+				default_value = '{pet_dir}/{subject_id}/{pet_file}_{surface_file}'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'no_smoothing'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'retain_unsmoothed'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pet_template_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'projection_param_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'proj_sigma_normal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'proj_sigma_max_normal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'proj_sigma_tangent'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'proj_sigma_max_tangent'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'proj_sigma_set_max_normal'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'proj_sigma_set_max_tangent'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'smoothing_sigma'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'smoothing_sigma_max'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subjects_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pet_origin'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pet_geom_dims'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pet_data_dims'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pet_flip_x'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pet_flip_y'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pet_flip_z'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='surface_intersections_report_from_files' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'report_file' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'surface_intersections_report_from_files'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'report_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'intersection_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_report_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'frequency_file_pattern'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'levels_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'roi_report_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'roi_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'roi_name_map'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_list'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'civet_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='select_valid_subject_data' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'select_valid_subject_data'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'valid_subject_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_data_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'data_output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='vertex-scatterplot' main_class = 'mgui.command.CivetFunctions' input_parameter = 'instance_x_data' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'function'
+				optional = 'false'
+				default_value = 'vertex-scatterplot'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'log_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'instances_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'instance_x_data'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'data_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'vertex_index'
+				optional = 'false'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'parameter_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'instance_list_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'size_x'
+				optional = 'true'
+				default_value = '500'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'size_y'
+				optional = 'true'
+				default_value = '500'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'symbol'
+				optional = 'true'
+				default_value = 'circle'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'symbol_colour'
+				optional = 'true'
+				default_value = '0,0,255'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'title'
+				optional = 'true'
+				default_value = 'Scatterplot'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'regression_line'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'regression_colour'
+				optional = 'true'
+				default_value = '255,0,0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'legend'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'number_format_x'
+				optional = 'true'
+				default_value = '#0.00'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'number_format_y'
+				optional = 'true'
+				default_value = '#0.00'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'label_x'
+				optional = 'true'
+				default_value = 'X'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'label_y'
+				optional = 'true'
+				default_value = 'Y'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'range_x'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'range_y'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'min_x'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'min_y'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='set_path' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'set_path'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'path'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='minc_operation_subjects' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'minc_operation_subjects'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'operation'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source_ext'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_ext'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'param_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source_subdir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_subdir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pattern'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'skip_existing'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='calculate-area-and-volume' main_class = 'mgui.command.CivetFunctions' input_parameter = 'surface_file' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'function'
+				optional = 'false'
+				default_value = 'calculate-surface-area'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'surface_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'append'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_name'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'log_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'number_format'
+				optional = 'true'
+				default_value = '#0.0000000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'write_header'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'thickness_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='roi-scatterplots' main_class = 'mgui.command.CivetFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'function'
+				optional = 'false'
+				default_value = 'roi-scatterplots'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'instances_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'instance_x_data'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'y_data_file_pattern'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'roi_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'name_map_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'parameter_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'instance_list_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'size_x'
+				optional = 'true'
+				default_value = '500'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'size_y'
+				optional = 'true'
+				default_value = '500'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'symbol'
+				optional = 'true'
+				default_value = 'circle'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'symbol_colour'
+				optional = 'true'
+				default_value = '0,0,255'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'title'
+				optional = 'true'
+				default_value = 'Scatterplot: {roi}'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'regression_line'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'regression_colour'
+				optional = 'true'
+				default_value = '0,0,255'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'legend'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'log_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'number_format_x'
+				optional = 'true'
+				default_value = '0.00'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'number_format_y'
+				optional = 'true'
+				default_value = '0.00'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'label_x'
+				optional = 'true'
+				default_value = 'X'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'label_y'
+				optional = 'true'
+				default_value = 'Y'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'range_x'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'range_y'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'min_x'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'min_y'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'multilevel_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'multilevel_colours_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'y_mean_roi_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'switch_xy'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='minc_operation_images' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'minc_operation_images'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'operation'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'param_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source_ext'
+				optional = 'true'
+				default_value = 'mnc'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_ext'
+				optional = 'true'
+				default_value = 'mnc'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='timed_test' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'timed_test'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'delay'
+				optional = 'false'
+				default_value = '1000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+	</Processes>
+</PipelineProcessLibrary>

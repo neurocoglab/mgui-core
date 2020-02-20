@@ -1,0 +1,85 @@
+<PipelineProcessLibrary name = 'image'>
+	<Processes>
+		<JavaProcess name ='convert-raw-to-png' main_class = 'mgui.neuro.imaging.tasks.ConvertRawToPNG' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'width'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'height'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'datatype'
+				optional = 'false'
+				default_value = 'TYPE_BYTE'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'colorspace'
+				optional = 'false'
+				default_value = 'RGB'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='calculate-average-volume' main_class = 'mgui.command.ImagingFunctions' input_parameter = 'inputfile' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'function'
+				optional = 'false'
+				default_value = 'calculate-average-volume'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'instance_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'input_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'instance_list_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'log_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nifti_format'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+	</Processes>
+</PipelineProcessLibrary>

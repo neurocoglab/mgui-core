@@ -1,0 +1,127 @@
+package ar.interfaces;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+
+import ar.interfaces.datasource.InterfaceDataTableTitle;
+import ar.interfaces.graphics.InterfaceGraphic2DTitle;
+import ar.interfaces.graphics.InterfaceGraphic3DTitle;
+import ar.interfaces.graphs.InterfaceGraphDisplayTitle;
+
+public class InterfaceGraphicTitle extends InterfacePanel {
+
+	public GraphicButton thisTitle = new GraphicButton();
+	public InterfaceGraphic thisPanel; // = new InterfaceGraphic();
+	
+	public InterfaceGraphicTitle(){
+		super();
+		//init();
+	}
+	
+	public InterfaceGraphicTitle(InterfaceGraphic p){
+		super();
+		setPanel(p);
+		//init();
+	}
+	
+	private void init(){
+		thisTitle.setHorizontalAlignment(JLabel.CENTER);
+		thisTitle.setBackground(new Color(240,240,240));
+		thisTitle.setActionCommand(thisPanel.getName());
+		//thisTitle.setMinimumSize(new Dimension(1, 100));
+		thisTitle.setPreferredSize(new Dimension(1, 20));
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		this.removeAll();
+		c.fill = GridBagConstraints.BOTH;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weighty = 0;
+		c.weightx = 1;
+		add(thisTitle, c);
+		c.gridx = 0;
+		c.gridy = 1;
+		c.weighty = 5;
+		c.weightx = 1;
+		add(thisPanel, c);
+	}
+	
+	public void setPanel(InterfaceGraphic p){
+		thisPanel = p;
+		setName(p.getName());
+		init();
+	}
+	
+	public void setName(String thisName){
+		thisPanel.setName(thisName);
+		if (thisPanel.type == InterfaceGraphic.GraphicType.Graphic2D)
+			thisTitle.setText("Graphic2D Window: " + thisName);
+		if (thisPanel.type == InterfaceGraphic.GraphicType.Graphic3D)
+			thisTitle.setText("Graphic3D Window: " + thisName);
+		if (thisPanel.type == InterfaceGraphic.GraphicType.DataTable)
+			thisTitle.setText("Data Table: " + thisName);
+		thisTitle.setActionCommand(thisPanel.getName());
+	}
+	
+	public InterfaceGraphic getPanel(){
+		return thisPanel;
+	}
+	
+	public static InterfaceGraphicTitle getInstance(InterfaceGraphic.GraphicType type){
+		
+		if (type == InterfaceGraphic.GraphicType.Graphic2D)
+			return InterfaceGraphic2DTitle.getInstance();
+		if (type == InterfaceGraphic.GraphicType.Graphic3D)
+			return InterfaceGraphic3DTitle.getInstance();
+		if (type == InterfaceGraphic.GraphicType.DataTable)
+			return InterfaceDataTableTitle.getInstance();
+		if (type == InterfaceGraphic.GraphicType.GraphDisplay)
+			return InterfaceGraphDisplayTitle.getInstance();
+		
+		return null;
+	}
+	
+	public static InterfaceGraphicTitle getInstance(String typeStr){
+		return getInstance(InterfaceGraphic.getType(typeStr));
+	}
+	
+	public static InterfaceGraphicTitle getInstance(InterfaceGraphic g){
+		
+		if (g.getType() == InterfaceGraphic.GraphicType.Graphic2D)
+			return InterfaceGraphic2DTitle.getInstance(g);
+		if (g.getType() == InterfaceGraphic.GraphicType.Graphic3D)
+			return InterfaceGraphic3DTitle.getInstance(g);
+		if (g.getType() == InterfaceGraphic.GraphicType.DataTable)
+			return InterfaceDataTableTitle.getInstance(g);
+		if (g.getType() == InterfaceGraphic.GraphicType.GraphDisplay)
+			return InterfaceGraphDisplayTitle.getInstance(g);
+		
+		return null;
+	}
+	
+	public void updateDisplay(){
+		//thisPanel.updateDisplay();
+	}
+	
+	protected class GraphicButton extends JButton{
+		
+		public GraphicButton(){
+			super();
+		}
+		
+		public void clearListeners(){
+			Object[] list = this.listenerList.getListenerList();
+			for (int i = 0; i < list.length; i++)
+				if (ActionListener.class.isInstance(list[i]))
+					this.removeActionListener((ActionListener)list[i]);
+		}
+	}
+	
+}

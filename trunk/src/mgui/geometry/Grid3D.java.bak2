@@ -1,0 +1,705 @@
+package ar.geometry;
+
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.IndexColorModel;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import javax.imageio.ImageIO;
+import javax.media.j3d.Transform3D;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
+
+import ar.datasource.DataType;
+import ar.datasource.DataTypes;
+import ar.io.util.ioFunctions;
+import ar.stats.Histogram;
+
+/*************************
+ * Holds a 3D array of values and a Box3D defining the distribution of these
+ * values in R3. For use as a voxel set or volume 3D texture. Values are designated
+ * in terms of their size in bytes using the function setDataSize
+ * 
+ * @author Andrew Reid
+ * @version 1.0
+ *
+ */
+
+
+public class Grid3D extends Shape3D {
+	
+	public int dataSize = 0;
+	public double dataScale = 1.0;
+	int dataType;
+	public int xSize, ySize, zSize, tSize;
+	public Box3D bounds;
+	byte[][][][] data;
+	DataBuffer buffer;
+	public Transform3D basisTransform, inverseTransform;
+	
+	public boolean[][][] mask;
+	
+	public Grid3D(){
+		this(10, 10, 10, new Box3D(), DataBuffer.TYPE_BYTE);
+	}
+	
+	public Grid3D(int x, int y, int z, Box3D b){
+		this(x, y, z, b, DataBuffer.TYPE_BYTE);
+	}
+	
+	public Grid3D(int x, int y, int z){
+		this(x, y, z, new Box3D(), DataBuffer.TYPE_BYTE);
+	}
+	
+	public Grid3D(int x, int y, int z, Box3D b, int type){
+		xSize = x;
+		ySize = y;
+		zSize = z;
+		setBounds(b);
+		setDataType(type);
+	}
+	
+	public void setMask(boolean[][][] m){
+		mask = m;
+	}
+	
+	public void setMaskUnion(boolean[][][] m){
+		if (mask == null) mask = this.getMaskForGrid(false);
+		for (int i = 0; i < xSize; i++)
+			for (int j = 0; j < ySize; j++)
+				for (int k = 0; k < zSize; k++)
+					mask[i][j][k] |= m[i][j][k];
+	}
+	
+	public boolean hasMask(){
+		return mask != null;
+	}
+	
+	public Box3D getBoundBox(){
+		return bounds;
+	}
+	
+	/**************************************
+	 * Returns absolute index of this coordinate, which is given by:
+	 * k * xSize * ySize + j * xSize + i (x changes fastest)
+	 * @param i
+	 * @param j
+	 * @param k
+	 * @return
+	 */
+	public int getAbsoluteIndex(int i, int j, int k){
+		return k * xSize * ySize + j * xSize + i;
+		
+	}
+	
+	public void setBounds(Box3D b){
+		bounds = b;
+		setBasisTransform();
+	}
+	
+	public int getChannelCount(){
+		return dataSize;
+	}
+	
+	public void presetAlpha(){
+		/*
+		//assume alpha is last channel
+		for (int k = 0; k < zSize; k++)
+			for (int j = 0; j < ySize; j++)
+				for (int i = 0; i < xSize; i++)
+					setValue(i, j, k, dataSize - 1, (byte)255);
+		*/
+	}
+	
+	public Transform3D getBasisTransform(){
+		if (basisTransform == null) setBasisTransform();
+		return basisTransform;
+	}
+	
+	public Transform3D getInverseBasisTransform(){
+		if (inverseTransform == null) setBasisTransform();
+		return inverseTransform;
+	}
+	
+	
+	/**********************
+	 * Returns the number of dimensions in this grid (default is 3).
+	 * @return number of dimensions
+	 */
+	public int getDimensions(){
+		return 3;
+	}
+	
+	private void resetArray(){
+		//int size = dataSize;
+		InterfaceSession.log("Reset data...?");
+		//data = new byte[xSize][ySize][zSize][dataSize];
+	}
+	
+	/*********************************
+	 * Size of the data to be stored in this grid, in bytes. Note that the method
+	 * Double.SIZE returns its size in bits; thus size = Double.SIZE / 8 if you
+	 * wish to store double values. Using arNumber as a wrapper, you can also use
+	 * the function getByteSize() to get the size of a data type.
+	 * 
+	 * @param size Size of the data in bytes
+	 */
+	public void setDataSize(int size){
+		if (dataSize == size) return;
+		dataSize = size;
+		resetArray();
+	}
+	
+	public double getDoubleValueAtPoint(Point3f p){
+		return getDoubleValueAtPoint(p, 0);
+	}
+	
+	public double getDoubleValueAtPoint(Point3f p, int channel){
+		double[] r = getRawValueAtPoint(p);
+		if (r == null) return Double.NaN;
+		return r[channel];
+	}
+	
+	public double getNormalizedValueAtPoint(Point3f p){
+		return getNormalizedValueAtPoint(p, 0);
+	}
+	
+	public double getNormalizedValueAtPoint(Point3f p, int channel){
+		double[] r = getRawValueAtPoint(p);
+		if (r == null) return Double.NaN;
+		return r[channel];
+	}
+	
+	public double interpolateDoubleValueAtPoint(Point3f p){
+		return interpolateDoubleValueAtPoint(p, 0);
+	}
+	
+	public double interpolateDoubleValueAtPoint(Point3f p, int channel){
+		double[] d = new double[dataSize];
+		if (!interpolateValueAtPoint(p, d)) return Double.NaN;
+		return d[channel];
+	}
+	
+	public boolean interpolateValueAtPoint(Point3f p, double[] val){
+		return false;
+	}
+	
+	public double getNormalizedValue(double val){
+		return Double.NaN;
+	}
+	
+	public Point3f getVoxelMidPoint(int x, int y, int z){
+		
+		float x_voxel = bounds.getSDim() / (float)xSize;
+		float y_voxel = bounds.getTDim() / (float)ySize;
+		float z_voxel = bounds.getRDim() / (float)zSize;
+		
+		Vector3f v = new Vector3f(bounds.sAxis);
+		v.normalize();
+		v.scale(x_voxel * (0.5f + (float)x));
+		Vector3f offset = new Vector3f(v); 
+		v = new Vector3f(bounds.tAxis);
+		v.normalize();
+		v.scale(y_voxel * (0.5f + (float)y));
+		offset.add(v); 
+		v = new Vector3f(bounds.rAxis);
+		v.normalize();
+		v.scale(z_voxel * (0.5f + (float)z));
+		offset.add(v);
+		
+		Point3f p = new Point3f(bounds.basePt);
+		p.add(offset);
+		return p;
+		
+	}
+	
+	public boolean isMaskedAtPoint(Point3f p){
+		if (mask == null || !getBoundBox().contains(p)) return false;
+		int[] voxel = getEnclosingVoxel(p);
+		return mask[voxel[0]][voxel[1]][voxel[2]];
+	}
+	
+	/***********************************
+	 * Return array of bytes for grid plane at z.
+	 * @param z plane from which to retrieve data
+	 * @return byte array of size xSize * ySize * dataSize representing the data in this plane.
+	 */
+	public byte[] getZPlane(int z){
+		byte[] array = new byte[xSize * ySize * dataSize];
+		for (int i = 0; i < xSize; i++)
+			for (int j = 0; j < ySize; j++)
+				for (int k = 0; k < dataSize; k++)
+					System.arraycopy(data[i][j][z], 0, array, 
+							(i * ySize + j) * dataSize + k, 1);
+			
+		return array;
+	}
+	
+	/*****************************************
+	 * Returns two points (min coords, max coords) which represent a subset of this grid which 
+	 * is bounded by the geometric box specified by p1 and p2 (i.e., a voxel must be contained 
+	 * within the box, or must enclose its boundary). Adds 1 to the max indices, such
+	 * that the includes indices are < max.
+	 * 
+	 * @param p1 min point
+	 * @param p2 max point
+	 * @return
+	 */
+	public int[] getSubGrid(Point3f p1, Point3f p2){
+		
+		boolean in1 = this.contains(p1);
+		boolean in2 = this.contains(p2);
+		
+		if (!in1 && !in2) return null;
+		
+		if (!in1){
+			p1 = GeometryFunctions.getMaxPt(p1, bounds.getMinPt());
+			p1 = GeometryFunctions.getMinPt(p1, bounds.getMaxPt());
+		}
+		
+		if (!in2){
+			p2 = GeometryFunctions.getMaxPt(p2, bounds.getMinPt());
+			p2 = GeometryFunctions.getMinPt(p2, bounds.getMaxPt());
+		}
+		
+		//Given correct p1, p2, find points in grid
+		int[] c1 = getEnclosingVoxel(p1);
+		int[] c2 = getEnclosingVoxel(p2);
+		
+		if (c1 == null || c2 == null){
+			InterfaceSession.log("Error getting subgrid for points " + p1.toString() + " and  " + p2.toString() + ".");
+			return null;
+		}
+		
+		//return as min_x,y,z, max_x+1,y+1,z+1
+		return new int[]{Math.min(c1[0], c2[0]), 
+						 Math.min(c1[1], c2[1]), 
+						 Math.min(c1[2], c2[2]),
+						 Math.min(xSize, Math.max(c1[0], c2[0]) + 1), 
+						 Math.min(ySize, Math.max(c1[1], c2[1]) + 1), 
+						 Math.min(zSize, Math.max(c1[2], c2[2]) + 1)};
+		
+	}
+	
+	
+
+	/*********************************
+	 * Returns the geometric midpoint of the grid coordinate i, j, k
+	 * @param i
+	 * @param j
+	 * @param k
+	 * @return
+	 */
+	public Point3f getMidPoint(int i, int j, int k){
+		//distance i is (0.5 + i) * voxel_size
+		float voxel_x = bounds.getSDim() / (float)xSize;
+		float voxel_y = bounds.getTDim() / (float)ySize;
+		float voxel_z = bounds.getRDim() / (float)zSize;
+		Point3f p = new Point3f(bounds.basePt);
+		Vector3f v1 = new Vector3f(bounds.sAxis);
+		v1.normalize();
+		v1.scale((0.5f + (float)i) * voxel_x);
+		p.add(v1);
+		v1.set(bounds.tAxis);
+		v1.normalize();
+		v1.scale((0.5f + (float)j) * voxel_y);
+		p.add(v1);
+		v1.set(bounds.rAxis);
+		v1.normalize();
+		v1.scale((0.5f + (float)k) * voxel_z);
+		p.add(v1);
+		return p;
+	}
+	
+	public boolean contains(Point3f p){
+		return bounds.contains(p);
+	}
+	
+	/************************************************
+	 * Set the given z-plane with data from the image stored at the given url. Data will
+	 * be resampled to fit the grid's X,Y dimensions. Image's data size should match the
+	 * grid's. i.e., a 4-channel RGBA image should be loaded into a grid with dataSize = 4.
+	 * Otherwise, data will be lost. Likewise, if a 3-channel RGB image is loaded into a
+	 * grid of dataSize = 4, the 4th channel will be filled with bytes of value 0.
+	 * 
+	 * Data will be stored in the order in which it is retrieved.
+	 * 
+	 * @param z Z- plane into which to load this image's data 
+	 * @param image URL of a valid image file from which to retrieve data
+	 */
+	public void setZPlane(int z, URL image){
+		try{
+			BufferedImage urlImage = ImageIO.read(image);
+			setZPlane(z, urlImage);
+		}
+		catch (IOException e){
+			e.printStackTrace();
+			return;
+		}			
+		
+	}
+	
+	public void setZPlane(int z, BufferedImage image){
+		//determine image data-size, compare to grid's
+        int iDataSize = ar.util.Colours.getDataSize(image);
+        if (iDataSize < 0) return;
+		//int dataDiff = dataSize - iDataSize;
+        
+		int width = image.getWidth();
+        int height = image.getHeight();
+		
+        //resample?
+        if (width != xSize || height != ySize)
+        	image = (BufferedImage)image.getScaledInstance(xSize, ySize, BufferedImage.SCALE_REPLICATE);
+        
+        //TODO read formats other than byte i.e., greyscale int
+        byte[] imgData = ((DataBufferByte)image.getData().getDataBuffer()).getData();
+        
+		//copy data from image to grid
+        for (int j = 0; j < ySize; j++)
+        	for (int i = 0; i < xSize; i++)
+        		for (int d = 0; d < Math.min(dataSize, iDataSize); d++){
+        			data[i][j][z][d] = imgData[((j * xSize + i) * iDataSize) + d];
+        			if (iDataSize < dataSize)
+        				for (int e = iDataSize; e < dataSize; e++)
+        					data[i][j][z][e] = (byte)0;
+        			}
+	}
+	
+	protected int[] getBitArray(){
+		int[] bits = new int[dataSize];
+		for (int i = 0; i < dataSize; i++)
+			bits[i] = 8;
+		return bits;
+	}
+	
+	public double[] getRawValue(int x, int y, int z){
+		int[] v = getIntValue(x, y, z);
+		double[] r = new double[v.length];
+		for (int i = 0; i < v.length; i++)
+			r[i] = (double)v[i] / dataScale;
+		return r;
+	}
+	
+	public double[] getRawValueAtPoint(Point3f p){
+		//int[] v = getIntValueAtPoint(p);
+		double[] r = new double[dataSize];
+		getValueAtPoint(p, r);
+		return r;
+		
+	}
+	
+	/**************************
+	 * Return a byte array representing the value at grid coord x, y, z
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param z z coordinate
+	 * @return byte array of length dataSize, representing the requested value
+	 */
+	public void getValue(int x, int y, int z, byte[] b){
+		//pad extra space with zeros
+		if (x >= xSize || y >= ySize || z >= zSize || 
+			(mask != null && mask[x][y][z])){
+			getNullData(b);
+			return;
+			}
+		
+		for (int i = 0; i < b.length && i < dataSize; i++)
+			b[i] = data[x][y][z][i];
+	}
+	
+	public void getValue(int x, int y, int z, double[] val){
+		
+	}
+	
+	public int[] getIntValue(int x, int y, int z){
+		return null;
+	}
+	
+	/*
+	public void setDataType(DataType type){
+		dataType = type;
+		setDataSize(DataTypes.getSize(type));
+	}
+	*/
+	
+	public void setDataType(int type){
+		dataType = type;
+		/*
+		switch (type){
+		case DataBuffer.TYPE_BYTE:
+			
+		case DataBuffer.TYPE_SHORT:
+			
+		case DataBuffer.TYPE_INT:
+		
+			
+		case DataBuffer.TYPE_FLOAT:
+			
+		case DataBuffer.TYPE_DOUBLE:
+			
+		
+			}
+		*/
+	}
+	
+	public boolean[][][] getMaskForGrid(boolean fill){
+		
+		boolean[][][] mask = new boolean[xSize][ySize][zSize];
+		
+		for (int i = 0; i < xSize; i++)
+			for (int j = 0; j < ySize; j++)
+				Arrays.fill(mask[i][j], fill);
+		
+		return mask;
+	}
+	
+	public int getDataType(){
+		return dataType;
+	}
+	
+	public int getDataSize(){
+		return dataSize;
+		//return DataTypes.getSize(dataType);
+	}
+	
+	/*
+	public byte getValue(int x, int y, int z, int channel){
+		byte[] b = new byte[dataSize];
+		getValue(x, y, z, b);
+		return b[channel];
+	}
+	*/
+	
+	public double getNormalizedValue(int x, int y, int z, int channel){
+		return getDoubleValue(x, y, z, channel);
+	}
+	
+	public double getDoubleValue(int x, int y, int z){
+		return getDoubleValue(x, y, z, 0);
+	}
+	
+	public double getDoubleValue(int x, int y, int z, int channel){
+		double[] d = new double[dataSize];
+		getValue(x, y, z, d);
+		return d[channel];
+	}
+	
+	protected void getNullData(byte[] b){
+		//byte[] ret = new byte[dataSize];
+		Arrays.fill(b, (byte)0);
+	}
+	
+	//buffer between power-of-two size and data extents, for x dimension
+	public float getXBuffer(){
+		return (float)xSize / powerOfTwo(xSize);
+	}
+	
+	//buffer between power-of-two size and data extents, for y dimension
+	public float getYBuffer(){
+		return (float)ySize / powerOfTwo(ySize);
+	}
+	
+	//buffer between power-of-two size and data extents, for z dimension
+	public float getZBuffer(){
+		return (float)zSize / powerOfTwo(zSize);
+	}
+	
+	public void setDoubleValue(int x, int y, int z, int channel, double value){
+		double[] d = new double[dataSize];
+		getValue(x, y, z, d);
+		d[channel] = value;
+		setValue(x, y, z, d);
+	}
+	
+	public void setValue(int x, int y, int z, byte[] b){
+		if (b.length == dataSize)
+			data[x][y][z] = b;
+	}
+	
+	public void setValue(int x, int y, int z, int[] i){
+		
+	}
+	
+	public void setValue(int x, int y, int z, float[] i){
+		
+	}
+	
+	public void setValue(int x, int y, int z, double[] i){
+		
+	}
+	
+	public void setValue(int x, int y, int z, short[] i){
+		
+	}
+	
+//	set value for specified channel
+	protected void setValue(int x, int y, int z, int channel, int i){
+		/*
+		if (channel > dataSize) return;
+		int[] d = getIntValue(x, y, z);
+		d[channel] = i;
+		setValue(x, y, z, d);
+		*/
+	}
+	
+	//set value for specified channel
+	public void setValue(int x, int y, int z, int channel, byte b){
+		/*
+		if (channel > dataSize) return;
+		byte[] d = new byte[dataSize];
+		getValue(x, y, z, d);
+		d[channel] = b;
+		setValue(x, y, z, d);
+		*/
+	}
+	
+	public ArrayList<Point3f> getNodes(){
+		if (bounds == null) return null;
+		return bounds.getNodes();
+	}
+	
+	protected int powerOfTwo(int value) {
+		int retval = 2;
+		while (retval < value)
+		    retval *= 2;
+		return retval;
+	}
+	
+	/**************************
+	 * Return the voxel value at the geometric point p. If p is not inside volume, returns
+	 * null.
+	 * @param p Point3f representing geometric point
+	 * @return data at voxel closest to point p in volume. null is p is not inside volume.
+	 *
+	public void getValueAtPointBak(Point3f p, byte[] b){
+		//if (!bounds.contains(p)) return null;
+		Vector3f v = new Vector3f();
+		v.sub(p, bounds.basePt);
+		float deltaX = v.length() * (float)Math.cos(v.angle(bounds.sAxis));
+		float deltaY = v.length() * (float)Math.cos(v.angle(bounds.tAxis));
+		float deltaZ = v.length() * (float)Math.cos(v.angle(bounds.rAxis));
+		//p.sub(bounds.basePt, v);
+		//int i = Math.round(v.x / bounds.getSDim() * (float)xSize);
+		int i = Math.round((deltaX / bounds.getSDim()) * (float)xSize);
+		if (i < 0) return null; //i = 0;
+		if (i >= xSize) return null; // i = xSize;
+		//int j = Math.round(v.y / bounds.getTDim() * (float)ySize);
+		int j = Math.round((deltaY / bounds.getTDim()) * (float)ySize);
+		if (j < 0) return null; // j = 0;
+		if (j >= ySize) return null; // j = ySize;
+		//int k = Math.round(v.z / bounds.getRDim() * (float)zSize);
+		int k = Math.round((deltaZ / bounds.getRDim()) * (float)zSize);
+		if (k < 0) return null; // k = 0;
+		if (k >= zSize) return null; // k = zSize;
+		//InterfaceSession.log("get value at: " + i + "," + j + "," + k);
+		return getValue(i, j, k);
+	}
+	*/
+	
+	public void setBasisTransform(){
+		basisTransform = new Transform3D(bounds.getBasisTransform());
+		inverseTransform = null;
+		if (basisTransform == null) return;
+		inverseTransform = new Transform3D(basisTransform);
+		//inverseTransform.transpose();
+		//inverseTransform.invert();
+		
+	}
+	
+	public void setDimensions(int x, int y, int z){
+		xSize = x;
+		ySize = y;
+		zSize = z;
+		resetArray();
+	}
+	
+	public int[] getEnclosingVoxel(Point3f p){
+		Vector3f v = new Vector3f();
+		v.sub(p, bounds.basePt);
+		if (basisTransform == null)
+			setBasisTransform();
+		basisTransform.transform(v);
+		int i = Math.round(v.x / bounds.getSDim() * (float)xSize);
+		if (i < 0 && ++i < 0) return null; 
+		if (i >= xSize && --i >= xSize) return null; 
+		int j = Math.round(v.y / bounds.getTDim() * (float)ySize);
+		if (j < 0 && ++j < 0) return null;
+		if (j >= ySize && --j >= ySize) return null; 
+		int k = Math.round(v.z / bounds.getRDim() * (float)zSize);
+		if (k < 0 && ++k < 0) return null; 
+		if (k >= zSize && --k >= zSize) return null; 
+		return new int[]{i, j, k};
+	}
+	
+	public boolean getValueAtPoint(Point3f p, double[] i){
+		return false;
+	}
+	
+	public boolean getValueAtPoint(Point3f p, byte[] b){
+		int[] coords = getEnclosingVoxel(p);
+		if (coords == null) return false;
+		
+		//getValue(i, j, k, b);
+		getValue(coords[0], coords[1], coords[2], b);
+		return true;
+	}
+	
+	public Object clone(){
+		Grid3D out;
+		if (bounds != null)
+			out = new Grid3D(xSize, ySize, zSize, (Box3D)bounds.clone());
+		else
+			out = new Grid3D(xSize, ySize, zSize);
+		
+		out.setDataSize(dataSize);
+		
+		byte[] b, b2;
+		for (int i = 0; i < xSize; i++)
+			for (int j = 0; j < ySize; j++)
+				for (int k = 0; k < zSize; k++){
+					b = new byte[dataSize];
+					//b = (byte[])getValue(i, j, k);
+					getValue(i, j, k, b);
+					//System.arraycopy(b, 0, b2, 0, dataSize);
+					out.setValue(i, j, k, b);
+					}
+		return out;
+	}
+
+	public int getChannelSize(){
+		return DataBuffer.getDataTypeSize(dataType);
+		/*
+		int size = 0;
+		
+		switch (dataType.val){
+			case DT_BYTE:
+			case DT_SHORT8:
+				size = 1;
+				break;
+			case DT_INT16:
+				size = 2;
+				break;
+			case DT_FLOAT32:
+				size = 4;
+				break;
+			case DT_DOUBLE64:
+				size = 8;
+				break;
+			}
+		return size;
+		*/
+	}
+	
+}

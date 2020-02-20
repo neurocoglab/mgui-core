@@ -1,0 +1,49 @@
+
+*** These modified files were found in JOE when it aborted on Thu Jan 27 17:17:05 2011
+*** JOE was aborted because the terminal closed
+
+*** File '(Unnamed)'
+bzr_log.i6YMZN
+
+*** File 'bzr_log.i6YMZN'
+Console improvements.
+
+-------------- This line and the following will be ignored --------------
+
+added:
+  src/mgui/interfaces/plots/sgt/SgtAxis.java
+modified:
+  src/init/mgui.model.init
+  src/mgui/command/CommandInstance.java
+  src/mgui/command/CommandInterpreter.java
+  src/mgui/geometry/Grid3D.java
+  src/mgui/geometry/volume/VolumeFunctions.java
+  src/mgui/interfaces/AbstractInterfaceObject.java
+  src/mgui/interfaces/InterfaceEnvironment.java
+  src/mgui/interfaces/attributes/AttributeSelection.java
+  src/mgui/interfaces/attributes/tree/AttributeTreeCellRenderer.java
+  src/mgui/interfaces/console/InterfaceConsoleDisplay.java
+  src/mgui/interfaces/pipelines/InterfacePipelinesPanel.java
+  src/mgui/interfaces/pipelines/PipelineProcessDialogBox.java
+  src/mgui/interfaces/plots/sgt/InterfacePlotSgt.java
+  src/mgui/interfaces/plots/sgt/SgtCartesianLayout.java
+  src/mgui/interfaces/plots/sgt/SgtLineLayout.java
+  src/mgui/interfaces/plots/sgt/SgtPlotFunctions.java
+  src/mgui/interfaces/plots/sgt/SgtPlotLayout.java
+  src/mgui/interfaces/shapes/InterfaceShapesPanel.java
+  src/mgui/interfaces/shapes/volume/InterfaceVolumePanel.java
+  src/mgui/interfaces/variables/MatrixInt.java
+  src/mgui/pipelines/InterfacePipeline.java
+  src/mgui/pipelines/JavaProcess.java
+  src/mgui/pipelines/NativeProcess.java
+  src/mgui/pipelines/PipelineTask.java
+unknown:
+  .classpath
+  .project
+  .settings.moved/
+  bin/
+  src/mgui/command/CommandException.java
+  src/pipeline_process_libraries/mgui_adni.proclib
+  src/pipeline_process_libraries/minc.proclib
+pending merges:
+  typically 2011-01-21 Plotting functionality

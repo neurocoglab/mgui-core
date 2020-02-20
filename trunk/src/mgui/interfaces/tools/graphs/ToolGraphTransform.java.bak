@@ -1,0 +1,360 @@
+/*
+* Copyright (C) 2011 Andrew Reid and the modelGUI Project <http://mgui.wikidot.com>
+* 
+* This file is part of modelGUI[core] (mgui-core).
+* 
+* modelGUI[core] is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* modelGUI[core] is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with modelGUI[core]. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package mgui.interfaces.tools.graphs;
+
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Point2D;
+
+import javax.swing.Icon;
+
+import mgui.interfaces.graphs.AbstractGraphEdge;
+import mgui.interfaces.graphs.AbstractGraphNode;
+import mgui.interfaces.graphs.InterfaceGraphDisplay;
+import mgui.interfaces.menus.InterfacePopupMenu;
+import mgui.interfaces.tools.ToolConstants;
+import mgui.interfaces.tools.ToolInputEvent;
+import mgui.interfaces.tools.ToolListener;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
+import edu.uci.ics.jung.visualization.control.TranslatingGraphMousePlugin;
+
+public class ToolGraphTransform extends ToolGraph {
+
+	DefaultModalGraphMouse<AbstractGraphNode, AbstractGraphEdge> scale_mouse, pan_mouse;
+	
+        
+	//stuff
+	Point startPt;
+	Point2D startPtL;
+	double startScale, startTransX, startTransY;
+	double crossover = 1;
+	double zoomRate = 0.5;
+	
+	public ToolGraphTransform(){
+		init();
+	}
+	
+	public ToolGraphTransform(double crossover){
+		init();
+		this.crossover = crossover;
+	}
+	
+	protected void init(){
+		plugins.add(new TranslatingGraphMousePlugin());
+		//GraphScaleControl sc = new GraphScaleControl();
+		//sc.setCrossover(0);
+		plugins.add(new ScalingGraphMousePluginExt(ScalingControl, 0, 0.01f));
+		
+		
+	}
+	
+	public void activate(){
+		panel.setCurrentTool(this);
+	}
+	
+	public void deactivate(){
+		
+	}
+	
+	public boolean isExclusive(){
+		return true;
+	}
+	
+	public void addListener(ToolListener tl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void removeListener(ToolListener tl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	@Override
+	public String getName() {
+		
+		return "Graph Mouse Tool";
+	}
+	
+	@Override
+	public Object clone() {
+		
+		return null;
+	}
+	
+	
+	@Override
+	public void handleToolEvent(ToolInputEvent e){
+		
+		if (!(e.getSource() instanceof InterfaceGraphDisplay))
+			return;
+		
+		VisualizationViewer<AbstractGraphNode, AbstractGraphEdge> viewer = 
+											((InterfaceGraphDisplay)e.getSource()).getViewer();
+		if (viewer == null) return;
+		double deltaX = 0, deltaY = 0, scale, thisScale;
+		
+		switch (e.getEventType()){
+			case ToolConstants.TOOL_MOUSE_UP:
+				startPt = null;
+				return;
+		
+			//pan
+			case ToolConstants.TOOL_MOUSE_RDRAGGED:
+				
+				//tool phase 1
+				if (startPt == null){
+					startPt = e.getPoint();
+					startTransX = viewer.getLayoutTransformer().getTranslateX();
+					startTransY = viewer.getLayoutTransformer().getTranslateY();
+					return;
+					}
+				//tool phase 2
+				deltaX = e.getPoint().x - startPt.x;
+				deltaY = e.getPoint().y - startPt.y;
+				scale = vv.getLayoutTransformer().getScale();
+				//scale = 1;
+				vv.getLayoutTransformer().setTranslate(startTransX, startTransY);
+				vv.getLayoutTransformer().translate(deltaX / scale, deltaY / scale);
+				vv.repaint();
+				return;
+			
+			//zoom
+			case ToolConstants.TOOL_MOUSE_DRAGGED:
+				//tool phase 1
+				if (startPt == null){
+					startPt = e.getPoint();
+					startPtL = vv.getViewTransformer().inverseTransform(startPt);
+					startScale = vv.getLayoutTransformer().getScale();
+					startTransX = vv.getLayoutTransformer().getTranslateX();
+					startTransY = vv.getLayoutTransformer().getTranslateY();
+					deltaX = startPtL.getX(); // - startTransX;
+					deltaY = startPtL.getY(); // - startTransY;
+					//startPtL.setLocation(startPtL.getX() + startTransX, 
+					//					 startPtL.getY() + startTransY);
+					return;
+					}
+				//tool phase 2
+				scale = startPt.y - e.getPoint().y;
+				//targetPanel.theMap.setZoom(startVal * (1.0 + 
+				//		(Math.max(((startPt.y - e.getPoint().y) * zoomRate), -99.0) / 100.0)));
+				scale = (1.0 + Math.max(scale * zoomRate, -99) / 100.0);
+				//thisScale = vv.getLayoutTransformer().getScale();
+				//thisScale = startScale * scale;
+				//Point2D center = vv.getCenter();
+				
+				vv.getLayoutTransformer().setScale(startScale, startScale, startPtL);
+				//vv.getLayoutTransformer().setTranslate(deltaX * scale, deltaY * scale);
+				vv.getLayoutTransformer().scale(scale, scale, startPtL);
+				vv.getLayoutTransformer().setTranslate(startTransX, startTransY);
+				
+				vv.repaint();
+				return;
+		}
+		
+		
+		
+		
+	} 
+	
+	@Override
+	public Icon getObjectIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InterfacePopupMenu getPopupMenu() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void handlePopupEvent(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showPopupMenu(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	protected class ScalingGraphMousePluginExt extends ScalingGraphMousePlugin 
+									 		   implements MouseListener,
+									 		   			  MouseMotionListener{
+
+		Point2D startCoords;
+		Point startPt;
+		Point2D startTrans;
+		float startScale;
+		float factor = 0.1f;
+		
+		public ScalingGraphMousePluginExt(ScalingControl scaler, int modifiers, float factor) {
+	        super(scaler, modifiers);
+	        this.factor = factor;
+	    }
+	    
+	    public ScalingGraphMousePluginExt(ScalingControl scaler, int modifiers, float factor,
+	    								  float in, float out) {
+	        super(scaler, modifiers, in, out);
+	        this.factor = factor;
+	    }
+		
+	    /**
+	     * Check the event modifiers. Set the 'down' point for later
+	     * use. If this event satisfies the modifiers, change the cursor
+	     * to the system 'move cursor'
+		 * @param e the event
+		 */
+		public void mousePressed(MouseEvent e) {
+			if (!javax.swing.SwingUtilities.isRightMouseButton(e)) return;
+		    VisualizationViewer vv = (VisualizationViewer)e.getSource();
+		    //boolean accepted = checkModifiers(e);
+		    down = e.getPoint();
+		    //last = new Point(down.x, down.y);
+		    //if(accepted) {
+		        vv.setCursor(cursor);
+		  //  }
+		}
+	    
+		/**
+		 * unset the 'down' point and change the cursoe back to the system
+	     * default cursor
+		 */
+	    public void mouseReleased(MouseEvent e) {
+	        VisualizationViewer vv = (VisualizationViewer)e.getSource();
+	        down = null;
+	        startPt = null;
+	        startTrans = null;
+	        vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	    }
+	    
+	    /**
+	     * chack the modifiers. If accepted, translate the graph according
+	     * to the dragging of the mouse pointer
+	     * @param e the event
+		 */
+	    public void mouseDragged(MouseEvent e) {
+	    	if (!javax.swing.SwingUtilities.isRightMouseButton(e)) return;
+	        //boolean accepted = checkModifiers(e);
+	        //if(accepted == true) {
+	    	
+            VisualizationViewer vv = (VisualizationViewer)e.getSource();
+            GraphScaleControl sc = (GraphScaleControl)scaler;
+            Point2D mouse = e.getPoint();
+            Point2D center = vv.getCenter();
+            
+            if (startPt == null){ 
+	    		startPt = e.getPoint();
+	    		//startCoords = vv.inverseViewTransform(startPt);
+	    		startCoords = vv.getCenter();
+	    		//startScale = Math.max((float)vv.getViewTransformer().getScale(),
+	    		//					  (float)vv.getLayoutTransformer().getScale());
+	    		startScale = (float)sc.getScale(vv);
+	    		
+	    		//startTrans = new Point2D.Double(vv.getViewTransformer().getTranslateX(),
+	    		//								vv.getViewTransformer().getTranslateY());
+	    		return;
+	    		}
+            
+            //Point2D q = vv.inverseTransform(last);
+            //Point2D p = vv.inverseTransform(e.getPoint());
+            //float amount = (float)(p.getY()-q.getY()) * factor;
+            float amount = (float)(startPt.getY()-mouse.getY()) * factor;
+            float scale = startScale + amount;
+            //float scaleL = startLScale + amount;
+            Point2D at = vv.transform(startCoords);
+            //Point2D at = new Point2D.Double();
+            //at.setLocation(startCoords.getX() + startTrans.getX(), 
+            //			   startCoords.getY() + startTrans.getY());
+            
+            /*
+            if (amount > 0){
+            	amount = Math.min(amount, 1.5f);
+            	amount = Math.max(amount, 0.75f);
+            }else if (amount < 0){	
+            	amount = Math.max(amount, -1.5f);
+            	amount = Math.min(amount, -0.75f);
+            	}
+            */
+            
+            //last.x = e.getPoint().x;
+            //last.y = e.getPoint().y;
+            
+            
+            //int amount = e.getWheelRotation();
+            /*
+            if(zoomAtMouse) {
+                if(amount > 0) {
+                    sc.setScale(vv, scale, mouse);
+                } else if(amount < 0) {
+                    sc.setScale(vv, out / (float)Math.abs(amount), mouse);
+                }
+            } else {
+                if(amount > 0) {
+                    sc.scale(vv, in * (float)amount, center);
+                } else if(amount < 0) {
+                    sc.scale(vv, out / (float)Math.abs(amount), center);
+                }
+            }*/
+            if (zoomAtMouse)
+            	sc.setScale(vv, scale, at);
+            else
+            	sc.setScale(vv, scale, center);
+            e.consume();
+            vv.repaint();
+       // }
+	        
+	    }
+	    
+	    public void mouseMoved(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+	    
+		public void mouseClicked(MouseEvent e) {
+			
+			
+		}
+
+		public void mouseEntered(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void mouseExited(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		
+	}
+	
+}

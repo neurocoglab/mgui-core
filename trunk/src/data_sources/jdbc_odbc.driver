@@ -1,0 +1,1 @@
+mgui.datasources.odbc.JdbcOdbcDriver "jdbc:odbc:Driver={Microsoft Text Driver (*.txt; *.csv)}" JDBC-ODBC

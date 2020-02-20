@@ -1,0 +1,662 @@
+package ar.geometry;
+
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferShort;
+import java.awt.image.IndexColorModel;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
+import ar.datasource.DataType;
+import ar.datasource.DataTypes;
+import ar.interfaces.maps.ColourMap;
+import ar.interfaces.shapes.util.Volume3DTexture;
+import ar.io.util.ioFunctions;
+import ar.numbers.arDouble;
+import ar.numbers.arNumber;
+import ar.stats.Histogram;
+import ar.util.Colours;
+import ar.util.arMath;
+
+/*****************************************
+ * Extension of Grid3D which stores its data as an array of BufferedImage objects.
+ * Can be used as an efficient by-reference source for Java3D objects.
+ * 
+ * @author Andrew Reid
+ *
+ */
+
+
+public class ImageGrid3D_bak extends Grid3D {
+
+	public BufferedImage[] images;
+	protected ColorModel colourModel;
+	public double dataMin, dataMax;
+	public double debug_maxPixel = 0;
+	
+	public ImageGrid3D(){
+		xSize = 10;
+		ySize = 10;
+		zSize = 10;
+		setBounds(new Box3D());
+		//grey by default
+		setColourModel(Volume3DTexture.getColourModel(Volume3DTexture.TYPE_INTENSITY_GREY_ALPHA));
+		//resetArray();
+	}
+	
+	public ImageGrid3D(ColorModel model){
+		xSize = 10;
+		ySize = 10;
+		zSize = 10;
+		setBounds(new Box3D());
+		setColourModel(model);
+		//resetArray();
+	}
+	
+	public ImageGrid3D(int x, int y, int z, Box3D b, DataType type, boolean setAlpha){
+		xSize = x;
+		ySize = y;
+		zSize = z;
+		setBounds(b);
+		//dataSize = size;
+		setDataType(type);
+		if (setAlpha)
+			setColourModel(Volume3DTexture.getColourModel(Volume3DTexture.TYPE_INTENSITY_GREY_ALPHA));
+		else
+			setColourModel(Volume3DTexture.getColourModel(Volume3DTexture.TYPE_INTENSITY_GREY));
+		//resetArray();
+	}
+	
+	public ImageGrid3D(int x, int y, int z, Box3D b, DataType type, boolean setAlpha, ColorModel model){
+		xSize = x;
+		ySize = y;
+		zSize = z;
+		setBounds(b);
+		//dataSize = size;
+		setDataType(type);
+		setColourModel(model);
+		//resetArray();
+	}
+	
+	public void setZPlane(int z, BufferedImage image){
+		images[z] = image;
+	}
+	
+	public ColorModel getColourModel(){
+		return colourModel;
+	}
+	
+	/***************************************
+	 * Resets the data array (i.e., creates a new stack of images) based upon the current
+	 * colour model, and sets alpha to 0 for each voxel, if this grid has alpha. If no
+	 * colour model is set, will set it to the default gray, translucent model.
+	 *
+	 */
+	public void resetArray(){
+		if (colourModel == null)
+			setColourModel(Volume3DTexture.getColourModel(Volume3DTexture.TYPE_INTENSITY_GREY_ALPHA));
+		images = new BufferedImage[powerOfTwo(zSize)];
+		WritableRaster raster;
+		
+		//add new BufferedImages to array with dataSize bytes
+		for (int i = 0; i < powerOfTwo(zSize); i++){
+			raster = getRaster();
+			//raster = colourModel.createCompatibleWritableRaster(powerOfTwo(xSize), powerOfTwo(ySize));
+			images[i] = new BufferedImage(colourModel, raster, false, null);
+			
+			if (colourModel.hasAlpha())
+				setAlpha(images[i], (byte)0);
+			}
+	}
+	
+	public void presetAlpha(){
+		//assume alpha is last channel
+		for (int k = 0; k < zSize; k++)
+			for (int j = 0; j < ySize; j++)
+				for (int i = 0; i < xSize; i++)
+					setValue(i, j, k, dataSize - 1, (byte)255);
+	}
+	
+	protected WritableRaster getRaster(){
+		WritableRaster raster = colourModel.
+						createCompatibleWritableRaster(powerOfTwo(xSize), powerOfTwo(ySize));
+		SampleModel model = raster.getSampleModel();
+		DataBuffer buffer = raster.getDataBuffer();
+		switch (dataType.val){
+			case DataTypes.BYTE:
+				buffer = new DataBufferByte(buffer.getSize(), buffer.getNumBanks());
+				break;
+			case DataTypes.SHORT:
+				buffer = new DataBufferShort(buffer.getSize(), buffer.getNumBanks());
+				break;
+			case DataTypes.INTEGER:
+				buffer = new DataBufferInt(buffer.getSize(), buffer.getNumBanks());
+				break;
+			case DataTypes.FLOAT:
+				buffer = new DataBufferFloat(buffer.getSize(), buffer.getNumBanks());
+				break;
+			case DataTypes.DOUBLE:
+				buffer = new DataBufferDouble(buffer.getSize(), buffer.getNumBanks());
+				break;
+			default:
+				buffer = new DataBufferByte(buffer.getSize(), buffer.getNumBanks());
+			}
+		//voxelMin = 
+		return WritableRaster.createWritableRaster(model, buffer, null);
+	}
+	
+	
+	/****************************
+	 * Updates the data array with the specified colour model, and preserves existing values.
+	 * If no colour model is set, or no image array is set, simply calls resetArray()
+	 *
+	 */
+	public void updateArray(){
+		if (colourModel == null || images == null){
+			resetArray();
+			return;
+			}
+		//for debugging
+		//if (true) return;
+		BufferedImage[] swap = images;
+		int sizeold = images[0].getColorModel().getNumComponents();
+		int sizenew = colourModel.getNumComponents();
+		int[] pixelold = new int[sizeold];
+		int[] pixelnew;
+		images = new BufferedImage[powerOfTwo(zSize)];
+		WritableRaster raster;
+		
+		//add new BufferedImages to array with dataSize bytes, and copy existing values
+		for (int k = 0; k < powerOfTwo(zSize); k++){
+			raster = colourModel.createCompatibleWritableRaster(powerOfTwo(xSize), powerOfTwo(ySize));
+			images[k] = new BufferedImage(colourModel, raster, false, null);
+			//copy values
+			for (int i = 0; i < powerOfTwo(xSize); i++)
+				for (int j = 0; j < powerOfTwo(ySize); j++){
+					swap[k].getRaster().getPixel(i, j, pixelold);
+					pixelnew = new int[sizenew];
+					for (int m = 0; m < Math.min(sizeold, sizenew); m++)
+						pixelnew[m] = pixelold[m];
+					images[k].getRaster().setPixel(i, j, pixelnew);
+					}
+			}
+	}
+	
+	//TODO mode to a utility class
+	//sets alpha for all pixels in image
+	protected void setAlpha(BufferedImage image, int alpha){
+		if (!colourModel.hasAlpha()) return;
+		int[] pixel = new int[dataSize];
+		for (int i = 0; i < image.getWidth(); i++)
+			for (int j = 0; j < image.getHeight(); j++){
+				pixel = image.getRaster().getPixel(i, j, pixel);
+				pixel[dataSize - 1] = alpha;
+				image.getRaster().setPixel(i, j, pixel);
+				}
+	}
+	
+	/*******************************************
+	 * Sets the data size of the BufferedImages in this grid
+	 */
+	public void setColourModel(ColorModel cm){
+		colourModel = cm;
+		dataSize = cm.getNumComponents();
+		setDataRange();
+		updateArray();
+		//if (colourModel.hasAlpha())
+		//	presetAlpha();
+	}
+	
+	/*******************************************
+	 * Sets the data size of the BufferedImages in this grid, and sets colour model 
+	 * from colour
+	 */
+	public void setColourModel(ColorModel cm, ColourMap cmap){
+		colourModel = cm;
+		dataSize = cm.getNumComponents();
+		setDataRange();
+		updateArray();
+	}
+	
+	protected void setDataRange(){
+		//dataMin = colourModel.getColorSpace().getMinValue(0);
+		//dataMax = colourModel.getColorSpace().getMaxValue(0);
+		
+		//double[] range = Colours.getTypeRange(colourModel);
+		//dataMin = range[0];
+		//dataMax = range[1];
+		dataMin = 0;
+		dataMax = 255;
+	}
+	
+	
+	
+	/***************************
+	 * Set value of pixel x,y,z from <code>val</code>, which must be an array 
+	 * of normalized values.
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param val
+	 */
+	public void setValue(int x, int y, int z, double[] val){
+		double[] pixel = new double[dataSize];
+		
+		//unnormalize to pixel
+		for (int i = 0; i < Math.min(val.length, pixel.length); i++)
+			pixel[i] = arMath.unnormalize(dataMin, dataMax, val[i]);
+		
+		switch(dataType.val){
+			case DataTypes.BYTE:
+				byte[] b_pixel = new byte[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					b_pixel[i] = (byte)pixel[i];
+				setValue(x, y, z, b_pixel);
+				return;
+			case DataTypes.DOUBLE:
+				setDoubleValue(x, y, z, pixel);
+				return;
+			case DataTypes.INTEGER:
+			case DataTypes.SHORT:
+				int[] i_pixel = new int[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					i_pixel[i] = (int)pixel[i];
+				setIntValue(x, y, z, i_pixel);
+				return;
+			case DataTypes.FLOAT:
+				float[] f_pixel = new float[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					f_pixel[i] = (float)pixel[i];
+				setFloatValue(x, y, z, f_pixel);
+				return;
+		}
+	}
+	
+	public void setDataType(DataType type){
+		dataType = type;
+	}
+	
+	public void setValue(int x, int y, int z, int[] val){
+		int[] pixel = new int[dataSize];
+		
+		//unnormalize to pixel
+		for (int i = 0; i < Math.min(val.length, pixel.length); i++)
+			pixel[i] = (int)arMath.unnormalize(dataMin, dataMax, val[i]);
+		
+		switch(dataType.val){
+			case DataTypes.INTEGER:
+			case DataTypes.SHORT:
+				setIntValue(x, y, z, pixel);
+				return;
+			case DataTypes.DOUBLE:
+				double[] d_pixel = new double[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					d_pixel[i] = (int)pixel[i];
+				setDoubleValue(x, y, z, d_pixel);
+				return;
+			case DataTypes.FLOAT:
+				float[] f_pixel = new float[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					f_pixel[i] = (float)pixel[i];
+				setFloatValue(x, y, z, f_pixel);
+				return;
+			}
+		
+	}
+	
+	public void setValue(int x, int y, int z, float[] val){
+		float[] pixel = new float[dataSize];
+		
+		//unnormalize to pixel
+		for (int i = 0; i < Math.min(val.length, pixel.length); i++)
+			pixel[i] = (float)arMath.unnormalize(dataMin, dataMax, val[i]);
+		
+		switch(dataType.val){
+			case DataTypes.FLOAT:
+				setFloatValue(x, y, z, pixel);
+				return;
+			case DataTypes.INTEGER:
+			case DataTypes.SHORT:
+				int[] i_pixel = new int[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					i_pixel[i] = (int)pixel[i];
+				setIntValue(x, y, z, i_pixel);
+				return;
+			case DataTypes.DOUBLE:
+				double[] d_pixel = new double[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					d_pixel[i] = (int)pixel[i];
+				setDoubleValue(x, y, z, d_pixel);
+				return;
+		}
+	}
+	
+	public void setValue(int x, int y, int z, short[] val){
+		int[] pixel = new int[dataSize];
+		
+		//unnormalize to pixel
+		for (int i = 0; i < Math.min(val.length, pixel.length); i++)
+			pixel[i] = (int)arMath.unnormalize(dataMin, dataMax, val[i]);
+		
+		switch(dataType.val){
+			case DataTypes.SHORT:
+			case DataTypes.INTEGER:
+				int[] i_pixel = new int[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					i_pixel[i] = (int)pixel[i];
+				setIntValue(x, y, z, i_pixel);
+				return;
+			case DataTypes.DOUBLE:
+				double[] d_pixel = new double[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					d_pixel[i] = (int)pixel[i];
+				setDoubleValue(x, y, z, d_pixel);
+				return;
+			case DataTypes.FLOAT:
+				float[] f_pixel = new float[pixel.length];
+				for (int i = 0; i < pixel.length; i++)
+					f_pixel[i] = (float)pixel[i];
+				setFloatValue(x, y, z, f_pixel);
+				return;
+		}
+	}
+	
+	/***************************
+	 * Set value of pixel x,y,z from <code>val</code>, which must be an array 
+	 * of normalized values.
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param val
+	 */
+	protected void setFloatValue(int x, int y, int z, float[] val){
+		images[z].getRaster().setPixel(x, y, val);
+	}
+	
+	protected void setIntValue(int x, int y, int z, int[] val){
+		debug_maxPixel = Math.max(val[0], debug_maxPixel);
+		images[z].getRaster().setPixel(x, y, val);
+	}
+	
+	protected void setDoubleValue(int x, int y, int z, double[] val){
+		images[z].getRaster().setPixel(x, y, val);
+	}
+	
+	/*******************************************
+	 * Set the voxel at x, y, z to the data in byte array b
+	 */
+	public void setValue(int x, int y, int z, byte[] b){
+		if (z > zSize || x > xSize || y > ySize) return;
+		BufferedImage bImage = images[z];
+		int[] pixel = null;
+		pixel = bImage.getRaster().getPixel(x, y, pixel);
+		
+		int size = getChannelSize();
+		
+		for (int i = 0; i < dataSize; i++){
+			byte[] b0 = new byte[size];
+			for (int j = 0; j < size; j++)
+				if (i * size + j < b.length)
+					b0[j] = b[i * size + j];
+			pixel[i] = (int)ioFunctions.byteArrayToVal(b0, dataType.val, ByteOrder.nativeOrder());
+			}
+		
+		bImage.getRaster().setPixel(x, y, pixel);
+		bImage.getRaster().getDataElements(x, y, b);
+		//InterfaceSession.log("Pixel [" + x + ", " + y + ", " + z + "]: " + b[0]);
+		return;
+	}
+	
+	/**************************
+	 * Return a byte array representing the value at grid coord x, y, z
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param z z coordinate
+	 * @return byte array of length dataSize, representing the requested value
+	 */
+	public void getValue(int x, int y, int z, byte[] b){
+		//pad extra space with zeros
+		if (x >= xSize || y >= ySize || z >= zSize){
+			Arrays.fill(b, (byte)0);
+			return;
+			}
+		
+		BufferedImage bImage = images[z];
+		int[] pixel = new int[dataSize];
+		pixel = bImage.getRaster().getPixel(x, y, pixel);
+		
+		for (int i = 0; i < b.length && i < dataSize; i++)
+			b[i] = (byte)pixel[i];
+	}
+	
+	/*
+	public int[] getIntValue(int x, int y, int z){
+		int[] pixel = new int[dataSize];
+		images[z].getRaster().getPixel(x, y, pixel);
+		return pixel;
+	}
+	
+	public void getIntValueAtPoint(Point3f p, double[] val){
+		//Point3f p2 = new Point3f(p);
+		Vector3f v = new Vector3f();
+		v.sub(p, bounds.basePt);
+		if (basisTransform == null)
+			setBasisTransform();
+		basisTransform.transform(v);
+		
+		int i = Math.round(v.x / bounds.getSDim() * (float)xSize);
+		if (i < 0){
+			getNullData(val);
+			return;
+			}
+		if (i >= xSize){
+			getNullData(val);
+			return;
+			}
+		//int j = Math.round(v.y / bounds.getTDim() * (float)ySize);
+		//y needs flipping.... not sure why
+		int j = Math.round((1.0f - (v.y / bounds.getTDim())) * (float)ySize);
+		if (j < 0){
+			getNullData(val);
+			return;
+			}
+		if (j >= ySize){
+			getNullData(val);
+			return;
+			}
+		//int k = Math.round(v.z / bounds.getRDim() * (float)zSize);
+		int k = Math.round(v.z / bounds.getRDim() * (float)zSize);
+		if (k < 0) {
+			getNullData(val);
+			return;
+			}
+		if (k >= zSize) {
+			getNullData(val);
+			return;
+			}
+		//InterfaceSession.log("get value at: " + i + "," + j + "," + k);
+		getValue(i, j, k, val);
+		
+	}
+	*/
+	
+	/*
+	public Object getValue(int x, int y, int z){
+		BufferedImage bImage = images[z];
+		int[] pixel = new int[dataSize];
+		pixel = bImage.getRaster().getPixel(x, y, pixel);
+		int size = getChannelSize();
+		
+		byte[] b = new byte[dataSize * size];
+		for (int i = 0; i < dataSize; i++){
+			//byte[] b0 = intToByteArray(pixel[i], dataType.val);
+			byte[] b0 = ioFunctions.getBytes(pixel[i], dataType, ByteOrder.nativeOrder());
+			for (int j = 0; j < size; j++)
+				b[i * size + j] = b0[j];
+			}
+		
+		//for (int i = 0; i < dataSize; i++)
+		//	b[i] = (byte)pixel[i];
+		return b;
+	}
+	*/
+	
+	public boolean getValueAtPoint(Point3f p, double[] val){
+		Vector3f v = new Vector3f();
+		v.sub(p, bounds.basePt);
+		if (basisTransform == null)
+			setBasisTransform();
+		basisTransform.transform(v);
+		for (int j = 0; j < val.length; j++)
+			val[j] = Double.NaN;
+		
+		int i = Math.round(v.x / bounds.getSDim() * (float)xSize);
+		if (i < 0) return false; //i = 0;
+		if (i >= xSize) return false; // i = xSize;
+		//int j = Math.round(v.y / bounds.getTDim() * (float)ySize);
+		//y needs flipping.... not sure why
+		int j = Math.round((1.0f - (v.y / bounds.getTDim())) * (float)ySize);
+		if (j < 0) return false; // j = 0;
+		if (j >= ySize) return false; // j = ySize;
+		//int k = Math.round(v.z / bounds.getRDim() * (float)zSize);
+		int k = Math.round(v.z / bounds.getRDim() * (float)zSize);
+		if (k < 0) return false; // k = 0;
+		if (k >= zSize) return false; // k = zSize;
+		
+		getValue(i, j, k, val); 
+		return true;
+	}
+	
+	protected void getNullData(double[] d){
+		Arrays.fill(d, 0);
+	}
+	
+	/*********************************
+	 * Sets <code>val</code> to the value of voxel at x,y,z, as a normalized
+	 * value.
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param val
+	 */
+	public void getValue(int x, int y, int z, double[] val){
+		BufferedImage bImage = images[z];
+		double[] pixel = new double[dataSize];
+		bImage.getRaster().getPixel(x, y, pixel);
+		
+		//normalize
+		for (int i = 0; i < Math.min(val.length, pixel.length); i++)
+			val[i] = arMath.normalize(dataMin, dataMax, pixel[i]);
+	}
+	
+	public Histogram getHistogram(int channel, int bins){
+		//for each of x, y, z add to histogram
+		//scale with dataMax, dataMin
+		InterfaceSession.log("Calculating histogram for " + toString());
+		Histogram h = new Histogram();
+		h.minX = dataMin;
+		h.maxX = dataMax;
+		InterfaceSession.log("Data min: " + dataMin + "; dataMax: " + dataMax);
+		//double bin_size = (dataMax - dataMin) / (double)bins;
+		double bin_size = 1.0 / (double)bins;
+		
+		ArrayList<arNumber> x = new ArrayList<arNumber>(bins);
+		ArrayList<arNumber> y = new ArrayList<arNumber>(bins);
+		for (int i = 0; i < bins; i++){
+			//x.add(new arDouble(dataMin + bin_size * i));
+			x.add(new arDouble(bin_size * (i + 1)));
+			y.add(new arDouble(0));
+			}
+		
+		double[] d = new double[dataSize];
+		int index;
+		
+		System.out.print("Progress: 0%");
+		int p = 0, n = 1;
+		int limit = (int)(xSize * ySize * zSize * 0.05);
+		
+		//fastest way to do this is probably use binary search on each
+		//voxel to get its bin...?
+		for (int i = 0; i < xSize; i++)
+			for (int j = 0; j < ySize; j++)
+				for (int k = 0; k < zSize; k++){
+					getValue(i, j, k, d);              
+					index = Collections.binarySearch(x, new arDouble(d[channel]));
+					if (index < 0) index = -index - 1;
+					y.get(index).add(1);
+					if (p++ > limit){
+						p = 0;
+						System.out.print(".." + n++ * 5 + "%");
+						}
+					}
+		
+		//get max/min y
+		double min = Double.MAX_VALUE, max = -Double.MAX_VALUE; 
+		for (int i = 0; i < y.size(); i++){
+			double v = y.get(i).getValue();
+			min = Math.min(v, min);
+			max = Math.max(v, max);
+			}
+		
+		h.minY = min;
+		h.maxY = max;
+		
+		InterfaceSession.log("");
+		h.x = x;
+		h.y = y;
+		
+		return h;
+	}
+	
+	/*********************************
+	 * Sets <code>val</code> to the value of voxel at x,y,z, as a normalized
+	 * value.
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param val
+	 */
+	public void getValue(int x, int y, int z, float[] val){
+		BufferedImage bImage = images[z];
+		float[] pixel = new float[dataSize];
+		bImage.getRaster().getPixel(x, y, pixel);
+		
+		//normalize
+		for (int i = 0; i < Math.min(val.length, pixel.length); i++)
+			val[i] = (float)arMath.normalize(dataMin, dataMax, pixel[i]);
+	}
+	
+	public Object clone(){
+		ImageGrid3D out = new ImageGrid3D(xSize, ySize, zSize, (Box3D)bounds.clone(), dataType, colourModel.hasAlpha());
+		out.setColourModel(this.colourModel);
+		
+		byte[] b, b2;
+		for (int i = 0; i < xSize; i++)
+			for (int j = 0; j < ySize; j++)
+				for (int k = 0; k < zSize; k++){
+					b = new byte[dataSize];
+					getValue(i, j, k, b);
+					//System.arraycopy(b, 0, b2, 0, dataSize);
+					out.setValue(i, j, k, b);
+					}
+		return out;
+		
+	}
+	
+}

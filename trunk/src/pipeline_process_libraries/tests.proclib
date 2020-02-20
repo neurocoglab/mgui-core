@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<PipelineProcessLibrary name ='tests' >
+	<Processes>
+		<JavaProcess name ='timed-test' main_class = 'mgui.neuro.imaging.camino.tasks.TimedTest' >
+			<TaskParameter
+				name = 'delay'
+				optional = 'false'
+				default_value = '1000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+	
+	</Processes>
+</PipelineProcessLibrary>

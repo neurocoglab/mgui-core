@@ -1,0 +1,365 @@
+<PipelineProcessLibrary name = 'mgui_fsl'>
+	<Processes>
+		<JavaProcess name ='generate_probtrackx_matrices' main_class = 'fsl.FslFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'generate_probtrackx_matrices'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'subject_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'name_map_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'matrix_file_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'image_file_pattern'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'environment_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'path'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'samples'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'mask'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'seed'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'verbose'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'mode'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'targetmasks'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'mask2'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'waypoints'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'network'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'mesh'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'seedref'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'dir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'forcedir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'opd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pd'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'os2t'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'out'
+				optional = 'true'
+				default_value = 'fdt_paths'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'avoid'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'stop'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'xfm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'invxfm'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nsamples'
+				optional = 'true'
+				default_value = '5000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'nsteps'
+				optional = 'true'
+				default_value = '2000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'distthresh'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'cthr'
+				optional = 'true'
+				default_value = '0.2'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fibthresh'
+				optional = 'true'
+				default_value = '0.01'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sampvox'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'steplength'
+				optional = 'true'
+				default_value = '0.5'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'loopcheck'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'usef'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'randfib'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'fibst'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'modeuler'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'rseed'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 's2tastext'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_mask_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'skip_existing'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='create_probtrackx_output' main_class = 'fsl.FslFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'create_probtrackx_output'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'probtrackx_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_total_pattern'
+				optional = 'true'
+				default_value = '{probtrackx_dir}/{subject}/connectivity_total.txt'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'subject_mean_pattern'
+				optional = 'true'
+				default_value = '{probtrackx_dir}/{subject}/connectivity_mean.txt'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'total_file_all'
+				optional = 'true'
+				default_value = '{probtrackx_dir}/connectivity_total_all.txt'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'mean_file_all'
+				optional = 'true'
+				default_value = '{probtrackx_dir}/connectivity_mean_all.txt'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'name_map_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+	</Processes>
+</PipelineProcessLibrary>

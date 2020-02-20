@@ -1,0 +1,353 @@
+package ar.Interface;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GraphicsConfiguration;
+import java.awt.Point;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
+
+import javax.media.j3d.Alpha;
+import javax.media.j3d.AmbientLight;
+import javax.media.j3d.BoundingSphere;
+import javax.media.j3d.Bounds;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Canvas3D;
+import javax.media.j3d.DirectionalLight;
+import javax.media.j3d.Link;
+import javax.media.j3d.RotationInterpolator;
+import javax.media.j3d.SharedGroup;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.media.j3d.VirtualUniverse;
+import javax.swing.BorderFactory;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
+
+import ar.Geometry.Sphere3D;
+import ar.Interface.InterfaceGraphic.GraphicType;
+import ar.Interface.Maps.Map;
+import ar.Interface.Maps.Map2D;
+import ar.Interface.Maps.Map3D;
+import ar.Interface.Shapes.SectionSet3DInt;
+import ar.Interface.Shapes.Shape2DSelectionSet;
+import ar.Interface.Shapes.Shape3DInt;
+import ar.Interface.Shapes.ShapeEvent;
+import ar.Interface.Shapes.ShapeListener;
+import ar.Interface.Shapes.ShapeSceneNode;
+import ar.Interface.Shapes.ShapeSelectionSet;
+import ar.Interface.Shapes.ShapeSet3DInt;
+import ar.Interface.Tools.Tool;
+import ar.Interface.Tools.Tool2D;
+import ar.Interface.Tools.Tool3D;
+import ar.Interface.Tools.ToolBehavior3DAdapter;
+import ar.Interface.Tools.ToolEvent;
+import ar.Interface.Tools.ToolInputAdapter;
+import ar.Interface.Tools.ToolMouseOrbit3D;
+
+import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
+import com.sun.j3d.utils.geometry.ColorCube;
+import com.sun.j3d.utils.universe.MultiTransformGroup;
+import com.sun.j3d.utils.universe.SimpleUniverse;
+
+/********************
+ * Interface class for Java3D display. Each InterfaceGraphic3D object contains its own
+ * SimpleUniverse object for display of Shape3DInt objects. Shape3DInt objects are
+ * represented as ShapeSceneNode objects (i.e., Shape2DSceneNode and Shape3DSceneNode),
+ * which should be specified by-reference and be updateable.
+ * 
+ * todo: Allow for multiple directional light sources
+ * 
+ * @author Andrew Reid
+ * @version 1.0
+ * @date 01/16/2007 [updated]
+ * 
+ */
+public class InterfaceGraphic3D extends InterfaceGraphic implements ShapeListener {
+
+	public SimpleUniverse universe;
+	public BranchGroup modelNode;
+	//public Link linkScene;
+	public InterfaceDisplayPanel displayPanel;
+	//public Map3D theMap = new Map3D();
+	public ToolBehavior3DAdapter toolInput3DAdapter;
+	public Tool3D currentTool;
+	public ShapeSelectionSet currentSelection;
+	public BoundingSphere tempBounds;
+	public InterfaceCanvas3D canvas3D;
+	public AmbientLight ambientLight;
+	public DirectionalLight lightSource, lightSource2;
+	public ShapeSceneNode currentScene;
+	public ShapeSet3DInt currentSet;
+	public boolean isDestroyed = false;
+	
+	public InterfaceGraphic3D(String theName){
+		super();
+		setName(theName);
+		init();
+	}
+	
+	public InterfaceGraphic3D(){	
+		super();
+		init();
+	}
+	
+	public void destroy(){
+		isDestroyed = true;
+	}
+	
+	public boolean isDestroyed(){
+		return isDestroyed;
+	}
+	
+	public void init(){
+		
+		type = GraphicType.Graphic3D;
+	
+		//set up stuff here
+		//panel display
+		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		this.setBackground(Color.BLACK);
+		
+		setLayout(new BorderLayout());
+		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+		canvas3D = new InterfaceCanvas3D(new Canvas3D(config));
+		canvas3D.setGraphic3D(this);
+		canvas3D.canvas3D.setDoubleBufferEnable(true);
+		
+		//Canvas3D c3D = new Canvas3D(config); 
+		
+		this.add(BorderLayout.CENTER, canvas3D.getCanvas());
+		//this.add(BorderLayout.CENTER, c3D);
+		
+		theMap = new Map3D();
+		
+		//tool adapter behaviour
+		toolInput3DAdapter = new ToolBehavior3DAdapter(canvas3D.getCanvas(), (Map3D)theMap);
+		//toolInput3DAdapter = new ToolBehavior3DAdapter(c3D, (Map3D)theMap);
+		
+		//the universe
+		universe = new SimpleUniverse(canvas3D.getCanvas(), 4);
+		//tempUniverse = new SimpleUniverse(c3D, 4);
+		
+		//set tool adapter to receive AWT events and update view platform
+		/**@TODO make it possible to enable/disable adapter based upon tool **/
+		
+		universe.getViewingPlatform().setViewPlatformBehavior(toolInput3DAdapter);
+		
+		//Map3D to manipulate ViewingPlatform
+		TransformGroup thisTarget = universe.getViewingPlatform().getViewPlatformTransform();
+		((Map3D)theMap).setTargetTransform(thisTarget);
+		((Map3D)theMap).thisCamera.setDistance(20);
+		
+		((Map3D)theMap).updateTargetTransform();
+		((Map3D)theMap).setView(universe.getViewer().getView());
+		
+		lightSource = new DirectionalLight();
+		lightSource.setCapability(DirectionalLight.ALLOW_DIRECTION_WRITE);
+		//lightSource2 = new DirectionalLight();
+		
+		//add this light source to the map (we want it to move with the camera)
+		((Map3D)theMap).setLightSource(lightSource);
+		
+		ambientLight = new AmbientLight();
+		lightSource.setInfluencingBounds(new BoundingSphere(new Point3d(0, 0, 0), Double.POSITIVE_INFINITY));
+		lightSource.setDirection(new Vector3f(0, 0, 0));
+		//lightSource2.setInfluencingBounds(new BoundingSphere(new Point3d(0, 0, 0), Double.POSITIVE_INFINITY));
+		//lightSource2.setDirection(new Vector3f(0, -1, 0));
+		ambientLight.setInfluencingBounds(new BoundingSphere(new Point3d(0, 0, 0), Double.POSITIVE_INFINITY));
+		
+		//lightSource.setCapability(DirectionalLight.ALLOW_BOUNDS_WRITE);
+		//ambientLight.setCapability(DirectionalLight.ALLOW_BOUNDS_WRITE);
+		//updateScene();
+		
+		modelNode = new BranchGroup();
+		modelNode.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+		modelNode.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+		modelNode.setCapability(BranchGroup.ALLOW_DETACH);
+		modelNode.setCapability(BranchGroup.ALLOW_BOUNDS_READ);
+		//modelNode.setBoundsAutoCompute(true);
+		
+		//tempScene.compile();
+		BranchGroup topNode = new BranchGroup();
+		topNode.addChild(lightSource);
+		//topScene.addChild(lightSource2);
+		topNode.addChild(ambientLight);
+		topNode.addChild(modelNode);
+		topNode.compile();
+		universe.addBranchGraph(topNode);
+		
+		//updateScene();
+	}
+	
+	//override mouse listeners to add to canvas3D instead
+	public void addMouseListener(MouseListener m){
+		canvas3D.addMouseListener(m);
+	}
+	
+	public void addMouseMotionListener(MouseMotionListener m){
+		canvas3D.addMouseMotionListener(m);
+	}
+	
+	public void addMouseWheelListener(MouseWheelListener m){
+		canvas3D.addMouseWheelListener(m);
+	}
+	
+	public void setDisplayPanel(InterfaceDisplayPanel panel){
+		displayPanel = panel;
+	}
+	
+	/*********************
+	 * Complete update of scene from currentSet. Should be used sparingly; individual
+	 * nodes can update themselves via listeners on their ShapeSceneNodes
+	 *
+	 */
+	public void updateScene(){
+		if (currentSet == null) return;
+		//get 3D objects from current ShapeSet3DInt
+		ShapeSet3DInt shapeSet = currentSet;
+		currentSet.setCameraListeners(((Map3D)theMap).thisCamera);
+		ShapeSceneNode thisScene;
+		if (excludeToSelection && currentSelection != null)
+			shapeSet = currentSelection.getFilteredShapeSet3D(currentSet);
+		//for (int i = 0; i < shapeSet.members.size(); i++) 
+		//thisScene = shapeSet.getScene3DObject();
+		//ShapeSceneNode temp = shapeSet.getShapeSceneNode();
+		//if (currentScene != shapeSet.getShapeSceneNode() || currentScene == null)
+		//	shapeSet.setShapeSceneNode();
+		thisScene = shapeSet.getShapeSceneNode(currentScene);
+		//thisScene = shapeSet.getSharedNode();
+		
+		((Map3D)theMap).setBounds(shapeSet.getBoundSphere());
+		((Map3D)theMap).setCenter(shapeSet.getCenterPoint());
+		
+		if (currentScene != thisScene){
+			currentScene = thisScene;
+			//currentScene.detach();
+			modelNode.removeAllChildren();
+			modelNode.addChild(currentScene);
+			}
+	}
+	
+	public void setTreeNode(){
+		if (treeNode == null)
+			treeNode = new InterfaceTreeNode(this);
+		//add panel objects here
+		treeNode.add(new DefaultMutableTreeNode("Source: " + displayPanel.modelSet.toString()));
+	}
+	
+	public InterfaceTreeNode getTreeNode(){
+		if (treeNode == null) setTreeNode();
+		return treeNode;
+	}
+	
+	public void shapeUpdated(ShapeEvent e){
+		//temp
+		/**@TODO extend BranchGroup to include an ID to match a shape to;
+		 * 		 thus, individual subtrees can be updated rather than the 
+		 * 		 entire scene  
+		 ***/
+		if (e.eventCode == ShapeEvent.UPDATE_ADD)
+			updateScene();
+		//if (tempScene != null)
+		//	tempBounds = (BoundingSphere)tempScene.getBounds();
+		//if (tempBounds != null){ //&& displayPanel.excludeToSelection && 
+		//						//						displayPanel.currentSelection != null){
+		//	Sphere3D tempSphere = new Sphere3D(tempBounds);
+		//	((Map3D)theMap).setBounds(tempSphere);
+		//	((Map3D)theMap).setCenter(tempSphere.center);
+		//	
+		//} else {
+		//	((Map3D)theMap).setBounds(displayPanel.shapeSet.getBoundSphere());
+		
+		//	((Map3D)theMap).setCenter(displayPanel.shapeSet.getCenterPoint());
+		//}
+		//temp.. should be updated on demand
+		//if (currentSet == null) return;
+		((Map3D)theMap).setBounds(currentSet.getBoundSphere());
+		if (((Map3D)theMap).centerPt == null)
+			((Map3D)theMap).setCenter(currentSet.getCenterPoint());
+		((Map3D)theMap).updateClipBounds();
+		
+	}
+	
+	public void setCurrentTool(Tool thisTool){
+		if (getToolLock()) return;
+		if (thisTool == null) return;
+		
+		Tool3D newTool = (Tool3D)thisTool;
+		if (newTool.isImmediate()){
+			newTool.setTargetPanel(this);
+			newTool.handleToolEvent(new ToolEvent(this,
+												  ToolInputAdapter.TOOL_IMMEDIATE,
+												  new Point()));
+			return;
+			}
+		//Tool3D oldTool = null;
+		if (currentTool != null){
+			toolInput3DAdapter.removeListener(currentTool);
+			//oldTool = (Tool3D)currentTool.clone();
+			}
+			
+		currentTool = newTool;
+		currentTool.setTargetPanel(this);
+		toolInput3DAdapter.addListener(currentTool);
+		//propertyChange.firePropertyChange("Current Tool", oldTool, currentTool);
+		
+	}
+	
+	public Tool getCurrentTool(){
+		return currentTool;
+	}
+	
+	public boolean getToolLock(){
+		return displayPanel.getToolLock();
+	}
+	
+	public void setToolLock(boolean val){
+		displayPanel.setToolLock(val);
+	}
+	
+	//selection set for 2D shapes 
+	public void setCurrentSelection2D(ShapeSelectionSet selSet, boolean exclude){
+		currentSelection = selSet;
+		excludeToSelection = exclude;
+	}
+	
+	public String toString(){
+		return "3D Panel: " + getName();
+	}
+	
+	public void setSource(Object o){
+		if (!(o instanceof ShapeSet3DInt)) return;
+		ShapeSet3DInt thisSet = (ShapeSet3DInt)o;
+		if (thisSet == currentSet) return;
+		currentSet = thisSet;
+		//add camera listeners
+		currentSet.setCameraListeners(((Map3D)theMap).thisCamera);
+		currentSet.addShapeListener(this);
+		updateScene();
+		((Map3D)theMap).updateClipBounds();
+	}
+	
+	/*****************
+	 * Returns a tree node containing a list of objects displayable by this class of
+	 * InterfaceGraphic. Thus, a hierarchical list of ShapeSet3DInt objects from the
+	 * data model (including the base shape set).
+	 * @param p InterfaceDisplayPanel containing displayable data objects
+	 * @return DefaultMutableTreeNode with a tree list of ShapeSet3DInt objects
+	 */
+	public DefaultMutableTreeNode getDisplayObjectsNode(InterfaceDisplayPanel p){
+		ShapeSet3DInt testSet = new ShapeSet3DInt();
+		ShapeSet3DInt shapeSets = p.modelSet.getShapeType(testSet);
+		DefaultMutableTreeNode retNode = new DefaultMutableTreeNode(p.modelSet);
+		if (shapeSets.members.size() > 0)
+			retNode.add(shapeSets.getTreeNode());
+		return retNode;
+		//return shapeSets.getTreeNode();
+	}
+	
+}

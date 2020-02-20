@@ -1,0 +1,1105 @@
+/*
+* Copyright (C) 2011 Andrew Reid and the modelGUI Project <http://mgui.wikidot.com>
+* 
+* This file is part of modelGUI[core] (mgui-core).
+* 
+* modelGUI[core] is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* modelGUI[core] is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with modelGUI[core]. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package mgui.interfaces.shapes;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.ImageComponent3D;
+import javax.swing.ImageIcon;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
+import mgui.datasources.DataSourceException;
+import mgui.datasources.LinkedDataStream;
+import mgui.geometry.Box3D;
+import mgui.geometry.Grid3D;
+import mgui.geometry.Plane3D;
+import mgui.image.util.WindowedColourModel;
+import mgui.interfaces.InterfaceSession;
+import mgui.interfaces.attributes.Attribute;
+import mgui.interfaces.attributes.AttributeEvent;
+import mgui.interfaces.attributes.AttributeSelection;
+import mgui.interfaces.logs.LoggingType;
+import mgui.interfaces.maps.Camera3D;
+import mgui.interfaces.maps.Camera3DListener;
+import mgui.interfaces.maps.ColourMap;
+import mgui.interfaces.maps.ColourMapListener;
+import mgui.interfaces.maps.NameMap;
+import mgui.interfaces.shapes.attributes.ShapeAttribute;
+import mgui.interfaces.shapes.mesh.VertexSelection;
+import mgui.interfaces.shapes.util.ShapeEvent;
+import mgui.interfaces.shapes.util.ShapeFunctions;
+import mgui.interfaces.shapes.util.ShapeListener;
+import mgui.interfaces.shapes.volume.Volume3DRenderer;
+import mgui.interfaces.shapes.volume.Volume3DTexture;
+import mgui.interfaces.shapes.volume.Volume3DUpdater;
+import mgui.io.domestic.shapes.VolumeFileLoader;
+import mgui.numbers.MguiBoolean;
+import mgui.numbers.MguiDouble;
+import mgui.numbers.MguiFloat;
+import mgui.numbers.MguiInteger;
+import mgui.numbers.MguiNumber;
+
+
+/****************************
+ * Class acting as interface to a volume shape, as defined by the Grid3D geometry
+ * class. Volume3D provides a Texture3D node and also defines the appearance of the
+ * voxel set in terms of colour or intensity mapping. 
+ * 
+ * 
+ * @author Andrew Reid
+ *
+ */
+
+public class Volume3DInt extends Shape3DInt implements ColourMapListener,
+													   ImageComponent3D.Updater,
+													   ShapeListener {
+
+	public Volume3DRenderer renderer;
+	public boolean textureSet;
+	public Volume3DUpdater updater;
+	public File dataFile;
+	public VolumeFileLoader loader;
+	public ShapeSceneNode intRect3D = new ShapeSceneNode();
+	
+	//debug flag
+	boolean debug = false;
+	
+	protected BranchGroup group_node, render_node;
+	
+	public Volume3DInt(){
+		init();
+	}
+	
+	public Volume3DInt(Grid3D g, boolean update){
+		init();
+		setGrid(g, update);
+	}
+	
+	public Volume3DInt(Grid3D g){
+		init();
+		setGrid(g);
+	}
+	
+	public Volume3DInt(Grid3D g, ColourMap cmap){
+		init();
+		attributes.getAttribute("ColourMap").setValue(cmap, false);
+	}
+
+	/********************************
+	 * Overrides <code>InterfaceShape.setParentSet</code> to add itself as a listener to the parent
+	 * 
+	 */
+	@Override
+	public void setParentSet(ShapeSet set){
+		if (this.parent_set != null) 
+			((ShapeSet3DInt)parent_set).removeShapeListener(this);
+		super.setParentSet(set);
+		((ShapeSet3DInt)parent_set).addShapeListener(this);
+		
+	}
+	
+	@Override
+	public int getClosestVertex(Point3f point){
+		
+		Grid3D grid = getGrid();
+		int[] voxel = grid.getEnclosingVoxel(point);
+		if (voxel == null) return -1;
+		return grid.getAbsoluteIndex(voxel);
+		
+	}
+	
+	public void shapeUpdated(ShapeEvent e){
+		
+		switch (e.eventType){
+			case SectionAdded:
+			case SectionRemoved:
+				setScene3DObject();
+				return;
+			}
+	}
+	
+	@Override
+	protected void setIcon(){
+		java.net.URL imgURL = ShapeSet3DInt.class.getResource("/mgui/resources/icons/volume_3d_17.png");
+		if (imgURL != null)
+			icon = new ImageIcon(imgURL);
+		else
+			InterfaceSession.log("Cannot find resource: mgui/resources/icons/volume_3d_17.png");
+	}
+	
+	@Override
+	protected void init(){
+		super.init();
+		//set up attributes here
+		/**@todo implement ColourMap class **/
+		attributes.add(new ShapeAttribute<MguiInteger>("TextureType", new MguiInteger(Volume3DTexture.TYPE_INTENSITY_CMAP_ALPHA)));
+		attributes.add(new ShapeAttribute<ColourMap>("ColourMap", null));
+		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowPoly", new MguiBoolean(true)));
+		attributes.add(new ShapeAttribute<Color>("2D.LineColour", Color.GREEN));
+		attributes.add(new ShapeAttribute<MguiBoolean>("ShowPoly3D", new MguiBoolean(true)));
+		attributes.add(new ShapeAttribute<Color>("BackColour", Color.BLACK));
+		attributes.add(new ShapeAttribute<MguiBoolean>("BackOpaque", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiFloat>("MapMax", new MguiFloat(255f)));
+		attributes.add(new ShapeAttribute<MguiFloat>("MapMin", new MguiFloat(0f)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("ApplyMasks", new MguiBoolean(true)));
+		attributes.add(new ShapeAttribute<HashMap<String, boolean[][][]>>("Masks", new HashMap<String, boolean[][][]>()));
+		attributes.add(new ShapeAttribute<HashMap<String,MguiBoolean>>("MaskSet", new HashMap<String,MguiBoolean>()));
+		attributes.add(new AttributeSelection<String>("RenderMode", Volume3DRenderer.getRenderModes()));
+		attributes.add(new ShapeAttribute<MguiBoolean>("ApplyMasks", new MguiBoolean(true)));
+		
+		attributes.setValue("LineColour", Color.BLUE);
+		hasCameraListener = true;
+		
+		isImageShape = true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public HashMap<String, boolean[][][]> getMasks(){
+		return (HashMap<String, boolean[][][]>)attributes.getValue("Masks");
+	}
+	
+	public void addMask(String name, boolean[][][] mask){
+		addMask(name, mask, true);
+	}
+	
+	public void clearMask(String name){
+		if (!getMasks().containsKey(name)) return;
+		
+		boolean[][][] mask = getMask(name);
+		Grid3D grid = getGrid(); 
+		int x_size = grid.getSizeS();
+		int y_size = grid.getSizeT();
+		int z_size = grid.getSizeR();
+		
+		for (int i = 0; i < x_size; i++)
+			for (int j = 0; j < y_size; j++)
+				for (int k = 0; k < z_size; k++)
+					mask[i][j][k] = false;
+		
+		if (getApplyMasks())
+			attributeUpdated(new AttributeEvent(attributes.getAttribute("ApplyMasks")));
+	}
+	
+	public void invertMask(String name){
+		if (!getMasks().containsKey(name)) return;
+		boolean[][][] mask = getMask(name);
+		Grid3D grid = getGrid(); 
+		
+		int x_size = grid.getSizeS();
+		int y_size = grid.getSizeT();
+		int z_size = grid.getSizeR();
+		
+		for (int i = 0; i < x_size; i++)
+			for (int j = 0; j < y_size; j++)
+				for (int k = 0; k < z_size; k++)
+					mask[i][j][k] = !mask[i][j][k];
+		
+		if (getApplyMasks())
+			attributeUpdated(new AttributeEvent(attributes.getAttribute("ApplyMasks")));
+		
+	}
+	
+	public Point3f getCenterOfVoxel(int i, int j, int k){
+		Grid3D grid = getGrid();
+		//offset to center of voxel
+		int x_size = grid.getSizeS();
+		int y_size = grid.getSizeT();
+		int z_size = grid.getSizeR();
+		
+		Vector3f center_offset = new Vector3f(0.5f / x_size,
+											  0.5f / y_size,
+											  0.5f / (float)z_size);
+		float scale_x = (float)i / (float)x_size;
+		float scale_y = (float)j / (float)y_size; 
+		float scale_z = (float)k / (float)z_size; 
+		Box3D bounds = grid.getBoundBox();
+		Vector3f v_x = bounds.getSAxis();
+		Vector3f v_y = bounds.getTAxis();
+		Vector3f v_z = bounds.getRAxis();
+		v_x.scale(scale_x);
+		v_y.scale(scale_y);
+		v_z.scale(scale_z);
+		Point3f p = bounds.getBasePt();
+		p.add(v_x);
+		p.add(v_y);
+		p.add(v_z);
+		p.add(center_offset);
+		return p;
+	}
+	
+	
+	public HashMap<String, MguiBoolean> getMaskSet(){
+		return (HashMap<String, MguiBoolean>)attributes.getValue("MaskSet");
+	}
+	
+	public boolean getMaskSet(String name){
+		if (getMaskSet().containsKey(name))
+			return getMaskSet().get(name).getTrue();
+		return false;
+	}
+	
+	public void setMaskSet(String name, boolean b){
+		HashMap<String, MguiBoolean> map = (HashMap<String, MguiBoolean>)attributes.getValue("MaskSet");
+		map.put(name, new MguiBoolean(b));
+		if (getApplyMasks())
+			attributeUpdated(new AttributeEvent(attributes.getAttribute("ApplyMasks")));
+	}
+	
+	public void addMask(String name, boolean[][][] mask, boolean set){
+		HashMap<String, boolean[][][]> masks = getMasks();
+		masks.put(name, mask);
+		HashMap<String,MguiBoolean> apply_masks = (HashMap<String,MguiBoolean>)attributes.getValue("MaskSet");
+		apply_masks.put(name, new MguiBoolean(set));
+		if (getApplyMasks())
+			attributeUpdated(new AttributeEvent(attributes.getAttribute("ApplyMasks")));
+	}
+	
+	public void removeMask(String name){
+		HashMap<String, boolean[][][]> masks = getMasks();
+		if (!masks.containsKey(name)) return;
+		masks.remove(name);
+		HashMap<String,MguiBoolean> apply_masks = (HashMap<String,MguiBoolean>)attributes.getValue("MaskSet");
+		apply_masks.remove(name);
+		attributeUpdated(new AttributeEvent(attributes.getAttribute("Masks")));
+	}
+	
+	public boolean[][][] getMask(String name){
+		HashMap<String, boolean[][][]> masks = getMasks();
+		return masks.get(name);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setMask(String name, boolean show){
+		HashMap<String,MguiBoolean> apply_masks = (HashMap<String,MguiBoolean>)attributes.getValue("MaskSet");
+		if (apply_masks.get(name) != null)
+			apply_masks.get(name).setTrue(show);
+		if (getApplyMasks())
+			attributeUpdated(new AttributeEvent(attributes.getAttribute("ApplyMasks")));
+	}
+	
+	public void setMask(String name, boolean[][][] mask){
+		getMasks().put(name, mask);
+		if (getApplyMasks())
+			attributeUpdated(new AttributeEvent(attributes.getAttribute("ApplyMasks")));
+	}
+	
+	/*****************************************************
+	 * Sets mask <code>name</code> to a new mask which is a union between its current state and the
+	 * mask specified by <code>volume</code>, where all zero-valued voxels are masked.
+	 * 
+	 * @param name
+	 * @param volume
+	 * @return
+	 */
+	public boolean unionMaskWithVolume(String name, Volume3DInt volume){
+		
+		boolean[][][] mask = getMask(name);
+		if (mask == null) return false;
+		Grid3D grid = volume.getGrid(); 
+		
+		int x_size = grid.getSizeS();
+		int y_size = grid.getSizeT();
+		int z_size = grid.getSizeR();
+		
+		if (mask.length != x_size ||
+			mask[0].length != y_size ||
+			mask[0][0].length != z_size)
+			return false;
+		
+		long in_count = 0;
+		
+		for (int i = 0; i < x_size; i++)
+			for (int j = 0; j < y_size; j++)
+				for (int k = 0; k < z_size; k++){
+					mask[i][j][k] |= (grid.getValue(i, j, k, 0) == 0);
+					if (mask[i][j][k]) in_count++;
+					}
+		
+		long out_count = x_size * y_size * z_size - in_count;
+		InterfaceSession.log("Mask merged with volume: " + in_count + " masked; " + out_count + " unmasked.");
+		
+		if (getApplyMasks())
+			attributeUpdated(new AttributeEvent(attributes.getAttribute("ApplyMasks")));
+		return true;
+		
+	}
+	
+	public boolean unionMask(String name, boolean[][][] to_merge){
+		
+		boolean[][][] mask = getMask(name);
+		if (mask == null) return false;
+		if (mask.length != to_merge.length ||
+			mask[0].length != to_merge[0].length ||
+			mask[0][0].length != to_merge[0][0].length)
+			return false;
+		
+		for (int i = 0; i < mask.length; i++)
+			for (int j = 0; j < mask[0].length; j++)
+				for (int k = 0; k < mask[0][0].length; k++)
+					mask[i][j][k] &= to_merge[i][j][k];
+		
+		if (getApplyMasks())
+			attributeUpdated(new AttributeEvent(attributes.getAttribute("ApplyMasks")));
+		
+		return true;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setAllMasks(boolean show){
+		HashMap<String,MguiBoolean> apply_masks = (HashMap<String,MguiBoolean>)attributes.getValue("MaskSet");
+		Iterator<MguiBoolean> itr = apply_masks.values().iterator();
+		
+		while (itr.hasNext())
+			itr.next().setValue(show);
+		
+		if (getApplyMasks())
+			attributeUpdated(new AttributeEvent(attributes.getAttribute("ApplyMasks")));
+
+	}
+	
+	/****************************
+	 * Applies the mask specified in params to the data in this volume.
+	 * NOTE: temporary until I can get the updater to work.
+	 * This function reloads data from the file filter and applies the given mask to it,
+	 * whereas I'd prefer to update referenced data directly, since this is much quicker
+	 * and more seamless.
+	 * @param params
+	 */
+	public void applyMask(){
+		
+		
+	}
+
+	/*************************
+	 * Sets an updater class, descended from Volume3DUpdater, with which to update
+	 * the data in this volume's grid. All updates to Volume3DInt data for objects with
+	 * live scene nodes must be performed using such an updater. Grid data must be set
+	 * by reference (isByRef() = true) in order to set an updater.
+	 * @param u Volume3DUpdater with which to update this volume's data
+	 */
+	public void setUpdater(Volume3DUpdater u){
+		if (!isByRef())	return;
+		updater = u;
+	}
+	
+	/*************************
+	 * Updates this volume's grid data with the current Volume3DUpdater object. Does
+	 * nothing if this Volume3DInt is not set by reference (isByRef() = true), or if no
+	 * updater is currently set. Updaters can be set using the setUpdater method.
+	 */
+	public void update(){
+		if (!isByRef() || updater == null) return;
+		Grid3D grid = getGrid();
+		int x_size = grid.getSizeS();
+		int y_size = grid.getSizeT();
+		int z_size = grid.getSizeR();
+		for (int k = 0; k < z_size; k++)
+			renderer.getImageComponent().updateData(updater, k, 0, 0, 
+													x_size, 
+													y_size);
+			
+		InterfaceSession.log("Updated volume - x:" + x_size + " y:" + y_size);
+	}
+	
+	public boolean isByRef(){
+		if (renderer == null) return false;
+		return renderer.getTexture().byRef;
+	}
+	
+	/********************************
+	 * Returns the {@linkplain Grid3D} associated with this volume.
+	 * 
+	 * @return
+	 */
+	public Grid3D getGrid(){
+		return (Grid3D)thisShape;
+	}
+	
+	/***********************************************************
+	 * Adds vertex-wise data to this shape.
+	 * 
+	 * @param key 			The key by which this column is to be referred
+	 * @param data 			The values for this column
+	 * @param map 			Name map [optionally null] associating integer keys to names
+	 * @return
+	 */
+	public boolean addVertexData(String key, ArrayList<MguiNumber> data, NameMap map){
+		
+		// Data is stored in grid; create new channel and store the data
+		Grid3D grid = getGrid();
+		ArrayList<String> channels = grid.getChannels();
+		for (int i = 0; i < channels.size(); i++){
+			if (channels.get(i).equals(key)){
+				InterfaceSession.log("Volume3DInt: Channel '" + key + "' already exists.", 
+									 LoggingType.Errors);
+				return false;
+				}
+			
+			}
+		if (data.get(0) instanceof MguiInteger)
+			grid.appendChannel(key, DataBuffer.TYPE_INT);
+		else if (data.get(0) instanceof MguiFloat)
+			grid.appendChannel(key, DataBuffer.TYPE_FLOAT);
+		else grid.appendChannel(key, DataBuffer.TYPE_DOUBLE);
+		
+		grid.setValues(key, 0, data);
+		VertexDataColumn column = new VertexDataColumn(key);
+		vertexData.put(key, column);
+		column.addListener(this);
+		
+		last_column_added = column;
+		
+		return true;
+		
+	}
+	
+	/**********************************************
+	 * Returns the datum from <code>column</code> at <code>index</code>.
+	 * 
+	 * @param column
+	 * @param index
+	 * @return
+	 */
+	public MguiNumber getDatumAtVertex(String column, int index){
+		if (!hasColumn(column)) return null;
+		if (column.contains(".{"))
+			return this.getLinkedVertexDatum(column, index);
+		
+		return new MguiDouble(getGrid().getValue(index));
+		
+	}
+	
+	/********************************************
+	 * Returns all vertex-wide data associated with this shape.  
+	 * 
+	 * @param column
+	 * @return
+	 */
+	public ArrayList<ArrayList<MguiNumber>> getVertexData(){
+		ArrayList<ArrayList<MguiNumber>> data = new ArrayList<ArrayList<MguiNumber>>(data_columns.size());
+		
+		for (int i = 0; i < data_columns.size(); i++)
+			data.add(getVertexData(data_columns.get(i)));
+		
+		return data;
+	}
+	
+	/********************************
+	 * Retrieves the vertex-wise data associated with a data-linked column.  
+	 * 
+	 * @param linked_column
+	 * @return
+	 */
+	public ArrayList<MguiNumber> getLinkedVertexData(String linked_column){
+		VertexDataColumn v_column = getVertexDataColumn(linked_column);
+		if (v_column == null) return null;
+		String[] column_field = parseLinkColumn(linked_column);
+		LinkedDataStream<?> stream = getDataLink(column_field[0], column_field[1]);
+		if (stream == null) return null;
+		ArrayList<MguiNumber> column_data = getGrid().getValues(column_field[0], 0);
+		//ArrayList<MguiNumber> column_data = vertexData.get(column_field[0]).getData();
+		ArrayList<MguiNumber> linked_data = new ArrayList<MguiNumber>();
+		NameMap name_map = getNameMap(column_field[0]);
+		
+		for (int i = 0; i < column_data.size(); i++){
+			try{
+				
+				if (!v_column.isNameMapped(column_field[1])){
+					LinkedDataStream<Integer> stream2 = (LinkedDataStream<Integer>)getDataLink(column_field[0], column_field[1]);
+					linked_data.add(new MguiDouble(stream2.getNumericValue((int)column_data.get(i).getValue(), column_field[2])));
+				}else{
+					LinkedDataStream<String> stream2 = (LinkedDataStream<String>)getDataLink(column_field[0], column_field[1]);
+					String key = name_map.get((int)column_data.get(i).getValue());
+					if (key == null)
+						linked_data.add(new MguiDouble(stream2.getUnknownValue()));
+					else
+						linked_data.add(new MguiDouble(stream2.getNumericValue(key, column_field[2])));
+					}
+			}catch (DataSourceException e){
+				//this will occur usually if key is not in index; set to zero
+				linked_data.add(new MguiDouble(stream.getUnknownValue()));
+				}
+			}
+		return linked_data;
+	}
+	
+	/********************************************
+	 * Returns a live version of the data in <code>column</code>.  
+	 * 
+	 * @param column
+	 * @return
+	 */
+	public ArrayList<MguiNumber> getVertexData(String column){
+		if (column.contains(".{")) return getLinkedVertexData(column);
+		if (!hasColumn(column)) return null;
+		return getGrid().getValues(column, 0);
+		
+	}
+	
+	/***************************************
+	 * Remove a vertex data column from this shape. This also removes all associated data, and
+	 * calls listeners to update, for instance, tree nodes.
+	 * 
+	 * @param key
+	 */
+	public void removeVertexData(String key){
+		
+		this.getGrid().removeChannel(key);
+		super.removeVertexData(key);
+		
+	}
+	
+	public void vertexDataColumnColourMapChanged(VertexDataColumnEvent event){
+		//colour map changed, must regenerate
+		
+		VertexDataColumn column = (VertexDataColumn)event.getSource();
+		ColourMap cmap = column.getColourMap();
+		if (cmap == null) return;
+		// Update grid with colour map
+		Grid3D grid = this.getGrid();
+		WindowedColourModel wcm = grid.getColourModel();
+		wcm.setColourMap(cmap);
+		wcm.window_mid = (cmap.mapMax + cmap.mapMin) / 2.0;
+		wcm.window_width = cmap.mapMax - cmap.mapMin;
+		
+		setTexture(false);
+		setScene3DObject();
+		fireShapeModified();
+	}
+	
+	public ColourMap getColourMap(){
+		if (thisShape == null || getGrid().getColourModel() == null) return null;
+		return getGrid().getColourModel().getColourMap();
+		
+	}
+	
+	public void setColourMap(ColourMap cmap){
+		attributes.setValue("ColourMap", cmap);
+	}
+	
+	public void setMapMax(float m){
+		if (m == getMapMax()) return;
+		textureSet = false;
+		attributes.setValue("MapMax", new MguiFloat(m));
+	}
+	
+	public float getMapMax(){
+		return ((MguiFloat)attributes.getValue("MapMax")).getFloat();
+	}
+	
+	public void setMapMin(float m){
+		if (m == getMapMin()) return;
+		textureSet = false;
+		attributes.setValue("MapMin", new MguiFloat(m));
+	}
+	
+	public float getMapMin(){
+		return ((MguiFloat)attributes.getValue("MapMin")).getFloat();
+	}
+	
+	public void setGrid(Grid3D grid){
+		setGrid(grid, true);
+	}
+	
+	public void setGrid(Grid3D grid, boolean fire){
+		if (grid == null) return;
+		thisShape = grid;
+		if (renderer == null)
+			renderer = new Volume3DRenderer(this);
+		textureSet = false;
+		
+		//columns
+		for (int i = 0; i < vertexData.size(); i++)
+			vertexData.get(i).removeListener(this);
+		
+		this.data_columns.clear();
+		ArrayList<String> channels = grid.getChannels();
+		data_columns.addAll(channels);
+		vertexData.clear();
+		for (int i = 0; i < channels.size(); i++){
+			VertexDataColumn column = new VertexDataColumn(channels.get(i));
+			column.addListener(this);
+			column.setColourMap(grid.getColourModel(channels.get(i)).getColourMap());
+			vertexData.put(channels.get(i), column);
+			
+			}
+		
+		updateShape();
+		
+		if (fire){
+			setScene3DObject();
+			fireShapeModified();
+			}
+	}
+	
+	//renderer updates based upon camera angle
+	public void registerCameraListener(Camera3D c){
+		if (renderer != null)
+			c.addListener(renderer);
+	}
+	
+	public void deregisterCameraListener(Camera3D c){
+		if (renderer != null)
+			c.removeListener(renderer);
+	}
+	
+	public Camera3DListener getCameraListener(){
+		return renderer;
+	}
+	
+	public void setTexture(){
+		setTexture(false);
+	}
+	
+	public void setTexture(boolean setModel){
+		
+		//TODO: throw exception if colour map is null
+		ColourMap map = getColourMap();
+		if (map != null){
+			if (setModel && getGrid() instanceof Grid3D){
+				Grid3D grid3d = (Grid3D)getGrid();
+				ColorModel model = Volume3DTexture.getColourModel(grid3d.getDataType(), map);
+				grid3d.setColourModel((WindowedColourModel)model);
+			}else{
+				//InterfaceSession.log("Grid not instance of Grid3D..");
+				}
+			renderer.setTexture(map);
+			textureSet = true;
+			return;
+			}
+		renderer.setTexture();
+		textureSet = true;
+		
+		
+	}
+	
+	public void attributeUpdated(AttributeEvent e){
+		
+		if (e.getAttribute().getName().equals("RenderMode")){
+			String new_mode = e.getAttribute().getValueStr();
+			renderer.setRenderMode(new_mode);
+			setScene3DObject();
+			return;
+			}
+		
+		if (e.getAttribute().getName().equals("ApplyMasks")){
+			textureSet = false;
+			applyMasks();
+			setScene3DObject();
+			fireShapeModified();
+			return;
+			}
+		if (e.getAttribute().getName().equals("Alpha")){
+			if (!hasAlpha()) return;
+			InterfaceSession.log(renderer.toString());
+			InterfaceSession.log(e.getAttribute().getValue().toString());
+			renderer.setTransparency(((MguiFloat)e.getAttribute().getValue()).getFloat());
+			fireShapeModified();
+			return;
+			}
+		if (e.getAttribute().getName().equals("ColourMap")){
+			this.updateSceneNode();
+			updateChildren2D(e.getAttribute());
+			return;
+			}
+		super.attributeUpdated(e);
+	}
+	
+	public void setApplyMasks(boolean b){
+		textureSet = false;
+		attributes.setValue("ApplyMasks", new MguiBoolean(b));
+	}
+	
+	public boolean getApplyMasks(){
+		return ((MguiBoolean)attributes.getValue("ApplyMasks")).getTrue();
+	}
+	
+	protected void applyMasks(){
+		if (!getApplyMasks()) {
+			getGrid().mask = null;
+			return;
+			}
+		
+		Vector<boolean[][][]> applied_masks = new Vector<boolean[][][]>();
+		HashMap<String, boolean[][][]> masks = getMasks();
+		HashMap<String,MguiBoolean> apply_masks = (HashMap<String,MguiBoolean>)attributes.getValue("MaskSet");
+		Iterator<String> itr = masks.keySet().iterator();
+		
+		while (itr.hasNext()){
+			String n = itr.next();
+			if (apply_masks.get(n).getTrue())
+				applied_masks.add(masks.get(n));
+			}
+		
+		if (applied_masks.size() == 0){
+			getGrid().mask = null;
+		}else{
+			InterfaceSession.log("Union of masks [" + applied_masks.size() + "]");
+			Grid3D grid = getGrid();
+			grid.mask = grid.getMaskForGrid(false);
+			//grid.setMaskUnion(applied_masks.get(0));
+			for (int m = 0; m < applied_masks.size(); m++){
+				boolean[][][] thisMask = applied_masks.get(m);
+				grid.setMaskUnion(thisMask);
+				}
+			}
+		
+	}
+	
+	public Volume3DTexture getTexture(){
+		if (!this.textureSet) return null;
+		return renderer.getTexture();
+	}
+	
+	boolean setScene3DObjectDebug(boolean make_live){
+		if (!debug) return false;
+		
+		super.setScene3DObject(false);
+		if (thisShape == null || !this.isVisible()){
+			if (make_live) setShapeSceneNode();
+			return true;
+			}
+		
+		return true;
+	}
+	
+	public void setBounds(Box3D box){
+		
+		Grid3D grid = getGrid();
+		grid.setBounds(box);
+		updateShape();
+		((ShapeSet3DInt)getParentSet()).updateShape();
+		setScene3DObject();
+		fireShapeModified();
+		
+	}
+	
+	public void updateShape() {
+		super.updateShape();
+		
+		// Re-establish texture...
+		this.setTexture(false);
+		
+	}
+	
+	//updates the scene node by calling this object as an updater
+	protected void updateSceneNode(){
+		if (this.scene3DObject == null) return;
+		
+		Grid3D grid = getGrid();
+		if (grid == null) return;
+		
+		int x_size = grid.getSizeS();
+		int y_size = grid.getSizeT();
+		int z_size = grid.getSizeR();
+		
+		//call updater on all images
+		for (int index = 0; index < z_size; index++)
+			this.renderer.getImageComponent().updateData(this, index, 0, 0, x_size, y_size);
+		
+	}
+	
+	/*******************************************
+	 * Sets the scene node image with the current state of this volume.
+	 */
+	@Override
+	public void updateData(ImageComponent3D imageComponent,
+					       int index,
+					       int x, int y,
+					       int width, int height){
+		
+		Grid3D grid = getGrid();
+		if (grid == null) return;
+		int x_size = grid.getSizeS();
+		int y_size = grid.getSizeT();
+			
+		//set whole image or subimage, depending on parameters
+		if (x > 0 || y > 0 || width < x_size || height < y_size){
+			imageComponent.setSubImage(index, grid.getImage(index), width, height, x, y, x, y);
+			return;
+		}else{
+			imageComponent.set(index, grid.getImage(index));
+			}
+		
+	}
+	
+	public void setScene3DObject(boolean make_live){
+		
+		if (setScene3DObjectDebug(make_live)) return;
+		
+		//set the texture3D object and its appearance, etc.
+		super.setScene3DObject(false);
+		if (thisShape == null || !this.isVisible() || !this.show3D()){
+			if (make_live) setShapeSceneNode();
+			return;
+			}
+		
+		if (render_node != null) render_node.detach();
+		
+		if (group_node != null){
+			group_node.removeAllChildren();
+		}else{
+			group_node = new BranchGroup();
+			group_node.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+			group_node.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+			group_node.setCapability(BranchGroup.ALLOW_DETACH);
+			}
+		
+		if (!ShapeFunctions.nodeHasChild(scene3DObject, group_node))
+			scene3DObject.addChild(group_node);
+		
+		//get node from renderer
+		if (!textureSet)
+			setTexture();
+		
+		renderer.setAlpha = hasAlpha();
+		renderer.alpha = this.getAlpha();
+		renderer.setRenderMode(getRenderMode());
+		render_node = renderer.getNode();
+		
+		group_node.addChild(render_node);
+		
+		if (make_live) setShapeSceneNode();
+		
+	}
+	
+	public String getRenderMode(){
+		if (renderer == null) return "?";
+		return renderer.getRenderModeStr();
+	}
+	
+	public void setRenderMode(String mode){
+		attributes.getAttribute("RenderMode").setValue(mode);
+	}
+	
+	public Box3D getBox(){
+		//return ((Grid3D)thisShape).bounds;
+		return (Box3D)getShape();
+	}
+	
+	protected Shape2DInt getShape2D(Plane3D plane, float above_dist, float below_dist){
+		//System.out.print("Volume3DInt: create 2D image..");
+		boolean setAlpha = ((MguiBoolean)attributes.getValue("2D.HasAlpha")).getTrue();
+		//temp for debugging - displays nodes from which data will be sampled
+		BranchGroup scanNodes = null; // new BranchGroup();
+		Shape2DInt shape2D = ShapeFunctions.getIntersectionImage(this, plane, setAlpha, scanNodes);
+		
+		if (shape2D == null){
+			//InterfaceSession.log("failed.");
+			return null;
+			}
+		//InterfaceSession.log("succeeded.");
+		shape2D.attributes.setIntersection(attributes);
+		shape2D.attributes.setValue("HasBorder", attributes.getValue("ShowBounds2D"));
+		
+		//show intersection polygon in 3D
+		if (intRect3D != null)
+			intRect3D.detach();
+		
+		return shape2D;
+	}
+	
+	public void colourMapChanged(ColourMap map){
+		
+	}
+	
+	public String toString(){
+		return "Volume3D [" + getName() + "][" + String.valueOf(ID) + "]"; 
+	}
+	
+	/********************** VARIABLE STUFF ********************************/
+	
+	public ArrayList<String> getVariables() {
+		return getGrid().getChannels();
+	}
+
+	/***************************
+	 * Returns the value of a variable in this object, at the specified element location. If <code>element</code>
+	 * is not of length 3 or 4, a value of <code>Double.NaN</code> is returned: {i, j, k, t}. If <code>element</code> 
+	 * is of length 3, the value of <code>t</code> is set to zero. 
+	 * 
+	 * @param variable Name of the variable
+	 * @param element 
+	 * @return
+	 */
+	public double getVariableValue(String variable, int[] element) {
+		int t = 0;
+		if (element.length < 3 || element.length > 4)
+			return Double.NaN;
+		if (element.length == 4)
+			t = element[3];
+		return getGrid().getValue(variable, element[0], element[1], element[2], t);
+	}
+
+	/****************************
+	 * Sets the variable's values with the <code>values</code> object, which must be one of the following types:
+	 * 
+	 * <ul>
+	 * <li><code>ArrayList&lt;BufferedImage[]></code>
+	 * <li><code>DataBufferDouble</code>
+	 * </ul>
+	 * 
+	 * If not, a value of <code>false</code> is returned.
+	 * 
+	 * @param variable		The variable to update
+	 * @param values		An <code>Object</code> containing the new data
+	 */
+	public boolean setVariableValues(String variable, Object values){
+		return setVariableValues(variable, values, null);
+	}
+	
+	/****************************
+	 * Sets the variable's values with the <code>values</code> object, which must be one of the following types:
+	 * 
+	 * <ul>
+	 * <li><code>ArrayList&lt;BufferedImage[]></code>
+	 * <li><code>DataBufferDouble</code>
+	 * </ul>
+	 * 
+	 * If not, a value of <code>false</code> is returned.
+	 * 
+	 * @param variable		The variable to update
+	 * @param values		An <code>Object</code> containing the new data
+	 * @param selection		Not implemented
+	 */
+	public boolean setVariableValues(String variable, Object values, VertexSelection selection){
+		try{
+			//TODO: use selection to apply masks
+			if (values instanceof ArrayList<?>){
+				ArrayList<BufferedImage[]> images = (ArrayList<BufferedImage[]>)values;
+				Grid3D grid = getGrid();
+				if (images.size() != grid.getSizeV()) return false;
+				for (int t = 0; t < images.size(); t++){
+					BufferedImage[] image_stack = grid.getImages(variable, t);
+					if (image_stack.length != images.get(t).length) return false;
+					System.arraycopy(images.get(t), 0, image_stack, 0, image_stack.length);
+					}
+				return true;
+				}
+			
+			//TODO: implement DataBufferDouble here
+			
+		}catch (ClassCastException ex){
+			InterfaceSession.log("Invalid value array passed to Mesh3DInt.setVariableValues()");
+			ex.printStackTrace();
+			}
+		return false;
+		
+	}
+	
+	public Class<?> getVariableType(){
+		ArrayList<BufferedImage[]> images = new ArrayList<BufferedImage[]>();
+		return images.getClass();
+	}
+	
+	public boolean supportsVariableType(Class<?> type){
+		//currently only supports an ArrayList of image stacks
+		if (getVariableType().isAssignableFrom(type)) return true;
+		
+		return false;
+	}
+	
+	
+	//*********************** NODE DATA OVERRIDES *******************************************
+	
+	
+	public void addNodeData(String key, ArrayList<MguiNumber> data){
+		
+	}
+	
+	public void addNodeData(String key, ArrayList<MguiNumber> data, NameMap map){
+		
+	}
+	
+	/**********************************
+	 * Add a vertex-wise data column of type <code>DataBuffer.TYPE_DOUBLE</code>.
+	 * 
+	 * @param key		The key associated with the data column
+	 */
+	public void addNodeData(String key){
+		//TODO: add new channel
+	}
+	
+	/*********************************
+	 * Add a vertex-wise data column of type <code>dataType</code>, which must be one of 
+	 * <code>DataBuffer.TYPE_DOUBLE</code>, <code>DataBuffer.TYPE_FLOAT</code>, or
+	 * <code>DataBuffer.TYPE_INT</code>. If an incorrect type is specified, this method
+	 * creates a column of type <code>DataBuffer.TYPE_DOUBLE</code>.
+	 * 
+	 * @param key			The key associated with the data column
+	 * @param dataType		The data type with which to store the data
+	 */
+	public void addNodeData(String key, int dataType){
+		//TODO: add new channel
+	}
+	
+	/********************************
+	 * Retrieves a hash map containing the vertex-wise data associated with this shape.
+	 * 
+	 * @return
+	 */
+	public HashMap<String, ArrayList<MguiNumber>> getNodeData(){
+		//TODO: return voxel-wise data??
+		return null;
+	}
+	
+	/********************************
+	 * Sets the hash map specified the vertex-wise data associated with this shape.
+	 * 
+	 * @param data
+	 */
+	public void setNodeData(HashMap<String, ArrayList<MguiNumber>> data){
+		//TODO: set voxel-wise data??
+	}
+	
+	
+	public boolean hasColumn(String s){
+		ArrayList<String> cols = getGrid().getChannels();
+		for (int i = 0; i < cols.size(); i++)
+			if (cols.get(i).equals(s)) return true;
+		return false;
+	}
+
+	public void removeNodeData(String key){
+		//TODO: remove channel?
+	}
+	
+	public void setCurrentColumn(String key){
+		
+	}
+	
+	public void setCurrentColumn(String key, boolean update){
+	}
+	
+	public void setCurrentColumn(String key, double min, double max, boolean update){
+	}
+	
+}

@@ -1,0 +1,182 @@
+# set version
+setVersion 1.0.20 [dev]
+
+# set locale
+setLocale en CA
+
+# set units
+addUnit spatial millimeter mm 0.001
+addUnit spatial centimeter cm 0.01
+addUnit spatial kilometer km 1000
+addUnit spatial micrometer μm 0.000001
+addUnit spatial mile mi 1609.344
+
+# set logging
+setLogFileAndConsole mgui_session
+setLoggingType debug
+
+# colour maps
+# This command loads all the colour maps found in the specified directory
+loadColourMaps cmaps
+
+# name maps
+# This command loads all the name maps found in the specified directory
+#loadNameMaps nmaps
+
+# node shapes
+# This command loads all the graph node shapes found in the specified directory
+loadGraphNodeShapes node_shapes
+
+# set data source key file
+# This command sets the current private key for password encryption from the specified file/URL.
+# The command is optional; if not specified, a generic key will be used. Note that this file/URL should be
+# stored in a trusted environment; it is the responsibility of the user to set permissions properly. A
+# file can be generated using the generate_db_key script; see the README file for more.
+# URLs which do not specify a protocol will be treated as files. Files which do not start with "/" will
+# be treated as relative to the mgui home directory. 
+# setDataSourceKey data_sources/.dbkey
+
+# jdbc drivers
+# This command tells the environment to register the given classes as JDBC drivers, and make them available for use
+# in the session. The optional third argument specifies an instance of DataSourceDialogPanel, which will be
+# used to provide a specialized set up of the data source (if not specified, the default panel is used).
+#addKnownDataSourceDriver mysql.driver mgui.interfaces.datasources.DataSourceListDialogPanel
+#addKnownDataSourceDriver jdbc_odbc.driver
+#addKnownDataSourceDriver tinysql.driver
+#addKnownDataSourceDriver postgresql.driver mgui.interfaces.datasources.DataSourceListDialogPanel
+addKnownDataSourceDrivers
+
+# set look and feel
+# Java uses a "look-and-feel" concept to provide customized GUI rendering for Swing components. Such libraries
+# are available online, and can be used with mgui by setting them here. This command sets the look-and-feel
+# to "NimROD" (see http://personales.ya.com/nimrod/index-en.html)
+#setLookAndFeel native
+#setLookAndFeel com.birosoft.liquid.LiquidLookAndFeel
+setLookAndFeel com.nilo.plaf.nimrod.NimRODLookAndFeel
+#setLookAndFeel napkin.NapkinLookAndFeel
+#setLookAndFeel org.fife.plaf.Office2003.Office2003LookAndFeel
+#setLookAndFeel org.fife.plaf.OfficeXP.OfficeXPLookAndFeel
+#setLookAndFeel org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel
+#setLookAndFeel ch.randelshofer.quaqua.QuaquaLookAndFeel
+#setLookAndFeel javax.swing.plaf.nimbus.NimbusLookAndFeel
+
+# preloaded data sources
+# This command loads all datasources in the specified directory from parameters specified in a text files. 
+# If the specified driver has not already been loaded using addKnownDataSourceDriver, mgui attempts to add a 
+# new driver to the environment as well.
+loadDataSources data_sources
+
+# load graphic window classes (can also do this explicitly for efficiency)
+# This command loads the various interface graphics types, which specifies which graphics windows are available
+# in the session.
+loadInterfaceGraphicClass Graphic3D mgui.interfaces.graphics.InterfaceGraphic3D
+loadInterfaceGraphicClass Graphic2D mgui.interfaces.graphics.InterfaceGraphic2D
+loadInterfaceGraphicClass Graph mgui.interfaces.graphs.InterfaceGraphDisplay
+loadInterfaceGraphicClass "Data Table" mgui.interfaces.tables.InterfaceDataTable
+loadInterfaceGraphicClass Console mgui.interfaces.console.InterfaceConsoleDisplay
+loadInterfaceGraphicClass Plot mgui.interfaces.plots.InterfacePlotDisplay
+
+# load interface panel classes
+# This command loads the various interface panels into the session, which will show up as selections in the
+# interface combo box.
+loadInterfacePanelClass "Windows Panel" mgui.interfaces.graphics.InterfaceGraphicPanel
+#loadInterfacePanelClass "Neuro Mesh Panel" mgui.interfaces.shapes.neuro.InterfaceNeuroMeshPanel
+loadInterfacePanelClass "Neuro Mesh Panel" mgui.interfaces.shapes.neuro.InterfaceNeuroMeshPanel2
+loadInterfacePanelClass "Section Set Panel" mgui.interfaces.shapes.InterfaceSectionSetPanel
+loadInterfacePanelClass "File Panel" mgui.interfaces.io.InterfaceFilePanel
+loadInterfacePanelClass "Datasource Panel" mgui.interfaces.datasources.InterfaceDatasourcePanel
+#loadInterfacePanelClass "Graph Panel" mgui.interfaces.graphs.InterfaceGraphPanel
+loadInterfacePanelClass "Volume Panel" mgui.interfaces.shapes.volume.InterfaceVolumePanel
+loadInterfacePanelClass "Mesh Panel" mgui.interfaces.shapes.mesh.InterfaceMeshPanel
+loadInterfacePanelClass "Maps Panel" mgui.interfaces.maps.InterfaceMapPanel
+loadInterfacePanelClass "Cortical Thickness Panel" mgui.interfaces.neuro.InterfaceCorticalThicknessPanel
+#loadInterfacePanelClass "Geology Panel" mgui.interfaces.geology.InterfaceGeologyPanel
+#loadInterfacePanelClass "Camino Panel" mgui.interfaces.neuro.imaging.camino.InterfaceCaminoPanel
+loadInterfacePanelClass "Selection Panel" mgui.interfaces.InterfaceSelectionPanel
+loadInterfacePanelClass "Queries Panel" mgui.interfaces.queries.InterfaceQueryPanel
+loadInterfacePanelClass "Tools Panel" mgui.interfaces.tools.InterfaceToolPanel
+loadInterfacePanelClass "Shapes Panel" mgui.interfaces.shapes.InterfaceShapesPanel
+loadInterfacePanelClass "Shape Stats Panel" mgui.interfaces.shapes.ShapeStatsPanel
+loadInterfacePanelClass "Pipelines Panel" mgui.interfaces.pipelines.InterfacePipelinesPanel
+#loadInterfacePanelClass "Projects Panel" mgui.interfaces.projects.InterfaceProjectPanel
+
+# load plot classes
+loadInterfacePlotClass "Multiline Plot" mgui.interfaces.plots.sgt.SgtMultilinePlot
+loadInterfacePlotClass "XY Scatter Plot" mgui.interfaces.plots.sgt.SgtScatterplot
+
+# load video task classes
+# This command loads video task types (instances of VideoTask) available for video processes
+loadVideoTaskType SetView3D mgui.interfaces.graphics.video.SetView3DTask mgui.interfaces.graphics.video.SetView3DTaskDialogPanel
+loadVideoTaskType RotateView3D mgui.interfaces.graphics.video.RotateView3DTask mgui.interfaces.graphics.video.RotateView3DTaskDialogPanel
+loadVideoTaskType AttributeUpdate mgui.interfaces.attributes.video.AttributeObjectVideoTask mgui.interfaces.attributes.video.AttributeObjectVideoTaskDialogPanel
+loadVideoTaskType ChangeSection mgui.interfaces.shapes.video.ChangeSectionVideoTask mgui.interfaces.shapes.video.ChangeSectionVideoTaskDialogPanel
+
+# initial windows
+# This command adds a graphic window to the display panel on launch
+addGraphicsWindow Graphic3D "3D Window"
+
+# load IO types: name, type (input or output), class (instance of InterfaceIO), dialog class, options class, file description, file extension filters
+# This command loads the available I/O classes (instances of FileLoader or FileWriter) available in the session.
+# These classes determine the type of data that can be input or output in the session. The command also specifies
+# which dialog and options classes are associated with the I/O class; mgui uses these to provide user interaction.
+# If no such class is available, the string "null" is used. Finally, the file description and associated extensions 
+# are provided, which are used by the file browser.
+loadIOType Workspace_out output mgui.io.domestic.WorkspaceWriter null mgui.io.domestic.WorkspaceOutputOptions "Mgui Workspaces (*.workspace)" workspace
+loadIOType ShapeModel3D_out output mgui.io.domestic.shapes.ShapeModel3DWriter mgui.io.domestic.shapes.ShapeModel3DOutputDialog mgui.io.domestic.shapes.ShapeModel3DOutputOptions "Mgui shape models (*.smod, *.smod.gz, *.xml)" smod smod.gz xml
+loadIOType ShapeModel3D_in input mgui.io.domestic.shapes.ShapeModel3DLoader mgui.io.domestic.shapes.ShapeModel3DInputDialog mgui.io.domestic.shapes.ShapeModel3DInputOptions "Mgui Shape models (*.smod, *.smod.gz, *.xml)" smod smod.gz xml
+loadIOType Minc_surf_in input mgui.io.foreign.minc.MincSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Minc surfaces (*.obj)" obj
+loadIOType Minc_surf_out output mgui.io.foreign.minc.MincSurfaceWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox mgui.io.domestic.shapes.SurfaceOutputOptions "Minc surfaces (*.obj)" obj
+loadIOType Minc_surf_data_out output mgui.io.foreign.minc.MincSurfaceDataWriter mgui.io.foreign.minc.MincSurfaceDataOutDialogBox mgui.io.foreign.minc.MincSurfaceDataOutOptions "Minc surface data (*.txt)" txt
+loadIOType Minc_surf_data_in input mgui.io.foreign.minc.MincSurfaceDataLoader mgui.io.domestic.shapes.SurfaceDataInputDialogBox mgui.io.domestic.shapes.SurfaceDataInputOptions "Minc surface data (*.txt)" txt
+loadIOType Caret_surf_paint_in input mgui.io.foreign.caret.CaretPaintLoader mgui.io.foreign.caret.CaretPaintInDialogBox mgui.io.foreign.caret.CaretPaintInOptions "Caret paint data (*.paint)" paint
+loadIOType Caret_surf_paint_out output mgui.io.foreign.caret.CaretPaintWriter mgui.io.domestic.shapes.SurfaceDataOutputDialogBox mgui.io.foreign.caret.CaretPaintOutOptions "Caret paint data (*.paint)" paint
+loadIOType Caret_surf_metric_in input mgui.io.foreign.caret.CaretMetricLoader mgui.io.foreign.caret.CaretMetricInDialogBox mgui.io.foreign.caret.CaretMetricInOptions "Caret metric data (*.metric)" metric
+loadIOType Caret_surf_out output mgui.io.foreign.caret.CaretSurfaceWriter mgui.io.foreign.caret.CaretSurfaceOutDialogBox mgui.io.foreign.caret.CaretSurfaceOutOptions "Caret surfaces (*.topo, *.coord)" topo coord
+loadIOType Caret_surf_in input mgui.io.foreign.caret.CaretSurfaceLoader mgui.io.foreign.caret.CaretSurfaceInDialogBox mgui.io.foreign.caret.CaretSurfaceInOptions "Caret surfaces (*.topo, *.coord)" topo coord
+loadIOType Caret_area_colour_in input mgui.io.foreign.caret.CaretAreaColourLoader mgui.io.foreign.caret.CaretAreaColourInDialogBox mgui.io.foreign.caret.CaretAreaColourInOptions "Caret area colour files (*.areacolor)" areacolor
+loadIOType Caret_area_colour_out output mgui.io.foreign.caret.CaretAreaColourWriter mgui.io.foreign.caret.CaretAreaColourOutDialogBox mgui.io.foreign.caret.CaretAreaColourOutputOptions "Caret area colour files (*.areacolor)" areacolor
+loadIOType NameMap_in input mgui.io.domestic.maps.NameMapLoader null mgui.io.domestic.maps.NameMapInOptions "Name maps (*.txt, *.nmap)" txt nmap
+loadIOType NameMap_out output mgui.io.domestic.maps.NameMapWriter mgui.io.domestic.maps.NameMapOutDialogBox mgui.io.domestic.maps.NameMapOutOptions "Name maps (*.txt, *.nmap)" txt nmap
+loadIOType MricroLut_in input mgui.io.foreign.mricro.MricroLutLoader mgui.io.domestic.maps.DiscreteColourMapInDialogBox mgui.io.domestic.maps.DiscreteColourMapInOptions "Mricro LUT (*.lut)" lut
+loadIOType Network_in input mgui.io.domestic.network.CorticalNetworkMatrixLoader mgui.io.domestic.network.CorticalNetworkMatrixInDialogBox mgui.io.domestic.network.CorticalNetworkMatrixInOptions "Network matrix files (*.net, *.txt)" net txt
+loadIOType Mesh3D_in input mgui.io.domestic.shapes.Mesh3DLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Tri surfaces (*.tri)" tri
+loadIOType Mesh3D_out output mgui.io.domestic.shapes.Mesh3DWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox mgui.io.domestic.shapes.SurfaceOutputOptions "Tri surfaces (*.tri)" tri
+loadIOType Duff_surface_in input mgui.io.foreign.duff.DuffSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Duff surfaces (*.dfs)" dfs
+loadIOType Nifti_volume_in input mgui.io.standard.nifti.NiftiVolumeLoader mgui.io.domestic.shapes.VolumeInputDialogBox mgui.io.domestic.shapes.VolumeInputOptions "Nifti volumes (*.hdr, *.nii, *.gz)" hdr nii gz
+loadIOType Nifti_volume_out output mgui.io.standard.nifti.NiftiVolumeWriter mgui.io.domestic.shapes.VolumeOutputDialogBox mgui.io.domestic.shapes.VolumeOutputOptions "Nifti volumes (*.hdr, *.nii, *.gz)" hdr nii gz
+loadIOType FSL_surface_in input mgui.io.foreign.fsl.FSLSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "FSL surfaces (*.off)" off
+loadIOType Freesurfer_surface_in input mgui.io.foreign.freesurfer.FreesurferSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Freesurfer surfaces (*.*)" *
+loadIOType Freesurfer_surface_out output mgui.io.foreign.freesurfer.FreesurferSurfaceWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox mgui.io.foreign.freesurfer.FreesurferSurfaceOutputOptions "Freesurfer surfaces (*.*)" *
+loadIOType Freesurfer_surface_data_in input mgui.io.foreign.freesurfer.FreesurferVertexDataLoader mgui.io.foreign.freesurfer.FreesurferVertexDataDialogBox mgui.io.foreign.freesurfer.FreesurferVertexDataInOptions "Freesurfer surface data (*.curv, *.annot, *.label)" *
+#loadIOType X3D_scene_in input mgui.io.standard.xml.x3d.X3DFileLoader null mgui.io.standard.xml.x3d.Vector3DInputOptions "X3D scenes (*.vrml, *.x3d)" vrml x3d
+loadIOType Pajek_graph_in input mgui.io.foreign.pajek.PajekGraphLoader mgui.io.foreign.pajek.PajekGraphInputDialog mgui.io.foreign.pajek.PajekGraphInputOptions "Pajek graphs (*.net)" net
+loadIOType Discrete_cmap_out output mgui.io.domestic.maps.DiscreteColourMapWriter mgui.io.domestic.maps.DiscreteColourMapOutDialogBox mgui.io.domestic.maps.DiscreteColourMapOutOptions "Discrete colour maps (*.cmap)" cmap
+loadIOType Discrete_cmap_in input mgui.io.domestic.maps.DiscreteColourMapLoader mgui.io.domestic.maps.DiscreteColourMapInDialogBox mgui.io.domestic.maps.DiscreteColourMapInOptions "Discrete colour maps (*.cmap)" cmap
+loadIOType TrackVis_tracts_in input mgui.io.foreign.trackvis.TrackVisTractLoader mgui.io.domestic.shapes.PolygonSet3DInputDialogBox mgui.io.domestic.shapes.PolygonSet3DInputOptions "TrackVis tract files (*.trk)" trk
+loadIOType Point_set_3D_in input mgui.io.domestic.shapes.PointSet3DLoader mgui.io.domestic.shapes.PointSet3DInputDialogBox mgui.io.domestic.shapes.PointSet3DInputOptions "PointSet 3D file (*.txt, *.pset3d)" txt pset3d
+loadIOType Point_set_3D_data_in input mgui.io.domestic.shapes.PointSet3DDataLoader mgui.io.domestic.shapes.PointSet3DDataInputDialogBox mgui.io.domestic.shapes.PointSet3DDataInputOptions "PointSet 3D data file (*.txt)" txt
+loadIOType Point_set_2D_in input mgui.io.domestic.shapes.PointSet2DLoader mgui.io.domestic.shapes.PointSet2DInputDialogBox mgui.io.domestic.shapes.PointSet2DInputOptions "PointSet 2D file (*.txt, *.pset2d)" txt pset2d
+loadIOType Polygon_set_3D_in input mgui.io.domestic.shapes.PolygonSet3DLoader mgui.io.domestic.shapes.PolygonSet3DInputDialogBox mgui.io.domestic.shapes.PolygonSet3DInputOptions "PolygonSet 3D files (*.txt *.poly3d)" txt poly3d
+loadIOType Vector_set_3D_in input mgui.io.domestic.shapes.VectorSet3DLoader mgui.io.domestic.shapes.VectorSet3DInputDialogBox mgui.io.domestic.shapes.VectorSet3DInputOptions "VectorSet 3D files (*.txt *.vect3d)" txt vect3d
+loadIOType Matrix_in input mgui.io.domestic.variables.DefaultMatrixFileLoader mgui.io.domestic.variables.MatrixInDialogBox mgui.io.domestic.variables.MatrixInOptions "Matrix files (*.txt, *.matrix)" txt matrix
+loadIOType Matrix_out output mgui.io.domestic.variables.DefaultMatrixFileWriter null null "Matrix files (*.txt, *.matrix)" txt matrix
+loadIOType Shape_3D_data_in input mgui.io.domestic.shapes.ShapeDataLoader mgui.io.domestic.shapes.ShapeDataInputDialogBox mgui.io.domestic.shapes.ShapeDataInputOptions "Shape data files (*.txt *.sdata)" txt sdata
+loadIOType Wunil_volume_in input mgui.io.foreign.wunil.WunilVolumeLoader mgui.io.domestic.shapes.VolumeInputDialogBox mgui.io.domestic.shapes.VolumeInputOptions "Wunil volumes (*.ifh)" ifh
+loadIOType View3D_out output mgui.io.domestic.views.View3DWriter mgui.io.domestic.views.View3DOutputDialogBox mgui.io.domestic.views.View3DOutputOptions "View3Ds (*.view3d)" view3d
+loadIOType View3D_in input mgui.io.domestic.views.View3DLoader null mgui.io.domestic.views.View3DInputOptions "View3Ds (*.view3d)" view3d
+loadIOType ImportDataTableText input mgui.io.domestic.datasources.ImportDataTableTextLoader mgui.io.domestic.datasources.ImportDataTableDialogBox mgui.io.domestic.datasources.ImportDataTableTextOptions "Delimited Text (*.txt, *.csv)" txt csv
+loadIOType Data_table_out_text output mgui.io.domestic.datasources.ExportDataTableTextWriter mgui.io.domestic.datasources.ExportDataTableDialogBox mgui.io.domestic.datasources.ExportDataTableTextOptions "Delimited Text (*.txt, *.csv)" txt csv
+loadIOType String_vector_in input mgui.io.domestic.variables.StringVectorLoader null mgui.io.domestic.variables.StringVectorInOptions "String vector (*.txt, *.svector)" txt svector
+loadIOType Shape_xml_out output mgui.io.domestic.shapes.ShapeXmlWriter mgui.io.domestic.shapes.ShapeOutputDialogBox mgui.io.domestic.shapes.ShapeOutputOptions "Mgui Shape (*.xml, *.shape)" xml shape
+loadIOType Shape_xml_in input mgui.io.domestic.shapes.ShapeXmlLoader mgui.io.domestic.shapes.ShapeInputDialogBox mgui.io.domestic.shapes.ShapeInputOptions "Mgui shapes (*.xml, *.shape)" xml shape
+loadIOType Gifti_in input mgui.io.standard.gifti.GiftiSurfaceLoader mgui.io.standard.gifti.GiftiSurfaceInDialogBox mgui.io.standard.gifti.GiftiInputOptions "Gifti surfaces (*.gii)" gii
+loadIOType Gifti_out output mgui.io.standard.gifti.GiftiSurfaceWriter mgui.io.standard.gifti.GiftiSurfaceOutDialogBox mgui.io.standard.gifti.GiftiOutputOptions "Gifti surfaces (*.gii)" gii
+loadIOType FSL_volume_in input mgui.io.foreign.fsl.FSLVolumeLoader mgui.io.domestic.shapes.VolumeInputDialogBox mgui.io.domestic.shapes.VolumeInputOptions "FSL volumes (*.mgz, *.mgh)" mgz mgh
+loadIOType Minc_volume_in input mgui.io.foreign.minc.MincVolumeLoader mgui.io.domestic.shapes.VolumeInputDialogBox mgui.io.foreign.minc.MincVolumeInputOptions "Minc volumes (*.mnc)" mnc
+loadIOType STL_out output mgui.io.domestic.printing.StlWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox mgui.io.domestic.printing.StlOutputOptions "3D print file (*.stl)" stl
+loadIOType BrainBrowser_out output mgui.io.foreign.brainbrowser.BrainBrowserShapeWriter mgui.io.foreign.brainbrowser.BrainBrowserOutputDialog mgui.io.foreign.brainbrowser.BrainBrowserOutputOptions "BrainBrowser shapes (*.json)" json
+loadIOType Data_table_out_excel output mgui.io.domestic.datasources.ExportDataTableExcelWriter mgui.io.domestic.datasources.ExportDataTableDialogBox mgui.io.domestic.datasources.ExportDataTableExcelOptions "Excel files (*.xls, *.xlsx)" xls xlsx
+
+
+# Pipeline Process Libraries
+loadPipelineProcessLibraries pipeline_process_libraries

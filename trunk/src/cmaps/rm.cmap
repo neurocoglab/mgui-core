@@ -1,0 +1,336 @@
+<?xml version="1.0"?>
+
+<ColourMap name = 'regional_map' type = 'discrete' >>
+	<NameMap name = 'rm'>
+		<Item index = '2' value = 'RM-TCpol_R' />
+		<Item index = '3' value = 'RM-TCs_R' />
+		<Item index = '4' value = 'RM-Amyg_R' />
+		<Item index = '5' value = 'RM-PFCoi_R' />
+		<Item index = '6' value = 'RM-IA_R' />
+		<Item index = '7' value = 'RM-PFCom_R' />
+		<Item index = '8' value = 'RM-TCc_R' />
+		<Item index = '9' value = 'RM-PFCol_R' />
+		<Item index = '10' value = 'RM-TCi_R' />
+		<Item index = '11' value = 'RM-PHC_R' />
+		<Item index = '12' value = 'MM82a-G_R' />
+		<Item index = '13' value = 'RM-PMCvl_R' />
+		<Item index = '14' value = 'RM-VACv_R' />
+		<Item index = '15' value = 'RM-Ip_R' />
+		<Item index = '16' value = 'RM-PFCpol_R' />
+		<Item index = '17' value = 'RM-HC_R' />
+		<Item index = '18' value = 'RM-CCs_R' />
+		<Item index = '19' value = 'RM-PFCvl_R' />
+		<Item index = '20' value = 'RM-V2_R' />
+		<Item index = '21' value = 'RM-PFCm_R' />
+		<Item index = '22' value = 'RM-TCv_R' />
+		<Item index = '23' value = 'RM-VACd_R' />
+		<Item index = '24' value = 'RM-V1_R' />
+		<Item index = '25' value = 'RM-PFCcl_R' />
+		<Item index = '26' value = 'RM-A2_R' />
+		<Item index = '27' value = 'RM-CCr_R' />
+		<Item index = '28' value = 'RM-CCp_R' />
+		<Item index = '29' value = 'RM-CCa_R' />
+		<Item index = '30' value = 'RM-S2_R' />
+		<Item index = '31' value = 'RM-S1_R' />
+		<Item index = '32' value = 'RM-A1_R' />
+		<Item index = '33' value = 'RM-M1_R' />
+		<Item index = '34' value = 'RM-PCi_R' />
+		<Item index = '35' value = 'RM-PCm_R' />
+		<Item index = '36' value = 'RM-PFCdm_R' />
+		<Item index = '37' value = 'RM-PCip_R' />
+		<Item index = '38' value = 'RM-PCs_R' />
+		<Item index = '39' value = 'RM-FEF_R' />
+		<Item index = '40' value = 'RM-PFCdl_R' />
+		<Item index = '41' value = 'RM-PMCm_R' />
+		<Item index = '42' value = 'RM-PMCdl_R' />
+		<Item index = '51' value = 'TM-F_R' />
+		<Item index = '52' value = 'TM-T_R' />
+		<Item index = '53' value = 'TM-OP_R' />
+		<Item index = '61' value = 'BG-Cd_R' />
+		<Item index = '62' value = 'BG-Pu_R' />
+		<Item index = '63' value = 'BG-Pa_R' />
+		<Item index = '64' value = 'BG-Acc_R' />
+		<Item index = '102' value = 'RM-TCpol_L' />
+		<Item index = '103' value = 'RM-TCs_L' />
+		<Item index = '104' value = 'RM-Amyg_L' />
+		<Item index = '105' value = 'RM-PFCoi_L' />
+		<Item index = '106' value = 'RM-IA_L' />
+		<Item index = '107' value = 'RM-PFCom_L' />
+		<Item index = '108' value = 'RM-TCc_L' />
+		<Item index = '109' value = 'RM-PFCol_L' />
+		<Item index = '110' value = 'RM-TCi_L' />
+		<Item index = '111' value = 'RM-PHC_L' />
+		<Item index = '112' value = 'MM82a-G_L' />
+		<Item index = '113' value = 'RM-PMCvl_L' />
+		<Item index = '114' value = 'RM-VACv_L' />
+		<Item index = '115' value = 'RM-Ip_L' />
+		<Item index = '116' value = 'RM-PFCpol_L' />
+		<Item index = '117' value = 'RM-HC_L' />
+		<Item index = '118' value = 'RM-CCs_L' />
+		<Item index = '119' value = 'RM-PFCvl_L' />
+		<Item index = '120' value = 'RM-V2_L' />
+		<Item index = '121' value = 'RM-PFCm_L' />
+		<Item index = '122' value = 'RM-TCv_L' />
+		<Item index = '123' value = 'RM-VACd_L' />
+		<Item index = '124' value = 'RM-V1_L' />
+		<Item index = '125' value = 'RM-PFCcl_L' />
+		<Item index = '126' value = 'RM-A2_L' />
+		<Item index = '127' value = 'RM-CCr_L' />
+		<Item index = '128' value = 'RM-CCp_L' />
+		<Item index = '129' value = 'RM-CCa_L' />
+		<Item index = '130' value = 'RM-S2_L' />
+		<Item index = '131' value = 'RM-S1_L' />
+		<Item index = '132' value = 'RM-A1_L' />
+		<Item index = '133' value = 'RM-M1_L' />
+		<Item index = '134' value = 'RM-PCi_L' />
+		<Item index = '135' value = 'RM-PCm_L' />
+		<Item index = '136' value = 'RM-PFCdm_L' />
+		<Item index = '137' value = 'RM-PCip_L' />
+		<Item index = '138' value = 'RM-PCs_L' />
+		<Item index = '139' value = 'RM-FEF_L' />
+		<Item index = '140' value = 'RM-PFCdl_L' />
+		<Item index = '141' value = 'RM-PMCm_L' />
+		<Item index = '142' value = 'RM-PMCdl_L' />
+		<Item index = '151' value = 'TM-F_L' />
+		<Item index = '152' value = 'TM-T_L' />
+		<Item index = '153' value = 'TM-OP_L' />
+		<Item index = '161' value = 'BG-Cd_L' />
+		<Item index = '162' value = 'BG-Pu_L' />
+		<Item index = '163' value = 'BG-Pa_L' />
+		<Item index = '164' value = 'BG-Acc_L' />
+	</NameMap>
+	<Item index = '2'>
+		<Colour4f red = '1.0' green = '0.9764706' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '3'>
+		<Colour4f red = '0.3647059' green = '0.27450982' blue = '0.95686275' alpha = '1.0' />
+	</Item>
+	<Item index = '4'>
+		<Colour4f red = '0.7490196' green = '0.27058825' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '5'>
+		<Colour4f red = '0.72156864' green = '0.0' blue = '0.41568628' alpha = '1.0' />
+	</Item>
+	<Item index = '7'>
+		<Colour4f red = '0.02745098' green = '0.7058824' blue = '0.827451' alpha = '1.0' />
+	</Item>
+	<Item index = '8'>
+		<Colour4f red = '1.0' green = '0.105882354' blue = '0.2' alpha = '1.0' />
+	</Item>
+	<Item index = '9'>
+		<Colour4f red = '1.0' green = '0.8666667' blue = '0.20784314' alpha = '1.0' />
+	</Item>
+	<Item index = '10'>
+		<Colour4f red = '0.6117647' green = '0.7137255' blue = '0.28627452' alpha = '1.0' />
+	</Item>
+	<Item index = '11'>
+		<Colour4f red = '0.2901961' green = '0.5372549' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '13'>
+		<Colour4f red = '0.87058824' green = '0.60784316' blue = '0.30588236' alpha = '1.0' />
+	</Item>
+	<Item index = '14'>
+		<Colour4f red = '0.16862746' green = '0.40392157' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '15'>
+		<Colour4f red = '0.47843137' green = '0.9490196' blue = '0.16862746' alpha = '1.0' />
+	</Item>
+	<Item index = '16'>
+		<Colour4f red = '0.0' green = '0.5019608' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '17'>
+		<Colour4f red = '0.67058825' green = '0.2901961' blue = '0.5803922' alpha = '1.0' />
+	</Item>
+	<Item index = '18'>
+		<Colour4f red = '1.0' green = '0.33333334' blue = '0.6039216' alpha = '1.0' />
+	</Item>
+	<Item index = '19'>
+		<Colour4f red = '0.14117648' green = '0.45490196' blue = '0.9882353' alpha = '1.0' />
+	</Item>
+	<Item index = '20'>
+		<Colour4f red = '1.0' green = '0.14509805' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '21'>
+		<Colour4f red = '0.9098039' green = '0.9607843' blue = '0.07450981' alpha = '1.0' />
+	</Item>
+	<Item index = '22'>
+		<Colour4f red = '0.3647059' green = '1.0' blue = '0.38039216' alpha = '1.0' />
+	</Item>
+	<Item index = '23'>
+		<Colour4f red = '0.8509804' green = '0.47058824' blue = '0.2509804' alpha = '1.0' />
+	</Item>
+	<Item index = '24'>
+		<Colour4f red = '1.0' green = '1.0' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '25'>
+		<Colour4f red = '0.8156863' green = '0.3019608' blue = '0.22745098' alpha = '1.0' />
+	</Item>
+	<Item index = '26'>
+		<Colour4f red = '0.98039216' green = '0.13333334' blue = '0.7019608' alpha = '1.0' />
+	</Item>
+	<Item index = '27'>
+		<Colour4f red = '0.84313726' green = '0.34901962' blue = '0.11372549' alpha = '1.0' />
+	</Item>
+	<Item index = '28'>
+		<Colour4f red = '0.94509804' green = '0.72156864' blue = '0.25490198' alpha = '1.0' />
+	</Item>
+	<Item index = '29'>
+		<Colour4f red = '0.22745098' green = '0.7882353' blue = '0.28627452' alpha = '1.0' />
+	</Item>
+	<Item index = '30'>
+		<Colour4f red = '0.21960784' green = '0.85490197' blue = '0.8627451' alpha = '1.0' />
+	</Item>
+	<Item index = '31'>
+		<Colour4f red = '0.972549' green = '0.1764706' blue = '0.12941177' alpha = '1.0' />
+	</Item>
+	<Item index = '32'>
+		<Colour4f red = '1.0' green = '0.62352943' blue = '0.015686275' alpha = '1.0' />
+	</Item>
+	<Item index = '33'>
+		<Colour4f red = '0.07450981' green = '0.20784314' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '34'>
+		<Colour4f red = '0.8980392' green = '0.9882353' blue = '0.16078432' alpha = '1.0' />
+	</Item>
+	<Item index = '35'>
+		<Colour4f red = '0.05490196' green = '1.0' blue = '0.35686275' alpha = '1.0' />
+	</Item>
+	<Item index = '36'>
+		<Colour4f red = '0.96862745' green = '0.15686275' blue = '0.5176471' alpha = '1.0' />
+	</Item>
+	<Item index = '37'>
+		<Colour4f red = '0.2' green = '0.7019608' blue = '0.34117648' alpha = '1.0' />
+	</Item>
+	<Item index = '38'>
+		<Colour4f red = '0.8' green = '0.0' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '39'>
+		<Colour4f red = '1.0' green = '0.8509804' blue = '0.2784314' alpha = '1.0' />
+	</Item>
+	<Item index = '40'>
+		<Colour4f red = '0.3137255' green = '0.6' blue = '0.85882354' alpha = '1.0' />
+	</Item>
+	<Item index = '41'>
+		<Colour4f red = '1.0' green = '0.49019608' blue = '0.047058824' alpha = '1.0' />
+	</Item>
+	<Item index = '42'>
+		<Colour4f red = '0.8627451' green = '0.42745098' blue = '0.7254902' alpha = '1.0' />
+	</Item>
+	<Item index = '102'>
+		<Colour4f red = '1.0' green = '0.9764706' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '103'>
+		<Colour4f red = '0.3647059' green = '0.27450982' blue = '0.95686275' alpha = '1.0' />
+	</Item>
+	<Item index = '104'>
+		<Colour4f red = '0.7490196' green = '0.27058825' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '105'>
+		<Colour4f red = '0.72156864' green = '0.0' blue = '0.41568628' alpha = '1.0' />
+	</Item>
+	<Item index = '107'>
+		<Colour4f red = '0.02745098' green = '0.7058824' blue = '0.827451' alpha = '1.0' />
+	</Item>
+	<Item index = '108'>
+		<Colour4f red = '1.0' green = '0.105882354' blue = '0.2' alpha = '1.0' />
+	</Item>
+	<Item index = '109'>
+		<Colour4f red = '1.0' green = '0.8666667' blue = '0.20784314' alpha = '1.0' />
+	</Item>
+	<Item index = '110'>
+		<Colour4f red = '0.6117647' green = '0.7137255' blue = '0.28627452' alpha = '1.0' />
+	</Item>
+	<Item index = '111'>
+		<Colour4f red = '0.2901961' green = '0.5372549' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '113'>
+		<Colour4f red = '0.87058824' green = '0.60784316' blue = '0.30588236' alpha = '1.0' />
+	</Item>
+	<Item index = '114'>
+		<Colour4f red = '0.16862746' green = '0.40392157' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '115'>
+		<Colour4f red = '0.47843137' green = '0.9490196' blue = '0.16862746' alpha = '1.0' />
+	</Item>
+	<Item index = '116'>
+		<Colour4f red = '0.0' green = '0.5019608' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '117'>
+		<Colour4f red = '0.67058825' green = '0.2901961' blue = '0.5803922' alpha = '1.0' />
+	</Item>
+	<Item index = '118'>
+		<Colour4f red = '1.0' green = '0.33333334' blue = '0.6039216' alpha = '1.0' />
+	</Item>
+	<Item index = '119'>
+		<Colour4f red = '0.14117648' green = '0.45490196' blue = '0.9882353' alpha = '1.0' />
+	</Item>
+	<Item index = '120'>
+		<Colour4f red = '1.0' green = '0.14509805' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '121'>
+		<Colour4f red = '0.9098039' green = '0.9607843' blue = '0.07450981' alpha = '1.0' />
+	</Item>
+	<Item index = '122'>
+		<Colour4f red = '0.3647059' green = '1.0' blue = '0.38039216' alpha = '1.0' />
+	</Item>
+	<Item index = '123'>
+		<Colour4f red = '0.8509804' green = '0.47058824' blue = '0.2509804' alpha = '1.0' />
+	</Item>
+	<Item index = '124'>
+		<Colour4f red = '1.0' green = '1.0' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '125'>
+		<Colour4f red = '0.8156863' green = '0.3019608' blue = '0.22745098' alpha = '1.0' />
+	</Item>
+	<Item index = '126'>
+		<Colour4f red = '0.98039216' green = '0.13333334' blue = '0.7019608' alpha = '1.0' />
+	</Item>
+	<Item index = '127'>
+		<Colour4f red = '0.84313726' green = '0.34901962' blue = '0.11372549' alpha = '1.0' />
+	</Item>
+	<Item index = '128'>
+		<Colour4f red = '0.94509804' green = '0.72156864' blue = '0.25490198' alpha = '1.0' />
+	</Item>
+	<Item index = '129'>
+		<Colour4f red = '0.22745098' green = '0.7882353' blue = '0.28627452' alpha = '1.0' />
+	</Item>
+	<Item index = '130'>
+		<Colour4f red = '0.21960784' green = '0.85490197' blue = '0.8627451' alpha = '1.0' />
+	</Item>
+	<Item index = '131'>
+		<Colour4f red = '0.972549' green = '0.1764706' blue = '0.12941177' alpha = '1.0' />
+	</Item>
+	<Item index = '132'>
+		<Colour4f red = '1.0' green = '0.62352943' blue = '0.015686275' alpha = '1.0' />
+	</Item>
+	<Item index = '133'>
+		<Colour4f red = '0.07450981' green = '0.20784314' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '134'>
+		<Colour4f red = '0.8980392' green = '0.9882353' blue = '0.16078432' alpha = '1.0' />
+	</Item>
+	<Item index = '135'>
+		<Colour4f red = '0.05490196' green = '1.0' blue = '0.35686275' alpha = '1.0' />
+	</Item>
+	<Item index = '136'>
+		<Colour4f red = '0.96862745' green = '0.15686275' blue = '0.5176471' alpha = '1.0' />
+	</Item>
+	<Item index = '137'>
+		<Colour4f red = '0.2' green = '0.7019608' blue = '0.34117648' alpha = '1.0' />
+	</Item>
+	<Item index = '138'>
+		<Colour4f red = '0.8' green = '0.0' blue = '1.0' alpha = '1.0' />
+	</Item>
+	<Item index = '139'>
+		<Colour4f red = '1.0' green = '0.8509804' blue = '0.2784314' alpha = '1.0' />
+	</Item>
+	<Item index = '140'>
+		<Colour4f red = '0.3137255' green = '0.6' blue = '0.85882354' alpha = '1.0' />
+	</Item>
+	<Item index = '141'>
+		<Colour4f red = '1.0' green = '0.49019608' blue = '0.047058824' alpha = '1.0' />
+	</Item>
+	<Item index = '142'>
+		<Colour4f red = '0.8627451' green = '0.42745098' blue = '0.7254902' alpha = '1.0' />
+	</Item>
+</ColourMap>

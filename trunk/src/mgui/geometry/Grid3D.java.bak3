@@ -1,0 +1,1660 @@
+/*
+* Copyright (C) 2011 Andrew Reid and the modelGUI Project <http://mgui.wikidot.com>
+* 
+* This file is part of modelGUI[core] (mgui-core).
+* 
+* modelGUI[core] is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* modelGUI[core] is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with modelGUI[core]. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package mgui.geometry;
+
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.WritableRaster;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
+import mgui.geometry.util.GeometryFunctions;
+import mgui.geometry.volume.VolumeFunctions;
+import mgui.image.util.WindowedColourModel;
+import mgui.interfaces.InterfaceSession;
+import mgui.numbers.MguiDouble;
+import mgui.numbers.MguiNumber;
+import mgui.util.ImageFunctions;
+
+/*************************
+ * Holds a 3D array of values and a Box3D defining the distribution of these
+ * values in R3. For use as a voxel set or volume 3D texture. Values are designated
+ * in terms of their size in bytes using the function setDataSize
+ * 
+ * <p>To avoid confusion, dimensions in a <code>Grid3D</code> shape, following the Java3D convention, 
+ * are specified as S (analogous to X), T (analogous to Y), and R (analogous to Z). 
+ * 
+ * <p>Voxels are referred to as integer arrays: {s, t, r}; and with an absolute index, calculated
+ * as: r * s_size * t_size + t * s_size + s.
+ * 
+ * @author Andrew Reid
+ * @version 1.0
+ *
+ */
+
+public class Grid3D extends Box3D {
+	
+	protected int s_size, t_size, r_size, v_size;
+	//protected float x_geom, y_geom, z_geom;
+	protected double data_min = 0, data_max = 255;
+	
+	public boolean[][][] mask;
+	
+	protected HashMap<String,ArrayList<BufferedImage[]>> channels = new HashMap<String,ArrayList<BufferedImage[]>> ();
+	protected HashMap<String, WindowedColourModel> colour_models = new HashMap<String, WindowedColourModel>();
+	protected ArrayList<String> ordered_channels = new ArrayList<String>();
+	protected ArrayList<Boolean> show_channels = new ArrayList<Boolean>();
+	
+	public final static String DEFAULT_CHANNEL = "default";
+	
+	public Grid3D(Grid3D grid){
+		setFromGrid(grid);
+	}
+	
+	public Grid3D(int s_size, int t_size, int r_size){
+		this(s_size, t_size, r_size, new WindowedColourModel());
+	}
+	
+	public Grid3D(int s_size, int t_size, int r_size, int v_size){
+		this(s_size, t_size, r_size, v_size, new WindowedColourModel());
+	}
+	
+	public Grid3D(int s_size, int t_size, int r_size, int v_size, Box3D bounds){
+		this(s_size, t_size, r_size, v_size, bounds, new WindowedColourModel());
+	}
+	
+	public Grid3D(int s_size, int t_size, int r_size, WindowedColourModel colour_model){
+		this(s_size, t_size, r_size, 1, new Box3D(new Point3f(),
+												  new Vector3f(1,0,0),
+												  new Vector3f(0,1,0),
+												  new Vector3f(0,0,1)),
+												  colour_model);
+	}
+	
+	
+	public Grid3D(int s_size, int t_size, int r_size, int v_size, WindowedColourModel colour_model){
+		this(s_size, t_size, r_size, v_size, new Box3D(new Point3f(),
+												  new Vector3f(1,0,0),
+												  new Vector3f(0,1,0),
+												  new Vector3f(0,0,1)),
+												  colour_model);
+	}
+	
+	public Grid3D(int s_size, int t_size, int r_size, int v_size, Box3D bounds, WindowedColourModel colour_model){
+		//super(s_size, t_size, r_size, v_size, bounds);
+		this.s_size = s_size;
+		this.t_size = t_size;
+		this.r_size = r_size;
+		this.v_size = v_size;
+		
+		appendChannel(DEFAULT_CHANNEL, colour_model);
+		setFromBox(bounds);
+	}
+	
+	public Grid3D(int s_size, int t_size, int r_size, int v_size, int transferType){
+		this(s_size, t_size, r_size, 1, new Box3D(new Point3f(),
+												  new Vector3f(1,0,0),
+												  new Vector3f(0,1,0),
+												  new Vector3f(0,0,1)),
+												  transferType);
+	}
+	
+	public Grid3D(int s_size, int t_size, int r_size, int v_size, Box3D bounds, int transferType){
+		//super(s_size, t_size, r_size, v_size, bounds);
+		this.s_size = s_size;
+		this.t_size = t_size;
+		this.r_size = r_size;
+		this.v_size = v_size;
+		
+		WindowedColourModel colour_model = new WindowedColourModel(transferType);
+		
+		appendChannel(DEFAULT_CHANNEL, colour_model);
+		setFromBox(bounds);
+	}
+	
+	/******************************
+	 * The bound box for a <code>Grid3D</code> is expanded by half a voxel size in each direction, at both
+	 * ends, since grid points are center points.
+	 * 
+	 *
+	public Box3D getBoundBox(){
+		
+		Box3D box = new Box3D(this);
+		
+		//half voxel sizes
+		float vox_s = this.getSDim() / this.getSizeS();
+		float vox_t = this.getTDim() / this.getSizeT();
+		float vox_r = this.getRDim() / this.getSizeR();
+		
+		//displace base point by half a voxel
+		//and expand axes by a voxel
+		Vector3f disp = new Vector3f(getSAxis());
+		disp.normalize();
+		disp.scale(-vox_s / 2f);
+		box.basePt.add(disp);
+		disp = new Vector3f(getSAxis());
+		disp.normalize();
+		disp.scale(vox_s);
+		box.sAxis.add(disp);
+		disp = new Vector3f(getTAxis());
+		disp.normalize();
+		disp.scale(-vox_s / 2f);
+		box.basePt.add(disp);
+		disp = new Vector3f(getTAxis());
+		disp.normalize();
+		disp.scale(vox_t);
+		box.sAxis.add(disp);
+		disp = new Vector3f(getRAxis());
+		disp.normalize();
+		disp.scale(-vox_r / 2f);
+		box.basePt.add(disp);
+		disp = new Vector3f(getRAxis());
+		disp.normalize();
+		disp.scale(vox_r);
+		box.sAxis.add(disp);
+		
+		return box;
+		
+	}
+	*/
+	
+	/******************************
+	 * Returns the midpoint of the voxel identified by <code>i</code>, where i is determined by the order
+	 * s < t < r. I.e., 
+	 * 
+	 * @param index The absolute index of the voxel
+	 */
+	@Override
+	public Point3f getVertex(int index){
+		
+		int[] voxel = getIndexAsVoxel(index);
+		return getMidPoint(voxel[0], voxel[1], voxel[2]);
+	}
+	
+	/*****************************************
+	 * Returns the absolute index of the voxel specified by the integer array {s, t, r}.
+	 * Calculated as: r * s_size * t_size + t * s_size + s.
+	 * 
+	 * @param voxel
+	 * @return
+	 */
+	public int getAbsoluteIndex(int[] voxel){
+		
+		return voxel[2] * s_size * t_size + voxel[1] * s_size + voxel[0];
+		
+	}
+	
+	/*****************************************
+	 * Returns a voxel as an integer array of the form {s, t, r}, from the absolute index <code>index</code>.
+	 * 
+	 * <p>A voxel {s, t, r} is determined by:
+	 * 
+	 * <p>r = ceil(index / (s_size * t_size))
+	 * <br>residual = index - (r - 1) * (s_size * t_size)
+	 * <br>t = ceil(residual / (s_size))
+	 * <br>s = residual - (t - 1) * (s_size)
+	 * 
+	 * @param index The absolute index of the voxel
+	 * @return the voxel as an integer array
+	 */
+	public int[] getIndexAsVoxel(int index){
+		
+		double r = Math.floor((double)index / ((double)(s_size * t_size)));
+		double residual = index - r * (double)(s_size * t_size);
+		double t = Math.floor(residual / (double)s_size);
+		double s = residual - t * (double)s_size;
+		return new int[]{(int)s, (int)t, (int)r};
+		
+	}
+	
+	/***********************************
+	 * Flips the data in the S dimension for the default channel.
+	 * 
+	 */
+	public void flipS(){
+		flipS(DEFAULT_CHANNEL);
+	}
+	
+	/***********************************
+	 * Flips the data in the S dimension for <code>channel</code>.
+	 * 
+	 */
+	public void flipS(String channel){
+		
+		for (int v = 0; v < v_size; v++){
+			BufferedImage[] images = channels.get(channel).get(v);
+			for (int k = 0; k < r_size; k++){
+				WritableRaster raster = images[k].getRaster();
+				WritableRaster raster2 = images[k].getRaster().createCompatibleWritableRaster();
+				raster2.setDataElements(0, 0, raster);
+				for (int i = 0; i < s_size; i++)
+					for (int j = 0; j < t_size; j++){
+						double[] value = raster2.getPixel(i, j, (double[])null);
+						raster.setPixel(s_size - i - 1, j, value);
+						}
+				}
+			}
+	}
+	
+	/***********************************
+	 * Flips the data in the T dimension for the default channel.
+	 * 
+	 */
+	public void flipT(){
+		flipS(DEFAULT_CHANNEL);
+	}
+	
+	/***********************************
+	 * Flips the data in the T dimension for <code>channel</code>.
+	 * 
+	 */
+	public void flipT(String channel){
+		
+		for (int v = 0; v < v_size; v++){
+			BufferedImage[] images = channels.get(channel).get(v);
+			for (int k = 0; k < r_size; k++){
+				WritableRaster raster = images[k].getRaster();
+				WritableRaster raster2 = images[k].getRaster().createCompatibleWritableRaster();
+				raster2.setDataElements(0, 0, raster);
+				for (int i = 0; i < s_size; i++)
+					for (int j = 0; j < t_size; j++){
+						double[] value = raster2.getPixel(i, j, (double[])null);
+						raster.setPixel(i, t_size - j - 1, value);
+						}
+				}
+			}
+	}
+	
+	/***********************************
+	 * Flips the data in the R dimension for the default channel.
+	 * 
+	 */
+	public void flipR(){
+		flipS(DEFAULT_CHANNEL);
+	}
+	
+	/***********************************
+	 * Flips the data in the R dimension for <code>channel</code>.
+	 * 
+	 */
+	public void flipR(String channel){
+		
+		for (int v = 0; v < v_size; v++){
+			BufferedImage[] images = channels.get(channel).get(v);
+			for (int k = 0; k < r_size; k++){
+				int k0 = r_size - k - 1;
+				if (k != k0){
+					//simply need to swap image data here
+					WritableRaster raster = images[k].getRaster();
+					WritableRaster swap = images[k0].getRaster();
+					images[k].setData(swap);
+					images[k0].setData(raster);
+					}
+				}
+			}
+	}
+	
+	/************************
+	 * Returns the data dimensions in the x (S) dimension
+	 * 
+	 * @return
+	 */
+	public int getSizeS(){
+		return s_size;
+	}
+	
+	/************************
+	 * Returns the data dimensions in the y (T) dimension
+	 * 
+	 * @return
+	 */
+	public int getSizeT(){
+		return t_size;
+	}
+	
+	/************************
+	 * Returns the data dimensions in the z (R) dimension
+	 * 
+	 * @return
+	 */
+	public int getSizeR(){
+		return r_size;
+	}
+	
+	public int getSizeV(){
+		return v_size;
+	}
+	
+	public float getGeomS(){
+		return getSDim();
+	}
+	
+	public float getGeomT(){
+		return getTDim();
+	}
+	
+	public int getSize(){
+		return getSizeR() * getSizeS() * getSizeT() * getSizeV();
+	}
+	
+	public float getGeomR(){
+		return getRDim();
+	}
+	
+	public void setFromGrid(Grid3D grid){
+		
+		setFromBox(grid);
+		
+		this.s_size = grid.s_size;
+		this.t_size = grid.t_size;
+		this.r_size = grid.r_size;
+		this.v_size = grid.v_size;
+		this.data_max = grid.data_max;
+		this.data_min = grid.data_min;
+		
+		//copy channels; copy all images
+		ArrayList<String> channel_names = grid.getChannels();
+		for (int i = 0; i < channel_names.size(); i++){
+			String channel = channel_names.get(i);
+			ArrayList<BufferedImage[]> images = grid.channels.get(channel);
+			ArrayList<BufferedImage[]> new_images = new ArrayList<BufferedImage[]>(v_size);
+			WindowedColourModel colour_model = grid.getColourModel(channel);
+			for (int t = 0; t < grid.v_size; t++){
+				BufferedImage[] c_images = images.get(t);
+				BufferedImage[] new_c_images = new BufferedImage[r_size];
+				for (int j = 0; j < r_size; j++)
+					new_c_images[j] = ImageFunctions.getCopy(c_images[j]);
+				new_images.add(new_c_images);
+				}
+			channels.put(channel, new_images);
+			colour_models.put(channel, colour_model);
+			ordered_channels.add(0, channel);
+			}
+		
+		
+	}
+	
+	@Override
+	public Object clone(){
+		return new Grid3D(this);
+	}
+	
+	public ArrayList<String> getChannels(){
+		return new ArrayList<String>(ordered_channels);
+	}
+	
+	public ArrayList<Boolean> getShowChannels(){
+		return new ArrayList<Boolean>(show_channels);
+	}
+	
+	/*******************************
+	 * Adds a channel at the top of the list (thus by default it will be the top overlay)
+	 * 
+	 * @param channel
+	 * @param colour_model
+	 */
+	public void pushChannel(String channel, WindowedColourModel colour_model){
+		channels.put(channel, new ArrayList<BufferedImage[]>(v_size));
+		colour_models.put(channel, colour_model);
+		ordered_channels.add(0, channel);
+		initArray(channel);
+	}
+	
+	/*******************************
+	 * Adds a channel at the bottom of the list (thus by default it will be the bottom overlay)
+	 * 
+	 * @param channel
+	 */
+	public void appendChannel(String channel){
+		appendChannel(channel, new WindowedColourModel(DataBuffer.TYPE_DOUBLE));
+	}
+	
+	/*******************************
+	 * Adds a channel at the bottom of the list (thus by default it will be the bottom overlay)
+	 * 
+	 * @param channel
+	 */
+	public void appendChannel(String channel, int transferType){
+		appendChannel(channel, new WindowedColourModel(transferType));
+	}
+	
+	/*******************************
+	 * Adds a channel at the bottom of the list (thus by default it will be the bottom overlay)
+	 * 
+	 * @param channel
+	 * @param colour_model
+	 */
+	public void appendChannel(String channel, WindowedColourModel colour_model){
+		channels.put(channel, new ArrayList<BufferedImage[]>(v_size));
+		colour_models.put(channel, colour_model);
+		ordered_channels.add(channel);
+		initArray(channel);
+	}
+	
+	public void removeChannel(String channel){
+		channels.remove(channel);
+		colour_models.remove(channel);
+	}
+	
+	public void setChannelPosition(String channel, int pos){
+		ArrayList<String> new_order = new ArrayList<String>();
+		for (int i = 0; i < ordered_channels.size(); i++){
+			if (i == pos)
+				new_order.add(channel);
+			else if (!ordered_channels.get(i).equals(channel))
+				new_order.add(ordered_channels.get(i));
+			}
+		ordered_channels = new_order;
+	}
+	
+	public int getChannelPosition(String channel){
+		for (int i = 0; i < ordered_channels.size(); i++)
+			if (ordered_channels.get(i).equals(channel))
+				return i;
+		return -1;
+	}
+	
+	/***************************************
+	 * Inits arrays by instantiating the BufferedImages with colour_model and setting their values to
+	 * Double.NaN (transparent)
+	 */
+	protected void initArrays(){
+		
+		if (channels == null) return;
+		
+		Iterator<String> itr = channels.keySet().iterator(); 
+		
+		while (itr.hasNext()){
+			String channel = itr.next();
+			initArray(channel);
+			}
+		
+	}
+	
+	/************
+	 * Returns a copy of this box's S-axis (analogous to X-axis), plus one voxel. This is useful for
+	 * determining bounds dimensions, by adding half a voxel to each end.
+	 * 
+	 * @return
+	 */
+	public Vector3f getSBoundsAxis(){
+		Vector3f v = new Vector3f(sAxis);
+		v.scale((float)(getSizeS() + 1) / (float)getSizeS());
+		return v;
+	}
+	
+	/************
+	 * Returns a copy of this box's T-axis (analogous to Y-axis), plus one voxel. This is useful for
+	 * determining bounds dimensions, by adding half a voxel to each end.
+	 * 
+	 * @return
+	 */
+	public Vector3f getTBoundsAxis(){
+		Vector3f v = new Vector3f(tAxis);
+		v.scale((float)(getSizeT() + 1) / (float)getSizeT());
+		return v;
+	}
+	
+	/************
+	 * Returns a copy of this box's R-axis (analogous to Z-axis), plus one voxel. This is useful for
+	 * determining bounds dimensions, by adding half a voxel to each end.
+	 * 
+	 * @return
+	 */
+	public Vector3f getRBoundsAxis(){
+		Vector3f v = new Vector3f(rAxis);
+		v.scale((float)(getSizeR() + 1) / (float)getSizeR());
+		return v;
+	}
+	
+	/**********************************
+	 * Returns the data at time 0 in this volume as a double array
+	 * 
+	 * @return
+	 */
+	public double[][][] getDoubleArray(){
+		return getDoubleArray(DEFAULT_CHANNEL, 0, 0, false, false, false, false);
+	}
+	
+	/**********************************
+	 * Returns the data at time t in this volume as a double array. Indices are Z,Y,X, as required
+	 * for writing.
+	 * 
+	 * @return
+	 */
+	public double[][][] getDoubleArray(int t){
+		return getDoubleArray(DEFAULT_CHANNEL, t, 0, false, false, false, false);
+	}
+	
+	/**********************************
+	 * Returns the data at time t in this volume as a double array. Indices are Z,Y,X, as required
+	 * for writing.
+	 * 
+	 * @return
+	 */
+	public double[][][] getDoubleArray(int t, boolean flipX, boolean flipY, boolean flipZ){
+		return getDoubleArray(DEFAULT_CHANNEL, t, 0, flipX, flipY, flipZ, false);
+	}
+	
+	/**********************************
+	 * Returns the data at time t in this volume as a double array. Indices are Z,Y,X, as required
+	 * for writing.
+	 * 
+	 * @return
+	 */
+	public double[][][] getDoubleArray(int t, boolean flipX, boolean flipY, boolean flipZ, boolean apply_masks){
+		return getDoubleArray(DEFAULT_CHANNEL, t, 0, flipX, flipY, flipZ, apply_masks);
+	}
+	
+	/**********************************
+	 * Returns the data at time t in this volume as a double array. Indices are Z,Y,X, as required
+	 * for writing.
+	 * 
+	 * @return
+	 */
+	public double[][][] getDoubleArray(int t, boolean apply_masks){
+		return getDoubleArray(DEFAULT_CHANNEL, t, 0, false, false, false, apply_masks);
+	}
+	
+	/**********************************
+	 * Returns the data from <code>channel</code> at time <code>t</code> in this volume as a double array. 
+	 * Indices are Z,Y,X, corresponding to the ZYXT format.
+	 * 
+	 * @return
+	 */
+	public double[][][] getDoubleArray(String channel, int t){
+		return getDoubleArray(channel, t, 0, false, false, false, false);
+	}
+	
+	/**********************************
+	 * Returns the data from <code>channel</code> at time <code>t</code> in this volume as a double array. 
+	 * Indices are Z,Y,X, corresponding to the ZYXT format.
+	 * 
+	 * @param channel Channel to use
+	 * @param t Volume (time point) to use
+	 * @param zero_value Value to substitute for the zero value (i.e., Double.POSITIVE_INFINITY) 
+	 * 
+	 * @return
+	 */
+	public double[][][] getDoubleArray(String channel, int t, double zero_value){
+		return getDoubleArray(channel, t, zero_value, false, false, false, false);
+	}
+	
+	/**********************************
+	 * Returns the data from <code>channel</code> at volume <code>v</code> in this grid as a double array. 
+	 * Indices are R,T,S; corresponding to the ZYXT format.
+	 * 
+	 * @param channel 		Channel to use
+	 * @param v 			Volume to use
+	 * @param zero_value 	Value to substitute for the zero value 
+	 * @param flipS			Flips S coordinates
+	 * @param flipT			Flips T coordinates
+	 * @param flipR			Flips R coordinates
+	 * @param apply_masks	Applies the active set of masks if <code>true</code>
+	 * 
+	 * @return
+	 */
+	public double[][][] getDoubleArray(String channel, int v, double zero_value, 
+									   boolean flipS, boolean flipT, boolean flipR,
+									   boolean apply_masks){
+		
+		double[][][] data = new double[r_size][t_size][s_size];
+				
+		BufferedImage[] images = channels.get(channel).get(v);
+		for (int k = 0; k < r_size; k++){
+			int k0 = k;
+			if (flipR) k0 = r_size - k - 1;
+			WritableRaster raster = images[k].getRaster();
+			for (int i = 0; i < s_size; i++)
+				for (int j = 0; j < t_size; j++){
+					int i0 = i;
+					if (flipS) i0 = s_size - i - 1;
+					int j0 = j;
+					if (flipT) j0 = t_size - j - 1;
+					double d = zero_value; 
+					if (!apply_masks || !mask[i][j][k])
+						d = raster.getPixel(i, j, (double[])null)[0];
+					
+					if (isZeroValue(d))
+						data[k0][j0][i0] = zero_value;
+					else
+						data[k0][j0][i0] = d; // raster.getPixel(i, j, (double[])null)[0];
+					}
+			}
+			
+		return data;
+		
+	}
+	
+	/**************************************************************
+	 * Fills all voxels in this grid's default channel with the specified value
+	 * 
+	 * @param value Fill value
+	 */
+	public void fill(double value){
+		fill(DEFAULT_CHANNEL, value);
+	}
+	
+	/**************************************************************
+	 * Fills all voxels in the specified channel with the specified value
+	 * 
+	 * @param channel Channel to fill
+	 * @param value Fill value
+	 */
+	public void fill(String channel, double value){
+		
+		for (int t = 0; t < v_size; t++){
+			BufferedImage[] images = channels.get(channel).get(t);
+			for (int k = 0; k < r_size; k++){
+				WritableRaster raster = images[k].getRaster();
+				for (int i = 0; i < s_size; i++)
+					for (int j = 0; j < t_size; j++)
+						raster.setPixel(i, j, new double[]{value});
+				}
+			}
+		
+	}
+	
+	protected void initArray(String channel){
+		initArray(channel, 0, Double.POSITIVE_INFINITY);
+	}
+	
+	protected void initArray(String channel, double fill_value, double mask_value){
+		ArrayList<BufferedImage[]> grid = new ArrayList<BufferedImage[]>(v_size);
+		channels.put(channel, grid);
+		WindowedColourModel colour_model = colour_models.get(channel);
+				
+		for (int t = 0; t < v_size; t++){
+			BufferedImage[] images = new BufferedImage[powerOfTwo(r_size)];
+			grid.add(images);
+			for (int k = 0; k < powerOfTwo(r_size); k++){
+				WritableRaster raster = colour_model.createCompatibleWritableRaster(powerOfTwo(s_size), powerOfTwo(t_size));
+				BufferedImage image = new BufferedImage(colour_model, raster, false, null);
+				images[k] = image;
+				for (int i = 0; i < powerOfTwo(s_size); i++)
+					for (int j = 0; j < powerOfTwo(t_size); j++)
+						if (i >= s_size || j >= t_size || k >= r_size)
+							raster.setPixel(i, j, new double[]{mask_value});
+						else
+							raster.setPixel(i, j, new double[]{fill_value});
+				}
+			}
+	}
+	
+	protected ArrayList<BufferedImage[]> getDefaultGrid(){
+		return channels.get(DEFAULT_CHANNEL);
+	}
+	
+	/***************************************
+	 * Updates the pixel values for images in this grid
+	 */
+	protected void updateArrays(){
+		
+		if (getDefaultGrid() == null) initArrays();
+		Iterator<String> itr = channels.keySet().iterator(); 
+		
+		while (itr.hasNext()){
+			String channel = itr.next();
+			ArrayList<BufferedImage[]> grids = channels.get(channel);
+			WindowedColourModel colour_model = colour_models.get(channel);
+			for (int t = 0; t < v_size; t++){
+				BufferedImage[] images = grids.get(t);
+				for (int k = 0; k < r_size; k++)
+					for (int i = 0; i < s_size; i++)
+						for (int j = 0; j < t_size; j++){
+							WritableRaster raster = images[k].getRaster();
+							images[k] = new BufferedImage(colour_model, raster, false, null);
+							}
+				}
+			}
+		
+	}
+	
+	/***************************************
+	 * Updates the images in this grid with the specified colour model 
+	 * 
+	 * @param model
+	 */
+	public void setColourModel(WindowedColourModel model){
+		setColourModel(DEFAULT_CHANNEL, model);
+	}
+	
+	public void setColourModel(String channel, WindowedColourModel model){
+		colour_models.put(channel, model);
+		updateArrays();
+	}
+	
+	public WindowedColourModel getColourModel(){
+		return getColourModel(DEFAULT_CHANNEL);
+	}
+	
+	public WindowedColourModel getColourModel(String channel){
+		return colour_models.get(channel);
+	}
+	
+	public BufferedImage[] getImages(int t){
+		return getImages(DEFAULT_CHANNEL, t);
+	}
+	
+	public BufferedImage[] getImages(String channel, int t){
+		ArrayList<BufferedImage[]> grids = channels.get(channel);
+		if (grids == null) return null;
+		return grids.get(t);
+	}
+	
+	/*********************************
+	 * Returns an overlay of all channels, ordered by <code>ordered_channels</code>.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	public BufferedImage[] getImagesOverlay(int t){
+		
+		BufferedImage[] o_images = new BufferedImage[r_size];
+		WindowedColourModel model = getColourModel();
+		
+		for (int k = 0; k < r_size; k++){
+			//compile ordered list of images at z for all shown channels
+			ArrayList<BufferedImage> z_images = new ArrayList<BufferedImage>();
+			for (int c = 0; c < ordered_channels.size(); c++)
+				z_images.add(channels.get(ordered_channels.get(c)).get(t)[k]);
+			
+			//get overlay
+			o_images[k] = VolumeFunctions.getOverlayImage(z_images, model);
+			}
+		
+		return o_images;
+	}
+	
+	public BufferedImage getImage(int z){
+		return getImage(z, 0);
+	}
+	
+	public BufferedImage getImage(int z, int t){
+		return getImage(DEFAULT_CHANNEL, z, t);
+	}
+	
+	public BufferedImage getImage(String channel, int z, int t){
+		ArrayList<BufferedImage[]> grids = channels.get(channel);
+		if (grids == null) return null;
+		return grids.get(t)[z];
+	}
+	
+	/**************************************
+	 * Copies data from <code>source_channel</code> into this grid's <code>target_channel</code>. If <code>target_channel</code>
+	 * doesn't exist, it will be created.
+	 * 
+	 * @param grid
+	 * @param channel
+	 */
+	public boolean copyChannel(Grid3D grid, String source_channel, String target_channel){
+		
+		if (!(grid.getSizeR() == this.getSizeR() && grid.getSizeS() == this.getSizeS() && grid.getSizeT() == this.getSizeT()))
+			return false;
+		
+		ArrayList<BufferedImage[]> data_in = grid.channels.get(source_channel);
+		if (data_in == null) 
+			return false;
+		
+		ArrayList<BufferedImage[]> data_out = channels.get(target_channel);
+		if (data_out == null){
+			appendChannel(target_channel, grid.getDataType(source_channel));
+			data_out = channels.get(target_channel);
+			}
+		
+		for (int v = 0; v < this.v_size; v++){
+			for (int k = 0; k < this.r_size; k++){
+				WritableRaster input = data_in.get(v)[k].getRaster();
+				WritableRaster output = data_out.get(v)[k].getRaster();
+				if (input.getTransferType() == output.getTransferType()){
+					output.setDataElements(0, 0, s_size, t_size, input.getDataElements(0, 0, s_size, t_size, null));
+				}else{
+					//incompatible types, must copy per pixel
+					for (int i = 0; i < s_size; i++)
+						for (int j = 0; j < t_size; j++){
+							double[] pixel = input.getPixel(i, j, (double[])null);
+							output.setPixel(i, j, pixel);
+							}
+					}
+				}
+			}
+		
+		updateDataRange();
+		
+		return true;
+	}
+	
+	/***************************************
+	 * Set the base value for specified grid element. Assumes t = 0.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param value
+	 */
+	public void setValue(int x, int y, int z, double value){
+		setValue(DEFAULT_CHANNEL, x, y, z, 0, value);
+	}
+	
+	public void setValue(int x, int y, int z, int t, double value){
+		setValue(DEFAULT_CHANNEL, x, y, z, t, value);
+	}
+	
+	public void setValue(int index, double value){
+		setValue(DEFAULT_CHANNEL, index, value);
+	}
+	
+	public void setValue(String channel, int index, double value){
+		int[] voxel = getIndexAsVoxel(index);
+		setValue(channel, voxel[0], voxel[1], voxel[2], 0, value);
+	}
+	
+	public void setValue(String channel, int x, int y, int z, int t, double value){
+		if (x < 0 || x >= s_size || y < 0 || y >= t_size || z < 0 || z >= r_size || t < 0 || t >= v_size)
+			return;
+		BufferedImage image = getImage(channel, z, t);
+		image.getRaster().setPixel(x, getY(y), new double[]{value});
+	}
+	
+	/************************************
+	 * Returns the value at the absolute index <code>index</code>, for the default channel, and
+	 * volume 0.
+	 * 
+	 * @param voxel
+	 * @return
+	 */
+	public double getValue(int index){
+		return getValue(DEFAULT_CHANNEL, index);
+	}
+	
+	/************************************
+	 * Returns the value at the absolute index <code>index</code>, for the default channel, and
+	 * volume 0.
+	 * 
+	 * @param voxel
+	 * @return
+	 */
+	public double getValue(String channel, int index){
+		int[] voxel = getIndexAsVoxel(index);
+		return getValue(channel, voxel[0], voxel[1], voxel[2], 0);
+	}
+	
+	/************************************
+	 * Returns the value at the absolute index <code>index</code>.
+	 * 
+	 * @param voxel
+	 * @return
+	 */
+	public double getValue(String channel, int index, int t){
+		int[] voxel = getIndexAsVoxel(index);
+		return getValue(channel, voxel[0], voxel[1], voxel[2], t);
+	}
+	
+	/************************************
+	 * Returns the value at <code>voxel</code>, for the default channel, at volume 0. 
+	 * 
+	 * @param voxel
+	 * @return
+	 */
+	public double getValue(int[] voxel){
+		return getValue(voxel[0], voxel[1], voxel[2]);
+	}
+	
+	/************************************
+	 * Returns the value at <code>voxel</code>. 
+	 * 
+	 * @param voxel
+	 * @return
+	 */
+	public double getValue(String channel, int[] voxel, int t){
+		return getValue(channel, voxel[0], voxel[1], voxel[2], t);
+	}
+	
+	public double getValue(int x, int y, int z){
+		return getValue(DEFAULT_CHANNEL, x, y, z, 0);
+	}
+	
+	public double getValue(int x, int y, int z, int t){
+		return getValue(DEFAULT_CHANNEL, x, y, z, t);
+	}
+	
+	/***************************************
+	 * Returns the raw (unscaled) value for the specified channel and grid coordinates.
+	 * 
+	 * @param channel
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param t
+	 * @return
+	 */
+	public double getValue(String channel, int x, int y, int z, int t){
+		double[] dummy = null;
+		double value = getImage(channel, z, t).getRaster().getPixel(x, getY(y), dummy)[0];
+		//WindowedColourModel model = getColourModel(channel);
+		//if (model != null)
+		//	return model.getMappedValue(value);
+		return value;
+	}
+	
+	/************************************
+	 * Returns the value at <code>voxel</code>. 
+	 * 
+	 * @param voxel
+	 * @return
+	 */
+	public double getScaledValue(String channel, int[] voxel, int t){
+		return getValue(channel, voxel[0], voxel[1], voxel[2], t);
+	}
+	
+	public double getScaledValue(int x, int y, int z){
+		return getValue(DEFAULT_CHANNEL, x, y, z, 0);
+	}
+	
+	public double getScaledValue(int x, int y, int z, int t){
+		return getValue(DEFAULT_CHANNEL, x, y, z, t);
+	}
+	
+	/***************************************
+	 * Returns the value for the specified channel and grid coordinates; value will be scaled by
+	 * the intercept/scale defined in its colour model, if it is set.
+	 * 
+	 * @param channel
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param t
+	 * @return
+	 */
+	public double getScaledValue(String channel, int x, int y, int z, int t){
+		WindowedColourModel model = getColourModel(channel);
+		return model.getMappedValue(getValue(channel,x,y,z,t));
+	}
+	
+	/***************************************************
+	 * Returns a list of all values in this grid (1st image); arranged in the order X, then Y, then Z.
+	 * Returns values for default channel, first image. Values will be scaled by
+	 * the intercept/scale defined in its colour model, if it is set.
+	 * 
+	 * @return
+	 */
+	public ArrayList<MguiNumber> getScaledValues(){
+		return getValues(DEFAULT_CHANNEL, 0);
+	}
+	
+	/***************************************************
+	 * Returns a list of all values in this grid for the {@code volume}th image, for the channel {@code channel}. 
+	 * Arranged in the order X, then Y, then Z. Valuea will be scaled by
+	 * the intercept/scale defined in its colour model, if it is set.
+	 * 
+	 * @return
+	 */
+	public ArrayList<MguiNumber> getScaledValues(String channel, int volume){
+		ArrayList<MguiNumber> values = new ArrayList<MguiNumber>();
+		
+		for (int k = 0; k < this.r_size; k++)
+			for (int j = 0; j < this.t_size; j++)
+				for (int i = 0; i < this.s_size; i++)
+					values.add(new MguiDouble(getValue(channel, i, j, k, volume)));
+		
+		return values;
+		
+	}
+	
+	/***************************************************
+	 * Returns a list of all values in this grid for the {@code volume}th image, for the channel {@code channel}. 
+	 * Arranged in the order X, then Y, then Z.
+	 * 
+	 * @return
+	 */
+	public ArrayList<MguiNumber> getValues(){
+		return getValues(DEFAULT_CHANNEL, 0);
+	}
+	
+	/***************************************************
+	 * Returns a list of all values in this grid for the {@code volume}th image, for the channel {@code channel}. 
+	 * Arranged in the order X, then Y, then Z.
+	 * 
+	 * @return
+	 */
+	public ArrayList<MguiNumber> getValues(String channel, int volume){
+		ArrayList<MguiNumber> values = new ArrayList<MguiNumber>();
+		
+		for (int k = 0; k < this.r_size; k++)
+			for (int j = 0; j < this.t_size; j++)
+				for (int i = 0; i < this.s_size; i++)
+					values.add(new MguiDouble(getValue(channel, i, j, k, volume)));
+		
+		return values;
+		
+	}
+	
+	/*******************************************************
+	 * Sets values for the first image of the default channel. Values must be ordered X, then Y, then Z.
+	 * 
+	 * @param values
+	 */
+	public void setValues(ArrayList<MguiNumber> values){
+		setValues(DEFAULT_CHANNEL, 0, values);
+	}
+	
+	/*******************************************************
+	 * Sets values for the {@code volume}th image of the channel {@code channel}. 
+	 * Values must be ordered X, then Y, then Z.
+	 * 
+	 * @param values
+	 */
+	public void setValues(String channel, int volume, ArrayList<MguiNumber> values){
+		for (int k = 0; k < this.r_size; k++)
+			for (int j = 0; j < this.t_size; j++)
+				for (int i = 0; i < this.s_size; i++){
+					int index = getAbsoluteIndex(i, j, k);
+					setValue(channel, index, values.get(index).getValue());
+					}
+	}
+	
+	public double getMaskedValue(int x, int y, int z){
+		return getMaskedValue(DEFAULT_CHANNEL, x, y, z, 0);
+	}
+	
+	public double getMaskedValue(int x, int y, int z, int t){
+		return getMaskedValue(DEFAULT_CHANNEL, x, y, z, t);
+	}
+	
+	public double getMaskedValue(String channel, int x, int y, int z, int t){
+		if (isMasked(x, y, z)) return getZeroValue(channel);
+		double[] dummy = null;
+		return getImage(channel, z, t).getRaster().getPixel(x, getY(y), dummy)[0];
+	}
+	
+	public boolean isMasked(int i, int j, int k){
+		return (mask != null && mask[i][j][k]);
+	}
+	
+	public int getY(int y){
+		return t_size - y - 1;
+	}
+	
+	/**********************
+	 * Returns the data type (one of the types specified by {@link DataBuffer}) for the default channel.
+	 * 
+	 * @return
+	 */
+	public int getDataType(){
+		return getDataType(DEFAULT_CHANNEL);
+	}
+	
+	/**********************
+	 * Returns the data type (one of the types specified by {@link DataBuffer}) for <code>channel</code>.
+	 * 
+	 * @return
+	 */
+	public int getDataType(String channel){
+		WindowedColourModel colour_model = colour_models.get(channel);
+		return colour_model.getTransferType();
+	}
+	
+	public BufferedImage[] getMaskedImages(){
+		return getMaskedImages(DEFAULT_CHANNEL, 0);
+	}
+	
+	public BufferedImage[] getMaskedImages(int t){
+		return getMaskedImages(DEFAULT_CHANNEL, t);
+	}
+	
+	public BufferedImage[] getMaskedImages(String channel, int t){
+		ArrayList<BufferedImage[]> grids = channels.get(channel);
+		if (grids == null) return null;
+		
+		BufferedImage[] images = grids.get(t);
+		
+		if (!hasMask())
+			return images;
+		
+		//otherwise pass copy of images with mask applied
+		BufferedImage[] copy = new BufferedImage[images.length];
+		BufferedImage source = images[0];
+		int x = source.getWidth();
+		int y = source.getHeight();
+		WritableRaster raster = source.getColorModel().createCompatibleWritableRaster(x, y);
+		BufferedImage target = new BufferedImage(source.getColorModel(), raster, false, null);
+		
+		
+		//fill up excess power-of-two space
+		for (int k = r_size; k < images.length; k++){
+			copy[k] = target;
+			ImageFunctions.fillImage(target, getZeroValue(channel));
+			}
+		
+		for (int k = 0; k < r_size; k++){
+			source = images[k];
+			raster = source.getColorModel().createCompatibleWritableRaster(x, y);
+			target = new BufferedImage(source.getColorModel(), raster, false, null);
+			ImageFunctions.fillImage(target, getZeroValue(channel));
+			
+			for (int i = 0; i < s_size; i++)
+				for (int j = 0; j < t_size; j++){
+					double[] pixel = new double[source.getColorModel().getNumComponents()];
+					if (mask[i][j][k])
+						setToZero(pixel);
+					else
+						source.getRaster().getPixel(i, j, pixel);
+					target.getRaster().setPixel(i, j, pixel);
+					}
+			copy[k] = target; 
+			}
+		
+		return copy;
+	}
+	
+	//POSITIVE_INFINITY is transparency value
+	protected void setToZero(double[] pixel){
+		setToZero(DEFAULT_CHANNEL, pixel);
+	}
+	
+	protected void setToZero(String channel, double[] pixel){
+		Arrays.fill(pixel, getZeroValue());
+	}
+	
+	protected boolean isZeroValue(double d){
+		//return Double.POSITIVE_INFINITY == d;
+		return d == getZeroValue();
+	}
+	
+	protected boolean isZeroValue(String channel, double d){
+		//return Double.POSITIVE_INFINITY == d;
+		return d == getZeroValue(channel);
+	}
+	
+	protected double getZeroValue(){
+		return getZeroValue(DEFAULT_CHANNEL);
+	}
+	
+	protected double getZeroValue(String channel){
+		
+		WindowedColourModel model = this.getColourModel(channel);
+		return WindowedColourModel.getZeroValue(model.getTransferType());
+		
+	}
+	
+	public void setBounds(Box3D bounds){
+		//this.bounds = new Box3D(bounds);
+		setFromBox(bounds);
+	}
+	
+	public double getDataMin(){
+		return data_min;
+	}
+	
+	public double getDataMax(){
+		return data_max;
+	}
+	
+	public void setDataMin(double m){
+		data_min = m;
+	}
+	
+	public void setDataMax(double m){
+		data_max = m;
+	}
+	
+	/**************************************
+	 * Updates data min and max based upon current state of grid.
+	 */
+	public void updateDataRange(){
+		
+		data_min = Double.MAX_VALUE;
+		data_max = -Double.MAX_VALUE;
+		
+		for (int t = 0; t < v_size; t++)
+			for (int k = 0; k < r_size; k++)
+				for (int j = 0; j < t_size; j++)
+					for (int i = 0; i < s_size; i++){
+						double v = getValue(i, j, k, t);
+						data_min = Math.min(data_min, v);
+						data_max = Math.max(data_max, v);
+						}
+		
+	}
+	
+	public boolean[][][] getMaskForGrid(boolean fill){
+		
+		boolean[][][] mask = new boolean[s_size][t_size][r_size];
+		for (int i = 0; i < s_size; i++)
+			for (int j = 0; j < t_size; j++)
+				Arrays.fill(mask[i][j], fill);
+		
+		return mask;
+	}
+	
+	/*******************************************
+	 * Returns a boolean mask for volume 0, based on a threshold value and a comparison, where 
+	 * <p><code>compare</code> < 0 is less than, and
+	 * <p><code>compare</code> > 0 is greater than.
+	 * 
+	 * @param threshold		Threshold value
+	 * @param compare		Comparison to perform
+	 * @return
+	 */
+	public boolean[][][] getThresholdMask(double threshold, int compare){
+		return getThresholdMask(threshold, compare, 0);
+	}
+	
+	/*******************************************
+	 * Returns a boolean mask for volume <code>v</code> based on a threshold value and a comparison, where 
+	 * <p><code>compare == -1</code> is less than, and
+	 * <p><code>compare == +1</code> is greater than.
+	 * 
+	 * @param threshold		Threshold value
+	 * @param compare		Comparison to perform
+	 * @param v				Volume to query
+	 * @return
+	 */
+	public boolean[][][] getThresholdMask(double threshold, int compare, int v){
+		
+		boolean[][][] mask = new boolean[s_size][t_size][r_size];
+		for (int i = 0; i < s_size; i++)
+			for (int j = 0; j < t_size; j++)
+				for (int k = 0; k < r_size; k++){
+					double val = this.getValue(i, j, k, v);
+					mask[i][j][k] = GeometryFunctions.compareDouble(val, threshold) != compare;
+					}
+		
+		return mask;
+	}
+	
+	/**********************************
+	 * Determines the voxel which encloses point <code>p</code>. Returns an array containing
+	 * the coordinates of the voxel (i, j, k), or <code>null</code> if <code>p</code> is
+	 * not contained by this volume.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public int[] getEnclosingVoxel(Point3f p){
+		Vector3f v = new Vector3f(p);
+		Point3f voxel_base_point = getMidPoint(0, 0, 0);
+		v.sub(p, voxel_base_point);
+		
+		Matrix4f M = this.getBasisTransform();
+		v = GeometryFunctions.transform(v, M);
+		/*
+		Transform3D basis_transform = new Transform3D();
+		basis_transform.set(M);
+		try{
+			basis_transform.invert();
+		}catch (SingularMatrixException e){
+			e.printStackTrace();
+			return null;
+			}
+		*/
+	
+		float x_geom = getSDim();
+		float y_geom = getTDim();
+		float z_geom = getRDim();
+		
+		//inverse_transform.transform(v);
+		//basis_transform.transform(v);
+		int i = Math.round(v.x / x_geom * s_size);
+		if (i < 0 && ++i < 0) 
+			return null; 
+		if (i >= s_size && --i >= s_size) 
+			return null; 
+		int j = Math.round(v.y / y_geom * t_size);
+		if (j < 0 && ++j < 0) 
+			return null;
+		if (j >= t_size && --j >= t_size) 
+			return null;
+		int k = Math.round(v.z / z_geom * r_size);
+		if (k < 0 && ++k < 0) 
+			return null; 
+		if (k >= r_size && --k >= r_size) 
+			return null; 
+		
+		return new int[]{i, j, k};
+	}
+	
+	/*************************
+	 * Returns the value at point <code>p</code>.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public double getValueAtPoint(Point3f p){
+		return getValueAtPoint(p, 0);
+	}
+	
+	/*************************
+	 * Returns the value at point <code>p</code>.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public double getValueAtPoint(Point3f p, int t){
+		int[] coords = getEnclosingVoxel(p);
+		if (coords == null) return Double.MAX_VALUE;
+		return getValue(coords[0], coords[1], coords[2], t);
+	}
+	
+	/*************************
+	 * Returns the value at point <code>p</code> if it is not masked, otherwise returns the zero
+	 * value.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public double getMaskedValueAtPoint(Point3f p){
+		return getMaskedValueAtPoint(p, 0);
+	}
+	
+	/*************************
+	 * Returns the value at point <code>p</code> if it is not masked, otherwise returns the zero
+	 * value.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public double getMaskedValueAtPoint(Point3f p, int t){
+		int[] coords = getEnclosingVoxel(p);
+		if (coords == null) return Double.NaN;
+		return getMaskedValue(coords[0], coords[1], coords[2], t);
+	}
+	
+	/**********************************************
+	 * Returns a value which is interpolated from the voxel enclosing <code>p</code> and its nearest neighbours.
+	 * Interpolation is an average weighted by the inverse distance of the center points of these neighbouring
+	 * voxels to <code>p</code>.
+	 * <code>t</code> is assumed to be 0.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public double getInterpolatedValueAtPoint(Point3f p){
+		return getInterpolatedValueAtPoint(p, 0);
+	}
+	
+	/**********************************************
+	 * Returns a value which is interpolated from the voxel enclosing <code>p</code> and its nearest neighbours.
+	 * Interpolation is an average weighted by the inverse distance of the center points of these neighbouring
+	 * voxels to <code>p</code>.
+	 * 
+	 * @param p The geometric point at which to sample
+	 * @param t The time, if this is a stack of time points
+	 * @return The sampled value, or <code>Double.NaN</code> if this point is not within the bounds of this grid
+	 */
+	public double getInterpolatedValueAtPoint(Point3f p, int t){
+		return getInterpolatedValueAtPoint(DEFAULT_CHANNEL, p, t);
+	}
+	
+	/**********************************************
+	 * Returns a value which is interpolated from the voxel enclosing <code>p</code> and its nearest neighbours.
+	 * Interpolation is an average weighted by the inverse distance of the center points of these neighbouring
+	 * voxels to <code>p</code>.
+	 * 
+	 * @param p The geometric point at which to sample
+	 * @param t The time, if this is a stack of time points
+	 * @return The sampled value, or <code>Double.NaN</code> if this point is not within the bounds of this grid
+	 */
+	public double getInterpolatedValueAtPoint(String channel, Point3f p, int t){
+		
+		//if (!bounds.contains(p)) return Double.NaN;
+		if (!contains(p)) return Double.NaN;
+		
+		int[] coords = getEnclosingVoxel(p);
+		float x_geom = getSDim();
+		float y_geom = getTDim();
+		float z_geom = getRDim();
+		
+		float voxel_delta = Math.max(x_geom / s_size, y_geom / t_size);
+		voxel_delta = Math.max(voxel_delta, z_geom / r_size);
+		
+		double w_sum = 0;
+		double val = 0;
+		
+		//for enclosing voxel and its neighbours, if p.distance(voxel.midpoint) <= voxel.delta
+		//add to weighted average
+		for (int i = Math.max(0, coords[0] - 1); i < Math.min(s_size, coords[0] + 1); i++)
+			for (int j = Math.max(0, coords[1] - 1); j < Math.min(t_size, coords[1] + 1); j++)
+				for (int k = Math.max(0, coords[2] - 1); k < Math.min(r_size, coords[2] + 1); k++){
+					Point3f p2 = getVoxelMidPoint(i, j, k);
+					if (i == coords[0] && j == coords[1] && k == coords[2])
+						p2.scale(1f);
+					if (p.distance(p2) < voxel_delta){
+						double w = (voxel_delta - p.distance(p2)) / voxel_delta;
+						w_sum += w;
+						double value = getValue(channel, i, j, k, t);
+						if (Double.isInfinite(value) || Double.isNaN(value)) value = getDataMin();
+						val += w * value; // getValue(i, j, k, t);
+						}
+					}
+		
+		return val / w_sum;
+	}
+	
+	protected int powerOfTwo(int value) {
+		int retval = 2;
+		while (retval < value)
+		    retval *= 2;
+		return retval;
+	}
+	
+	/******************************
+	 * Returns the midpoint at the specified voxel. 
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public Point3f getVoxelMidPoint(int x, int y, int z){
+		
+		float x_voxel = getSDim() / s_size;
+		float y_voxel = getTDim() / t_size;
+		float z_voxel = getRDim() / r_size;
+		
+		Vector3f v = new Vector3f(sAxis);
+		v.normalize();
+		v.scale(x_voxel * (0.5f + x));
+		Vector3f offset = new Vector3f(v); 
+		v = new Vector3f(tAxis);
+		v.normalize();
+		v.scale(y_voxel * (0.5f + y));
+		offset.add(v); 
+		v = new Vector3f(rAxis);
+		v.normalize();
+		v.scale(z_voxel * (0.5f + z));
+		offset.add(v);
+		
+		Point3f p = new Point3f(basePt);
+		p.add(offset);
+		return p;
+		
+	}
+	
+	public boolean isMaskedAtPoint(Point3f p){
+		if (mask == null || !getBoundBox().contains(p)) return false;
+		int[] voxel = getEnclosingVoxel(p);
+		return mask[voxel[0]][voxel[1]][voxel[2]];
+	}
+	
+	public void setMask(boolean[][][] m){
+		mask = m;
+	}
+	
+	public void setMaskUnion(boolean[][][] m){
+		if (mask == null) mask = this.getMaskForGrid(false);
+		for (int i = 0; i < s_size; i++)
+			for (int j = 0; j < t_size; j++)
+				for (int k = 0; k < r_size; k++)
+					mask[i][j][k] |= m[i][j][k];
+	}
+	
+	public boolean hasMask(){
+		return mask != null;
+	}
+	
+	/*********************************
+	 * Returns the geometric midpoint of the grid coordinate i, j, k
+	 * 
+	 * @param i
+	 * @param j
+	 * @param k
+	 * @return
+	 */
+	public Point3f getMidPoint(int i, int j, int k){
+		float voxel_x = getSDim() / s_size;
+		float voxel_y = getTDim() / t_size;
+		float voxel_z = getRDim() / r_size;
+		
+		Point3f p = new Point3f(basePt);
+		p.add(new Vector3f(0.5f * voxel_x, 0.5f * voxel_y, 0.5f * voxel_z));
+		Vector3f v1 = new Vector3f(sAxis);
+		v1.normalize();
+		v1.scale(i * voxel_x);
+		p.add(v1);
+		v1.set(tAxis);
+		v1.normalize();
+		v1.scale(j * voxel_y);
+		p.add(v1);
+		v1.set(rAxis);
+		v1.normalize();
+		v1.scale(k * voxel_z);
+		p.add(v1);
+		return p;
+	}
+	
+	/*******************************
+	 * Test whether p is contained by this grid's bounds.
+	 *
+	public boolean contains(Point3f p){
+		return bounds.contains(p);
+	}
+	*/
+	
+	/*****************************************
+	 * Returns two points (min coords, max coords) which represent a subset of this grid which 
+	 * is bounded by the geometric box specified by p1 and p2 (i.e., a voxel must be contained 
+	 * within the box, or must enclose its boundary). Adds 1 to the max indices, such
+	 * that the includes indices are < max.
+	 * 
+	 * @param p1 min point
+	 * @param p2 max point
+	 * @return
+	 */
+	public int[] getSubGrid(Point3f p1, Point3f p2){
+		
+		boolean in1 = this.contains(p1);
+		boolean in2 = this.contains(p2);
+		
+		if (!in1 && !in2) return null;
+		
+		if (!in1){
+			p1 = GeometryFunctions.getMaxPt(p1, getMinVoxelMidPt());
+			p1 = GeometryFunctions.getMinPt(p1, getMaxVoxelMidPt());
+		}
+		
+		if (!in2){
+			p2 = GeometryFunctions.getMaxPt(p2, getMinVoxelMidPt());
+			p2 = GeometryFunctions.getMinPt(p2, getMaxVoxelMidPt());
+		}
+		
+		//Given correct p1, p2, find points in grid
+		int[] c1 = getEnclosingVoxel(p1);
+		int[] c2 = getEnclosingVoxel(p2);
+		
+		if (c1 == null || c2 == null){
+			InterfaceSession.log("Error getting subgrid for points " + p1.toString() + " and  " + p2.toString() + ".");
+			return null;
+		}
+		
+		//return as min_x,y,z, max_x+1,y+1,z+1
+		return new int[]{Math.min(c1[0], c2[0]), 
+						 Math.min(c1[1], c2[1]), 
+						 Math.min(c1[2], c2[2]),
+						 Math.min(s_size, Math.max(c1[0], c2[0]) + 1), 
+						 Math.min(t_size, Math.max(c1[1], c2[1]) + 1), 
+						 Math.min(r_size, Math.max(c1[2], c2[2]) + 1)};
+		
+	}
+	
+	public Point3f getMinVoxelMidPt(){
+		return getMidPoint(0, 0 ,0);
+	}
+	
+	public Point3f getMaxVoxelMidPt(){
+		return getMidPoint(s_size - 1, t_size - 1, r_size - 1);
+	}
+	
+	/**************************************
+	 * Returns absolute index of this coordinate, which is given by:
+	 * k * xSize * ySize + j * xSize + i (x changes fastest)
+	 * @param i
+	 * @param j
+	 * @param k
+	 * @return
+	 */
+	public int getAbsoluteIndex(int i, int j, int k){
+		return k * s_size * t_size + j * s_size + i;
+		
+	}
+	
+	/***************************************
+	 * Samples <code>sample_grid</code> where its geometric bounds cross the bounds of this grid. All non-crossing
+	 * voxels will be assigned a value of <code>data_min</code>.
+	 * 
+	 * @param sample_grid
+	 * @return
+	 */
+	public boolean sampleFromGrid(Grid3D sample_grid){
+		return sampleFromGrid(sample_grid, 0);
+	}
+	
+	/***************************************
+	 * Samples <code>sample_grid</code> where its geometric bounds cross the bounds of this grid. All non-crossing
+	 * voxels will be assigned a value of <code>data_min</code>.
+	 * 
+	 * @param sample_grid
+	 * @param t The time point, if this is a time stack
+	 * @return
+	 */
+	public boolean sampleFromGrid(Grid3D sample_grid, int t){
+		
+		for (int i = 0; i < s_size; i++)
+			for (int j = 0; j < t_size; j++)
+				for (int k = 0; k < r_size; k++){
+					Point3f mid_pt = getMidPoint(i, j, k);
+					double sample = sample_grid.getInterpolatedValueAtPoint(mid_pt, t);
+					if (Double.isNaN(sample)){
+						setValue(i, j, k, data_min);
+					}else{
+						setValue(i, j, k, sample);
+						}
+					}
+		return true;
+		
+	}
+	
+	
+}

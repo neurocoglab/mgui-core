@@ -1,0 +1,301 @@
+<PipelineProcessLibrary name = 'mgui-core'>
+	<Processes>
+		<JavaProcess name ='map_volume_to_surface_gaussian' main_class = 'mgui.command.MguiFunctions' input_parameter = 'volume_in' output_parameter = 'output_file' help_parameter = '-help' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'map_volume_to_surface_gaussian'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'v'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'volume_in'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 's'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'surface_in'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'o'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'volume_format'
+				optional = 'true'
+				default_value = 'auto'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'surface_format'
+				optional = 'true'
+				default_value = 'auto'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'data_type_in'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_tangent'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_normal'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_max_tangent'
+				optional = 'true'
+				default_value = '2'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_max_normal'
+				optional = 'true'
+				default_value = '3'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'normalize'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'number_format'
+				optional = 'true'
+				default_value = '#0.00000000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='mask_normalize_volume' main_class = 'mgui.command.MguiFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '-help' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'mask_normalize_volume'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'mask'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'geometric'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'format'
+				optional = 'true'
+				default_value = 'nifti'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'statistic'
+				optional = 'true'
+				default_value = 'mean'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='convert_integer_values' main_class = 'mgui.command.CivetFunctions' input_parameter = 'input_file' output_parameter = 'output_file' help_parameter = '-help' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'convert-integer-values'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'input_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'conversion_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'unknown_value'
+				optional = 'true'
+				default_value = '-1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='normalize_volume' main_class = 'mgui.command.MguiFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '-help' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'normalize_volume'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'format'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source_min'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source_max'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_min'
+				optional = 'true'
+				default_value = '0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_max'
+				optional = 'true'
+				default_value = '1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='convert_surface' main_class = 'mgui.command.neuro.MguiNeuroFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '-help' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'convert_surface'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'from'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'to'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+	</Processes>
+</PipelineProcessLibrary>

@@ -1,0 +1,76 @@
+<PipelineProcessLibrary name = 'freesurfer'>
+	<Processes>
+		<NativeProcess name ='mris_fill' command = 'mris_fill' input_parameter = 'inputfile' output_parameter = 'outputfile' help_parameter = '--help' path = '/usr/local/freesurfer/bin' set_operator = ' ' >
+			<TaskParameter
+				name = 'c'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'r'
+				optional = 'true'
+				default_value = '0.25'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'inputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'outputfile'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<Environment>
+				<Element name='COMPIZ_BIN_PATH' value='/usr/bin/' />
+				<Element name='COMPIZ_CONFIG_PROFILE' value='ubuntu' />
+				<Element name='DBUS_SESSION_BUS_ADDRESS' value='unix:abstract=/tmp/dbus-h8EIu6jQ5y,guid=f58319a75caa7ba1171676e55274ec9b' />
+				<Element name='DEFAULTS_PATH' value='/usr/share/gconf/ubuntu.default.path' />
+				<Element name='DESKTOP_SESSION' value='ubuntu' />
+				<Element name='DISPLAY' value=':0' />
+				<Element name='FREESURFER_HOME' value='/usr/local/freesurfer' />
+				<Element name='GDMSESSION' value='ubuntu' />
+				<Element name='GDM_LANG' value='en_US' />
+				<Element name='GIO_LAUNCHED_DESKTOP_FILE' value='/home/typically/Desktop/eclipse.desktop' />
+				<Element name='GIO_LAUNCHED_DESKTOP_FILE_PID' value='2289' />
+				<Element name='GNOME_DESKTOP_SESSION_ID' value='this-is-deprecated' />
+				<Element name='GNOME_KEYRING_CONTROL' value='/run/user/typically/keyring-OpBGPJ' />
+				<Element name='GNOME_KEYRING_PID' value='1790' />
+				<Element name='GPG_AGENT_INFO' value='/run/user/typically/keyring-OpBGPJ/gpg:0:1' />
+				<Element name='GTK_MODULES' value='overlay-scrollbar' />
+				<Element name='HOME' value='/home/typically' />
+				<Element name='LANG' value='en_US.UTF-8' />
+				<Element name='LOGNAME' value='typically' />
+				<Element name='MANDATORY_PATH' value='/usr/share/gconf/ubuntu.mandatory.path' />
+				<Element name='NLSPATH' value='/usr/dt/lib/nls/msg/%L/%N.cat' />
+				<Element name='PATH' value='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games' />
+				<Element name='PWD' value='/home/typically' />
+				<Element name='SESSION_MANAGER' value='local/typically-laptop:@/tmp/.ICE-unix/1809,unix/typically-laptop:/tmp/.ICE-unix/1809' />
+				<Element name='SHELL' value='/bin/bash' />
+				<Element name='SSH_AGENT_PID' value='1864' />
+				<Element name='SSH_AUTH_SOCK' value='/run/user/typically/keyring-OpBGPJ/ssh' />
+				<Element name='TEXTDOMAIN' value='im-config' />
+				<Element name='TEXTDOMAINDIR' value='/usr/share/locale/' />
+				<Element name='UBUNTU_MENUPROXY' value='libappmenu.so' />
+				<Element name='USER' value='typically' />
+				<Element name='USERNAME' value='typically' />
+				<Element name='WINDOWPATH' value='7' />
+				<Element name='XAUTHORITY' value='/run/gdm/auth-for-typically-zS4RtD/database' />
+				<Element name='XDG_CONFIG_DIRS' value='/etc/xdg/xdg-ubuntu:/etc/xdg' />
+				<Element name='XDG_CURRENT_DESKTOP' value='Unity' />
+				<Element name='XDG_DATA_DIRS' value='/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/' />
+				<Element name='XDG_RUNTIME_DIR' value='/run/user/typically' />
+				<Element name='XDG_SESSION_COOKIE' value='74d7a39c8b388bdad928fe70524c4253-1383394458.529569-2077717962' />
+				<Element name='XFILESEARCHPATH' value='/usr/dt/app-defaults/%L/Dt' />
+			</Environment>
+		</NativeProcess>
+	</Processes>
+</PipelineProcessLibrary>

@@ -1,0 +1,1 @@
+mgui.datasources.mysql.MySQLDriver jdbc:mysql://localhost:3306 MySQL login password

@@ -1,0 +1,124 @@
+/*
+* Copyright (C) 2011 Andrew Reid and the modelGUI Project <http://mgui.wikidot.com>
+* 
+* This file is part of modelGUI[core] (mgui-core).
+* 
+* modelGUI[core] is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* modelGUI[core] is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with modelGUI[core]. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package mgui.interfaces.graphs.util;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+
+import javax.swing.JComponent;
+
+import edu.uci.ics.jung.graph.Edge;
+import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.visualization.DefaultGraphLabelRenderer;
+
+public class GraphLabelRenderer2 extends DefaultGraphLabelRenderer {
+
+	public boolean is_opaque;
+	
+	public GraphLabelRenderer2(){
+		this(Color.red, Color.red);
+	}
+	
+	 public GraphLabelRenderer2(Color pickedVertexLabelColor,
+             					Color pickedEdgeLabelColor) {
+		 super(pickedVertexLabelColor, pickedEdgeLabelColor);
+		 
+	 }
+	
+	 public GraphLabelRenderer2(Color pickedVertexLabelColor,
+	            				Color pickedEdgeLabelColor, boolean rotateEdgeLabels) {
+		 
+		 super(pickedVertexLabelColor, pickedEdgeLabelColor, rotateEdgeLabels);
+		 
+	 }
+	 
+	 
+	 /**
+     *
+     * Returns the default label renderer for a Vertex
+     *
+     * @param vv  the <code>VisualizationViewer</code> to render on
+     * @param value  the value to assign to the label for
+     *			<code>Vertex</code>
+     * @param vertex  the <code>Vertex</code>
+     * @return the default label renderer
+     */
+    @Override
+	public Component getGraphLabelRendererComponent(JComponent vv, Object value,
+            Font font, boolean isSelected, Vertex vertex) {
+        
+        super.setForeground(vv.getForeground());
+        if (isSelected) setForeground(pickedVertexLabelColor);
+        super.setBackground(vv.getBackground());
+        if(font != null) {
+            setFont(font);
+        } else {
+            setFont(getFont());
+        	}
+        setIcon(null);
+        setBorder(noFocusBorder);
+        setValue(value); 
+        setOpaque(is_opaque);
+        return this;
+    }
+    
+    @Override
+	public boolean isOpaque() { 
+    	return is_opaque;
+    }
+    
+    @Override
+	public void setOpaque(boolean b){
+    	is_opaque = b;
+    	super.setOpaque(b);
+    }
+    
+    /**
+    *
+    * Returns the default label renderer for an Edge
+    *
+    * @param vv  the <code>VisualizationViewer</code> to render on
+    * @param value  the value to assign to the label for
+    *			<code>Edge</code>
+    * @param edge  the <code>Edge</code>
+    * @return the default label renderer
+    */
+    @Override
+	public Component getGraphLabelRendererComponent(JComponent vv, Object value,
+            Font font, boolean isSelected, Edge edge) {
+        
+        super.setForeground(vv.getForeground());
+        if(isSelected) setForeground(pickedEdgeLabelColor);
+        super.setBackground(vv.getBackground());
+        
+        if(font != null) {
+//            setFont(vv.getFont());
+            setFont(font);
+        } else {
+            setFont(vv.getFont());
+        }
+        setIcon(null);
+        setBorder(noFocusBorder);
+        setValue(value); 
+        return this;
+    }
+	
+}

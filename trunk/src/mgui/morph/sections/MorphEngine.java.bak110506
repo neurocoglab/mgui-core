@@ -1,0 +1,947 @@
+package ar.MorphSections;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+
+import javax.vecmath.Point2d;
+import javax.vecmath.Point2f;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector2d;
+
+import ar.Interface.*;
+import ar.Interface.Shapes.*;
+import ar.Geometry.*;
+import ar.Numbers.*;
+
+public class MorphEngine {
+
+	//map nodes between a set of scetions using radial representations
+	//create splines from mapped polylines (trajectories)
+	//create n new sections, morphing based upon this mapping scheme
+	public AttributeList morphAttr = new AttributeList();
+	public MorphDrawEngine drawEngine = new MorphDrawEngine();
+	//public SectionSet3DInt sections;
+	
+	//constants
+	public static final int MORPH_SECTIONS = 0;
+	public static final int MORPH_MESH = 1;
+	public static final int MORPH_ALL = 2;
+	
+	public MorphEngine(){
+		init();
+	}
+	
+	private void init(){
+		//attributes
+		morphAttr.add(new Attribute("NoIterations", new arInteger(1)));
+		morphAttr.add(new Attribute("UseSelectionSet", new arBoolean(false)));
+		morphAttr.add(new Attribute("SelectionSet", new ShapeSelectionSet()));
+		morphAttr.add(new Attribute("ApplySpline", new arBoolean(false)));
+		morphAttr.add(new Attribute("GenerateSurface", new arBoolean(false)));
+		morphAttr.add(new Attribute("EndSplineFactor", new arDouble(1)));
+		morphAttr.add(new Attribute("ShapeName", new String("Unnamed")));
+		morphAttr.add(new Attribute("AngleThreshold", new arDouble(3 * Math.PI / 4)));
+	}
+	
+	public MorphSections3DInt getMorphSections(SectionSet3DInt sections, double weight_thres){
+		
+		//get polygon objects from set
+		SectionSet3DInt polySet = getPolygonSet(sections);
+		
+		if (polySet.sectionSet.items.size() == 0) return new MorphSections3DInt();
+		
+		polySet.setShape(sections.getShape());
+		polySet.setSpacing(sections.getSpacing());
+		
+		//map all nodes in polygon
+		ArrayList<MappedPolygon2D> mappedSet = getMappedPolygons(polySet, weight_thres);
+		
+		//output to system
+		//for (int i = 0; i < mappedSet.size(); i++){
+		//	InterfaceSession.log("Map " + i + ":");
+		//	mappedSet.get(i).printMap();
+		//}
+			
+		
+		//if spline X or spline Y selected, set node tangents
+		if (((arBoolean)morphAttr.getValue("ApplySpline")).value)
+			mappedSet = getNodeTangents(mappedSet, sections.spacing, 
+								   ((arDouble)morphAttr.getValue("EndSplineFactor")).value);
+		
+		int iter = ((arInteger)morphAttr.getValue("NoIterations")).value;
+		
+		//generate subsection polygons
+		MorphSections3DInt morphSections = getSubsections(mappedSet, iter);
+		
+		morphSections.setParent(polySet, iter);
+		
+		return morphSections;
+	}
+	
+	//attempts to find corner points for a set of polygon shapes,
+	//using the criteria of:
+	//1. Above threshold relative length of edge attached to node
+	//2. At least one angle with threshold acuteness attached to this edge
+	//method returns a SectionSet2DInt object with its Polygon2DInt
+	//objects replaced by BoolPolygon2DInt objects, with corner points set
+	//to <true>
+	public SectionSet3DInt getCornerPoints(SectionSet3DInt sections){
+		
+		//for each section
+		//for each Polygon2DInt
+		//get BoolPolygon2DInt from GeometryFunctions.getCornerPoints
+		
+		//return new section set
+		
+		return null;
+	}
+	
+	//returns a section set with only polygon objects
+	public SectionSet3DInt getPolygonSet(SectionSet3DInt sections){
+		
+		ShapeSet2DInt polySet;
+		SectionSet3DInt sectSet = new SectionSet3DInt();
+		
+		for (int i = 0; i < sections.sectionSet.items.size(); i++){
+			polySet = ((ShapeSet2DInt)sections.sectionSet.items.get(i).objValue).getShapeType(new Polygon2DInt());
+			for (int j = 0; j < polySet.getSize(); j++)
+				sectSet.addShape2D(polySet.getShape(j), sections.sectionSet.items.get(i).keyValue);
+		}
+		
+		//filter by selection set if specified
+		if (((arBoolean)morphAttr.getValue("UseSelectionSet")).value &&
+						morphAttr.getValue("SelectionSet") != null)
+			sectSet = ((ShapeSelectionSet)morphAttr.getValue("SelectionSet")).
+													  getFilteredSectionSet(sectSet);
+		
+		return sectSet;
+		
+	}
+	
+	
+	public ArrayList<MappedPolygon2D> getMappedPolygons(SectionSet3DInt polySet, double weight_thres){
+		
+		Polygon2D thisPoly, lastPoly = null;
+		MappedPolygon2D mapPoly, lastMap = null;
+		ShapeSet2DInt thisSet;
+		int thisSect, lastSect = 0;
+		ShapeSet2DInt lastSet = null;
+		ArrayList<MappedPolygon2D> mapList = new ArrayList<MappedPolygon2D>();
+		//ArrayList<arInteger> sectionList = new ArrayList<arInteger>();
+		
+		Iterator setItr = polySet.getIterator();
+		
+		//get first polygon in section set
+		//get section no.
+		//for (int i = 0; i < polySet.sectionSet.items.size(); i++){
+		thisSect = polySet.getFirstSection();
+		int firstSect = -1; // = thisSect;
+		boolean isSet = false;
+		
+		while (setItr.hasNext()){
+		
+			//thisSet = ((ShapeSet2DInt)polySet.sectionSet.items.get(i).objValue);
+			thisSet = ((ShapeSet2DInt)setItr.next());
+			if (thisSet.members.size() == 1){
+				if (firstSect < 0) firstSect = thisSect;
+				thisPoly = ((Polygon2DInt)thisSet.getShape(0)).getPolygon();
+				//thisSect = polySet.sectionSet.items.get(i).keyValue;
+				
+				if (thisPoly.nodes.size() > 2){
+					//polygons can't be on the same section
+					/**@TODO insert code for branching map here **/
+					if (thisSect > firstSect && thisSect - lastSect > 0 && lastPoly != null){
+						//if (lastSet != null){
+							mapPoly = new MappedPolygon2D(lastPoly, thisPoly, lastSect, thisSect);
+							if (isSet) mapPoly.setNodeList(lastMap);
+							mapPoly.mapPolygons(weight_thres);
+							if (mapPoly.isMapped){
+								mapList.add(mapPoly);
+								lastMap = mapPoly;
+								isSet = true;
+								}
+							//}
+						}
+					
+						lastPoly = thisPoly;
+						lastSet = thisSet;
+						lastSect = thisSect;
+					}
+				}
+			thisSect++;
+			System.out.print(".");
+			}
+		System.out.print("!");
+		return mapList;
+	}
+	
+		/**
+	public MappedPolygon2D MapToPolyRadialRep(MappedPolygon2D prevMap, Polygon2D A, Polygon2D B, int sectA, int sectB){
+		MappedPolygon2D thisPolyMap = new MappedPolygon2D(A, B);
+		Polygon2D origA = A;
+		Polygon2D origB = B;
+		A = thisPolyMap.getA();
+		B = thisPolyMap.getB();
+		int nA = A.nodes.size();
+		int nB = B.nodes.size();
+		
+		//We want to map from A to B (where nA >= nB, see MappedPolygon2D)
+		//based upon node weights obtained from Radial Representations
+		
+		//obtain radial reps
+		RadialRep2D repA = new RadialRep2D(A);
+		RadialRep2D repB = new RadialRep2D(B);
+		
+		//set weights with radial reps
+		double[][] weights = new double[A.nodes.size()][B.nodes.size()];
+		for (int i = 0; i < repA.radii.size(); i++)
+			for (int j = 0; j < repB.radii.size(); j++)
+				weights[i][j] = (1 - (repA.getRadiusAtNode(i).getAngleDiff(repB.getRadiusAtNode(j)))
+																						/ (Math.PI));
+		
+		//for each node N_A(i), map to a node N_B(j) based upon weights
+		//first, ensure all B nodes have at least one source
+		double thisMax;
+		int sourceNode;
+		
+		//array to record source nodes that have been mapped
+		boolean[] mapped = new boolean[A.nodes.size()];
+		
+		for (int j = 0; j < nB; j++){
+			thisMax = Double.MIN_VALUE;
+			sourceNode = -1;
+			for (int i = 0; i < nA; i++)
+				if (weights[i][j] > thisMax){
+					thisMax = weights[i][j];
+					sourceNode = i;
+					}
+			//set source node and increment source count
+			
+			thisPolyMap.nodeMaps.get(sourceNode).source.thisPt = A.nodes.get(sourceNode);
+			thisPolyMap.nodeMaps.get(sourceNode).target.thisPt = B.nodes.get(j);
+				
+			thisPolyMap.sourceCounts.get(j).value++;
+			mapped[sourceNode] = true;
+			}
+		
+		//for all unmapped nodes in A, map to B
+		int targetNode;
+		for (int i = 0; i < nA; i++){
+			if (!mapped[i]){
+				thisMax = Double.MIN_VALUE;
+				targetNode = -1;
+				for (int j = 0; j < nB; j++)
+					if (weights[i][j] > thisMax){
+						thisMax = weights[i][j];
+						targetNode = j;
+						}
+				//set source node and increment source count
+				thisPolyMap.nodeMaps.get(i).source.thisPt = A.nodes.get(i);
+				thisPolyMap.nodeMaps.get(i).target.thisPt = B.nodes.get(targetNode);
+				thisPolyMap.sourceCounts.get(targetNode).value++;
+			}
+		}
+		
+		return thisPolyMap;
+	} **/
+	
+	/**
+	public MappedPolygon2D MapToPolyRadialRep_bak(Polygon2D A, Polygon2D B, int sectA, int sectB){
+		//for sorting map nodes
+		//NodeMapComparator c = new NodeMapComparator();
+		boolean isReversed = false;
+		
+		if (A.nodes.size() < B.nodes.size()){
+			Polygon2D T = B;
+			B = A;
+			A = T;
+			isReversed = true;
+		}
+		
+		//obtain radial reps
+		RadialRep2D repA = new RadialRep2D(A);
+		RadialRep2D repB = new RadialRep2D(B);
+		
+		//set weights with radial reps
+		double[][] weights = new double[A.nodes.size()][B.nodes.size()];
+		
+		//for each source node, assign weights for all of target nodes
+		//InterfaceSession.log("Weight matrix, P" + sectA + " to P" + (sectB) + ":");
+		//for (int i = 0; i < repB.radii.size(); i++)
+			//System.out.print("P2.N" + i + " ");
+		//InterfaceSession.log();
+		for (int i = 0; i < repA.radii.size(); i++){
+			//System.out.print("\nP1.N" + i + " ");
+			for (int j = 0; j < repB.radii.size(); j++){
+				weights[i][j] = (1 - (repA.getRadiusAtNode(i).getAngleDiff(repB.getRadiusAtNode(j))) / (Math.PI));
+				//System.out.print(arDouble.getString(weights[i][j], "#0.000") + " ");
+			}
+		}
+		
+		//InterfaceSession.log();
+		//for (int i = 0; i < repA.radii.size(); i++)
+			//for (int j = 0; j < repB.radii.size(); j++)
+		//InterfaceSession.log("Angle A (N" + i + "): " + arDouble.getString(repA.getRadiusAtNode(i).angle, "#0.000") + ", " + 
+		//		   "Angle B (N" + j + "): " + arDouble.getString(repB.getRadiusAtNode(j).angle, "#0.000") + " -> diff: " +
+		//		   arDouble.getString(repA.getRadiusAtNode(i).getAngleDiff(repB.getRadiusAtNode(j)), "#0.000"));
+		
+		//map nodes
+		double thisMax;
+		int targetNode;
+		int sourceNode;
+		MappedPolygon2D thisMap = new MappedPolygon2D(A, B, sectA, sectB, sectA);
+		thisMap.isReversed = isReversed;
+		
+		MorphNode2D thisNode;
+		
+		//for each node in A, set first targets
+		int nA = A.nodes.size();
+		int nB = B.nodes.size();
+		
+		//since nA >= nB, for each nA, assign a target node
+		//this is O(n^2)?
+		for (int i = 0; i < nA; i++){
+			thisMax = Double.MIN_VALUE;
+			targetNode = -1;
+			for (int j = 0; j < nB; j++)
+				if (weights[i][j] > thisMax && !thisMap.nodeMaps.get(i).hasTarget(j)){
+					thisMax = weights[i][j];
+					targetNode = j;
+				}
+				
+			thisNode = new MorphNode2D(B.nodes.get(targetNode), targetNode, sectB);
+			thisNode.attributes.setValue("TargetNode", targetNode);
+			thisMap.nodeMaps.get(i).addNode(thisNode, new MapWeight(thisMax, i, targetNode));
+			thisMap.nodeMaps.get(i).attributes.setValue("SourceNode", i);
+			thisMap.addTarget(targetNode);
+		}
+		
+		
+		//nA = A.nodes.size();
+		//nB = B.nodes.size();
+			
+		//int nMin = Math.min(nA, nB);
+		
+		/**
+		for (int j = 0; j < nB; j++){
+			thisMax = Double.MIN_VALUE;
+			//targetNode = -1;
+			sourceNode = -1;
+			for (int i = 0; i < nA; i++)
+				if (weights[i][j] > thisMax && !thisMap.nodeMaps.get(i).hasTarget(j)){
+					thisMax = weights[i][j];
+					//targetNode = j;
+					sourceNode = i;
+					}
+			thisNode = new MorphNode2D(B.nodes.get(j), j, sectB);
+			//thisNode.attributes.setValue("Weight", thisMax);
+			thisNode.attributes.setValue("TargetNode", j);
+			//thisNode.attributes.setValue("SourceNode", i);
+			thisMap.nodeMaps.get(sourceNode).addNode(thisNode, new MapWeight(thisMax, sourceNode, j));
+			thisMap.nodeMaps.get(sourceNode).attributes.setValue("SourceNode", sourceNode);
+			}
+		
+		//if nA > nB, map remaining nodes
+		int targetNode;
+		for (int i = 0; i < nA; i++){
+			if (thisMap.nodeMaps.get(i).nodes.size() == 0){
+				thisMax = Double.MIN_VALUE;
+				targetNode = -1;
+				for (int j = 0; j < nB; j++)
+					if (weights[i][j] > thisMax){
+						thisMax = weights[i][j];
+						targetNode = j;
+					}
+				thisNode = new MorphNode2D(B.nodes.get(targetNode), targetNode, sectB);
+				thisNode.attributes.setValue("TargetNode", targetNode);
+				thisMap.nodeMaps.get(i).addNode(thisNode, new MapWeight(thisMax, i, targetNode));
+				thisMap.nodeMaps.get(i).attributes.setValue("SourceNode", i);
+			}
+		} 
+		
+		//add nodes if nA < nB (nodes have been added above, for the case nA > nB)
+		
+		if (nA < nB){
+			//sort ascending by node weights
+			//lowest weighted node should be assigned a new node first, etc.
+			//thisMap.setNodeSortAttribute("Weight");
+			//Collections.sort(thisMap.nodeMaps, c);
+			
+			//add target nodes to remaining source node maps
+			int i = 0;
+			int count = 1;
+			int aNode;
+			MapWeight thisWeight;
+			
+			while (count * nA + i < nB){
+				thisMap.setWeightArray();
+				thisMax = Double.MIN_VALUE;
+				targetNode = -1;
+				thisWeight = thisMap.getNextWeight();
+				aNode = thisWeight.source;
+				//aNode = ((arInteger)thisMap.nodeMaps.get(i).attributes.getValue("SourceNode")).value;
+				for (int j = 0; j < nB; j++)//{
+					if (weights[aNode][j] > thisMax && !thisMap.nodeMaps.get(aNode).hasTarget(j)) {
+						thisMax = weights[aNode][j];
+						targetNode = j;
+						}
+					thisNode = new MorphNode2D(B.nodes.get(targetNode), targetNode, section + 1);
+					//thisNode.attributes.setValue("Weight", thisMax);
+					thisNode.attributes.setValue("TargetNode", targetNode);
+					//thisNode.attributes.setValue("SourceNode", i);
+					thisMap.nodeMaps.get(aNode).addNode(thisNode, new MapWeight(thisMax, aNode, targetNode));
+					//thisMap.nodeMaps.get(aNode).attributes.setValue("SourceNode", aNode);
+					//}
+				i++;
+				if (i == nA){
+					i = 0;
+					count++;
+					}
+				
+				}
+			}//nA < nB 
+		
+		//resort by source node (so polygon and node map match)
+		//thisMap.setSortAttribute("SourceNode");
+		//Collections.sort(thisMap.nodeMaps, c);
+		return thisMap;
+	} **/
+	
+	/*********
+	 * Given a list of mapped polygons, assign tangents to nodes based upon the mapping
+	 * vectors. Tangents can be used to smooth (spline) these lines and thus smooth a
+	 * given morphing transition.
+	 * @param maps - a list of MappedPolygon2D objects 
+	 * @return maps with tangent values assigned (using the "TangentX" and "TangentY"
+	 * Attributes).
+	 */
+	
+	public ArrayList<MappedPolygon2D> getNodeTangents(ArrayList<MappedPolygon2D> maps, 
+													  double spacing, double endFactor){
+		
+		//note: Z-axis is considered as the direction of this section set's normal vector
+		//don't ask why I've reversed X and Y here...
+		MorphNodeMap2D thisNodeMap;
+		double angleX, angleY;
+		double deltaX, deltaY;
+		Vector2d axis = new Vector2d(1,0);
+		
+		//for each polygon map, set angle from previous and next nodes (i, i + 1)
+		//for each node in polygon i = 1, .., n - 1, calculate tangent from previous
+		//and current angle
+		for (int i = 0; i < maps.size(); i++){
+			for (int j = 0; j < maps.get(i).nodeMaps.size(); j++){
+				thisNodeMap = maps.get(i).nodeMaps.get(j);
+	
+				deltaY = thisNodeMap.getNext().thisPt.y - thisNodeMap.getPrev().thisPt.y;
+				deltaX = thisNodeMap.getNext().thisPt.x - thisNodeMap.getPrev().thisPt.x;
+				
+				//Y angle is angle of vector spacing, deltaY
+				angleY = axis.angle(new Vector2d(spacing, deltaY));
+				angleX = axis.angle(new Vector2d(deltaX, deltaY));
+				
+				//assign to next node
+				thisNodeMap.getNext().tangentY = angleY;
+				thisNodeMap.getNext().tangentX = angleX;
+				
+				//if this is the first polygon, assign tangent as angle * endFactor
+				if (i == 0){
+					thisNodeMap.getPrev().setTangentY(angleY * endFactor);
+					thisNodeMap.getPrev().setTangentX(angleX * endFactor);
+					}
+				
+				//otherwise, assign tangent from source and present angle
+				else {
+					thisNodeMap.getPrev().setTangentY(GeometryFunctions.getAngleTangent(
+														thisNodeMap.getPrev().tangentY, angleY));
+					thisNodeMap.getPrev().setTangentX(GeometryFunctions.getAngleTangent(
+														thisNodeMap.getPrev().tangentX, angleX));
+					}
+				
+				//if last polygon, simply calculate tangents
+				if (i == maps.size() - 1){
+					thisNodeMap.getNext().setTangentY(thisNodeMap.getNext().tangentY * endFactor);
+					thisNodeMap.getNext().setTangentX(thisNodeMap.getNext().tangentX * endFactor);
+					}
+				}
+			}
+		return maps;
+	}
+	
+	
+	/******
+	 * Given a set of mapped polygons, generate <iters> new subsections for each section s, which
+	 * morph from polygon i	to polygon j.
+	 * @param mappedPolys set of polygons whose nodes are mapped between sections
+	 * @param iters number of subsections to generate
+	 * @return a MorphSections3DInt object containing generated subsections
+	 */
+	public MorphSections3DInt getSubsections(ArrayList<MappedPolygon2D> mappedPolys, 
+											 int iters){
+		
+		//for each mapped polygon
+		MappedPolygon2D thisPoly;
+		MappedPolygon2D itrPoly;
+		int nA, nB, deltaN;
+		double nodeChange;
+		double residual;
+		int remNodes;
+		MorphNode2D thisNode;
+		int thisItr, thisSect;
+		int sectVal;
+		
+		//for splining
+		double t;
+		Point2f N1y, N2y, N1x, N2x;
+		Point2f C1y, C2y, C1x, C2x;
+		Point2f splinePtY, splinePtX;
+		
+		MorphSections3DInt morphSections = new MorphSections3DInt();
+		morphSections.iterations = iters;
+		morphSections.name = (String)morphAttr.getValue("ShapeName");
+		ArrayList<Point2f> splineXNodes = null, splineYNodes = null;
+		
+		double minAngle = ((arDouble)morphAttr.getValue("AngleThreshold")).value;
+		
+		for (int i = 0; i < mappedPolys.size(); i++){
+			thisPoly = mappedPolys.get(i);
+			
+			//set spline nodes array, if selected
+			if (((arBoolean)morphAttr.getValue("ApplySpline")).value){
+					//get X, Y points and control points
+					//as array {N1i, C1i, N2i, C2i, ... N1n, C1n, N2n, C2n}
+					splineXNodes = getSplineXNodes(thisPoly.nodeMaps);
+					splineYNodes = getSplineYNodes(thisPoly.nodeMaps);
+				}
+			
+			thisSect = thisPoly.prevSect;;
+			nA = thisPoly.A.nodes.size();
+			nB = thisPoly.B.nodes.size();
+			itrPoly = (MappedPolygon2D)thisPoly.clone();
+			
+			thisItr = iters * (thisPoly.nextSect - thisPoly.prevSect);
+			deltaN = nB - nA;
+			
+			nodeChange = (double)Math.abs(deltaN) / ((double)thisItr);
+			residual = 0;
+			
+			//for each iteration
+			for (int j = 0; j < thisItr; j++){
+				//calculate how many nodes (if any) to remove this iteration
+				remNodes = (int)Math.floor(nodeChange + residual);
+				residual = nodeChange + residual - remNodes;
+				
+				nA = itrPoly.A.nodes.size();
+				//InterfaceSession.log();
+				//InterfaceSession.log("\nIteration " + j + ":\n");
+				//InterfaceSession.log("nA = " + nA + "; nB = " + nB + "; remNodes = " + remNodes +
+				//		"; nodeChange = " + nodeChange + "; residual = " + residual + "\n");
+				
+				//if nA > nB, remove remNodes = nodeChange * fractionItr
+				//remove by priority of weight
+				if (nA > nB){
+					for (int l = 0; l < remNodes; l++){
+						int k = itrPoly.removeNodeByCount(minAngle);
+						//if splining, remove spline nodes
+						if (k >= 0 && (((arBoolean)morphAttr.getValue("ApplySpline")).value)){
+							for (int m = 0; m < 4; m++){
+								splineXNodes.remove(k * 4);
+								splineYNodes.remove(k * 4);
+								}
+							}
+						
+						//InterfaceSession.log("Node removed.\n");
+						}
+					}
+		
+				nA = itrPoly.nodeMaps.size();
+				
+				//for each node in polygon i
+				for (int k = 0; k < nA; k++){
+					
+					//now we can apply the morphing
+					//if splining, use (TangentX(i+1) - TangentX(i)) / iters
+					//otherwise use (AngleX(i+1) - AngleX(i)) / iters
+					
+					//thisNode = itrPoly.nodeMaps.get(k).getPrev();
+					thisNode = itrPoly.nodeMaps.get(k).N_A;
+					//nextNode = nextPoly.nodeMaps.get(thisNode.getTarget()).thisNode;
+					
+					//apply cubic spline mapping if selected
+					if (((arBoolean)morphAttr.getValue("ApplySpline")).value){
+						//apply spline using spline nodes array
+						int m = (itrPoly.nodeMaps.get(k).weight.source) * 4;
+						//int m = k * 4;
+						
+						//these assignments make the code nicer =)
+						N1x = splineXNodes.get(m);
+						C1x = splineXNodes.get(m + 1);
+						N2x = splineXNodes.get(m + 2);
+						C2x = splineXNodes.get(m + 3);
+						N1y = splineYNodes.get(m);
+						C1y = splineYNodes.get(m + 1);
+						N2y = splineYNodes.get(m + 2);
+						C2y = splineYNodes.get(m + 3);
+						
+						t = (double)j / (double)thisItr;
+						//if (thisPoly.isReversed) t = 1.0 - t;
+						
+						splinePtX = GeometryFunctions.getCubicSplinePt(N1x, C1x, N2x, C2x, t);
+						splinePtY = GeometryFunctions.getCubicSplinePt(N1y, C1y, N2y, C2y, t);
+						
+						thisNode.thisPt.x = splinePtX.y;
+						thisNode.thisPt.y = splinePtY.y;
+						
+						}
+					//otherwise apply linear mapping
+					else {
+						//change in x, y coordinates between mapped nodes
+						double deltaX = itrPoly.nodeMaps.get(k).N_B.thisPt.x - 
+										itrPoly.nodeMaps.get(k).N_A.thisPt.x;
+						double deltaY = itrPoly.nodeMaps.get(k).N_B.thisPt.y - 
+										itrPoly.nodeMaps.get(k).N_A.thisPt.y;
+						
+						//change in coordinates for this iteration
+						thisNode.thisPt.x = (float)(thisNode.thisPt.x + (1 / ((double)thisItr + 1 - j) * deltaX));
+						thisNode.thisPt.y = (float)(thisNode.thisPt.y + (1 / ((double)thisItr + 1 - j) * deltaY));
+						
+						}
+					
+					}//each kth node
+				
+				//add polygon to jth subsection
+				LPolygon2DInt newPoly = new LPolygon2DInt(itrPoly.A);
+				
+				//if mapping is reversed, add to sections in reversed order
+				if (itrPoly.isReversed)
+					sectVal = thisItr - j - 1;
+				else
+					sectVal = j;
+				//if (sectVal == -1)
+				//	boolean blnDebug = true;
+				
+				morphSections.addShape2D(newPoly, thisSect, sectVal);
+					if (((arBoolean)morphAttr.getValue("UseSelectionSet")).value){
+						int newSect = thisSect;
+						while (sectVal >= iters){
+							sectVal -= iters;
+							newSect++;
+							}
+						morphSections.setCurrentSubsection(sectVal);
+
+						/**@TODO move this to the interface panel **/
+						((ShapeSelectionSet)morphAttr.getValue("SelectionSet")).addShape(newPoly); //,
+								//morphSections.getShapeSet(newSect));
+						}
+					
+				itrPoly = (MappedPolygon2D)itrPoly.clone();
+				//InterfaceSession.log("Itr poly " + j + ":");
+				//itrPoly.printMap();
+				}
+			}
+		
+		return morphSections;
+	}
+	
+	private ArrayList<Point2f> getSplineYNodes(ArrayList<MorphNodeMap2D> maps){
+		//for each mapped node, we want to define a start and end node with
+		//control points based upon their tangents, in the plane YZ, where
+		//Z is the plane normal direction of the section set; note here that
+		//the Z-axis acts as an X-axis
+		
+		Point2f N1, C1, N2, C2;
+		ArrayList<Point2f> retList = new ArrayList<Point2f>();
+		
+		for (int i = 0; i < maps.size(); i++){
+			N1 = new Point2f(0, maps.get(i).N_A.thisPt.y);
+			N2 = new Point2f(1, maps.get(i).N_B.thisPt.y);
+			C1 = new Point2f((float)Math.sin(maps.get(i).N_A.tangentY), 
+							 (float)Math.cos(maps.get(i).N_A.tangentY) + 
+							 maps.get(i).N_A.thisPt.y);
+			C2 = new Point2f(1.0f - (float)Math.cos(maps.get(i).N_B.tangentY),
+							 (float)(maps.get(i).N_B.thisPt.y -
+							 Math.sin(maps.get(i).N_B.tangentY)));
+			retList.add(N1);
+			retList.add(C1);
+			retList.add(N2);
+			retList.add(C2);
+			}
+		return retList;
+	}
+	
+	private ArrayList<Point2f> getSplineXNodes(ArrayList<MorphNodeMap2D> maps){
+		//for each mapped node, we want to define a start and end node with
+		//control points based upon their tangents, in the plane XZ, where
+		//Z is the plane normal direction of the section set; note that here
+		//the Z axis acts as the X axis and the X axis acts as the Y axis.
+		
+		Point2f N1, C1, N2, C2;
+		ArrayList<Point2f> retList = new ArrayList<Point2f>();
+		
+		for (int i = 0; i < maps.size(); i++){
+			N1 = new Point2f(0.0f, maps.get(i).N_A.thisPt.x);
+			N2 = new Point2f(1.0f, maps.get(i).N_B.thisPt.x);
+			C1 = new Point2f((float)Math.sin(maps.get(i).N_A.tangentX), 
+							 (float)Math.cos(maps.get(i).N_A.tangentX) + 
+							 maps.get(i).N_A.thisPt.x);
+			C2 = new Point2f(1.0f - (float)Math.cos(maps.get(i).N_B.tangentX),
+							 (float)(maps.get(i).N_B.thisPt.x -
+							 Math.sin(maps.get(i).N_B.tangentX)));
+			retList.add(N1);
+			retList.add(C1);
+			retList.add(N2);
+			retList.add(C2);
+			}
+		return retList;
+	}
+	
+	/*********************
+	 * Given a set of sections, map nodes using radial rep and then triangulate between
+	 * sections based upon this mapping, and each polygon's direction (CW or CCW)
+	 * @param morphSections section set containing polygons to use
+	 * @return Mesh3DInt object representing the surface connecting these section polygons
+	 */
+	
+	public Mesh3DInt getMorphMesh(MorphSections3DInt morphSections, double weight_thres){
+		//morph section set should contain only polygons...
+		
+		//get mapped polygons
+		ArrayList<MappedPolygon2D> mappedPolys = getMappedPolygons(morphSections, weight_thres);
+		
+		ShapeSet3DInt thisSet3D;
+		ShapeSet2DInt thisSet2D;
+		float dist;
+		Mesh3D mesh = new Mesh3D();
+		ArrayList<Point3f> nodes;
+		Polygon3D thisPoly3D;
+		Color thisColour = null;
+		
+		Iterator setItr = morphSections.getIterator();
+		int thisSect = morphSections.getFirstSection();
+		int thisSubSect = -1;
+		
+		//First, add all 3d nodes to mesh
+		
+		//for (int i = 0; i < morphSections.sectionSet.items.size(); i++){
+		//	dist = (float)((Math.floor(morphSections.sectionSet.items.get(i).keyValue / 
+		//			morphSections.iterations) * morphSections.spacing) +
+		//		  ((morphSections.sectionSet.items.get(i).keyValue + 1) * morphSections.spacing));
+		
+		while (setItr.hasNext()){
+			//thisSet2D = (ShapeSet2DInt)morphSections.sectionSet.items.get(i).objValue;
+			thisSet2D = (ShapeSet2DInt)setItr.next();
+			
+			if (thisSet2D.members.size() > 0){
+				if (thisSubSect == -1)
+					dist = (float)morphSections.parentSet.getSectionDist(thisSect);
+				else
+					dist = morphSections.getSubSectionDist(thisSect * morphSections.iterations + thisSubSect);
+				
+				thisSet3D = ShapeFunctions.getShapeSet3DFromSection((Plane3D)morphSections.thisShape,
+															dist,
+															thisSet2D,
+															null);
+				
+				//add nodes to mesh
+				thisPoly3D = (Polygon3D)thisSet3D.members.get(0).thisShape;
+				thisColour = (Color)thisSet3D.members.get(0).attributes.getValue("LineColour");
+				mesh.nodes.addAll(thisSet3D.members.get(0).thisShape.getNodes());
+				
+				}
+				thisSubSect++;
+				if (thisSubSect == morphSections.iterations){
+					thisSubSect = -1;
+					thisSect++;
+					}
+			}
+		
+		//Second, set triangles using mapped polygons
+		
+		//variable for polygon direction
+		int dirA, dirB, NA, NB;
+		boolean cwA, cwB;
+		int nA, nB;
+		int indexA, indexB; //start indices for polygons A and B, relative to mesh nodes
+		int meshIndex = 0; //current start index for this map, relative to mesh nodes
+		Polygon2D A, B;
+		ArrayList<MorphNodeMap2D> nodeMaps;
+		ArrayList<MorphNodeMap2D> extraMaps;
+		boolean blnDraw;
+		
+		//for each mapped polygon
+		for (int m = 0; m < mappedPolys.size(); m++){
+			//set map parameters
+			nodeMaps = mappedPolys.get(m).nodeMaps;
+			extraMaps = mappedPolys.get(m).extraMaps;
+			nA = mappedPolys.get(m).A.nodes.size();
+			nB = mappedPolys.get(m).B.nodes.size();
+			
+			//set start indices based upon reversal state of this map
+			if (mappedPolys.get(m).isReversed){
+				indexA = meshIndex + nB;
+				indexB = meshIndex;
+				}else{
+				indexA = meshIndex;
+				indexB = meshIndex + nA;
+				}
+			
+			//polygon direction
+			cwA = GeometryFunctions.isClockwise(mappedPolys.get(m).A);
+			cwB = GeometryFunctions.isClockwise(mappedPolys.get(m).B);
+			
+			if(cwA != cwB)
+				dirB = -1; 
+				else 
+				dirB = 1;
+			//InterfaceSession.log("Poly " + i + ", CW(A):" + 
+			//		GeometryFunctions.isClockwise(mappedPolys.get(i).A) +
+			//		", CW(B):" + 
+			//		GeometryFunctions.isClockwise(mappedPolys.get(i).B));
+			//InterfaceSession.log("\nMapped Polygon " + i + ": \n");
+			//mappedPolys.get(i).printMap();
+			
+			
+			//Three cases of node relationships:
+			//1. sourceCount == targetCount == 1
+			//2. sourceCount > 1, targetCount == 1
+			//3. sourceCount == 1, targetCount > 1
+			
+			
+			
+			boolean case1 = false, case2 = false, case3 = false;
+			int maxT = -1;
+			
+			for (NA = 0; NA < nA; NA++){
+			
+				NB = nodeMaps.get(NA).getTarget();
+				
+				//case 1 test
+				if (mappedPolys.get(m).sourceCounts.get(NB).value == 1 &&
+					(mappedPolys.get(m).targetCounts.get(NA).value == 1 || maxT >= 0))
+					case1 = true;
+				
+				//case 2 test
+				if (mappedPolys.get(m).sourceCounts.get(NB).value > 1 &&
+					(mappedPolys.get(m).targetCounts.get(NA).value == 1 || maxT >= 0)){
+					int k = 0;
+					if (maxT < 0){
+						k = NA + 1;
+						if (k == nA) k = 0;
+					}else{
+	
+						}
+					if (nodeMaps.get(k).getTarget() == nodeMaps.get(NA).getTarget())
+						case2 = true;
+					else
+						case1 = true;
+					}
+				
+				//case 3 test
+				if (mappedPolys.get(m).targetCounts.get(NA).value > 1)
+					case3 = true;
+			
+				//Case 1: simply make a tile from Ai, Bj, Bj+1 and Ai, Ai+1, Bj+1
+				if (case1){
+					int k = NA + 1; // dirA;
+					if (k == nA) k = 0;
+					int p = NB + dirB;
+					if (p == nB) p = 0;
+					if (p < 0) p = nB - 1;
+			
+					//flip triangles if map is reversed
+					if (mappedPolys.get(NA).isReversed){
+						if (!cwA){
+							mesh.addFace(indexA + NA, indexB + p, indexB + NB);
+							mesh.addFace(indexA + NA, indexA + k, indexB + p);
+							}else{
+							mesh.addFace(indexA + NA, indexB + NB, indexB + p);
+							mesh.addFace(indexA + NA, indexB + p, indexA + k);
+							}
+					}else{
+						if (cwA){
+							mesh.addFace(indexA + NA, indexB + p, indexB + NB);
+							mesh.addFace(indexA + NA, indexA + k, indexB + p);
+							}else{
+							mesh.addFace(indexA + NA, indexB + NB, indexB + p);
+							mesh.addFace(indexA + NA, indexB + p, indexA + k);
+							}
+						}
+					}
+				
+				//Case 2: if i+1.target = i.target, create tri Ai, Bj, Ai+1
+				if (case2){
+					int k = NA + 1;
+					if (k == nA) k = 0;
+					if (mappedPolys.get(NA).isReversed){
+						if (!cwA){
+							mesh.addFace(indexA + NA, indexB + NB, indexA + k);
+						}else{
+							mesh.addFace(indexA + NA, indexA + k, indexB + NB);
+							}
+					}else{
+						if (cwA){
+							mesh.addFace(indexA + NA, indexB + NB, indexA + k);
+						}else{
+							mesh.addFace(indexA + NA, indexA + k, indexB + NB);	
+							}
+						}
+					}
+				
+				//Case 3: if k.source (from extraMaps) = i, create tri Ai, Bj, Bk
+				//											and repeat for all k in extraMaps
+				//			otherwise, as 1...
+				if (case3){
+					//extra maps are in extraMaps
+					MorphNodeMap2D lastMap = nodeMaps.get(NA);
+					maxT = -1;
+					for (int k = 0; k < extraMaps.size(); k++){
+						if (extraMaps.get(k).getSource() == NA){
+							//map this triangle Ai, Bj, Bk
+							int l = extraMaps.get(k).getTarget();
+							int p = lastMap.getTarget();
+							if (mappedPolys.get(NA).isReversed){
+								if (!cwA){
+									mesh.addFace(indexA + NA, indexB + p, indexB + l);
+								}else{
+									mesh.addFace(indexA + NA, indexB + l, indexB + p);
+									}
+							}else{
+								if (cwA){
+									mesh.addFace(indexA + NA, indexB + p, indexB + l);
+								}else{
+									mesh.addFace(indexA + NA, indexB + l, indexB + p);	
+									}
+								}
+							maxT = k;
+							}
+						lastMap = extraMaps.get(k);
+						}
+					if (maxT > -1){
+						//map last as tile as in case 1
+						
+						
+						}
+					
+					
+					}
+				
+				
+				}
+			
+			//update meshIndex
+			if (mappedPolys.get(m).isReversed)
+				meshIndex += nB;
+			else
+				meshIndex += nA;
+		}
+		
+		
+		Mesh3DInt retMesh = new Mesh3DInt(mesh);
+		//if (thisColour != null)
+		//retMesh.attributes.setValue("FillColour", thisColour);
+		return retMesh;
+	}
+	
+}

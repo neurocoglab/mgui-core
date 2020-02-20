@@ -1,0 +1,485 @@
+/*
+* Copyright (C) 2014 Andrew Reid and the ModelGUI Project <http://mgui.wikidot.com>
+* 
+* This file is part of ModelGUI[core] (mgui-core).
+* 
+* ModelGUI[core] is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* ModelGUI[core] is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with ModelGUI[core]. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package mgui.io.domestic.variables;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
+import mgui.interfaces.InterfaceEnvironment;
+import mgui.interfaces.ProgressUpdater;
+import mgui.io.InterfaceIOException;
+import mgui.io.InterfaceIOOptions;
+import mgui.numbers.MguiDouble;
+import mgui.numbers.NumberFunctions;
+import Jama.Matrix;
+import foxtrot.Job;
+import foxtrot.Worker;
+
+public class DefaultMatrixFileWriter extends MatrixFileWriter {
+	
+	public int format, precision = 6;
+	BufferedWriter lineWriter;
+	RandomAccessFile binaryWriter;
+	boolean has_header;
+	int entry_count;
+	String delimiter = "\t";
+	
+	public DefaultMatrixFileWriter(){
+		
+	}
+	
+	public DefaultMatrixFileWriter(File file){
+		this(file, 0);
+	}
+	
+	public DefaultMatrixFileWriter(File file, int format){
+		this.dataFile = file;
+		this.format = format;
+	}
+	
+	public boolean open(){
+		if (dataFile == null || isWriting()) return false;
+		
+		switch(format){
+			case MatrixOutOptions.FORMAT_ASCII_SPARSE:
+				return openAsciiSparse();
+			case MatrixOutOptions.FORMAT_BINARY_SPARSE:
+				return openBinarySparse();
+		}
+		
+		return false;
+	}
+	
+	public boolean finalize(int m, int n){
+		switch(format){
+			case MatrixOutOptions.FORMAT_ASCII_SPARSE:
+				return finalizeAsciiSparse(m, n);
+			case MatrixOutOptions.FORMAT_BINARY_SPARSE:
+				return finalizeBinarySparse(m, n);
+			}
+		return false;
+	}
+	
+	//write m, n, l values and close file
+	public boolean finalizeAsciiSparse(int m, int n){
+		
+		if (!close()) return false;
+		try{
+			File temp = new File(dataFile.getAbsolutePath() + ".tmp");
+			//read resulting file an insert header line
+			BufferedReader reader = new BufferedReader(new FileReader(temp));
+			lineWriter = new BufferedWriter(new FileWriter(dataFile));
+			
+			String line = reader.readLine();
+			while (line != null && line.startsWith("%")){
+				lineWriter.write(line + "\n");
+				line = reader.readLine();
+				}
+			
+			if (line == null){
+				lineWriter.close();
+				reader.close();
+				return false;
+				}
+			
+			//insert header
+			lineWriter.write(m + delimiter + n + delimiter + entry_count + "\n");
+			
+			//write the rest
+			line = reader.readLine();
+			while (line != null){
+				lineWriter.write(line + "\n");
+				line = reader.readLine();
+				}
+			
+			lineWriter.close();
+			reader.close();
+			
+			return true;
+		}catch (IOException e){
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	public boolean finalizeBinarySparse(int m, int n){
+		
+		if (!isWriting()) return false;
+		
+		try{
+			binaryWriter.seek(4);
+			binaryWriter.writeInt(m);
+			binaryWriter.writeInt(n);
+			binaryWriter.writeInt(entry_count);
+			
+			binaryWriter.close();
+		
+			return true;
+		}catch (IOException e){
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	public boolean close(){
+		if (!isWriting()) return false;
+		try{
+			if (format == MatrixOutOptions.FORMAT_ASCII_SPARSE ||
+				format == MatrixOutOptions.FORMAT_ASCII_FULL)
+				lineWriter.close();
+			if (format == MatrixOutOptions.FORMAT_BINARY_SPARSE ||
+				format == MatrixOutOptions.FORMAT_BINARY_FULL)
+				binaryWriter.close();
+		}catch (IOException e){
+			e.printStackTrace();
+			return false;
+			}
+		return true;
+	}
+	
+	public boolean isWriting(){
+		if (format == MatrixOutOptions.FORMAT_ASCII_SPARSE ||
+			format == MatrixOutOptions.FORMAT_ASCII_FULL)
+			return (lineWriter != null);
+		if (format == MatrixOutOptions.FORMAT_BINARY_SPARSE ||
+			format == MatrixOutOptions.FORMAT_BINARY_FULL)
+			return (binaryWriter != null);
+		return false;
+	}
+	
+	//opens a file, prints a header, and allows line-by-line writing
+	public boolean openAsciiSparse(){
+		if (dataFile == null || isWriting()) return false;
+		
+		try{
+			File temp = new File(dataFile.getAbsolutePath() + ".tmp");
+			lineWriter = new BufferedWriter(new FileWriter(temp));
+			//header
+			lineWriter.write("%%MatrixMarket matrix coordinate real general\n");
+			lineWriter.write("%Generated by ar.interface." + InterfaceEnvironment.getVersion() + "\n");
+			lineWriter.write("%Date: " + InterfaceEnvironment.getNow("dd/mm/yyyy"));
+			
+			//don't know these values yet
+			lineWriter.write("\n?" + delimiter + "?" + delimiter + "?");
+			
+			entry_count = 0;
+			
+			return true;
+		}catch (IOException e){
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	//opens a file, prints a header, and allows line-by-line writing
+	public boolean openBinarySparse(){
+		if (dataFile == null || isWriting()) return false;
+		
+		try{
+			//File temp = new File(dataFile.getAbsolutePath() + ".tmp");
+			binaryWriter = new RandomAccessFile(dataFile, "rw");
+			
+			//write header
+			binaryWriter.writeChars("abcd");		//magic
+			binaryWriter.writeInt(0);				//M
+			binaryWriter.writeInt(0);				//N
+			binaryWriter.writeInt(0);				//count
+			
+			entry_count = 0;
+			
+			return true;
+		}catch (IOException e){
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	public boolean writeLine(int i, int j, double value){
+		if (!isWriting()) return false;
+		
+		switch(format){
+			case MatrixOutOptions.FORMAT_ASCII_SPARSE:
+				return writeLineAsciiSparse(i, j, value);
+			case MatrixOutOptions.FORMAT_BINARY_SPARSE:
+				return writeLineBinarySparse(i, j, value);
+		}
+	
+	return false;
+	}
+	
+	public boolean writeLineAsciiSparse(int i, int j, double value){
+		if (!isWriting()) return false;
+		
+		try{
+			lineWriter.write("\n" + (i + 1) + delimiter + (j + 1) + delimiter + MguiDouble.getString(value, number_format));
+			entry_count++;
+			return true;
+		}catch (IOException e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean writeLineBinarySparse(int i, int j, double value){
+		if (!isWriting()) return false;
+		
+		try{
+			binaryWriter.writeInt(i + 1);
+			binaryWriter.writeInt(j + 1);
+			binaryWriter.writeFloat((float)value);
+
+			entry_count++;
+			return true;
+		}catch (IOException e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean write(InterfaceIOOptions options, ProgressUpdater progress_bar) {
+		
+		if (!(options instanceof MatrixOutOptions)) return false;
+		
+		MatrixOutOptions opts = (MatrixOutOptions)options;
+		File[] files = opts.getFiles();
+		format = opts.format;
+		number_format = opts.string_format;
+		
+		Matrix[] matrices = opts.getMatrices();
+		
+		boolean success = true;
+		has_header = opts.has_header;
+		
+		try{
+			for (int i = 0; i < files.length; i++){
+				dataFile = files[i];
+				success &= writeMatrix(matrices[i], progress_bar);
+				}
+		}catch (Exception e){
+			e.printStackTrace();
+			return false;
+			}
+		
+		return success;
+	}
+	
+	@Override
+	public boolean writeMatrix(final Matrix m, final ProgressUpdater progress_bar) throws IOException, InterfaceIOException {
+		
+		if (dataFile == null) return false;
+		if (progress_bar == null){
+			switch (format){
+				case MatrixOutOptions.FORMAT_ASCII_FULL:
+					return writeMatrixAsciiFullBlocking(m, progress_bar);
+				case MatrixOutOptions.FORMAT_ASCII_SPARSE:
+					return writeMatrixAsciiSparseBlocking(m, progress_bar);
+				case MatrixOutOptions.FORMAT_BINARY_FULL:
+					return writeMatrixBinaryFullBlocking(m, progress_bar);
+				case MatrixOutOptions.FORMAT_BINARY_SPARSE:
+					return writeMatrixBinarySparseBlocking(m, progress_bar);
+				}
+			return false;
+		}else{
+			return ((Boolean)Worker.post(new Job(){
+					@Override
+					public Boolean run(){
+						try{
+							switch (format){
+								case MatrixOutOptions.FORMAT_ASCII_FULL:
+									return writeMatrixAsciiFullBlocking(m, progress_bar);
+								case MatrixOutOptions.FORMAT_ASCII_SPARSE:
+									return writeMatrixAsciiSparseBlocking(m, progress_bar);
+								case MatrixOutOptions.FORMAT_BINARY_FULL:
+									return writeMatrixBinaryFullBlocking(m, progress_bar);
+								case MatrixOutOptions.FORMAT_BINARY_SPARSE:
+									return writeMatrixBinarySparseBlocking(m, progress_bar);
+								}
+						}catch (Exception e) { }
+						return false;
+					}
+				}));
+			}
+		
+	}
+
+	boolean writeMatrixAsciiFullBlocking(Matrix m, ProgressUpdater progress_bar) 
+																		throws IOException, InterfaceIOException {
+		return false;
+	}
+	
+	/*************************************
+	 * Output a sparse matrix in Ascii format. See:
+	 * 
+	 * http://math.nist.gov/MatrixMarket/formats.html
+	 * 
+	 * @param m
+	 * @param progress_bar
+	 * @return
+	 */
+	boolean writeMatrixAsciiSparseBlocking(final Matrix m, final ProgressUpdater progress_bar) 
+																		throws IOException, InterfaceIOException {
+		
+		if (dataFile == null) return false;
+		
+		if (progress_bar != null){
+			progress_bar.setMinimum(0);
+			progress_bar.setMaximum(m.getColumnDimension() * m.getRowDimension());
+			}
+		
+		BufferedWriter writer = new BufferedWriter(new FileWriter(dataFile));
+		//header
+		//TODO: header optional?
+		//if (has_header){
+			writer.write("%%MatrixMarket matrix coordinate real general\n");
+			writer.write("%Generated by ar.interface." + InterfaceEnvironment.getVersion() + "\n");
+			writer.write("%Date: " + InterfaceEnvironment.getNow("dd/mm/yyyy"));
+		
+		//since we need to specify no. of non-zeros, have to run through matrix first
+		int count = 0;
+		for (int i = 0; i < m.getRowDimension(); i++)
+			for (int j = 0; j < m.getColumnDimension(); j++)
+				if (NumberFunctions.compare(m.get(i, j), 0, precision) != 0)
+					count++;
+		
+		//if (has_header)
+			writer.write("\n" + m.getRowDimension() + delimiter + m.getColumnDimension() + delimiter + count);
+		
+		//data (indices are 1-based so add 1)
+		for (int i = 0; i < m.getRowDimension(); i++){
+			progress_bar.update(i * m.getRowDimension());
+			for (int j = 0; j < m.getColumnDimension(); j++)
+				if (NumberFunctions.compare(m.get(i, j), 0, precision) != 0)
+					writer.write("\n" + (i + 1) + delimiter + (j + 1) + delimiter + 
+								 MguiDouble.getString(m.get(i, j), number_format));
+			}
+				
+		return true;
+	}
+	
+	/*********************************
+	 * Output a full matrix in Ascii format.
+	 * 
+	 * @param matrix Matrix to write
+	 * @param progress_bar Optional progress bar to update writing progress
+	 * @return <code>true</code> if successful
+	 * @throws IOException
+	 * @throws InterfaceIOException
+	 */
+	boolean writeMatrixBinaryFullBlocking(Matrix matrix, ProgressUpdater progress_bar) 
+																		throws IOException, InterfaceIOException {
+		
+		if (progress_bar != null){
+			progress_bar.setMinimum(0);
+			progress_bar.setMaximum(matrix.getColumnDimension());
+			}
+		
+		BufferedWriter writer = new BufferedWriter(new FileWriter(dataFile));
+		
+		//header
+		writer.write("%Full matrix real\n");
+		writer.write("%Generated by ar.interface." + InterfaceEnvironment.getVersion() + "\n");
+		writer.write("%Date: " + InterfaceEnvironment.getNow("dd/mm/yyyy"));
+		
+		for (int i = 0; i < matrix.getColumnDimension(); i++){
+			writer.write("\n");
+			if (progress_bar != null)
+				progress_bar.update(i);
+			for (int j = 0; j < matrix.getRowDimension(); j++){
+				if (j > 0) writer.write(delimiter);
+				writer.write(MguiDouble.getString(matrix.get(i, j), number_format));
+				}
+			}
+		
+		writer.close();
+		return true;
+	}
+	
+	
+	/*************************************
+	 * Write a sparse matrix in binary format. Format is:
+	 * 
+	 * <p>header:
+	 * 
+	 * <p>item					size		pos		desc
+	 * <br>char[] magic			4			0		describes the data (currently does nothing; format is float)
+	 * <br>int[] size			3*4=12		4		M, N, number of entries
+	 * 
+	 * <p>data line:
+	 * 
+	 * <br>int i				4			(line_no * 12) + 16
+	 * <br>int j				4			(line_no * 12) + 20
+	 * <br>float value			4			(line_no * 12) + 24
+	 * 
+	 * @param m
+	 * @param progress_bar
+	 * @return
+	 */
+	boolean writeMatrixBinarySparseBlocking(final Matrix m, final ProgressUpdater progress_bar) 
+																			throws IOException, InterfaceIOException {
+		
+		if (dataFile == null) return false;
+		
+		if (progress_bar != null){
+			progress_bar.setMinimum(0);
+			progress_bar.setMaximum(m.getColumnDimension() * m.getRowDimension());
+			}
+		
+		RandomAccessFile writer = new RandomAccessFile(dataFile, "rw");
+		
+		//write header
+		writer.writeChars("abcd");					//magic
+		writer.writeInt(m.getRowDimension());		//M
+		writer.writeInt(m.getColumnDimension());	//N
+		
+		//since we need to specify no. of non-zeros, have to run through matrix first
+		int count = 0;
+		for (int i = 0; i < m.getRowDimension(); i++)
+			for (int j = 0; j < m.getColumnDimension(); j++)
+				if (NumberFunctions.compare(m.get(i, j), 0, precision) != 0)
+					count++;
+		writer.writeInt(count);						//entries (not known yet)
+		
+		//write data
+		//data (indices are 1-based so add 1)
+		for (int i = 0; i < m.getRowDimension(); i++){
+			progress_bar.update(i * m.getRowDimension());
+			for (int j = 0; j < m.getColumnDimension(); j++)
+				if (NumberFunctions.compare(m.get(i, j), 0, precision) != 0){
+					writer.writeInt(i + 1);
+					writer.writeInt(j + 1);
+					writer.writeFloat((float)m.get(i, j));
+					}
+			}
+			
+		return true;
+		
+	}
+
+}

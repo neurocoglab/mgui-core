@@ -1,0 +1,474 @@
+<PipelineProcessLibrary name = 'mgui-adni'>
+	<Processes>
+		<JavaProcess name ='adni_strip_cbrain_names' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_strip_cbrain_names'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'prefix'
+				optional = 'true'
+				default_value = 'adni_'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'suffixes'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='move_valid_images' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_move_valid_images'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'validation_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'valid_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'prefix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'suffix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'copy'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='nii2mnc' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_nii2mnc'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'process_id'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'prefix'
+				optional = 'true'
+				default_value = 'adni'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'suffix'
+				optional = 'true'
+				default_value = 't1'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'param_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'skip_existing'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='validity_report' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_validation_report'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'validation_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'definition_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'has_header'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'levels_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'as_table'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='create_input_dirs' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_create_input_dirs'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir_prefix'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'field_strength_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='compute_scale_transforms' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_compute_scale_transforms'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'param_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'prefix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'suffix'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'pre_pattern'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'post_pattern'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='adni_create_symlinks' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_create_symlinks'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='extract_xml_values' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_extract_xml_values'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'values_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='minc_operation' main_class = 'minc.MincFunctions' input_parameter = 'input_file' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'minc_operation'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'operation'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'param_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sub_dir'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='move_valid_subjects' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_move_valid_subjects'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'valid_pattern'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'validation_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'copy'
+				optional = 'true'
+				default_value = ''
+				has_value = 'false'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='transform_images' main_class = 'minc.MincFunctions' input_parameter = 'inputfile' output_parameter = 'outputfile' >
+			<TaskParameter
+				name = 'command'
+				optional = 'false'
+				default_value = 'adni_transform_images'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'source_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'target_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'transform_dir'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'param_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+	</Processes>
+</PipelineProcessLibrary>

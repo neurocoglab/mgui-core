@@ -1,0 +1,155 @@
+<PipelineProcessLibrary name = 'mgui-stats'>
+	<Processes>
+		<JavaProcess name ='volume-to-surface-projection' main_class = 'mgui.command.ShapeFunctions' input_parameter = 'volume_file' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'function'
+				optional = 'false'
+				default_value = 'volume-to-surface-parameters'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'volume_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'surface_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_normal_min'
+				optional = 'false'
+				default_value = '1.0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_normal_max'
+				optional = 'false'
+				default_value = '4.0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_normal_step'
+				optional = 'false'
+				default_value = '0.25'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_tangent_min'
+				optional = 'false'
+				default_value = '0.0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_tangent_max'
+				optional = 'false'
+				default_value = '3.0'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'sigma_tangent_step'
+				optional = 'false'
+				default_value = '0.25'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'log_file'
+				optional = 'true'
+				default_value = 'mgui.log'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'iterations'
+				optional = 'false'
+				default_value = '2'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'distance_normal_max'
+				optional = 'true'
+				default_value = '2'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'distance_tangent_max'
+				optional = 'true'
+				default_value = '2'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+		<JavaProcess name ='holm-bonferroni-correction' main_class = 'mgui.command.StatisticsFunctions' input_parameter = 'input_file' output_parameter = 'output_file' >
+			<TaskParameter
+				name = 'function'
+				optional = 'false'
+				default_value = 'holm-bonferroni-correction'
+				has_value = 'true'
+				use_name = 'false'
+			/>
+			<TaskParameter
+				name = 'input_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_file'
+				optional = 'false'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'p_value_column'
+				optional = 'false'
+				default_value = 'p_values'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'log_file'
+				optional = 'true'
+				default_value = ''
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'output_column'
+				optional = 'true'
+				default_value = 'hb_corrected'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+			<TaskParameter
+				name = 'number_format'
+				optional = 'true'
+				default_value = '0.000000'
+				has_value = 'true'
+				use_name = 'true'
+			/>
+		</JavaProcess>
+	</Processes>
+</PipelineProcessLibrary>

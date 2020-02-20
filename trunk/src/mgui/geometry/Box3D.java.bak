@@ -1,0 +1,120 @@
+package ar.Geometry;
+
+import java.util.ArrayList;
+
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
+/***************************
+ * Box in R3 with base point and x, y, and z axis points (defined with vectors but
+ * stored as points). 
+ * 
+ * @author AndrewR
+ */
+
+public class Box3D extends Shape3D {
+
+	public float xDim = 1, yDim = 1, zDim = 1;
+	public ArrayList<Point3f> nodes = new ArrayList<Point3f>(4);
+	
+	public Box3D(){
+		init();
+	}
+	
+	private void init(){
+		for (int i = 0; i < 4; i++)
+			nodes.add(i, new Point3f());
+	}
+	
+	public void setBasePt(Point3f p){
+		Vector3f t = new Vector3f();
+		t.sub(p, nodes.get(0));
+		nodes.get(1).add(t);
+		nodes.get(2).add(t);
+		nodes.get(3).add(t);
+		nodes.get(0).set(p);
+	}
+	
+	public Point3f getBasePt(){
+		return nodes.get(0);
+	}
+	
+	public void setXAxis(Vector3f v){
+		v.normalize();
+		v.scale(xDim);
+		nodes.get(1).add(nodes.get(0), v);
+	}
+	
+	public void setYAxis(Vector3f v){
+		v.normalize();
+		v.scale(yDim);
+		nodes.get(2).add(nodes.get(0), v);
+	}
+	
+	public void setZAxis(Vector3f v){
+		v.normalize();
+		v.scale(zDim);
+		nodes.get(3).add(nodes.get(0), v);
+	}
+	
+	public void setDimX(float dim){
+		if (dim <= 0) return;
+		xDim = dim;
+		Vector3f v = new Vector3f();
+		v.sub(nodes.get(1), nodes.get(0));
+		v.scale(xDim);
+		nodes.get(1).add(nodes.get(0), v);
+	}
+	
+	public void setDimY(float dim){
+		if (dim <= 0) return;
+		yDim = dim;
+		Vector3f v = new Vector3f();
+		v.sub(nodes.get(2), nodes.get(0));
+		v.scale(yDim);
+		nodes.get(2).add(nodes.get(0), v);
+	}
+	
+	public void setDimZ(float dim){
+		if (dim <= 0) return;
+		zDim = dim;
+		Vector3f v = new Vector3f();
+		v.sub(nodes.get(3), nodes.get(0));
+		v.scale(zDim);
+		nodes.get(3).add(nodes.get(0), v);
+	}
+	
+	public Vector3f getXAxis(){
+		Vector3f axis = new Vector3f();
+		axis.sub(nodes.get(1), nodes.get(0));
+		axis.normalize();
+		return axis;
+	}
+	
+	public Vector3f getYAxis(){
+		Vector3f axis = new Vector3f();
+		axis.sub(nodes.get(2), nodes.get(0));
+		axis.normalize();
+		return axis;
+	}
+	
+	public Vector3f getZAxis(){
+		Vector3f axis = new Vector3f();
+		axis.sub(nodes.get(3), nodes.get(0));
+		axis.normalize();
+		return axis;
+	}
+	
+	public ArrayList<Point3f> getNodes(){
+		return nodes;
+	}
+	
+	//return diagonal vector of this box
+	public Vector3f getDiagonal(){
+		Vector3f v = getXAxis();
+		v.dot(getYAxis());
+		v.dot(getZAxis());
+		return v;
+	}
+	
+}

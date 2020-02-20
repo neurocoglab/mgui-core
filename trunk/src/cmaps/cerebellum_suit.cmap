@@ -1,0 +1,807 @@
+<?xml version="1.0"?>
+
+<ColourMap name = 'Cerebellum-SUIT' type = 'discrete' >	<NameMap name = 'Cerebellum-SUIT'>
+		<Item index = '1' value = 'Left_I_IV' />
+		<Item index = '2' value = 'Right_I_IV' />
+		<Item index = '3' value = 'Left_V' />
+		<Item index = '4' value = 'Right_V' />
+		<Item index = '5' value = 'Left_VI' />
+		<Item index = '6' value = 'Vermis_VI' />
+		<Item index = '7' value = 'Right_VI' />
+		<Item index = '8' value = 'Left_CrusI' />
+		<Item index = '9' value = 'Vermis_CrusI' />
+		<Item index = '10' value = 'Right_CrusI' />
+		<Item index = '11' value = 'Left_CrusII' />
+		<Item index = '12' value = 'Vermis_CrusII' />
+		<Item index = '13' value = 'Right_CrusII' />
+		<Item index = '14' value = 'Left_VIIb' />
+		<Item index = '15' value = 'Vermis_VIIb' />
+		<Item index = '16' value = 'Right_VIIb' />
+		<Item index = '17' value = 'Left_VIIIa' />
+		<Item index = '18' value = 'Vermis_VIIIa' />
+		<Item index = '19' value = 'Right_VIIIa' />
+		<Item index = '20' value = 'Left_VIIIb' />
+		<Item index = '21' value = 'Vermis_VIIIb' />
+		<Item index = '22' value = 'Right_VIIIb' />
+		<Item index = '23' value = 'Left_IX' />
+		<Item index = '24' value = 'Vermis_IX' />
+		<Item index = '25' value = 'Right_IX' />
+		<Item index = '26' value = 'Left_X' />
+		<Item index = '27' value = 'Vermis_X' />
+		<Item index = '28' value = 'Right_X' />
+		<Item index = '29' value = 'Left_Dentate' />
+		<Item index = '30' value = 'Right_Dentate' />
+		<Item index = '31' value = 'Left_Interposed' />
+		<Item index = '32' value = 'Right_Interposed' />
+		<Item index = '33' value = 'Left_Fastigial' />
+		<Item index = '34' value = 'Right_Fastigial' />
+	</NameMap>
+	<Item index = '0'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '1'>
+		<Colour3f red = '0.8' green = '1.0' blue = '0.0' />
+	</Item>
+	<Item index = '2'>
+		<Colour3f red = '0.72156864' green = '0.9019608' blue = '0.0' />
+	</Item>
+	<Item index = '3'>
+		<Colour3f red = '0.0' green = '0.9019608' blue = '0.36078432' />
+	</Item>
+	<Item index = '4'>
+		<Colour3f red = '0.0' green = '1.0' blue = '0.4' />
+	</Item>
+	<Item index = '5'>
+		<Colour3f red = '0.0' green = '0.4' blue = '1.0' />
+	</Item>
+	<Item index = '6'>
+		<Colour3f red = '0.0' green = '0.32156864' blue = '0.8' />
+	</Item>
+	<Item index = '7'>
+		<Colour3f red = '0.0' green = '0.4' blue = '1.0' />
+	</Item>
+	<Item index = '8'>
+		<Colour3f red = '0.8' green = '0.0' blue = '1.0' />
+	</Item>
+	<Item index = '9'>
+		<Colour3f red = '0.6392157' green = '0.0' blue = '0.8' />
+	</Item>
+	<Item index = '10'>
+		<Colour3f red = '0.8' green = '0.0' blue = '1.0' />
+	</Item>
+	<Item index = '11'>
+		<Colour3f red = '1.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '12'>
+		<Colour3f red = '0.8' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '13'>
+		<Colour3f red = '1.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '14'>
+		<Colour3f red = '1.0' green = '0.6' blue = '0.0' />
+	</Item>
+	<Item index = '15'>
+		<Colour3f red = '0.8' green = '0.47843137' blue = '0.0' />
+	</Item>
+	<Item index = '16'>
+		<Colour3f red = '1.0' green = '0.6' blue = '0.0' />
+	</Item>
+	<Item index = '17'>
+		<Colour3f red = '0.2' green = '1.0' blue = '0.0' />
+	</Item>
+	<Item index = '18'>
+		<Colour3f red = '0.16078432' green = '0.8' blue = '0.0' />
+	</Item>
+	<Item index = '19'>
+		<Colour3f red = '0.2' green = '1.0' blue = '0.0' />
+	</Item>
+	<Item index = '20'>
+		<Colour3f red = '0.0' green = '1.0' blue = '1.0' />
+	</Item>
+	<Item index = '21'>
+		<Colour3f red = '0.0' green = '0.8' blue = '0.8' />
+	</Item>
+	<Item index = '22'>
+		<Colour3f red = '0.0' green = '1.0' blue = '1.0' />
+	</Item>
+	<Item index = '23'>
+		<Colour3f red = '0.2' green = '0.0' blue = '1.0' />
+	</Item>
+	<Item index = '24'>
+		<Colour3f red = '0.16078432' green = '0.0' blue = '0.8' />
+	</Item>
+	<Item index = '25'>
+		<Colour3f red = '0.2' green = '0.0' blue = '1.0' />
+	</Item>
+	<Item index = '26'>
+		<Colour3f red = '1.0' green = '0.0' blue = '0.6' />
+	</Item>
+	<Item index = '27'>
+		<Colour3f red = '0.8' green = '0.0' blue = '0.47843137' />
+	</Item>
+	<Item index = '28'>
+		<Colour3f red = '1.0' green = '0.0' blue = '0.6' />
+	</Item>
+	<Item index = '29'>
+		<Colour3f red = '1.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '30'>
+		<Colour3f red = '1.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '31'>
+		<Colour3f red = '0.2' green = '1.0' blue = '0.0' />
+	</Item>
+	<Item index = '32'>
+		<Colour3f red = '0.2' green = '1.0' blue = '0.0' />
+	</Item>
+	<Item index = '33'>
+		<Colour3f red = '0.0' green = '0.4' blue = '1.0' />
+	</Item>
+	<Item index = '34'>
+		<Colour3f red = '0.0' green = '0.4' blue = '1.0' />
+	</Item>
+	<Item index = '35'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '36'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '37'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '38'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '39'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '40'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '41'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '42'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '43'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '44'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '45'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '46'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '47'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '48'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '49'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '50'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '51'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '52'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '53'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '54'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '55'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '56'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '57'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '58'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '59'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '60'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '61'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '62'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '63'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '64'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '65'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '66'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '67'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '68'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '69'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '70'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '71'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '72'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '73'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '74'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '75'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '76'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '77'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '78'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '79'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '80'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '81'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '82'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '83'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '84'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '85'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '86'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '87'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '88'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '89'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '90'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '91'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '92'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '93'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '94'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '95'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '96'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '97'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '98'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '99'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '100'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '101'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '102'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '103'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '104'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '105'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '106'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '107'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '108'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '109'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '110'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '111'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '112'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '113'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '114'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '115'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '116'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '117'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '118'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '119'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '120'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '121'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '122'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '123'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '124'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '125'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '126'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '127'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '128'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '129'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '130'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '131'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '132'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '133'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '134'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '135'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '136'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '137'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '138'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '139'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '140'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '141'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '142'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '143'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '144'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '145'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '146'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '147'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '148'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '149'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '150'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '151'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '152'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '153'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '154'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '155'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '156'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '157'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '158'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '159'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '160'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '161'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '162'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '163'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '164'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '165'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '166'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '167'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '168'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '169'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '170'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '171'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '172'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '173'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '174'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '175'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '176'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '177'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '178'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '179'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '180'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '181'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '182'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '183'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '184'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '185'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '186'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '187'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '188'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '189'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '190'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '191'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '192'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '193'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '194'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '195'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '196'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '197'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '198'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '199'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '200'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '201'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '202'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '203'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '204'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '205'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '206'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '207'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '208'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '209'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '210'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '211'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '212'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '213'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '214'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '215'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '216'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '217'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '218'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '219'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '220'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '221'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '222'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '223'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '224'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '225'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '226'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '227'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '228'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '229'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '230'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '231'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '232'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '233'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '234'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '235'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '236'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '237'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '238'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '239'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '240'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '241'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '242'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '243'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '244'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '245'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '246'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '247'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '248'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '249'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '250'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '251'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '252'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '253'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '254'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '255'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+</ColourMap>

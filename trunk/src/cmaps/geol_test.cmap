@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<ColourMap name = 'geol_test' type = 'discrete'>
+	<NameMap name = 'geol_test'>
+		<Item index = '1' value = 'CAS' />
+		<Item index = '2' value = '1' />
+		<Item index = '3' value = '2' />
+		<Item index = '4' value = '3' />
+		<Item index = '5' value = '4' />
+	</NameMap>
+	<Item index = '1'>
+		<Colour4f red = '0.6' green = '0.6' blue = '0.6' alpha = '1.0' />
+	</Item>
+	<Item index = '2'>
+		<Colour4f red = '1.0' green = '0.0' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '3'>
+		<Colour4f red = '1.0' green = '1.0' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '4'>
+		<Colour4f red = '0.0' green = '0.8' blue = '0.0' alpha = '1.0' />
+	</Item>
+	<Item index = '5'>
+		<Colour4f red = '0.23921569' green = '0.23921569' blue = '0.79607844' alpha = '1.0' />
+	</Item>
+</ColourMap>

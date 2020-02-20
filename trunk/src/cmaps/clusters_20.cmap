@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+
+<ColourMap name = 'cmap' type = 'discrete' >	<Item index = '0'>
+		<Colour3f red = '1.0' green = '1.0' blue = '1.0' />
+	</Item>
+	<Item index = '1'>
+		<Colour3f red = '0.8' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '2'>
+		<Colour3f red = '0.0' green = '0.6' blue = '0.0' />
+	</Item>
+	<Item index = '3'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.8' />
+	</Item>
+	<Item index = '4'>
+		<Colour3f red = '0.0' green = '1.0' blue = '1.0' />
+	</Item>
+	<Item index = '5'>
+		<Colour3f red = '1.0' green = '1.0' blue = '0.0' />
+	</Item>
+	<Item index = '6'>
+		<Colour3f red = '0.8' green = '0.0' blue = '0.8' />
+	</Item>
+	<Item index = '7'>
+		<Colour3f red = '0.4' green = '0.0' blue = '0.4' />
+	</Item>
+	<Item index = '8'>
+		<Colour3f red = '0.8' green = '0.4' blue = '0.0' />
+	</Item>
+	<Item index = '9'>
+		<Colour3f red = '0.0' green = '1.0' blue = '0.0' />
+	</Item>
+	<Item index = '10'>
+		<Colour3f red = '0.6' green = '0.6' blue = '1.0' />
+	</Item>
+	<Item index = '11'>
+		<Colour3f red = '1.0' green = '0.2' blue = '0.2' />
+	</Item>
+	<Item index = '12'>
+		<Colour3f red = '0.0' green = '0.4' blue = '0.4' />
+	</Item>
+	<Item index = '13'>
+		<Colour3f red = '0.0' green = '0.2' blue = '0.0' />
+	</Item>
+	<Item index = '14'>
+		<Colour3f red = '1.0' green = '0.8' blue = '0.8' />
+	</Item>
+	<Item index = '15'>
+		<Colour3f red = '0.0' green = '0.4' blue = '0.4' />
+	</Item>
+	<Item index = '16'>
+		<Colour3f red = '0.4' green = '0.2' blue = '0.0' />
+	</Item>
+	<Item index = '17'>
+		<Colour3f red = '0.8' green = '1.0' blue = '0.8' />
+	</Item>
+	<Item index = '18'>
+		<Colour3f red = '0.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '19'>
+		<Colour3f red = '1.0' green = '0.0' blue = '0.0' />
+	</Item>
+	<Item index = '20'>
+		<Colour3f red = '0.0' green = '0.6' blue = '0.6' />
+	</Item>
+</ColourMap>

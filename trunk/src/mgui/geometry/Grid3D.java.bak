@@ -1,0 +1,406 @@
+package ar.Geometry;
+
+import java.util.ArrayList;
+
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
+
+/*************************
+ * Holds a 3D array of byte values and a Box3D defining the distribution of these
+ * values in R3. For use as a voxel set.
+ * 
+ * @author AndrewR
+ *
+ */
+
+
+/**@todo implement 8 & 16 bit capability for RGB, etc. **/
+
+public class Grid3D extends Shape3D {
+	
+	public static int BITS_8 = 8;
+	public static int BITS_16 = 16;
+	public int nBits = BITS_8;
+	
+	public byte[][][] gridData;
+	public Box3D 	gridBox;
+	private int 	sSize, tSize, rSize;
+	private float	sUnit, tUnit, rUnit;
+	private int		sTexSize, tTexSize, rTexSize;
+	private float 	sTexGenScale, tTexGenScale, rTexGenScale;
+	
+	public boolean	tFlip = true;
+	
+	byte[] emptyByteRow = new byte[1024];
+    int[] emptyIntRow = new int[1024];
+	
+	public Grid3D(){
+		setBox(new Box3D());
+	}
+	
+	public Grid3D(byte[][][] data, Box3D box){
+		setBox(box);
+		setData(data);
+	}
+	
+	public void setData(byte[][][] data){
+		gridData = data;
+		if (data != null){
+			rSize = data.length;
+			tSize = data[0].length;
+			sSize = data[0][0].length;
+			}
+		setUnits();
+		setTexSizes();
+	}
+	
+	private void setUnits(){
+		if (gridBox == null) return;
+		if (sSize == 0 || tSize == 0 || rSize == 0) return;
+		sUnit = gridBox.getSDim() / sSize;
+		tUnit = gridBox.getTDim() / tSize;
+		rUnit = gridBox.getRDim() / rSize;
+	}
+	
+	public void setBox(Box3D box){
+		gridBox = box;
+		setUnits();
+		setTexSizes();
+	}
+	
+	public Box3D getBox(){
+		return gridBox;
+	}
+	
+	public int getSSize(){
+		return sSize;
+	}
+	
+	public int getTSize(){
+		return tSize;
+	}
+	
+	public int getRSize(){
+		return rSize;
+	}
+	
+	public float getSUnit(){
+		return sUnit;
+	}
+	
+	public float getTUnit(){
+		return tUnit;
+	}
+	
+	public float getRUnit(){
+		return rUnit;
+	}
+	
+	public int getSTexSize(){
+		return sTexSize;
+	}
+	
+	public int getTTexSize(){
+		return tTexSize;
+	}
+	
+	public int getRTexSize(){
+		return rTexSize;
+	}
+	
+	public float getSTexGenScale(){
+		return sTexGenScale;
+	}
+	
+	public float getTTexGenScale(){
+		return tTexGenScale;
+	}
+	
+	public float getRTexGenScale(){
+		return rTexGenScale;
+	}
+	
+	public ArrayList<Point3f> getNodes(){
+		return gridBox.getNodes();
+	}
+	
+	/*********************************
+	 * The following methods adapted from the Volume class provided in the VolRend 
+	 * package: org.jscience.medicine.volumetric  
+	 * 
+	 */
+	
+	
+	//Note:
+    // Java3D "flips" images along the "t" axis, so we load the images into
+    // the buffer from the "top" down.  That is, we use (numRows - row - 1)
+    // instead of (row).
+
+    // load byteData with Intensity values
+    public void loadRIntensity(int rValue, byte[] byteData) {
+    	loadRIntensity(rValue, byteData, 0);
+    }
+
+    public void loadRIntensity(int rValue, byte[] byteData, int byteOffset) {
+	for (int t=0; t < tSize; t++){
+	    byte[] vRow = gridData[rValue][t];
+	    int rowIndex = 0;
+	    if (tFlip) {
+		rowIndex = (tTexSize - t - 1) * sTexSize;
+	    } else {
+		rowIndex = t * sTexSize;
+	    }
+	    System.arraycopy(vRow, 0, byteData, byteOffset + rowIndex, sSize);
+	}
+    }
+
+    // this routine loads values for constant yValue, the texture map is
+    // stored in x,z format (x changes fastest)
+    public void loadTIntensity(int tValue, byte[] byteData)  {
+	for (int r=0; r < rSize; r++){
+	    int rowIndex;
+	    if (tFlip) {
+	    	rowIndex = (rTexSize - r - 1) * sTexSize;
+	    } else {
+	    	rowIndex = r * sTexSize;
+	    }
+	    byte[] vRow;
+	    if (r < rSize) {
+		vRow = gridData[r][tValue];
+	    } else {
+		vRow = emptyByteRow;
+	    }
+	    System.arraycopy(vRow, 0, byteData, rowIndex, sSize);
+	}
+    }
+
+    // this routine loads values for constant xValue, into byteData in y,z
+    // order (y changes fastest)
+    public void loadSIntensity(int sValue, byte[] byteData)  {
+	for (int r=0; r < rSize; r++){
+	    int rowIndex;
+	    if (tFlip) {
+	    	rowIndex = (rTexSize - r - 1) * tTexSize;
+	    } else {
+	    	rowIndex = r * tTexSize;
+	    }
+	    for (int t=0; t < tSize; t++){
+		byte value;
+		value = gridData[r][t][sValue];
+		int tIndex = rowIndex + t;
+		try {
+		byteData[tIndex] = value;
+		} catch (ArrayIndexOutOfBoundsException e) {
+		    InterfaceSession.log("tIndex = " + tIndex +
+			" byteData.length = " + byteData.length);
+		    InterfaceSession.log("rowIndex =  " + rowIndex);
+		    InterfaceSession.log("rTexSize =  " + rTexSize);
+		    InterfaceSession.log("sDim =  " + sSize);
+		    InterfaceSession.log("r =  " + r + " t = " + t);
+		    System.exit(0);
+		}
+	    }
+	}
+    }
+
+    // load byteData with the Luminance/Alpha values-- in this case, the same
+    // value repeated twice for each value in the array.
+
+    public void loadRLumAlpha(int rValue, byte[] byteData) {
+	for (int t=0; t < tSize; t++){
+	    byte[] vRow = gridData[rValue][t];
+	    int rowIndex;
+	    if (tFlip) {
+		rowIndex = (tTexSize - t - 1) * sTexSize * 2;
+	    } else {
+		rowIndex = t * sTexSize * 2;
+	    }
+	    for (int s=0; s < sSize; s++){
+		byte value = vRow[s];
+		int tIndex = (rowIndex + s) * 2;
+		byteData[tIndex] = value;
+		byteData[tIndex+1] = value;
+	    }
+	}
+    }
+
+    // this routine loads values for constant yValue, the texture map is
+    // stored in x,z format (x changes fastest)
+    public void loadTLumAlpha(int tValue, byte[] byteData)  {
+	for (int r=0; r < rTexSize; r++){
+	    byte[] vRow;
+	    if (r < rSize) {
+		vRow = gridData[r][tValue];
+	    } else {
+		vRow = emptyByteRow;
+	    }
+	    int rowIndex;
+	    if (tFlip) {
+		rowIndex = (rTexSize - r - 1) * sTexSize * 2;
+	    } else {
+		rowIndex = r * sTexSize * 2;
+	    }
+	    for (int s=0; s < sSize; s++){
+		byte value = vRow[s];
+		int tIndex = (rowIndex + s) * 2;
+		byteData[tIndex] = value;
+		byteData[tIndex+1] = value;
+	    }
+	}
+    }
+
+    // this routine loads values for constant xValue, into byteData in y,z
+    // order (y changes fastest)
+    public void loadSLumAlpha(int sValue, byte[] byteData)  {
+	for (int r=0; r < rTexSize; r++){
+	    int rowIndex;
+	    if (tFlip) {
+	    	rowIndex = (rTexSize - r - 1) * sTexSize * 2;
+	    } else {
+	    	rowIndex = r  * sTexSize * 2;
+	    }
+	    for (int t=0; t < tSize; t++){
+		byte value;
+		if (r < rSize) {
+		    value = gridData[r][t][sValue];
+		} else {
+		    value = 0;
+		}
+		int tIndex = (rowIndex + t) * 2;
+		byteData[tIndex] = value;
+		byteData[tIndex+1] = value;
+	    }
+	}
+    }
+
+    /**@todo implement colour maps ************
+    
+    // this routine loads values for constant zValue, into byteData in x,y
+    // order (x changes fastest)
+    void loadZRGBA(int zValue, int[] intData, Colormap cmap) {
+	loadZRGBA(zValue, intData, 0, cmap);
+    }
+
+    // this routine loads values for constant zValue, into byteData in x,y
+    // order (x changes fastest)
+    void loadZRGBA(int zValue, int[] intData, int intOffset, Colormap cmap) {
+
+	for (int y=0; y < yDim; y++){
+	    byte[] vRow = vol.fileData[zValue][y];
+	    int rowIndex;
+	    if (tFlip) {
+	    	rowIndex = (yTexSize - y - 1) * xTexSize;
+	    } else {
+	    	rowIndex = y * xTexSize;
+	    }
+	    for (int x=0; x < xDim; x++){
+		byte value = vRow[x];
+		int mapIndex = value;
+		if (mapIndex < 0) {
+		   mapIndex += 256;
+		}
+		int tIndex = intOffset + rowIndex + x;
+		intData[tIndex] = cmap.colorMapping[mapIndex];
+	    }
+	}
+    }
+
+    // this routine loads values for constant yValue, into byteData in x,y
+    // order (x changes fastest)
+    void loadYRGBA(int yValue, int[] intData, Colormap cmap) {
+
+	for (int z=0; z < zTexSize; z++){
+	    byte[] vRow;
+	    if (z < zDim) {
+		vRow = vol.fileData[z][yValue];
+	    } else {
+		vRow = emptyByteRow;
+	    }
+	    int rowIndex;
+	    if (tFlip) {
+	    	rowIndex = (zTexSize - z - 1) * xTexSize;
+	    } else {
+	    	rowIndex = z * xTexSize;
+	    }
+	    for (int x=0; x < xDim; x++){
+		byte value = vRow[x];
+		int mapIndex = value;
+		if (mapIndex < 0) {
+		   mapIndex += 256;
+		}
+		int tIndex = rowIndex + x;
+		intData[tIndex] = cmap.colorMapping[mapIndex];
+	    }
+	}
+    }
+
+
+    // this routine loads values for constant xValue, into byteData in y,z
+    // order (y changes fastest)
+    void loadXRGBA(int xValue, int[] intData, Colormap cmap) {
+
+	for (int z=0; z < zTexSize; z++){
+	    int rowIndex;
+	    if (tFlip) {
+	    	rowIndex = (zTexSize - z - 1) * yTexSize;
+	    } else {
+	    	rowIndex = z * yTexSize;
+	    }
+	    for (int y=0; y < yDim; y++){
+		byte value;
+		if (z < zDim) {
+		    value = vol.fileData[z][y][xValue];
+		} else {
+		    value = 0;
+		}
+		int mapIndex = value;
+		if (mapIndex < 0) {
+		   mapIndex += 256;
+		}
+		int tIndex = rowIndex + y;
+		intData[tIndex] = cmap.colorMapping[mapIndex];
+	    }
+	}
+    }
+    
+    ****/
+	
+    private void setTexSizes(){
+		//tex size is next power of two greater than grid size
+		rTexSize = powerOfTwo(rSize);
+		sTexSize = powerOfTwo(sSize);
+		tTexSize = powerOfTwo(tSize);
+		
+		Point3d maxCoord = new Point3d();
+		
+		maxCoord.x = sSize * sUnit;
+		maxCoord.y = tSize * tUnit;
+		maxCoord.z = rSize * rUnit;
+		double max = maxCoord.x;
+		if (max < maxCoord.y) {
+		    max = maxCoord.y;
+		}
+		if (max < maxCoord.z) {
+		    max = maxCoord.z;
+		}
+		double scale = 1.0 / max;
+		double sSpace = sUnit * scale;
+		double tSpace = sUnit * scale;
+		double rSpace = sUnit * scale;
+
+		sTexGenScale =  (float)(1.0 / (sSpace * sTexSize));
+		tTexGenScale =  (float)(1.0 / (tSpace * tTexSize));
+		rTexGenScale =  (float)(1.0 / (rSpace * rTexSize));
+		
+	}
+	
+	private int powerOfTwo(int value) {
+		int retval = 16;
+		while (retval < value) {
+		    retval *= 2;
+		}
+		return retval;
+	    }
+	
+}

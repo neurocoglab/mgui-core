@@ -1,0 +1,439 @@
+package ar.MorphSections;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+import ar.Geometry.GeometryFunctions;
+import ar.Geometry.Polygon2D;
+import ar.Numbers.arInteger;
+
+public class MappedPolygon2D implements Cloneable {
+
+	public boolean isReversed;
+	public Polygon2D A, B;
+	public int prevSect, nextSect;
+	ArrayList<MorphNode2D> nodesA, nodesB;
+	ArrayList<MorphNodeMap2D> nodeMaps;
+	ArrayList<MorphNodeMap2D> nodeMapsAsc;
+	ArrayList<MorphNodeMap2D> nodeMapsDsc;
+	
+	ArrayList<arInteger> sourceCounts;
+	ArrayList<arInteger> targetCounts;
+	
+	public MappedPolygon2D(){
+		
+	}
+	
+	/*************
+	 * Constructor passing a source (A) and target (B) polygon. 
+	 * @param a Source polygon
+	 * @param b Target polygon
+	 */
+	
+	public MappedPolygon2D(Polygon2D a, Polygon2D b, int psect, int nsect){
+		setPolygons(a, b);
+		prevSect = psect;
+		nextSect = nsect;
+		//mapPolygons();
+	}
+	
+	/*************
+	 * 
+	 * @param a
+	 * @param b
+	 */
+	
+	public void setPolygons(Polygon2D a, Polygon2D b){
+		A = a;
+		B = b;
+		if (A == null || B == null){
+			return;
+		}
+		
+		//if (A.nodes.size() < B.nodes.size()){
+		//	isReversed = true;
+		//	A = b;
+		//	B = a;
+		//}
+		
+		//set nodes and sourceCounts arrays
+		nodesA = new ArrayList<MorphNode2D>(A.nodes.size());
+		for (int i = 0; i < A.nodes.size(); i++)
+			nodesA.add(new MorphNode2D(A.nodes.get(i)));
+		nodesB = new ArrayList<MorphNode2D>(B.nodes.size());
+		for (int i = 0; i < B.nodes.size(); i++)
+			nodesB.add(new MorphNode2D(B.nodes.get(i)));
+		nodeMaps = new ArrayList<MorphNodeMap2D>();
+		//for (int i = 0; i < A.nodes.size(); i++)
+		//	nodeMaps.add(new MorphNodeMap2D(isReversed));
+		sourceCounts = new ArrayList<arInteger>(B.nodes.size());
+		for (int i = 0; i < B.nodes.size(); i++)
+			sourceCounts.add(new arInteger(0));
+		targetCounts = new ArrayList<arInteger>(A.nodes.size());
+		for (int i = 0; i < A.nodes.size(); i++)
+			targetCounts.add(new arInteger(0));
+		
+	}
+	
+	public Polygon2D getA(){
+		return A;
+	}
+	
+	public Polygon2D getB(){
+		return B;
+	}
+	
+	public void setNodeMapsAsc(){
+		//sort node maps, ascending by weight
+		nodeMapsAsc = new ArrayList<MorphNodeMap2D>(nodeMaps);
+		Collections.sort(nodeMapsAsc, new nodeMapWeightComp());
+	}
+	
+	public ArrayList<MorphNodeMap2D> getNodeMapsAsc(){
+		return nodeMapsAsc;
+	}
+	
+	public void setNodeMapsDsc(){
+		//sort node maps, descending by weight
+		nodeMapsDsc = new ArrayList<MorphNodeMap2D>(nodeMaps);
+		Collections.sort(nodeMapsDsc, new nodeMapWeightComp(nodeMapWeightComp.COMP_DSC));
+	}
+	
+	public ArrayList<MorphNodeMap2D> getNodeMapsDsc(){
+		return nodeMapsDsc;
+	}
+	
+	public void mapPolygons(double threshold){
+		
+		int nA = A.nodes.size();
+		int nB = B.nodes.size();
+		
+		//obtain radial reps
+		RadialRep2D repA = new RadialRep2D(A);
+		RadialRep2D repB = new RadialRep2D(B);
+		
+		//set weights with radial reps
+		double[][] weights = new double[nA][nB];
+		for (int i = 0; i < repA.radii.size(); i++)
+			for (int j = 0; j < repB.radii.size(); j++)
+				weights[i][j] = (1 - (repA.getRadiusAtNode(i).getAngleDiff(repB.getRadiusAtNode(j)))
+																						/ (Math.PI));
+		
+		double thisMax = threshold;
+		int NB0 = -1;
+		
+		//for NA0, get NB0 = maxWt(NA0->B) > threshold
+		for (int j = 0; j < nB; j++)
+			if (weights[0][j] > thisMax){
+				thisMax = weights[0][j];
+				NB0 = j;
+			}
+		
+		//for all A nodes,
+		//while NAi->NBj 
+			//if Wt(NAi->NBj) > Wt(NAi+1->NBj) map NAi->NAj
+			//increment j
+		int j = 0;
+		int k;
+		boolean isFirst;
+		
+		for (int i = 0; i < nA; i++){
+			k = i + 1;
+			if (k == nA) k = 0;
+			//map this node regardless (ensure each source node has at least
+			//one target, and this target is in order)
+			isFirst = true;
+			nodeMaps.add(new MorphNodeMap2D(nodesA.get(i),
+											nodesB.get(NB0 + j),
+											new MapWeight(weights[i][NB0 + j], i, NB0 + j)));
+			sourceCounts.get(NB0 + j).value++;
+			targetCounts.get(i).value++;
+			while (weights[i][NB0 + j] > weights[k][NB0 + j]){
+				//map NAi to NBj
+				if (!isFirst){
+					nodeMaps.add(new MorphNodeMap2D(nodesA.get(i),
+													nodesB.get(NB0 + j),
+													new MapWeight(weights[i][NB0 + j], i, NB0 + j)));
+					sourceCounts.get(NB0 + j).value++;
+					targetCounts.get(i).value++;
+					}
+				isFirst = false;
+				j++;
+				}
+			}
+		
+		//now we have a map from A->B with source and target counts
+		
+	}
+	
+	/****************
+	 * Sets the nodes in nodesA or nodesB from the previous polygon map in this
+	 * series.
+	 * @param prevMap
+	 */
+	
+	public void setNodeList(MappedPolygon2D prevMap){
+		
+		//set nodes from prevMap.B -> this map.A 
+		if (prevMap.B.nodes.size() != this.A.nodes.size()) return;
+		for (int i = 0; i < A.nodes.size(); i++)
+			this.nodesA.set(i, prevMap.nodesB.get(i));
+		
+	}
+	
+	
+	public void setNodeListbak(MappedPolygon2D prevMap){
+		
+		//four cases depending on reversal state of polygons
+		if (!this.isReversed){
+			//case 1: neither is reversed
+			if (!prevMap.isReversed){
+				//map prev.B to this.A
+				//test whether they match in size
+				if (prevMap.B.nodes.size() != this.A.nodes.size()) return;
+				for (int i = 0; i < A.nodes.size(); i++)
+					this.nodesA.set(i, prevMap.nodesB.get(i));
+				
+				//case 2: prev map is reversed but this map is not
+				}else{
+				//map prev.A to this.A
+				if (prevMap.A.nodes.size() != this.A.nodes.size()) return;
+				for (int i = 0; i < A.nodes.size(); i++)
+					this.nodesA.set(i, prevMap.nodesA.get(i));
+				}
+		}else{
+			//case 3: this map is reversed but previous is not
+			if (!prevMap.isReversed){
+				//map prev.B to this.B
+				if (prevMap.B.nodes.size() != this.B.nodes.size()) return;
+				for (int i = 0; i < B.nodes.size(); i++)
+					this.nodesB.set(i, prevMap.nodesB.get(i));
+				
+				//case 4: both are reversed
+				}else{
+				//map prev.A to this.B
+				if (prevMap.A.nodes.size() != this.B.nodes.size()) return;
+				for (int i = 0; i < this.B.nodes.size(); i++)
+					this.nodesB.set(i, prevMap.nodesA.get(i));
+				}
+			}	
+	}
+	
+	/*********************
+	 * Remove a node from A, selected by the criteria that its target has a maximum
+	 * source count (i.e., multiple source (A) nodes mapped to a single target (B)
+	 * node), and is attached to a minimal length edge.
+	 * @param minAngle the minimum node angle at which a node remove a node is allowed
+	 * (may no longer be necessary...)
+	 */
+	
+	
+	public int removeNodeByCount(double minAngle){
+		//get an edge length array
+		//float angles[] = GeometryFunctions.getNodeAngles(A);
+		float lengths[] = GeometryFunctions.getSegmentLengths(A);
+		
+		//find first target node with max source count
+		//is perhaps possible to refine this search for multiple
+		//target nodes with the same source count...
+		int thisMax = -1, targetNode = -1;
+		for (int i = 0; i < sourceCounts.size(); i++)
+			if (sourceCounts.get(i).value > thisMax){
+				thisMax = sourceCounts.get(i).value;
+				targetNode = i;
+				}
+		
+		//now find source node with targetNode as target and maximal angle 
+		//... er shortest edge (perhaps this can be made a parameter)
+		//float max = Float.MIN_VALUE;
+		float min = Float.MAX_VALUE;
+		int j, remNode = -1;
+		
+		for (int i = 0; i < nodeMaps.size(); i++){
+			//if this source node maps to targetNode
+			if (nodeMaps.get(i).weight.target == targetNode){
+				j = i - 1;
+				if (j < 0) j = nodeMaps.size() - 1;
+				//find node with maximum angle
+				//if (angles[i] > max || angles[j] > max){
+				//	max = Math.max(angles[i], angles[j]);
+				//	if (angles[i] > angles[j])
+				//find node with minimum segment length
+				if (lengths[i] < min || lengths[j] < min){
+					min = Math.min(lengths[i], lengths[j]);
+					if (lengths[i] < lengths[j])
+						remNode = i;
+					else
+						remNode = j;
+					}
+				}
+			}
+		if (remNode >= 0){
+			//remove this node and return its index
+			//removeNode(remNode);
+			//decrement source count for this target node as source node
+			//is now removed
+			sourceCounts.get(targetNode).value--;
+			return remNode;
+			}
+		
+		//if no nodes removed, why not?
+		return -1;
+	}
+	
+	public int removeNodeByWeight(){
+		if (nodeMapsAsc == null) setNodeMapsAsc();
+		
+		int i = 0, remNode = -1;
+		
+		while (remNode < 0 && i < nodeMapsAsc.size()){
+			if (sourceCounts.get(nodeMapsAsc.get(i).weight.target).value > 1){
+				remNode = nodeMapsAsc.get(i).weight.source;
+				removeNode(nodeMapsAsc.get(i).N_A);
+				}
+			i++;
+			}
+		
+		return remNode;
+	}
+	
+	public int insertNodeByWeight(){
+		if (nodeMapsDsc == null) setNodeMapsDsc();
+		
+		int i = 0, addNode = -1;
+		
+		while (addNode < 0 && i < nodeMapsDsc.size()){
+			if (targetCounts.get(nodeMapsDsc.get(i).weight.source).value > 1){
+				addNode = nodeMapsDsc.get(i).weight.source;
+				insertNode(addNode, (MorphNode2D)nodeMapsDsc.get(i).N_A.clone());
+				}
+		i++;
+		}
+		
+		return addNode;
+	}
+	
+	public void removeNode(MorphNode2D m){
+		if (m == null) return;
+		int index = -1;
+		for (int i = 0; i < nodesA.size(); i++)
+			if (nodesA.get(i) == m){
+				index = i;
+				nodesA.remove(i);
+				A.nodes.remove(i);
+				}
+		if (index < 0) return;
+		for (int i = 0; i < nodeMaps.size(); i++){
+			if (nodeMaps.get(i).weight.source == index){
+				sourceCounts.get(nodeMaps.get(i).weight.target).value--;
+				nodeMaps.remove(i);
+				}
+			if (nodeMapsAsc != null)
+				if (nodeMapsAsc.get(i).weight.source == index)
+					nodeMapsAsc.remove(i);
+			if (nodeMapsDsc != null)
+				if (nodeMapsDsc.get(i).weight.source == index)
+					nodeMapsDsc.remove(i);
+			if (nodeMaps.get(i).weight.source >= index)
+				nodeMaps.get(i).weight.source--;
+			if (nodeMapsAsc != null)
+				if (nodeMapsAsc.get(i).weight.source >= index)
+					nodeMapsAsc.get(i).weight.source--;
+			if (nodeMapsDsc != null)
+				if (nodeMapsDsc.get(i).weight.source >= index)
+					nodeMapsDsc.get(i).weight.source--;
+		}
+	}
+	
+	public void insertNode(int i, MorphNode2D m){
+		nodeMaps.get(i).N_A = m;
+		A.nodes.add(nodeMaps.get(i).weight.source, m.thisPt);
+		targetCounts.get(nodeMaps.get(i).weight.source).value--;
+		targetCounts.add(nodeMaps.get(i).weight.source, new arInteger(1));
+		nodesA.add(nodeMaps.get(i).weight.source, m);
+		//update weights sources
+		for (int j = 0; j < nodeMaps.size(); j++){
+			if (nodeMaps.get(j).weight.source >= nodeMaps.get(i).weight.source && j != i)
+				nodeMaps.get(j).weight.source++;
+			if (nodeMapsAsc != null)
+				if (nodeMapsAsc.get(j).weight.source >= nodeMaps.get(i).weight.source && j != i)
+					nodeMapsAsc.get(j).weight.source++;
+			if (nodeMapsDsc != null)
+				if (nodeMapsDsc.get(j).weight.source >= nodeMaps.get(i).weight.source && j != i)
+					nodeMapsDsc.get(j).weight.source++;
+			}
+	}
+	
+	public Object clone(){
+		//return a deep copy of this polygon map
+		MappedPolygon2D retObj = new MappedPolygon2D((Polygon2D)A.clone(), 
+													 (Polygon2D)B.clone(),
+													 prevSect,
+													 nextSect);
+		retObj.isReversed = isReversed;
+		
+		retObj.nodesA = new ArrayList<MorphNode2D>(nodesA.size());
+		for (int i = 0; i < nodesA.size(); i++){
+			retObj.nodesA.add(new MorphNode2D(retObj.A.nodes.get(i)));
+			retObj.nodesA.get(i).tangentX = nodesA.get(i).tangentX;
+			retObj.nodesA.get(i).tangentY = nodesA.get(i).tangentY;
+			}
+		retObj.nodesB = new ArrayList<MorphNode2D>(nodesB.size());
+		for (int i = 0; i < nodesB.size(); i++){
+			retObj.nodesB.add(new MorphNode2D(retObj.B.nodes.get(i)));
+			retObj.nodesB.get(i).tangentX = nodesB.get(i).tangentX;
+			retObj.nodesB.get(i).tangentY = nodesB.get(i).tangentY;
+			}
+		
+		retObj.nodeMaps = new ArrayList<MorphNodeMap2D>(nodeMaps.size());
+		for (int i = 0; i < nodeMaps.size(); i++){
+			//new map to nodes from weight
+			retObj.nodeMaps.add(new MorphNodeMap2D(
+					new MorphNode2D(retObj.A.nodes.get(nodeMaps.get(i).weight.source)),
+					new MorphNode2D(retObj.B.nodes.get(nodeMaps.get(i).weight.target)),
+					(MapWeight)nodeMaps.get(i).weight.clone(),
+					isReversed));	
+			}
+		
+		retObj.sourceCounts = new ArrayList<arInteger>(sourceCounts.size());
+		for (int i = 0; i < sourceCounts.size(); i++)
+			retObj.sourceCounts.add((arInteger)sourceCounts.get(i).clone());
+		return retObj;
+	}
+	
+	public void printMap(){
+		//print each map node
+		InterfaceSession.log();
+		for (int i = 0; i < nodeMaps.size(); i++)
+			nodeMaps.get(i).printMap();
+		InterfaceSession.log();
+		for (int i = 0; i < sourceCounts.size(); i++)
+			System.out.print("B(" + i + "): " + sourceCounts.get(i) + "  ");
+	}
+	
+	class nodeMapWeightComp implements Comparator<MorphNodeMap2D>{
+		
+		public static final int COMP_ASC = 1;
+		public static final int COMP_DSC = -1;
+		
+		public int compOrder = COMP_ASC;
+		
+		public nodeMapWeightComp(){
+			
+		}
+		
+		public nodeMapWeightComp(int dir){
+			compOrder = dir;
+		}
+		
+		public int compare(MorphNodeMap2D m1, MorphNodeMap2D m2){
+			//ideally throw exception here
+			if (m1.weight == null || m2.weight == null) return -999;
+			if (m1.weight.weight > m2.weight.weight) return 1 * compOrder;
+			if (m1.weight.weight == m2.weight.weight) return 0;
+			return -1 * compOrder;
+		}
+	}
+	
+}

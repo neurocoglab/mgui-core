@@ -1,0 +1,290 @@
+<?xml version="1.0"?>
+
+<ColourMap name = 'freesurfer_converted' type = 'discrete'>
+	<NameMap name = 'freesurfer_converted'>
+		<Item index = '0' value = 'unknown' />
+		<Item index = '1' value = 'bankssts.left' />
+		<Item index = '2' value = 'caudalanteriorcingulate.left' />
+		<Item index = '3' value = 'caudalmiddlefrontal.left' />
+		<Item index = '4' value = 'corpuscallosum.left' />
+		<Item index = '5' value = 'cuneus.left' />
+		<Item index = '6' value = 'entorhinal.left' />
+		<Item index = '7' value = 'fusiform.left' />
+		<Item index = '8' value = 'inferiorparietal.left' />
+		<Item index = '9' value = 'inferiortemporal.left' />
+		<Item index = '10' value = 'isthmuscingulate.left' />
+		<Item index = '11' value = 'lateraloccipital.left' />
+		<Item index = '12' value = 'lateralorbitofrontal.left' />
+		<Item index = '13' value = 'lingual.left' />
+		<Item index = '14' value = 'medialorbitofrontal.left' />
+		<Item index = '15' value = 'middletemporal.left' />
+		<Item index = '16' value = 'parahippocampal.left' />
+		<Item index = '17' value = 'paracentral.left' />
+		<Item index = '18' value = 'parsopercularis.left' />
+		<Item index = '19' value = 'parsorbitalis.left' />
+		<Item index = '20' value = 'parstriangularis.left' />
+		<Item index = '21' value = 'pericalcarine.left' />
+		<Item index = '22' value = 'postcentral.left' />
+		<Item index = '23' value = 'posteriorcingulate.left' />
+		<Item index = '24' value = 'precentral.left' />
+		<Item index = '25' value = 'precuneus.left' />
+		<Item index = '26' value = 'rostralanteriorcingulate.left' />
+		<Item index = '27' value = 'rostralmiddlefrontal.left' />
+		<Item index = '28' value = 'superiorfrontal.left' />
+		<Item index = '29' value = 'superiorparietal.left' />
+		<Item index = '30' value = 'superiortemporal.left' />
+		<Item index = '31' value = 'supramarginal.left' />
+		<Item index = '32' value = 'frontalpole.left' />
+		<Item index = '33' value = 'temporalpole.left' />
+		<Item index = '34' value = 'transversetemporal.left' />
+		<Item index = '35' value = 'insula.left' />
+		<Item index = '36' value = 'bankssts.right' />
+		<Item index = '37' value = 'caudalanteriorcingulate.right' />
+		<Item index = '38' value = 'caudalmiddlefrontal.right' />
+		<Item index = '39' value = 'corpuscallosum.right' />
+		<Item index = '40' value = 'cuneus.right' />
+		<Item index = '41' value = 'entorhinal.right' />
+		<Item index = '42' value = 'fusiform.right' />
+		<Item index = '43' value = 'inferiorparietal.right' />
+		<Item index = '44' value = 'inferiortemporal.right' />
+		<Item index = '45' value = 'isthmuscingulate.right' />
+		<Item index = '46' value = 'lateraloccipital.right' />
+		<Item index = '47' value = 'lateralorbitofrontal.right' />
+		<Item index = '48' value = 'lingual.right' />
+		<Item index = '49' value = 'medialorbitofrontal.right' />
+		<Item index = '50' value = 'middletemporal.right' />
+		<Item index = '51' value = 'parahippocampal.right' />
+		<Item index = '52' value = 'paracentral.right' />
+		<Item index = '53' value = 'parsopercularis.right' />
+		<Item index = '54' value = 'parsorbitalis.right' />
+		<Item index = '55' value = 'parstriangularis.right' />
+		<Item index = '56' value = 'pericalcarine.right' />
+		<Item index = '57' value = 'postcentral.right' />
+		<Item index = '58' value = 'posteriorcingulate.right' />
+		<Item index = '59' value = 'precentral.right' />
+		<Item index = '60' value = 'precuneus.right' />
+		<Item index = '61' value = 'rostralanteriorcingulate.right' />
+		<Item index = '62' value = 'rostralmiddlefrontal.right' />
+		<Item index = '63' value = 'superiorfrontal.right' />
+		<Item index = '64' value = 'superiorparietal.right' />
+		<Item index = '65' value = 'superiortemporal.right' />
+		<Item index = '66' value = 'supramarginal.right' />
+		<Item index = '67' value = 'frontalpole.right' />
+		<Item index = '68' value = 'temporalpole.right' />
+		<Item index = '69' value = 'transversetemporal.right' />
+		<Item index = '70' value = 'insula.right' />
+	</NameMap>
+	<Item index = '0'>
+		<Colour3f red = '0.09765625' green = '0.01953125' blue = '0.09765625' />
+	</Item>
+	<Item index = '1'>
+		<Colour3f red = '0.09765625' green = '0.390625' blue = '0.15625' />
+	</Item>
+	<Item index = '2'>
+		<Colour3f red = '0.48828125' green = '0.390625' blue = '0.625' />
+	</Item>
+	<Item index = '3'>
+		<Colour3f red = '0.390625' green = '0.09765625' blue = '0.0' />
+	</Item>
+	<Item index = '4'>
+		<Colour3f red = '0.46875' green = '0.2734375' blue = '0.1953125' />
+	</Item>
+	<Item index = '5'>
+		<Colour3f red = '0.859375' green = '0.078125' blue = '0.390625' />
+	</Item>
+	<Item index = '6'>
+		<Colour3f red = '0.859375' green = '0.078125' blue = '0.0390625' />
+	</Item>
+	<Item index = '7'>
+		<Colour3f red = '0.703125' green = '0.859375' blue = '0.546875' />
+	</Item>
+	<Item index = '8'>
+		<Colour3f red = '0.859375' green = '0.234375' blue = '0.859375' />
+	</Item>
+	<Item index = '9'>
+		<Colour3f red = '0.703125' green = '0.15625' blue = '0.46875' />
+	</Item>
+	<Item index = '10'>
+		<Colour3f red = '0.546875' green = '0.078125' blue = '0.546875' />
+	</Item>
+	<Item index = '11'>
+		<Colour3f red = '0.078125' green = '0.1171875' blue = '0.546875' />
+	</Item>
+	<Item index = '12'>
+		<Colour3f red = '0.13671875' green = '0.29296875' blue = '0.1953125' />
+	</Item>
+	<Item index = '13'>
+		<Colour3f red = '0.87890625' green = '0.546875' blue = '0.546875' />
+	</Item>
+	<Item index = '14'>
+		<Colour3f red = '0.78125' green = '0.13671875' blue = '0.29296875' />
+	</Item>
+	<Item index = '15'>
+		<Colour3f red = '0.625' green = '0.390625' blue = '0.1953125' />
+	</Item>
+	<Item index = '16'>
+		<Colour3f red = '0.078125' green = '0.859375' blue = '0.234375' />
+	</Item>
+	<Item index = '17'>
+		<Colour3f red = '0.234375' green = '0.859375' blue = '0.234375' />
+	</Item>
+	<Item index = '18'>
+		<Colour3f red = '0.859375' green = '0.703125' blue = '0.546875' />
+	</Item>
+	<Item index = '19'>
+		<Colour3f red = '0.078125' green = '0.390625' blue = '0.1953125' />
+	</Item>
+	<Item index = '20'>
+		<Colour3f red = '0.859375' green = '0.234375' blue = '0.078125' />
+	</Item>
+	<Item index = '21'>
+		<Colour3f red = '0.46875' green = '0.390625' blue = '0.234375' />
+	</Item>
+	<Item index = '22'>
+		<Colour3f red = '0.859375' green = '0.078125' blue = '0.078125' />
+	</Item>
+	<Item index = '23'>
+		<Colour3f red = '0.859375' green = '0.703125' blue = '0.859375' />
+	</Item>
+	<Item index = '24'>
+		<Colour3f red = '0.234375' green = '0.078125' blue = '0.859375' />
+	</Item>
+	<Item index = '25'>
+		<Colour3f red = '0.625' green = '0.546875' blue = '0.703125' />
+	</Item>
+	<Item index = '26'>
+		<Colour3f red = '0.3125' green = '0.078125' blue = '0.546875' />
+	</Item>
+	<Item index = '27'>
+		<Colour3f red = '0.29296875' green = '0.1953125' blue = '0.48828125' />
+	</Item>
+	<Item index = '28'>
+		<Colour3f red = '0.078125' green = '0.859375' blue = '0.625' />
+	</Item>
+	<Item index = '29'>
+		<Colour3f red = '0.078125' green = '0.703125' blue = '0.546875' />
+	</Item>
+	<Item index = '30'>
+		<Colour3f red = '0.546875' green = '0.859375' blue = '0.859375' />
+	</Item>
+	<Item index = '31'>
+		<Colour3f red = '0.3125' green = '0.625' blue = '0.078125' />
+	</Item>
+	<Item index = '32'>
+		<Colour3f red = '0.390625' green = '0.0' blue = '0.390625' />
+	</Item>
+	<Item index = '33'>
+		<Colour3f red = '0.2734375' green = '0.078125' blue = '0.6640625' />
+	</Item>
+	<Item index = '34'>
+		<Colour3f red = '0.5859375' green = '0.5859375' blue = '0.78125' />
+	</Item>
+	<Item index = '35'>
+		<Colour3f red = '0.99609375' green = '0.75' blue = '0.125' />
+	</Item>
+	<Item index = '36'>
+		<Colour3f red = '0.09765625' green = '0.390625' blue = '0.15625' />
+	</Item>
+	<Item index = '37'>
+		<Colour3f red = '0.48828125' green = '0.390625' blue = '0.625' />
+	</Item>
+	<Item index = '38'>
+		<Colour3f red = '0.390625' green = '0.09765625' blue = '0.0' />
+	</Item>
+	<Item index = '39'>
+		<Colour3f red = '0.46875' green = '0.2734375' blue = '0.1953125' />
+	</Item>
+	<Item index = '40'>
+		<Colour3f red = '0.859375' green = '0.078125' blue = '0.390625' />
+	</Item>
+	<Item index = '41'>
+		<Colour3f red = '0.859375' green = '0.078125' blue = '0.0390625' />
+	</Item>
+	<Item index = '42'>
+		<Colour3f red = '0.703125' green = '0.859375' blue = '0.546875' />
+	</Item>
+	<Item index = '43'>
+		<Colour3f red = '0.859375' green = '0.234375' blue = '0.859375' />
+	</Item>
+	<Item index = '44'>
+		<Colour3f red = '0.703125' green = '0.15625' blue = '0.46875' />
+	</Item>
+	<Item index = '45'>
+		<Colour3f red = '0.546875' green = '0.078125' blue = '0.546875' />
+	</Item>
+	<Item index = '46'>
+		<Colour3f red = '0.078125' green = '0.1171875' blue = '0.546875' />
+	</Item>
+	<Item index = '47'>
+		<Colour3f red = '0.13671875' green = '0.29296875' blue = '0.1953125' />
+	</Item>
+	<Item index = '48'>
+		<Colour3f red = '0.87890625' green = '0.546875' blue = '0.546875' />
+	</Item>
+	<Item index = '49'>
+		<Colour3f red = '0.78125' green = '0.13671875' blue = '0.29296875' />
+	</Item>
+	<Item index = '50'>
+		<Colour3f red = '0.625' green = '0.390625' blue = '0.1953125' />
+	</Item>
+	<Item index = '51'>
+		<Colour3f red = '0.078125' green = '0.859375' blue = '0.234375' />
+	</Item>
+	<Item index = '52'>
+		<Colour3f red = '0.234375' green = '0.859375' blue = '0.234375' />
+	</Item>
+	<Item index = '53'>
+		<Colour3f red = '0.859375' green = '0.703125' blue = '0.546875' />
+	</Item>
+	<Item index = '54'>
+		<Colour3f red = '0.078125' green = '0.390625' blue = '0.1953125' />
+	</Item>
+	<Item index = '55'>
+		<Colour3f red = '0.859375' green = '0.234375' blue = '0.078125' />
+	</Item>
+	<Item index = '56'>
+		<Colour3f red = '0.46875' green = '0.390625' blue = '0.234375' />
+	</Item>
+	<Item index = '57'>
+		<Colour3f red = '0.859375' green = '0.078125' blue = '0.078125' />
+	</Item>
+	<Item index = '58'>
+		<Colour3f red = '0.859375' green = '0.703125' blue = '0.859375' />
+	</Item>
+	<Item index = '59'>
+		<Colour3f red = '0.234375' green = '0.078125' blue = '0.859375' />
+	</Item>
+	<Item index = '60'>
+		<Colour3f red = '0.625' green = '0.546875' blue = '0.703125' />
+	</Item>
+	<Item index = '61'>
+		<Colour3f red = '0.3125' green = '0.078125' blue = '0.546875' />
+	</Item>
+	<Item index = '62'>
+		<Colour3f red = '0.29296875' green = '0.1953125' blue = '0.48828125' />
+	</Item>
+	<Item index = '63'>
+		<Colour3f red = '0.078125' green = '0.859375' blue = '0.625' />
+	</Item>
+	<Item index = '64'>
+		<Colour3f red = '0.078125' green = '0.703125' blue = '0.546875' />
+	</Item>
+	<Item index = '65'>
+		<Colour3f red = '0.546875' green = '0.859375' blue = '0.859375' />
+	</Item>
+	<Item index = '66'>
+		<Colour3f red = '0.3125' green = '0.625' blue = '0.078125' />
+	</Item>
+	<Item index = '67'>
+		<Colour3f red = '0.390625' green = '0.0' blue = '0.390625' />
+	</Item>
+	<Item index = '68'>
+		<Colour3f red = '0.2734375' green = '0.078125' blue = '0.6640625' />
+	</Item>
+	<Item index = '69'>
+		<Colour3f red = '0.5859375' green = '0.5859375' blue = '0.78125' />
+	</Item>
+	<Item index = '70'>
+		<Colour3f red = '0.99609375' green = '0.75' blue = '0.125' />
+	</Item>
+</ColourMap>

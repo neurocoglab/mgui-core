@@ -1,0 +1,379 @@
+package ar.MorphSections;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+import javax.vecmath.Point2d;
+import javax.vecmath.Point2f;
+import javax.vecmath.Vector2d;
+
+import ar.Geometry.GeometryFunctions;
+import ar.Geometry.Line2D;
+import ar.Geometry.Polygon2D;
+import ar.Interface.Maps.ValueMap;
+import ar.Interface.Shapes.Polygon2DInt;
+
+/*******
+ * Polygon2D containing a MorphNodeMap of all its nodes to other nodes
+ * @author Andrew Reid
+ *
+ */
+
+
+public class MappedPolygon2D implements Cloneable {
+
+	Polygon2D thisPoly;
+	Polygon2D targetPoly;
+	ArrayList<MorphNodeMap2D> nodeMaps;
+	//ArrayList<MorphNode2D> nodeMaps;
+	ArrayList<MapWeight> nodeWeights;
+	ArrayList<MapWeight> nodeCounts;
+	int weightItr;
+	public String idStr;
+	boolean sourceClockwise;
+	boolean targetClockwise;
+	boolean isReversed;
+	
+	//ValueMap nodeMaps;
+	int thisSect;
+	int nextSect;
+	
+	public MappedPolygon2D(){
+		super();
+		thisPoly = new Polygon2D();
+		init();
+	}
+	
+	public MappedPolygon2D(ArrayList<Point2f> nodeList){
+		thisPoly = new Polygon2D(nodeList);
+		init();
+	}
+	
+	public MappedPolygon2D(Polygon2D poly, Polygon2D target, int sect, int next){
+		thisPoly = poly;
+		targetPoly = target;
+		thisSect = sect;
+		nextSect = next;
+		init();
+	}
+	
+	public MappedPolygon2D(Polygon2D poly, Polygon2D target, int sect, int next, int idNo){
+		thisPoly = poly;
+		targetPoly = target;
+		thisSect = sect;
+		nextSect = next;
+		idStr = "P" + String.valueOf(idNo);
+		init();
+	}
+	
+	public void setPoly(Polygon2D poly){
+		thisPoly = poly;
+		init();
+	}
+	
+	public void setWeightArray(){
+		for (int i = 0; i < thisPoly.nodes.size(); i++)
+			nodeWeights.get(i).setWeight(nodeMaps.get(i).getWeight(), i, 0);
+		Collections.sort(nodeWeights, new MapWeightComparator());
+		resetWeightArray();
+	}
+	
+	public void setNodeCounts(){
+		//nodeCounts = new ArrayList<MapWeight>();
+		for (int i = 0; i < thisPoly.nodes.size(); i++)
+			nodeCounts.get(i).setWeight(nodeMaps.get(i).getCount(), i, 0);
+		Collections.sort(nodeCounts, new MapWeightComparator(MapWeightComparator.SORT_DSC));
+		return;
+	}
+	
+	public int insertNodeByCount(){
+		int index = nodeCounts.get(0).source;
+		
+		MorphNodeMap2D thisMap = nodeMaps.get(index);
+		if (thisMap.nodes.size() < 2) 
+			return -1;
+		
+		MorphNodeMap2D newMap = thisMap.popNodeByWeight();
+		InterfaceSession.log("...Node " + newMap.thisNode.idStr + "popped");
+		
+		//new coordinates
+		Point2f nodePt1;
+		Point2f nodePt2;
+		Point2f targetNew;
+		Point2f targetThis;
+		Point2f nodePtInsert;
+		int insertIndex = index;
+		
+		//insert new node and adjust geometry
+		nodePt1 = GeometryFunctions.getMidPoint(thisPoly.getNode(index), thisPoly.getPrevNode(index), 1.0/2.0);
+		nodePt2 = GeometryFunctions.getMidPoint(thisPoly.getNode(index), thisPoly.getNextNode(index), 1.0/2.0);
+		targetNew = newMap.nodes.get(0).point;
+		//setNodePoint(index, nodePt2);
+		//thisPoly.nodes.set(index, nodePt1);
+		//need to add this node on the segment where it is closest to its target, to avoid crossing
+		//polyline segments
+		targetThis = nodeMaps.get(index).getFirstNode().point;
+		//int targetIndex = nodeMaps.get(index).getFirstNode().getSourceIndex();
+		//int thisIndex = newMap.nodes.get(0).getSourceIndex(); 
+		
+		//double angle1 = GeometryFunctions.getAngle(nodePt1, thisPoly.getNode(index), targetPt);
+		//double angle2 = GeometryFunctions.getAngle(nodePt2, thisPoly.getNode(index), targetPt);
+		//double alpha1 = GeometryFunctions.getAngle(nodePt1, thisPoly.getNode(index), targetThis);
+		//double beta1 = GeometryFunctions.getAngle(thisPoly.getNode(index), nodePt1, targetNew);
+		//double alpha2 = GeometryFunctions.getAngle(nodePt2, thisPoly.getNode(index), targetThis);
+		//double beta2 = GeometryFunctions.getAngle(thisPoly.getNode(index), nodePt2, targetNew);
+		
+		boolean crosses1 = GeometryFunctions.getSegmentsIntersect(new Line2D(nodePt1, targetNew),
+												new Line2D(thisPoly.getNode(index), targetThis));
+		boolean crosses2 = GeometryFunctions.getSegmentsIntersect(new Line2D(nodePt2, targetNew),
+												new Line2D(thisPoly.getNode(index), targetThis));
+		
+		//if (nodePt1.distance(targetPt) > nodePt2.distance(targetPt)){
+		//do trajectories cross?
+		if (crosses1 != crosses2){
+			//whichever trajectory does not cross
+			if (crosses1){
+				nodePtInsert = nodePt2;
+				insertIndex++;
+				if (insertIndex == nodeMaps.size())
+					insertIndex = 0;
+			}
+			else
+				nodePtInsert = nodePt1;
+		}
+		else {
+			//otherwise use proximity
+			if (nodePt2.distance(targetNew) < nodePt1.distance(targetNew)){
+		//	if ((alpha1 + beta1) < (alpha2 + beta2)){
+				nodePtInsert = nodePt2;
+				insertIndex++;
+				if (insertIndex == nodeMaps.size())
+					insertIndex = 0;
+			}
+			else
+				nodePtInsert = nodePt1;
+		}
+		
+		//targetPt1 = newMap.nodes.get(0).point;
+		//targetPt2 = nodeMaps.get(index).getFirstNode().point;
+		
+		nodePtInsert = (Point2f)thisPoly.getNode(index).clone();
+									
+		newMap.thisNode.point = nodePtInsert;
+		newMap.thisNode.idStr += "." + nodeMaps.size(); 
+		
+		//add to polygon
+		addNodeMap(insertIndex, newMap);
+		
+		//if (thisIndex > targetIndex)
+		//	swapNodes(insertIndex, insertIndex + 1);
+		
+		//return this new map
+		return insertIndex;
+	}
+	
+	public void swapNodes(int i1, int i2){
+		MorphNodeMap2D tempMap = nodeMaps.get(i1);
+		Point2f tempPt = thisPoly.nodes.get(i1);
+		nodeMaps.set(i1, nodeMaps.get(i2));
+		nodeMaps.set(i2, tempMap);
+		thisPoly.nodes.set(i1, thisPoly.nodes.get(i2));
+		thisPoly.nodes.set(i2, tempPt);
+		int wi1 = 0, wi2 = 0;
+		for (int i = 0; i < nodeWeights.size(); i++){
+			if (nodeWeights.get(i).source == i1)
+				wi1 = i;
+			if (nodeWeights.get(i).source == i2)
+				wi2 = i;
+		}
+		MapWeight tempWeight = nodeWeights.get(wi1);
+		nodeWeights.set(wi1, nodeWeights.get(wi2));
+		nodeWeights.set(wi2, tempWeight);
+	}
+	
+	public void setNodePoint(int i, Point2f pt){
+		Point2f thisPt = thisPoly.nodes.get(i);
+		thisPt.x = pt.x;
+		thisPt.y = pt.y;
+	}
+	
+	public void addNodeMap(int index, MorphNodeMap2D newMap){
+		thisPoly.nodes.add(index, newMap.thisNode.point);
+		nodeMaps.add(index, newMap);
+		nodeCounts.add(new MapWeight(index, 0, 1));
+		setNodeCounts();
+		
+		//have to roll through weight list to add this node and increment all source indices
+		//over <index>
+		double newWeight = newMap.getWeight();
+		
+		for (int i = 0; i < nodeWeights.size(); i++){
+			if (nodeWeights.get(i).weight > newWeight){
+				nodeWeights.add(i, new MapWeight(newWeight, index, newMap.thisNode.getTarget()));
+				i++;
+			}
+			if (nodeWeights.get(i).source > index)
+				nodeWeights.get(i).source++;
+		}
+	}
+	
+	public void removeNodeMap(int index){
+		thisPoly.nodes.remove(index);
+		nodeMaps.remove(index);
+		int n = nodeCounts.size();
+		for (int i = 0; i < n; i++){
+			if (i < nodeCounts.size())
+				if (nodeCounts.get(i).source == index)
+					nodeCounts.remove(i);
+			if (i < nodeWeights.size())
+				if (nodeWeights.get(i).source == index)
+					nodeWeights.remove(i);
+		}
+	}
+	
+	public void resetWeightArray(){
+		weightItr = 0;
+	}
+	
+	public MapWeight getNextWeight(){
+		MapWeight retVal = nodeWeights.get(weightItr);
+		weightItr ++;
+		if (weightItr == nodeWeights.size())
+			weightItr = 0;
+		return retVal;
+	}
+	
+	public int removeNodeByWeight(int weightRank){
+		int src = nodeWeights.get(weightRank).source;
+		nodeMaps.remove(src);
+		thisPoly.nodes.remove(src);
+		nodeWeights.remove(weightRank);
+		nodeCounts.remove(0);
+		setNodeCounts();
+		return src;
+	}
+	
+	public int removeNodeByCount(){
+		//remove a node with target node having highest count
+		//and secondarily having minimum segment length
+		float[] lengths = GeometryFunctions.getSegmentLengths(thisPoly);
+		
+		
+		
+		
+		return 0;
+	}
+	
+	public int removeNodeBySegment(double threshold){
+		//threshold is the minimum angle at which a node can be removed
+		//get segment lengths
+		//determine smallest segment
+		//remove node with smallest adjacent segment
+		float[] lengths = GeometryFunctions.getSegmentLengths(thisPoly);
+		float[] angles = GeometryFunctions.getNodeAngles(thisPoly);
+		if (lengths.length < 1) 
+			return -1;
+		
+		double thisMin = Double.MAX_VALUE;
+		int minNode = -1;
+		for (int i = 0; i < lengths.length; i++)
+			if (lengths[i] < thisMin && angles[i] > threshold){
+				thisMin = lengths[i];
+				minNode = i;
+				}
+		if (minNode < 0) //override the threshold since no nodes pass it
+			for (int i = 0; i < lengths.length; i++)
+				if (lengths[i] < thisMin){
+					thisMin = lengths[i];
+					minNode = i;
+					}
+		
+		int nextNode = minNode + 1;
+		int prevNode = minNode - 1;
+		int retNode = nextNode;
+		
+		if (nextNode == lengths.length) nextNode = 0;
+		if (prevNode == -1) prevNode = lengths.length - 1;
+		
+		if (lengths[nextNode] > lengths[prevNode] || angles[nextNode] < threshold){
+			removeNodeMap(minNode);
+			retNode = minNode;
+			}
+		else
+			removeNodeMap(nextNode);
+		return retNode;
+		
+	}
+	
+	public void setNodeSortAttribute(String thisAttr){
+		for (int i = 0; i < nodeMaps.size(); i++)
+			nodeMaps.get(i).setNodeSortAttribute(thisAttr);
+	}
+	
+	public void setSortAttribute(String thisAttr){
+		for (int i = 0; i < nodeMaps.size(); i++)
+			nodeMaps.get(i).setSortAttribute(thisAttr);
+	}
+	
+	public int getTargetNodeCount(){
+		int retCount = 0;
+		for (int i = 0; i < nodeMaps.size(); i ++)
+			retCount += nodeMaps.get(i).nodes.size();
+		return retCount;
+	}
+	
+	private void init(){
+		nodeMaps = new ArrayList<MorphNodeMap2D>(thisPoly.nodes.size());
+		//nodeMaps = new ArrayList<MorphNode2D>(thisPoly.nodes.size());
+		nodeWeights = new ArrayList<MapWeight>(thisPoly.nodes.size());
+		nodeCounts = new ArrayList<MapWeight>(thisPoly.nodes.size());
+		
+		for (int i = 0; i < thisPoly.nodes.size(); i++){
+			nodeMaps.add(new MorphNodeMap2D(thisSect, new MorphNode2D(thisPoly.nodes.get(i), i, thisSect)));
+			//nodeMaps.add(new MorphNode2D(thisPoly.nodes.get(i)));
+			nodeWeights.add(new MapWeight());
+			nodeCounts.add(new MapWeight());
+		}
+	}
+	
+	public void setSourcePoly(Polygon2D poly){
+		thisPoly = poly;
+		sourceClockwise = GeometryFunctions.isClockwise(thisPoly);
+	}
+	
+	public void setTargetPoly(Polygon2D poly){
+		targetPoly = poly;
+		targetClockwise = GeometryFunctions.isClockwise(targetPoly);
+	}
+	
+	//return deep copy of this object
+	public Object clone(){
+		MappedPolygon2D retObj = new MappedPolygon2D((Polygon2D)thisPoly.clone(), targetPoly, thisSect, nextSect);
+		//nodeMaps
+		for (int i = 0; i < nodeMaps.size(); i++){
+			retObj.nodeMaps.set(i, (MorphNodeMap2D)nodeMaps.get(i).clone());
+			retObj.nodeWeights.set(i, (MapWeight)nodeWeights.get(i).clone());
+			}
+		retObj.idStr = idStr;
+		retObj.isReversed = isReversed;
+		//if (retObj.thisPoly.nodes.get(0).x == Double.NaN)
+		//	return null;
+		//retObj.nodeMaps = (ArrayList<MorphNodeMap2D>)nodeMaps.clone();
+		//nodeWeights
+		//retObj.nodeWeights = (ArrayList<MapWeight>)nodeWeights.clone();
+		return retObj;
+	}
+	
+	public void updateNodes(){
+		for (int i = 0; i < nodeMaps.size(); i++)
+			thisPoly.nodes.set(i, nodeMaps.get(i).thisNode.point);
+	}
+	
+	public void printNodeMap(){
+		InterfaceSession.log();
+		InterfaceSession.log("Polygon " + idStr + " map:");
+		for (int i = 0; i < nodeMaps.size(); i++)
+			nodeMaps.get(i).printMap();
+	}
+	
+}

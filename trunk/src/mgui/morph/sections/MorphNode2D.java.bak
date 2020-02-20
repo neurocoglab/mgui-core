@@ -1,0 +1,125 @@
+package ar.MorphSections;
+
+import java.util.ArrayList;
+
+import javax.vecmath.Point2d;
+import javax.vecmath.Point2f;
+
+import ar.Interface.Attribute;
+import ar.Interface.AttributeList;
+import ar.Numbers.*;
+
+public class MorphNode2D extends AttributeNode2D {
+
+	public ArrayList<arDouble> sourceAnglesX = new ArrayList<arDouble>();
+	public ArrayList<arDouble> sourceAnglesY = new ArrayList<arDouble>();
+	
+	public MorphNode2D(){
+		super();
+		init();
+	}
+	
+	public MorphNode2D(Point2f thisPt){
+		super(thisPt);
+		init();
+	}
+	
+	public MorphNode2D(Point2f thisPt, int idNo, int polyNo){
+		super(thisPt);
+		idStr = "P" + polyNo + ".N" + idNo;
+		init();
+	}
+	
+	private void init(){
+		attributes.add(new Attribute("TargetNode", new arInteger(0)));
+		attributes.add(new Attribute("Weight", new arDouble(0)));
+		attributes.add(new Attribute("AngleX", new arDouble(0)));
+		attributes.add(new Attribute("AngleY", new arDouble(0)));
+		attributes.add(new Attribute("SourceAngleX", new arDouble(0)));
+		attributes.add(new Attribute("SourceAngleY", new arDouble(0)));
+		attributes.add(new Attribute("TangentX", new arDouble(0)));
+		attributes.add(new Attribute("TangentY", new arDouble(0)));
+		
+		//attributes.add(new Attribute("SourceNode", new arInteger(0)));
+	}
+	
+	public boolean hasTarget(int node){
+		return (node == ((arInteger)attributes.getValue("TargetNode")).value);
+	}
+	
+	
+	
+	public void addSourceAngleX(double val){
+		sourceAnglesX.add(new arDouble(val));
+	}
+	
+	public void addSourceAngleY(double val){
+		sourceAnglesY.add(new arDouble(val));
+	}
+	
+	public double getSourceAngleX(){
+		if (sourceAnglesX.size() == 0) return 0;
+		double avAngle = 0;
+		for (int i = 0; i < sourceAnglesX.size(); i++)
+			avAngle += sourceAnglesX.get(i).value;
+		return avAngle / sourceAnglesX.size();
+	}
+	
+	public double getSourceAngleY(){
+		if (sourceAnglesY.size() == 0) return 0;
+		double avAngle = 0;
+		for (int i = 0; i < sourceAnglesY.size(); i++)
+			avAngle += sourceAnglesY.get(i).value;
+		return avAngle / sourceAnglesY.size();
+	}
+	
+	public double getAngleX(){
+		return ((arDouble)attributes.getValue("AngleX")).value;
+	}
+	
+	public double getAngleY(){
+		return ((arDouble)attributes.getValue("AngleY")).value;
+	}
+	
+	public double getTangentX(){
+		return ((arDouble)attributes.getValue("TangentX")).value;
+	}
+	
+	public double getTangentY(){
+		return ((arDouble)attributes.getValue("TangentY")).value;
+	}
+	
+	public int getTarget(){
+		return ((arInteger)attributes.getValue("TargetNode")).value;
+	}
+	
+	public void setAngleX(double val){
+		((arDouble)attributes.getValue("AngleX")).value = val;
+	}
+	
+	public void setAngleY(double val){
+		((arDouble)attributes.getValue("AngleY")).value = val;
+	}
+	
+	public void setTangentX(double val){
+		((arDouble)attributes.getValue("TangentX")).value = val;
+	}
+	
+	public void setTangentY(double val){
+		((arDouble)attributes.getValue("TangentY")).value = val;
+	}
+	
+	public void setWeight(double val){
+		((arDouble)attributes.getValue("TangentY")).value = val;
+	}
+	
+	public Object clone(){
+		//MorphNode2D retObj = (MorphNode2D)super.clone();
+		MorphNode2D retObj = new MorphNode2D();
+		retObj.point = (Point2f)point.clone();
+		retObj.attributes = (AttributeList)attributes.clone();
+		retObj.idStr = idStr;
+		return retObj;
+	}
+	
+}

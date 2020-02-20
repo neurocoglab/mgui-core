@@ -1,0 +1,109 @@
+/*
+* Copyright (C) 2011 Andrew Reid and the modelGUI Project <http://mgui.wikidot.com>
+* 
+* This file is part of modelGUI[core] (mgui-core).
+* 
+* modelGUI[core] is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* modelGUI[core] is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with modelGUI[core]. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package mgui.interfaces.graphs.util;
+
+import java.awt.geom.Point2D;
+
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
+
+public class GraphScaleControl extends CrossoverScalingControl {
+
+	protected double minScale = 0.01;
+	
+    public void setMinScale(double scale) {
+	    this.minScale = scale;
+	}
+    
+    /********************
+     * Get the actual scale from the two scales
+     * @param vv
+     * @return
+     */
+    public double getScale(VisualizationViewer vv){
+    	double scaleV = vv.getViewTransformer().getScale();
+    	double scaleL = vv.getLayoutTransformer().getScale();
+    	return scaleV * scaleL;
+    	//if (scaleL <= crossover) return scaleV;
+    	//return scaleL;
+    }
+    
+    
+    
+    @Override
+	public void scale(VisualizationViewer vv, float amount, Point2D at) {
+    	double modelScale =  vv.getLayoutTransformer().getScale();
+	    double viewScale = vv.getViewTransformer().getScale();
+	    double scale = modelScale * viewScale;
+    	
+    	if (scale*amount < minScale) return;
+    	super.scale(vv, amount, at);
+    }
+    
+    public void setScale(VisualizationViewer vv, float scale, Point2D at){
+    	
+    	if (scale < minScale) return;
+    	
+    	MutableTransformer layoutTransformer = vv.getLayoutTransformer();
+	    MutableTransformer viewTransformer = vv.getViewTransformer();
+	    //double modelScale = layoutTransformer.getScale();
+	    //double viewScale = viewTransformer.getScale();
+	    //double inverseModelScale = Math.sqrt(crossover)/modelScale;
+	    //double inverseViewScale = Math.sqrt(crossover)/viewScale;
+	    //double scale = modelScale * viewScale;
+	    
+	    Point2D transformedAt = vv.inverseTransform(at);
+	    
+	    //layoutTransformer.setScale(scale, scale, transformedAt);
+    	//viewTransformer.setScale(scale, scale, at);
+	    
+    	
+	    if ((scale - crossover) * (scale - crossover) < 0.0001){
+	    	layoutTransformer.setScale(scale, scale, transformedAt);
+	    	viewTransformer.setScale(scale, scale, at);
+	    }else if (scale > crossover){
+	    	layoutTransformer.setScale(scale, scale, transformedAt);
+	    	viewTransformer.setScale(crossover, crossover, at);
+	    }else{
+	    	layoutTransformer.setScale(crossover, crossover, transformedAt);
+	    	viewTransformer.setScale(scale, scale, at);
+	    	}
+	    
+	    /*
+        if((scale > crossover) {
+            // close to the control point, return both transformers to a scale of 1.0
+            layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAt);
+            viewTransformer.scale(inverseViewScale, inverseViewScale, at);
+        } else if(scale < crossover) {
+            // scale the viewTransformer, return the layoutTransformer to 1.0
+	        viewTransformer.scale(amount, amount, at);
+	        layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAt);
+	    } else {
+            // scale the layoutTransformer, return the viewTransformer to 1.0
+	        layoutTransformer.scale(amount, amount, transformedAt);
+	        viewTransformer.scale(inverseViewScale, inverseViewScale, at);
+	    } */
+	    vv.repaint();
+    	
+    	
+    }
+	
+}

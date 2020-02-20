@@ -1,0 +1,11 @@
+****************************************************************
+Geometry algorithms copyright Tim Labert.
+
+For mgui-core-1.0.0-alpha, this library is used to generate
+3D convex hulls.
+
+Within mgui-core, this code is located in the package au.edu.unsw.cse
+
+****************************************************************
+
+See: http://www.cse.unsw.edu.au/~lambert/java/3d/implementation.html

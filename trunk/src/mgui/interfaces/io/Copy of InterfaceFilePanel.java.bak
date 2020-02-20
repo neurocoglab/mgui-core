@@ -1,0 +1,1063 @@
+package ar.interfaces.io;
+
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import uk.ac.ed.paxinos_handler.PaxinosHandler;
+
+import ar.geometry.Grid3D;
+import ar.interfaces.InterfaceDialogUpdater;
+import ar.interfaces.InterfaceDisplayPanel;
+import ar.interfaces.InterfaceEnvironment;
+import ar.interfaces.InterfacePanel;
+import ar.interfaces.InterfaceOptions;
+import ar.interfaces.layouts.CategoryLayout;
+import ar.interfaces.layouts.CategoryLayoutConstraints;
+import ar.interfaces.layouts.CategoryTitle;
+import ar.interfaces.layouts.LineLayout;
+import ar.interfaces.layouts.LineLayoutConstraints;
+import ar.interfaces.shapes.Mesh3DInt;
+import ar.interfaces.shapes.PolygonSet3DInt;
+import ar.interfaces.shapes.SectionSet3DInt;
+import ar.interfaces.shapes.Shape2DSelectionSet;
+import ar.interfaces.shapes.ShapeModel3D;
+import ar.interfaces.shapes.ShapeSelectionSet;
+import ar.interfaces.shapes.ShapeSet3DInt;
+import ar.interfaces.shapes.Volume3DInt;
+import ar.io.VolumeFileInterface;
+import ar.io.amira.AmiraTractLoader;
+import ar.io.caret.CaretMetricLoader;
+import ar.io.caret.CaretMetricOptions;
+import ar.io.caret.CaretMetricOptionsDialog;
+import ar.io.caret.CaretPaintLoader;
+import ar.io.caret.CaretPaintOptions;
+import ar.io.caret.CaretSurfaceLoader;
+import ar.io.caret.CaretPaintOptionsDialog;
+import ar.io.caret.CaretSurfaceOptions;
+import ar.io.caret.CaretSurfaceOutOptionsDialog;
+import ar.io.caret.CaretSurfaceWriter;
+import ar.io.freesurfer.FreesurferSurfaceLoader;
+import ar.io.minc.MincSurfaceDataLoader;
+import ar.io.minc.MincSurfaceDataOutDialog;
+import ar.io.minc.MincSurfaceDataOutOptions;
+import ar.io.minc.MincSurfaceDataWriter;
+import ar.io.minc.MincSurfaceLoader;
+import ar.io.minc.MincSurfaceOptions;
+import ar.io.minc.MincSurfaceOutOptionsDialog;
+import ar.io.minc.MincSurfaceWriter;
+import ar.io.network.NetworkMatrixInOptionsDialog;
+import ar.io.network.NetworkMatrixLoader;
+import ar.io.network.NetworkMatrixOptions;
+import ar.io.svg.SVGFileInterface;
+import ar.io.svg.SVGInputOptions;
+import ar.io.svg.SVGOptionsDialog;
+import ar.io.vol.VolumeInputOptions;
+import ar.io.x3d.VRMLFileLoader;
+import ar.neuro.networks.CorticalNetwork;
+import ar.numbers.arFloat;
+import ar.numbers.arInteger;
+import ar.numbers.arNumber;
+
+public class InterfaceFilePanel extends InterfacePanel implements ActionListener,
+																  InterfaceDialogUpdater{
+	
+	//constants
+	//TODO build from config file...
+	static final String TYPE_SVG = "SVG files (*.svg)";
+	static final String TYPE_EXCEL = "Excel files (*.xls)";
+	static final String TYPE_VOL = "Volume files (*.vol)";
+	static final String TYPE_VRML = "VRML files (*.wrl, *.vrml)";
+	static final String TYPE_CARET_SURF = "Caret surface files (*.topo, *.coord)";
+	static final String TYPE_CARET_PAINT = "Caret paint files (*.paint)";
+	static final String TYPE_CARET_METRIC = "Caret metric files (*.metric)";
+	static final String TYPE_MINC_SURF = "Minc surface files (*.obj)";
+	static final String TYPE_MINC_DATA = "Minc node data files (*.txt)";
+	static final String TYPE_MINC_VOL = "Minc volume files (*.mnc)";
+	static final String TYPE_AMIRA_TRACT = "Amira tract files (*.ami)";
+	static final String TYPE_NETWORK_MATRIX = "Network matrix files (*.net, *.txt)";
+	static final String TYPE_FSURF_SURF = "Freesurfer surface files (*.*)";
+	
+	//display panel
+	public InterfaceDisplayPanel displayPanel;
+	public HashMap<String, InterfaceIOType> ioTypes = InterfaceEnvironment.getIOTypes();
+	
+	//controls
+	//JLabel lblTitle = new JLabel("FILE DATA PANEL");
+	
+	CategoryTitle lblInputHeader = new CategoryTitle("INPUT"); 
+	JLabel lblInputFile = new JLabel("Input file(s):"); 
+	JTextField txtInputFile = new JTextField("");
+	JButton cmdInputFile = new JButton("Browse..");
+	JLabel lblInputFileType = new JLabel("File type:"); 
+	JComboBox cmbInputFileType = new JComboBox();
+	JButton cmdInputOptions = new JButton("Options..");
+	JButton cmdExecuteInput = new JButton("Read Data");
+	
+	CategoryTitle lblOutputHeader = new CategoryTitle("OUTPUT"); 
+	JLabel lblOutputFile = new JLabel("Output file(s):"); 
+	JTextField txtOutputFile = new JTextField("");
+	JButton cmdOutputFile = new JButton("Browse..");
+	JLabel lblOutputFileType = new JLabel("File type:"); 
+	JComboBox cmbOutputFileType = new JComboBox();
+	JButton cmdOutputOptions = new JButton("Options..");
+	JButton cmdExecuteOutput = new JButton("Write Data");
+	
+	//SVG Input Options
+	boolean toSVGSections;
+	boolean toSVGSelectionSets;
+	
+	//FileInputOptionsDialog inputDialog;
+	SVGOptionsDialog SVGDialog;
+	public SVGInputOptions SVGOptions = new SVGInputOptions();
+	public VolumeInputOptions VolOptions = new VolumeInputOptions();
+	
+	//Caret Input Options
+	CaretPaintOptionsDialog caretPaintDialog;
+	CaretPaintOptions caretPaintOptions = new CaretPaintOptions();
+	CaretMetricOptionsDialog caretMetricDialog;
+	CaretMetricOptions caretMetricOptions = new CaretMetricOptions();
+	
+	//Caret Output Options
+	CaretSurfaceOutOptionsDialog caretSurfaceOutDialog;
+	CaretSurfaceOptions caretSurfaceOutOptions = new CaretSurfaceOptions();
+	
+	//Minc Input Options
+	CaretMetricOptionsDialog mincSurfaceInDialog;
+	CaretMetricOptions mincSurfaceInOptions = new CaretMetricOptions();
+	
+	//Network Matrix Options
+	NetworkMatrixOptions networkMatrixInOptions = new NetworkMatrixOptions();
+	NetworkMatrixInOptionsDialog networkMatrixInDialog;
+	
+	//Minc Output Options
+	MincSurfaceOutOptionsDialog mincSurfaceOutDialog;
+	MincSurfaceOptions mincSurfaceOutOptions = new MincSurfaceOptions();
+	MincSurfaceDataOutOptions mincSurfaceDataOutOptions = new MincSurfaceDataOutOptions();
+	MincSurfaceDataOutDialog mincSurfaceDataOutDialog;
+	
+	//Files
+	File[] inputFiles;
+	File[] outputFiles;
+	
+	//constants
+	public enum Command {
+		Input ("Input Data"),
+		Output ("Output Data"),
+		Input_opt ("Input Options"),
+		Output_opt ("Output Options"),
+		Input_file ("Input File"),
+		Input_file_type ("Input File Type"),
+		Output_file ("Output File"),
+		Output_file_type ("Output File Type"),
+		Apply_Input_Opt ("Apply Input Options"),
+		Apply_Output_Opt ("Apply Output Options"),
+		Cancel_Input_Opt ("Cancel Input Options"),
+		Cancel_Output_Opt ("Cancel Output Options");
+		
+		public String type;
+		
+		Command (String ctype){
+			type = ctype;
+		}
+	}
+	
+	public enum Filter{
+		Excel (new FileNameExtensionFilter("Excel file (*.xls)", "xls")),
+		Svg (new FileNameExtensionFilter("Scalable Vector Graphics (*.svg)", "svg")),
+		Volume (new FileNameExtensionFilter("Volume file (*.vol)", "vol")),
+		VRML (new FileNameExtensionFilter("VRML file (*.wrl, *.vrml)", "wrl", "vrml")),
+		CaretSurf (new FileNameExtensionFilter("Caret surface file (*.topo, *.coord)", "topo", "coord")),
+		CaretPaint (new FileNameExtensionFilter("Caret paint file (*.paint)", "paint")),
+		CaretMetric (new FileNameExtensionFilter("Caret metric file (*.metric)", "metric")),
+		MincSurf (new FileNameExtensionFilter("Minc surface file (*.obj)", "obj")),
+		MincVolume (new FileNameExtensionFilter("Minc volume file (*.mnc)", "mnc")),
+		MincSurfData (new FileNameExtensionFilter("Minc node data file (*.txt)", "txt")),
+		AmiraTract (new FileNameExtensionFilter("Amira tract file (*.ami)", "ami")),
+		NetworkMatrix (new FileNameExtensionFilter("Network matrix file (*.net, *.txt)", "net", "txt")),
+		FSurfSurf (new FileNameExtensionFilter("Freesurfer surface file (*.*)", "*"));
+		
+		public FileNameExtensionFilter type;
+		
+		Filter (FileNameExtensionFilter ftype){
+			type = ftype;
+		}
+	}
+	
+	Filter fileInputFilter;
+	Filter fileOutputFilter;
+	
+	public InterfaceFilePanel(){
+		init();
+	}
+	
+	public InterfaceFilePanel(InterfaceDisplayPanel p){
+		displayPanel = p;
+		init();
+	}
+	
+	private void init(){
+		setLayout(new CategoryLayout(20, 5, 200, 10));
+		
+		caretPaintDialog = new CaretPaintOptionsDialog((JFrame)displayPanel.getParent(), this);
+		caretMetricDialog = new CaretMetricOptionsDialog((JFrame)displayPanel.getParent(), 
+														 this,
+														 CaretMetricOptionsDialog.INPUT);
+		mincSurfaceInDialog = new CaretMetricOptionsDialog((JFrame)displayPanel.getParent(), 
+													  this,
+													  CaretMetricOptionsDialog.INPUT);
+		caretSurfaceOutDialog = new CaretSurfaceOutOptionsDialog((JFrame)displayPanel.getParent(), 
+															 	 this);
+		mincSurfaceOutDialog = new MincSurfaceOutOptionsDialog((JFrame)displayPanel.getParent(), 
+			 	 												 this);
+		
+		mincSurfaceDataOutDialog = new MincSurfaceDataOutDialog((JFrame)displayPanel.getParent(), 
+															 	displayPanel,
+															 	mincSurfaceDataOutOptions);
+		
+		networkMatrixInDialog =	new NetworkMatrixInOptionsDialog((JFrame)displayPanel.getParent(), 
+																 displayPanel,
+																 networkMatrixInOptions);
+		
+		lblInputHeader.setHorizontalAlignment(JLabel.CENTER);
+		lblOutputHeader.setHorizontalAlignment(JLabel.CENTER);
+		
+		cmdExecuteInput.setActionCommand(Command.Input.type);
+		cmdExecuteInput.addActionListener(this);
+		cmdExecuteOutput.setActionCommand(Command.Output.type);
+		cmdExecuteOutput.addActionListener(this);
+		cmdInputOptions.setActionCommand(Command.Input_opt.type);
+		cmdInputOptions.addActionListener(this);
+		cmdOutputOptions.setActionCommand(Command.Output_opt.type);
+		cmdOutputOptions.addActionListener(this);
+		cmdInputFile.setActionCommand(Command.Input_file.type);
+		cmdInputFile.addActionListener(this);
+		cmdOutputFile.setActionCommand(Command.Output_file.type);
+		cmdOutputFile.addActionListener(this);
+		cmbInputFileType.setActionCommand(Command.Input_file_type.type);
+		cmbInputFileType.addActionListener(this);
+		cmbOutputFileType.setActionCommand(Command.Output_file_type.type);
+		cmbOutputFileType.addActionListener(this);
+		
+		cmbInputFileType.addItem(TYPE_SVG);
+		cmbInputFileType.addItem(TYPE_VOL);
+		cmbInputFileType.addItem(TYPE_VRML);
+		cmbInputFileType.addItem(TYPE_CARET_SURF);
+		cmbInputFileType.addItem(TYPE_CARET_PAINT);
+		cmbInputFileType.addItem(TYPE_CARET_METRIC);
+		cmbInputFileType.addItem(TYPE_MINC_SURF);
+		cmbInputFileType.addItem(TYPE_MINC_VOL);
+		cmbInputFileType.addItem(TYPE_MINC_DATA);
+		cmbInputFileType.addItem(TYPE_FSURF_SURF);
+		cmbInputFileType.addItem(TYPE_AMIRA_TRACT);
+		cmbInputFileType.addItem(TYPE_NETWORK_MATRIX);
+		
+		cmbOutputFileType.addItem(TYPE_CARET_SURF);
+		cmbOutputFileType.addItem(TYPE_MINC_SURF);
+		cmbOutputFileType.addItem(TYPE_MINC_DATA);
+		
+		fileInputFilter = Filter.Svg;
+		
+		fileOutputFilter = Filter.CaretSurf;
+		
+		CategoryLayoutConstraints c = new CategoryLayoutConstraints();
+		lblInputHeader.isExpanded = true;
+		lblInputHeader.setParentObj(this);
+		
+		//c = new CategoryLayoutConstraints("INPUT", 1, 1, 0, 1, 1);
+		//add(lblTitle, c);
+		//c = new CategoryLayoutConstraints("INPUT", 1, 1, 0, 1, 1);
+		add(lblInputHeader, c);
+		c = new CategoryLayoutConstraints("INPUT", 2, 2, 0, 1, 1);
+		add(lblInputFile, c);
+		c = new CategoryLayoutConstraints("INPUT", 3, 3, 0, 1, 1);
+		add(txtInputFile, c);
+		c = new CategoryLayoutConstraints("INPUT", 4, 4, 0.15, 0.7, 1);
+		add(cmdInputFile, c);
+		c = new CategoryLayoutConstraints("INPUT", 6, 6, 0, 0.28, 1);
+		add(lblInputFileType, c);
+		c = new CategoryLayoutConstraints("INPUT", 7, 7, 0.05, 0.9, 1);
+		add(cmbInputFileType, c);
+		c = new CategoryLayoutConstraints("INPUT", 5, 5, 0.15, 0.7, 1);
+		add(cmdInputOptions, c);
+		c = new CategoryLayoutConstraints("INPUT", 9, 10, 0.15, 0.7, 1);
+		add(cmdExecuteInput, c);
+	
+		c = new CategoryLayoutConstraints();
+		lblOutputHeader.isExpanded = true;
+		lblOutputHeader.setParentObj(this);
+		add(lblOutputHeader, c);
+		c = new CategoryLayoutConstraints("OUTPUT", 2, 2, 0, 1, 1);
+		add(lblOutputFile, c);
+		c = new CategoryLayoutConstraints("OUTPUT", 3, 3, 0, 1, 1);
+		add(txtOutputFile, c);
+		c = new CategoryLayoutConstraints("OUTPUT", 4, 4, 0.15, 0.7, 1);
+		add(cmdOutputFile, c);
+		c = new CategoryLayoutConstraints("OUTPUT", 6, 6, 0, 0.28, 1);
+		add(lblOutputFileType, c);
+		c = new CategoryLayoutConstraints("OUTPUT", 7, 7, 0.05, 0.9, 1);
+		add(cmbOutputFileType, c);
+		c = new CategoryLayoutConstraints("OUTPUT", 5, 5, 0.15, 0.7, 1);
+		add(cmdOutputOptions, c);
+		c = new CategoryLayoutConstraints("OUTPUT", 9, 10, 0.15, 0.7, 1);
+		add(cmdExecuteOutput, c);
+		
+		//dialogs
+		SVGDialog = new SVGOptionsDialog((Frame)displayPanel.getParent(), this);
+		SVGDialog.addActionListener(this);
+		SVGDialog.pack();
+		
+		//default SVGOptions
+		SVGOptions.setColourTableOption(SVGOptions.colourFileOptions.Increment);
+		SVGOptions.setMultiFileOption(SVGOptions.multiFileOptions.Increment);
+		
+		//deafult VolOptions
+		//VolOptions.targetSet = displayPanel.modelSet;
+		
+		
+		updateDisplay();
+	}
+	
+	public boolean setParameters(InterfaceOptions p, int code) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public void actionPerformed(ActionEvent e){
+		
+		if (Command.Input_file.type.equals(e.getActionCommand())){
+			JFileChooser fc;
+			if (inputFiles != null)
+				fc = new JFileChooser(inputFiles[0]);
+			else
+				fc = new JFileChooser();
+			if (fileInputFilter != null)
+				fc.setFileFilter(fileInputFilter.type);
+			fc.setDialogTitle("Select Input File(s)");
+			switch (fileInputFilter){
+				case Svg:
+					fc.setMultiSelectionEnabled(true);
+					break;
+				case Excel:
+					fc.setMultiSelectionEnabled(false);
+					break;
+				case Volume:
+					fc.setMultiSelectionEnabled(false);
+					break;
+				case VRML:
+					fc.setMultiSelectionEnabled(false);
+					break;
+				case CaretSurf:
+					fc.setMultiSelectionEnabled(true);
+					break;
+				case CaretPaint:
+					fc.setMultiSelectionEnabled(false);
+					break;
+				case CaretMetric:
+					fc.setMultiSelectionEnabled(false);
+					break;
+				case MincSurf:
+					fc.setMultiSelectionEnabled(true);
+					break;
+				case MincSurfData:
+					fc.setMultiSelectionEnabled(true);
+					break;
+				case AmiraTract:
+					fc.setMultiSelectionEnabled(true);
+					break;
+				case NetworkMatrix:
+					fc.setMultiSelectionEnabled(true);
+					break;
+				case FSurfSurf:
+					fc.setMultiSelectionEnabled(true);
+					break;
+					
+			}
+			
+			if (fc.isMultiSelectionEnabled()){
+				if (fc.showDialog(displayPanel, "Accept") == JFileChooser.APPROVE_OPTION)
+					inputFiles = fc.getSelectedFiles();
+			}else{
+				if (fc.showDialog(displayPanel, "Accept") == JFileChooser.APPROVE_OPTION){
+					inputFiles = new File[1];
+					inputFiles[0] = fc.getSelectedFile();
+					}
+				}
+			updateInputFiles();
+		}
+		
+		if (Command.Output_file.type.equals(e.getActionCommand())){
+			JFileChooser fc;
+			if (outputFiles != null)
+				fc = new JFileChooser(outputFiles[0]);
+			else
+				fc = new JFileChooser();
+			if (fileOutputFilter != null)
+				fc.setFileFilter(fileOutputFilter.type);
+			fc.setDialogTitle("Select Output File(s)");
+			
+			switch (fileOutputFilter){
+				case CaretSurf:
+					fc.setMultiSelectionEnabled(false);
+					fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					fc.setAcceptAllFileFilterUsed(false);
+					break;
+				case MincSurf:
+					fc.setMultiSelectionEnabled(false);
+					//fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					//fc.setAcceptAllFileFilterUsed(false);
+					break;
+				case MincSurfData:
+					fc.setMultiSelectionEnabled(false);
+					fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					fc.setAcceptAllFileFilterUsed(false);
+					break;
+				}
+			
+			if (fc.isDirectorySelectionEnabled()){
+				if (fc.showDialog(displayPanel, "Accept") == JFileChooser.APPROVE_OPTION){
+					outputFiles = new File[1];
+					outputFiles[0] = fc.getSelectedFile();
+					}
+				updateOutputFiles();
+				return;
+				}
+			
+			if (fc.isMultiSelectionEnabled()){
+				if (fc.showDialog(displayPanel, "Accept") == JFileChooser.APPROVE_OPTION)
+					outputFiles = fc.getSelectedFiles();
+			}else{
+				if (fc.showSaveDialog(displayPanel) == JFileChooser.APPROVE_OPTION){
+					outputFiles = new File[1];
+					outputFiles[0] = fc.getSelectedFile();
+					}
+				}
+			
+			updateOutputFiles();
+			
+			}
+		
+		//input file filters
+		if (Command.Input_file_type.type.equals(e.getActionCommand())){
+			//set file filter
+			//boolean enable = true;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_SVG))
+				fileInputFilter = Filter.Svg;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_VOL))
+				fileInputFilter = Filter.Volume;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_VRML))
+				fileInputFilter = Filter.VRML;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_SURF))
+				fileInputFilter = Filter.CaretSurf;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_PAINT))
+				fileInputFilter = Filter.CaretPaint;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_METRIC))
+				fileInputFilter = Filter.CaretMetric;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_MINC_SURF))
+				fileInputFilter = Filter.MincSurf;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_MINC_DATA))
+				fileInputFilter = Filter.MincSurfData;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_AMIRA_TRACT))
+				fileInputFilter = Filter.AmiraTract;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_NETWORK_MATRIX))
+				fileInputFilter = Filter.NetworkMatrix;
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_FSURF_SURF))
+				fileInputFilter = Filter.FSurfSurf;
+		}
+		
+		if (Command.Output_file_type.type.equals(e.getActionCommand())){
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_CARET_SURF))
+				fileOutputFilter = Filter.CaretSurf;
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_MINC_SURF))
+				fileOutputFilter = Filter.MincSurf;
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_MINC_DATA))
+				fileOutputFilter = Filter.MincSurfData;
+		}
+		
+		if (Command.Input.type.equals(e.getActionCommand())){
+			//input data using these settings
+			
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_SVG)){
+			
+				//SectionSet3DInt sectionSet = displayPanel.getCurrentSectionSet();
+				SectionSet3DInt sectionSet = SVGOptions.sectionSet;
+				ShapeModel3D model = sectionSet.getModel();
+				sectionSet.setUpdateable(false);
+				
+				SVGFileInterface inputSVG = new SVGFileInterface();
+				
+				//set up selection set colour table map
+				//to get acronyms for specific colours
+				if (SVGOptions.colourFileOptions == SVGInputOptions.SVGMap.TableMap){
+					inputSVG.colourTable = new PaxinosHandler();
+					try {
+						inputSVG.colourTable.readStream(new FileInputStream(SVGOptions.colourTableFile));
+						}
+					catch (FileNotFoundException ex){
+						InterfaceSession.log("Colour table file '" + SVGOptions.colourTableFile + "'" +
+								"not found.");
+						SVGOptions.colourFileOptions = SVGInputOptions.SVGMap.Increment;
+						}
+					}
+				
+				if (SVGOptions.multiFileOptions == SVGInputOptions.SVGMap.Increment){
+					//start at start section and add to incremental sections
+					int startSect = SVGOptions.startSection;
+					//initialize selection set list
+					//ArrayList<ShapeSelectionSet> selSets = displayPanel.selectionSets;
+					//ArrayList<ShapeSelectionSet> selSets = model.selections;
+					//inputSVG.selectionSets = selSets;
+					inputSVG.model = model;
+					
+					for (int i = 0; i < inputFiles.length; i++){
+						inputSVG.setOptions(SVGOptions);
+						inputSVG.inputFile = inputFiles[i];
+						//get section no. from file name
+						String indexStr = inputSVG.inputFile.getName().substring(
+										  inputSVG.inputFile.getName().indexOf(' ') + 1,
+										  inputSVG.inputFile.getName().indexOf('.'));
+						
+						int thisSect = Integer.valueOf(indexStr);
+						sectionSet.notifyListeners = false;
+						inputSVG.getSection3DShapes(sectionSet, thisSect + startSect);
+						int a = 0;	//debug breakpoint
+						}
+					//if (inputSVG)
+					sectionSet.setScene3DObject();
+					sectionSet.updateShape(true);
+					
+					for (int i = 0; i < inputSVG.selectionSets.size(); i++)
+						inputSVG.selectionSets.get(i).sort();
+					model.setSelectionSets(inputSVG.selectionSets);
+					
+					//displayPanel.setSelectionSets(inputSVG.selectionSets);
+					}
+				
+				if (!sectionSet.validateNodes()){
+					InterfaceSession.log("Invalid nodes in section set...");
+					}
+				sectionSet.notifyListeners = true;
+				sectionSet.setUpdateable(true);
+				sectionSet.updateShape(true);
+				displayPanel.updateDisplays();
+				}
+			
+			//Input Caret surface
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_SURF)){
+				if (inputFiles.length != 2) return;
+				boolean flip = false;
+				File topo = inputFiles[0];
+				String ext = topo.getName();
+				ext = ext.substring(ext.lastIndexOf("."));
+				if (ext.equals(".coord")) flip = true;
+				File coord = null;
+				if (flip){
+					coord = inputFiles[0];
+					topo = inputFiles[1];
+				}else{
+					coord = inputFiles[1];
+					}
+				
+				//TODO add format as option
+				CaretSurfaceLoader loader = new CaretSurfaceLoader(topo, coord, CaretSurfaceLoader.FORMAT_BINARY);
+				Mesh3DInt mesh = loader.loadSurface();
+				
+				if (mesh != null){
+					displayPanel.addShapeInt(mesh);
+					JOptionPane.showMessageDialog(displayPanel, "Surface loaded.");
+				}else{
+					JOptionPane.showMessageDialog(displayPanel, "Error loading surface.");
+					}
+				
+				}
+			
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_FSURF_SURF)){
+				if (inputFiles == null) return;
+				int count = 0; 
+				for (int i = 0; i < inputFiles.length; i++){
+					File file = inputFiles[i];
+					FreesurferSurfaceLoader loader = new FreesurferSurfaceLoader(file);
+					Mesh3DInt mesh = loader.loadSurface();
+					
+					if (mesh != null){
+						displayPanel.addShapeInt(mesh);
+						count++;
+						}
+					}
+				JOptionPane.showMessageDialog(displayPanel, count + " surfaces loaded.");
+				
+				
+				}
+			
+			//Input Amira surface file
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_AMIRA_TRACT)){
+				
+				for (int i = 0; i < inputFiles.length; i++){
+					File file = inputFiles[i];
+					AmiraTractLoader loader = new AmiraTractLoader(file);
+					PolygonSet3DInt polys = loader.loadPolygons();
+					
+					if (polys != null){
+						displayPanel.addShapeInt(polys);
+						}
+				}
+				
+			}
+			
+			//Input Minc surface file
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_MINC_SURF)){
+				if (inputFiles == null) return;
+				int count = 0; 
+				for (int i = 0; i < inputFiles.length; i++){
+					File file = inputFiles[i];
+					MincSurfaceLoader loader = new MincSurfaceLoader(file);
+					Mesh3DInt mesh = loader.loadSurface();
+					
+					if (mesh != null){
+						displayPanel.addShapeInt(mesh);
+						count++;
+						}
+					}
+				JOptionPane.showMessageDialog(displayPanel, count + " surfaces loaded.");
+			}
+			
+			//Input Caret Paint file
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_PAINT)){
+				//TODO throw error message here
+				if (caretPaintOptions.mesh == null){
+					InterfaceSession.log("Error loading paint file: no mesh selected...");
+					return;
+					}
+				if (inputFiles[0] == null){
+					InterfaceSession.log("Error loading paint file: no input file selected...");
+					return;
+					}
+				
+				CaretPaintLoader loader = new CaretPaintLoader(inputFiles[0]);
+				CaretPaintLoader.Header header = loader.getHeader();
+				
+				header.printAll();
+				ArrayList<ArrayList<arInteger>> values = loader.loadValues();
+				if (values == null){
+					InterfaceSession.log("Error: No values loaded...");
+					return;
+				}
+				
+				//ensure correct number of nodes
+				//TODO throw error message here
+				if (caretPaintOptions.mesh.getMesh().n != header.nodes){
+					InterfaceSession.log("Warning: Paint line count does not match mesh node count (mesh=" 
+									   + caretPaintOptions.mesh.getMesh().n + ", paint=" + header.nodes);
+					//return;
+				}
+				
+				//add values to mesh
+				for (int i = 0; i < header.getColumnCount(); i++)
+					caretPaintOptions.mesh.addIntNodeData((String)header.columns.items.get(i).objValue,
+														   values.get(i),
+														   header.nameMap);
+				//add name map
+				if (header.nameMap != null && header.nameMap.getSize() > 0){
+					displayPanel.addNameMap(header.nameMap);
+					}
+				caretPaintOptions.mesh.fireShapeListeners();
+			}
+			
+			//Input Caret metric file
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_METRIC)){
+				
+				if (caretMetricOptions.mesh == null){
+					InterfaceSession.log("Error loading metric file: no mesh selected...");
+					return;
+					}
+				
+				CaretMetricLoader loader = new CaretMetricLoader(inputFiles[0]);
+				CaretMetricLoader.Header header = loader.getHeader();
+				
+				ArrayList<ArrayList<arFloat>> values = loader.loadValues();
+				if (values == null){
+					InterfaceSession.log("Error: No values loaded...");
+					return;
+				}
+				
+				//ensure correct number of nodes
+				//TODO throw error message here
+				if (caretMetricOptions.mesh.getMesh().n != header.nodes){
+					InterfaceSession.log("Warning: Metric line count does not match mesh node count (mesh=" 
+									   + caretMetricOptions.mesh.getMesh().n + ", paint=" + header.nodes);
+					//return;
+				}
+				
+				//add values to mesh
+				for (int i = 0; i < header.getColumnCount(); i++)
+					caretMetricOptions.mesh.addFloatNodeData((String)header.columns.get(i),
+														   values.get(i));
+				caretMetricOptions.mesh.fireShapeListeners();
+				}
+			
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_MINC_DATA)){
+				if (mincSurfaceInOptions.mesh == null){
+					InterfaceSession.log("Error loading data file: no mesh selected...");
+					JOptionPane.showMessageDialog(displayPanel, "Please select target mesh in 'options'.");
+					return;
+					}
+				
+				int count = 0;
+				for (int i = 0; i < inputFiles.length; i++){
+					MincSurfaceDataLoader loader = new MincSurfaceDataLoader(inputFiles[i]);
+					String name = inputFiles[i].getName();
+					name = name.substring(0, name.indexOf("."));
+					ArrayList<arNumber> values = loader.loadValues();
+					if (values != null){
+						mincSurfaceInOptions.mesh.addNodeData(name, values);
+						count++;
+						}
+					}
+				
+				JOptionPane.showMessageDialog(displayPanel, count + " data files loaded.");
+				mincSurfaceInOptions.mesh.fireShapeListeners();
+				}
+			
+			//Input volume file
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_VOL)){
+				VolumeFileInterface inputVol = new VolumeFileInterface();
+				if (inputFiles[0] == null) return;
+				inputVol.inputFile = inputFiles[0];
+				try{
+					Volume3DInt volume = inputVol.getVolume3DInt(new Grid3D(), 0);
+					JOptionPane.showMessageDialog(displayPanel, "Vol file loaded.");
+					}
+				catch (IOException ex){
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(displayPanel, "Error loading vol file.");
+					}
+				
+				}
+			
+			//Input VRML file
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_VRML)){
+				VRMLFileLoader loader = new VRMLFileLoader();
+				loader.setFile(inputFiles[0]);
+				
+				displayPanel.addShapeInt(loader.getVRMLSscene());
+				JOptionPane.showMessageDialog(displayPanel, "VRML scene loaded.");
+				}
+			
+			//Input network matrix file 
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_NETWORK_MATRIX)){
+				int count = 0;
+				for (int i = 0; i < inputFiles.length; i++){
+					CorticalNetwork network = new CorticalNetwork();
+					network.setName(networkMatrixInOptions.name);
+					NetworkMatrixLoader loader = new NetworkMatrixLoader(inputFiles[i],
+																		 networkMatrixInOptions);
+					if (loader.setCorticalNetwork(network)) count++;
+					displayPanel.addModel(network);
+					if (networkMatrixInOptions.createGraph)
+						displayPanel.addGraph(network.getGraph());
+					}
+				JOptionPane.showMessageDialog(displayPanel, count + " networks loaded.");
+				}
+			
+			}
+		
+		//Output
+		if (Command.Output.type.equals(e.getActionCommand())){
+			
+			//Output caret surface
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_CARET_SURF)){
+				if (outputFiles == null) return;
+				String dir = outputFiles[0].getAbsolutePath();
+				caretSurfaceOutOptions.targetDir = outputFiles[0];
+				
+				if (caretSurfaceOutOptions.topoFile == null ||
+					caretSurfaceOutOptions.topoFile.length() == 0){
+					InterfaceSession.log("Error: Caret topo file not specified..");
+					return;
+					}
+				if (caretSurfaceOutOptions.coordFile == null ||
+					caretSurfaceOutOptions.coordFile.length() == 0){
+					InterfaceSession.log("Error: Caret coord file not specified..");
+					return;
+					}
+				
+				File topo = new File(dir + "\\" + caretSurfaceOutOptions.topoFile + ".topo");
+				
+				//if files exist, warn user
+				if (topo.exists() && JOptionPane.showConfirmDialog(displayPanel,
+											topo.getName() + " already exists. Overwrite?",
+											"Overwrite file",
+											JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+					return;
+				File coord = new File(dir + "\\" + caretSurfaceOutOptions.coordFile + ".coord");
+				if (coord.exists() && JOptionPane.showConfirmDialog(displayPanel,
+						coord.getName() + " already exists. Overwrite?",
+						"Overwrite file",
+						JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+					return;
+				
+				CaretSurfaceWriter writer = new CaretSurfaceWriter(caretSurfaceOutOptions);
+				if (writer.writeSurface(caretSurfaceOutOptions.mesh))
+					JOptionPane.showMessageDialog(displayPanel, 
+												  "Surface written successfully", 
+												  "Write Caret Surface Files",
+												  JOptionPane.INFORMATION_MESSAGE);
+				
+				}
+			
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_MINC_SURF)){
+				if (outputFiles == null || outputFiles[0] == null){
+					JOptionPane.showMessageDialog(displayPanel, 
+							  "No output file specified!", 
+							  "Write Minc Surface",
+							  JOptionPane.INFORMATION_MESSAGE);
+					return;
+					}
+				
+				if (mincSurfaceOutOptions.mesh == null){
+					JOptionPane.showMessageDialog(displayPanel, 
+							  "No mesh specified!", 
+							  "Write Minc Surface",
+							  JOptionPane.INFORMATION_MESSAGE);
+					return;
+					}
+				
+				if (!outputFiles[0].getName().endsWith(".obj")){
+					String path = outputFiles[0].getAbsolutePath();
+					outputFiles[0] = new File(path + ".obj");
+					}
+					
+				MincSurfaceWriter writer = new MincSurfaceWriter(outputFiles[0]);
+				if (writer.writeSurface(mincSurfaceOutOptions.mesh))
+					JOptionPane.showMessageDialog(displayPanel, 
+												  "Surface written successfully", 
+												  "Write Minc Surface",
+												  JOptionPane.INFORMATION_MESSAGE);
+				
+					}
+			
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_MINC_DATA)){
+				
+				
+				if (mincSurfaceDataOutOptions == null || 
+					mincSurfaceDataOutOptions.mesh == null){
+					JOptionPane.showMessageDialog(displayPanel,
+												  "Options not specified..",
+												  "Write Minc Surface Data",
+												  JOptionPane.ERROR_MESSAGE);
+					return;
+					}
+				
+				int error = 0;
+				for (int i = 0; i < mincSurfaceDataOutOptions.columns.size(); i++){
+					File file = new File(outputFiles[0].getAbsolutePath() + "/" + mincSurfaceDataOutOptions.filenames.get(i));
+					MincSurfaceDataWriter writer = new MincSurfaceDataWriter(file,
+																			 mincSurfaceDataOutOptions.formats.get(i));
+					if (!writer.writeValues(mincSurfaceDataOutOptions.mesh.getData(mincSurfaceDataOutOptions.columns.get(i))))
+						error++;
+					else
+						InterfaceSession.log("Wrote '" + file.getAbsolutePath() + "'.");
+					}
+				
+				if (error > 0)
+					JOptionPane.showMessageDialog(displayPanel,
+												  "Problems writing " + error + " of " + mincSurfaceDataOutOptions.columns.size() + " files.",
+												  "Write Minc Surface Data",
+												  JOptionPane.ERROR_MESSAGE);
+				else
+					JOptionPane.showMessageDialog(displayPanel,
+												  "" + mincSurfaceDataOutOptions.columns.size() + " files written.",
+												  "Write Minc Surface Data",
+												  JOptionPane.INFORMATION_MESSAGE);
+				}
+			
+		}
+		
+		if (Command.Input_opt.type.equals(e.getActionCommand())){
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_SVG)){
+				SVGDialog.updateDialog();
+				SVGDialog.setVisible(true);
+				return;
+				}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_PAINT)){
+				caretPaintDialog.updateDialog();
+				caretPaintDialog.setVisible(true);
+				return;
+			}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_METRIC)){
+				caretMetricDialog.updateDialog();
+				caretMetricDialog.setVisible(true);
+				return;
+			}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_MINC_DATA)){
+				mincSurfaceInDialog.updateDialog();
+				mincSurfaceInDialog.setVisible(true);
+				return;
+			}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_NETWORK_MATRIX)){
+				networkMatrixInDialog.updateDialog();
+				networkMatrixInDialog.setVisible(true);
+				return;
+			}
+			
+		}
+		
+		if (Command.Output_opt.type.equals(e.getActionCommand())){
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_CARET_SURF)){
+				caretSurfaceOutDialog.updateDialog();
+				caretSurfaceOutDialog.setVisible(true);
+				return;
+				}
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_MINC_SURF)){
+				mincSurfaceOutDialog.updateDialog();
+				mincSurfaceOutDialog.setVisible(true);
+				return;
+				}
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_MINC_DATA)){
+				mincSurfaceDataOutDialog.updateDialog();
+				mincSurfaceDataOutDialog.setVisible(true);
+				return;
+				}
+		}
+		
+		if (Command.Cancel_Input_Opt.type.equals(e.getActionCommand())){
+			//hide dialog without updating
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_SVG)){
+				SVGDialog.setVisible(false);
+				return;
+				}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_PAINT)){
+				caretPaintDialog.setVisible(false);
+				return;
+				}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_METRIC)){
+				caretMetricDialog.setVisible(false);
+				return;
+				}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_MINC_DATA)){
+				mincSurfaceInDialog.setVisible(false);
+				return;
+				}
+		}
+		
+		if (Command.Cancel_Output_Opt.type.equals(e.getActionCommand())){
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_CARET_SURF)){
+				caretSurfaceOutDialog.setVisible(false);
+				return;
+				}
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_MINC_SURF)){
+				mincSurfaceOutDialog.setVisible(false);
+				return;
+				}
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_MINC_DATA)){
+				mincSurfaceDataOutDialog.setVisible(false);
+				return;
+				}
+			}
+		
+		if (Command.Apply_Input_Opt.type.equals(e.getActionCommand())){
+			//apply options from dialog and hide it
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_SVG)){
+				SVGDialog.setVisible(false);
+				return;
+				}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_PAINT)){
+				caretPaintOptions.mesh = caretPaintDialog.getMesh();
+				caretPaintDialog.setVisible(false);
+				return;
+				}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_CARET_METRIC)){
+				caretMetricOptions.mesh = caretMetricDialog.getMesh();
+				caretMetricDialog.setVisible(false);
+				return;
+				}
+			if (cmbInputFileType.getSelectedItem().equals(TYPE_MINC_DATA)){
+				mincSurfaceInOptions.mesh = mincSurfaceInDialog.getMesh();
+				mincSurfaceInDialog.setVisible(false);
+				return;
+				}
+			}
+		
+		if (Command.Apply_Output_Opt.type.equals(e.getActionCommand())){
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_CARET_SURF)){
+				caretSurfaceOutDialog.setOptions(caretSurfaceOutOptions);
+				//caretSurfaceOutOptions.mesh = caretSurfaceOutDialog.getMesh();
+				//caretSurfaceOutOptions.topoFile = caretSurfaceOutDialog.getTopoFile();
+				//caretSurfaceOutOptions.coordFile = caretSurfaceOutDialog.getCoordFile();
+				
+				caretSurfaceOutDialog.setVisible(false);
+				return;
+				}
+			if (cmbOutputFileType.getSelectedItem().equals(TYPE_MINC_SURF)){
+				mincSurfaceOutOptions.mesh = mincSurfaceOutDialog.getMesh();
+				mincSurfaceOutDialog.setVisible(false);
+				return;
+				}
+			
+			}
+		
+	}
+	
+	public void setInputFiles(File[] files){
+		inputFiles = files;
+		updateInputFiles();
+	}
+	
+	public void setOutputFiles(File[] files){
+		outputFiles = files;
+		updateOutputFiles();
+	}
+
+	private void updateInputFiles(){
+		if (inputFiles != null){
+			String fileStr = "";
+			for (int i = 0; i < inputFiles.length; i++)
+				if (inputFiles[i] != null){
+					if (i != 0) fileStr += ";";
+					fileStr += inputFiles[i].getName();
+					}
+			txtInputFile.setText(fileStr);
+			}
+		else
+			txtInputFile.setText("");
+	}
+	
+	private void updateOutputFiles(){
+		if (outputFiles != null){
+			String fileStr = "";
+			for (int i = 0; i < outputFiles.length; i++)
+				if (outputFiles[i] != null){
+					if (i != 0) fileStr += ";";
+					fileStr += outputFiles[i].getName();
+					}
+			txtOutputFile.setText(fileStr);
+			}
+		else
+			txtOutputFile.setText("");
+	}
+	
+	public String toString(){
+		return "File Data Panel";
+	}
+	
+}

@@ -1,0 +1,637 @@
+package ar.geometry;
+
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferShort;
+import java.awt.image.DataBufferUShort;
+import java.awt.image.IndexColorModel;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
+import ar.datasource.DataType;
+import ar.datasource.DataTypes;
+import ar.interfaces.maps.ColourMap;
+import ar.interfaces.shapes.util.GridSampleModel;
+import ar.interfaces.shapes.util.Volume3DTexture;
+import ar.interfaces.shapes.util.WindowedColourModel;
+import ar.io.util.ioFunctions;
+import ar.numbers.arDouble;
+import ar.numbers.arNumber;
+import ar.stats.Histogram;
+import ar.util.Colours;
+import ar.util.arMath;
+
+/*****************************************
+ * Extension of Grid3D which stores its data as an array of BufferedImage objects.
+ * Can be used as an efficient by-reference source for Java3D objects.
+ * 
+ * @author Andrew Reid
+ *
+ * TODO: ensure ImageGrid3D uses only WindowedColourModel
+ */
+
+
+public class ImageGrid3D extends Grid3D {
+
+	protected Vector<BufferedImage[]> images;
+	protected ColorModel colourModel;
+	public double dataMin, dataMax;
+	public double debug_maxPixel = 0;
+	
+	//HashMap<String, boolean[][][]> masks = new HashMap<String, boolean[][][]>();
+	//public boolean apply_masks = true;
+	
+	public ImageGrid3D(){
+		this(10, 10, 10, 1, new Box3D(), 
+			 Volume3DTexture.getColourModel(Volume3DTexture.TYPE_INTENSITY_CMAP_ALPHA));
+	}
+	
+	public ImageGrid3D(ColorModel model){
+		this(10, 10, 10, 1, new Box3D(), model);
+	}
+	
+	public ImageGrid3D(int x, int y, int z, int t, Box3D b, ColorModel model){
+		xSize = x;
+		ySize = y;
+		zSize = z;
+		tSize = t;
+		setColourModel(model);
+		setBounds(b);
+		
+	}
+	
+	protected void resetArrays(){
+		if (tSize <= 0) return;
+		
+		images = new Vector<BufferedImage[]>();
+		
+		for (int i = 0; i < tSize; i++)
+			images.add(new BufferedImage[powerOfTwo(zSize)]);
+		
+		for (int i = 0; i < tSize; i++)
+			resetArray(i);
+	}
+	
+	/*
+	public ImageGrid3D(int x, int y, int z, Box3D b, int dataType, boolean setAlpha){
+		xSize = x;
+		ySize = y;
+		zSize = z;
+		setBounds(b);
+		setDataType(dataType);
+		setColourModel(Volume3DTexture.getColourModel(Volume3DTexture.TYPE_INTENSITY_CMAP_ALPHA));
+	
+	}
+	
+	public ImageGrid3D(int x, int y, int z, Box3D b, int dataType, boolean setAlpha, ColorModel model){
+		xSize = x;
+		ySize = y;
+		zSize = z;
+		setBounds(b);
+		setDataType(dataType);
+		setColourModel(model);
+	}
+	*/
+	
+	public void setZPlane(int z, BufferedImage image){
+		setZPlane(z, 0, image);
+	}
+	
+	public void setZPlane(int z, int t, BufferedImage image){
+		images.get(t)[z] = image;
+	}
+	
+	
+	public ColorModel getColourModel(){
+		return colourModel;
+	}
+	
+	public int getChannelCount(){
+		ColorModel cm = getColourModel();
+		if (cm instanceof WindowedColourModel){
+			return 1;
+			}
+
+		return cm.getNumComponents();
+	}
+	
+	public void resetArray(){
+		resetArray(0);
+	}
+	
+	/***************************************
+	 * Resets the data array (i.e., creates a new stack of images) based upon the current
+	 * colour model, and sets alpha to 0 for each voxel, if this grid has alpha. If no
+	 * colour model is set, will set it to the default gray, translucent model.
+	 *
+	 */
+	public void resetArray(int t){
+		//InterfaceSession.log("Reset image grid array..");
+		if (colourModel == null){
+			setColourModel(Volume3DTexture.getColourModel(Volume3DTexture.TYPE_INTENSITY_GREY_ALPHA));
+			return;		//calls this method again
+			}
+		if (this.images.get(t) == null)
+			images.set(t, new BufferedImage[powerOfTwo(zSize)]);
+		BufferedImage[] images = this.images.get(t);
+		WritableRaster raster;
+		
+		for (int i = 0; i < powerOfTwo(zSize); i++){
+			raster = getRaster();
+			images[i] = new BufferedImage(colourModel, raster, false, null);
+			
+			//if (colourModel.hasAlpha())
+			//setAlpha(images[i], -Double.MAX_VALUE);
+			setAlpha(images[i], getZero());
+				//setAlpha(images[i], (byte)0 & 0xFF);
+			}
+	}
+	
+	public void presetAlpha(){
+		//assume alpha is last channel
+		for (int k = 0; k < zSize; k++)
+			for (int j = 0; j < ySize; j++)
+				for (int i = 0; i < xSize; i++)
+					setValue(i, j, k, 0, dataSize - 1, getZero());
+	}
+	
+	protected WritableRaster getRaster(){
+		WritableRaster raster = colourModel.createCompatibleWritableRaster(powerOfTwo(xSize), powerOfTwo(ySize));
+		return raster;
+	}
+	
+	public void updateArray(){
+		updateArray(0);
+	}
+	
+	/****************************
+	 * Updates the data array with the specified colour model, and preserves existing values.
+	 * If no colour model is set, or no image array is set, simply calls resetArray()
+	 *
+	 */
+	public void updateArray(int t){
+
+		BufferedImage[] images = this.images.get(t);
+		if (colourModel == null || images == null){
+			resetArray();
+			return;
+			}
+		
+		BufferedImage[] swap = images;
+		int sizeold = images[0].getColorModel().getNumComponents();
+		int sizenew = colourModel.getNumComponents();
+		int[] pixelold = new int[sizeold];
+		int[] pixelnew;
+		images = new BufferedImage[powerOfTwo(zSize)];
+		WritableRaster raster;
+		
+		//add new BufferedImages to array with dataSize bytes, and copy existing values
+		//for (int k = 0; k < powerOfTwo(zSize); k++){
+		for (int k = 0; k < powerOfTwo(zSize); k++){
+			raster = colourModel.createCompatibleWritableRaster(powerOfTwo(xSize), powerOfTwo(ySize));
+			
+			images[k] = new BufferedImage(colourModel, raster, false, null);
+			//copy values
+			//for (int i = 0; i < powerOfTwo(xSize); i++)
+			//	for (int j = 0; j < powerOfTwo(ySize); j++){
+			for (int i = 0; i < powerOfTwo(xSize); i++)
+				for (int j = 0; j < powerOfTwo(ySize); j++){
+					if (k >= zSize || i >= xSize || j >= ySize){
+						double[] d = new double[sizenew];
+						setToZero(d);
+						images[k].getRaster().setPixel(i, j, d);
+					}else{
+						swap[k].getRaster().getPixel(i, j, pixelold);
+						pixelnew = new int[sizenew];
+						for (int m = 0; m < Math.min(sizeold, sizenew); m++)
+							pixelnew[m] = pixelold[m];
+						images[k].getRaster().setPixel(i, j, pixelnew);
+						}
+					}
+			}
+		
+		this.images.set(t, images);
+		
+	}
+	
+	//TODO move to a utility class
+	//sets alpha for all pixels in image
+	protected void setAlpha(BufferedImage image, double alpha){
+		//if (!colourModel.hasAlpha()) return;
+		double[] pixel = new double[dataSize];
+		for (int i = 0; i < image.getWidth(); i++)
+			for (int j = 0; j < image.getHeight(); j++){
+				pixel = image.getRaster().getPixel(i, j, pixel);
+				Arrays.fill(pixel, alpha);
+				//pixel[dataSize - 1] = alpha;
+				image.getRaster().setPixel(i, j, pixel);
+				}
+	}
+	
+	public void setColourModel(ColorModel cm){
+		colourModel = cm;
+		dataSize = cm.getNumComponents();
+		setDataType(cm.getTransferType());
+		if (colourModel instanceof WindowedColourModel){
+			dataMin = ((WindowedColourModel)colourModel).intercept;
+			dataMax = ((WindowedColourModel)colourModel).data_size /
+					  ((WindowedColourModel)colourModel).scale;
+		}else{
+			setDataRange(0, 255);
+			}
+		if (images == null)
+			resetArrays();
+		updateArray();
+	}
+	
+	protected int getTransferType(DataType type){
+		switch(type.val){
+			case DataTypes.BYTE:
+				return DataBuffer.TYPE_BYTE;
+			case DataTypes.SHORT:
+				return DataBuffer.TYPE_SHORT;
+			case DataTypes.USHORT:
+				return DataBuffer.TYPE_USHORT;
+			case DataTypes.FLOAT:
+				return DataBuffer.TYPE_FLOAT;
+			case DataBuffer.TYPE_DOUBLE:
+				return DataTypes.DOUBLE;
+			default:
+				return -1;
+			}
+	}
+	
+	public int getDataType(){
+		if (colourModel == null) return -1;
+		return colourModel.getTransferType();
+	}
+	
+	/*******************************************
+	 * Sets the data size of the BufferedImages in this grid, and sets colour model 
+	 * from colour
+	 */
+	public void setColourModel(ColorModel cm, ColourMap cmap){
+		setColourModel(cm);
+	}
+	
+	//TODO: remove?
+	protected void setDataRange(double min, double max){
+		dataMin = min;
+		dataMax = max;
+	}
+	
+	/***************************
+	 * Set value of pixel x,y,z from <code>val</code>, which must be an array 
+	 * of normalized values.
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param val
+	 */
+	public void setValue(int x, int y, int z,  double[] val){
+		setValue(x, y, z, 0, val);
+	}
+	
+	public void setValue(int x, int y, int z, int t, int channel, double val){
+		BufferedImage image = images.get(t)[z];
+		double[] pixel = new double[dataSize];
+		pixel = image.getRaster().getPixel(x, y, pixel);
+		image.getRaster().setPixel(x, ySize - y - 1, pixel);
+	}
+	
+	public void setValue(int x, int y, int z, int t, double[] val){
+		BufferedImage image = images.get(t)[z];
+		image.getRaster().setPixel(x, ySize - y - 1, val);
+	}
+	
+	public int getDataSize(){
+		return colourModel.getNumComponents();
+	}
+	
+	public boolean hasAlpha(){
+		return colourModel.hasAlpha();
+	}
+	
+	public void setValue(int x, int y, int z, int[] val){
+		setValue(x, y, z, 0, val);
+	}
+	
+	public void setValue(int x, int y, int z, int t, int[] val){
+		BufferedImage image = images.get(t)[z];
+		image.getRaster().setPixel(x, ySize - y - 1, val);
+	}
+	
+	public void setValue(int x, int y, int z, float[] val){
+		setValue(x, y, z, 0, val);
+	}
+	
+	public void setValue(int x, int y, int z, int t, float[] val){
+		BufferedImage image = images.get(t)[z];
+		image.getRaster().setPixel(x, ySize - y - 1, val);
+	}
+	
+	public void setValue(int x, int y, int z, short[] val){
+		setValue(x, y, z, 0, val);
+	}
+	
+	public void setValue(int x, int y, int z, int t, short[] val){
+		BufferedImage image = images.get(t)[z];
+		int[] v = new int[val.length];
+		System.arraycopy(val, 0, v, 0, val.length);
+		image.getRaster().setPixel(x, ySize - y - 1, v);
+	}
+	
+	public void setValue(int x, int y, int z, byte[] val){
+		setValue(x, y, z, 0, val);
+	}
+	
+	public void setValue(int x, int y, int z, int t, byte[] val){
+		BufferedImage image = images.get(t)[z];
+		int[] v = new int[val.length];
+		System.arraycopy(val, 0, v, 0, val.length);
+		image.getRaster().setPixel(x, ySize - y - 1, v);
+	}
+	
+	public boolean getValueAtPoint(Point3f p, double[] val){
+		
+		int[] coords = getEnclosingVoxel(p);
+		if (coords == null) return false;
+		for (int j = 0; j < val.length; j++)
+			val[j] = 0;
+		
+		getValue(coords[0], coords[1], coords[2], val); 
+		return true;
+	}
+	
+	public double interpolateValueAtPoint(Point3f p){
+		return Double.NaN;
+	}
+	
+	/*************************
+	 * Returns weighted sum of nearest neighbours of the voxel enclosing this point
+	 */
+	public boolean interpolateValueAtPoint(Point3f p, double[] val){
+		
+		if (!bounds.contains(p)) return false;
+		
+		int[] coords = getEnclosingVoxel(p);
+		//max distance between voxels
+		float voxel_delta = Math.max(bounds.getSDim() / (float)xSize, bounds.getTDim() / (float)ySize);
+		voxel_delta = Math.max(voxel_delta, bounds.getRDim() / (float)zSize);
+		
+		//double[] sum = new double[dataSize];
+		double w_sum = 0;
+		
+		//for enclosing voxel and its neighbours, if p.distance(voxel.midpoint) <= voxel.delta
+		//add to weighted average
+		for (int i = Math.max(0, coords[0] - 1); i < Math.min(xSize, coords[0] + 1); i++)
+			for (int j = Math.max(0, coords[1] - 1); j < Math.min(ySize, coords[1] + 1); j++)
+				for (int k = Math.max(0, coords[2] - 1); k < Math.min(zSize, coords[2] + 1); k++){
+					Point3f p2 = getVoxelMidPoint(i, j, k);
+					if (p.distance(p2) < voxel_delta){
+						double w = (voxel_delta - p.distance(p2)) / voxel_delta;
+						w_sum += w;
+						double[] d = new double[dataSize];
+						getValue(i, j, k, d);
+						for (int m = 0; m < dataSize; m++)
+							val[m] += w * d[m];
+						}
+					}
+		
+		for (int m = 0; m < dataSize; m++)
+			val[m] /= w_sum;
+		
+		return true;
+	}
+	
+	
+	protected void getNullData(double[] d){
+		Arrays.fill(d, -Double.MAX_VALUE);
+	}
+	
+	public Histogram getHistogram(int channel, int bins){
+		return getHistogram(channel, bins, dataMin, dataMax);
+	}
+	
+	public Histogram getHistogram(int channel, int bins, double min, double max){
+		InterfaceSession.log("Calculating histogram for " + toString());
+		Histogram h = new Histogram();
+		h.dataMin = dataMin;
+		h.dataMax = dataMax;
+		h.set(bins, min, max);
+		
+		//ArrayList<arNumber> values = new ArrayList<arNumber>();
+		
+		for (int i = 0; i < xSize; i++)
+			for (int j = 0; j < ySize; j++)
+				for (int k = 0; k < zSize; k++)
+					h.addValue(getDoubleValue(i, j, k, channel));
+					//values.add(new arDouble(getDoubleValue(i, j, k, channel)));
+		
+		//h.set(values, bins, dataMin, dataMax);
+		InterfaceSession.log("Histogram: " + bins + " bins; min: " + min + "; max: " + max);
+		return h;
+	}
+	
+	public void getValue(int x, int y, int z, int[] val){
+		getValue(x, y, z, 0, val);
+	}
+	
+	public void getValue(int x, int y, int z, int t, int[] val){
+		BufferedImage bImage = images.get(t)[z];
+		bImage.getRaster().getPixel(x, ySize - y - 1, val);
+	}
+	
+	/*********************************
+	 * Sets <code>val</code> to the value of voxel at x,y,z, as a normalized
+	 * value.
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param val
+	 */
+	public void getValue(int x, int y, int z, double[] val){
+		getValue(x, y, z, 0, val);
+	}
+	
+	
+	public void getValue(int x, int y, int z, int t, double[] val){
+		if (mask != null && mask[x][y][z]){
+			setToZero(val);
+			return;
+			}
+		BufferedImage bImage = images.get(t)[z];
+		bImage.getRaster().getPixel(x, ySize - y - 1, val);
+		
+	}
+	
+	public double getZero(){
+		if (this.colourModel instanceof WindowedColourModel)
+			return Double.NaN;
+			//return ((WindowedColourModel)colourModel).intercept;
+		return 0;
+	}
+	
+	public void setToZero(double[] pixel){
+		//if (this.colourModel instanceof WindowedColourModel){
+		//	Arrays.fill(pixel, -Double.MAX_VALUE);
+		//	return;
+		//	}
+		Arrays.fill(pixel, getZero());
+	}
+	
+	public BufferedImage[] getMaskedImages(){
+		return getMaskedImages(0);
+	}
+	
+	public BufferedImage[] getMaskedImages(int t){
+		BufferedImage[] images = this.images.get(t);
+		
+		if (!hasMask()){
+			InterfaceSession.log("No mask set.");
+			return images;
+		}
+		
+		InterfaceSession.log("Setting mask...");
+		//otherwise pass copy of images with mask applied
+		BufferedImage[] copy = new BufferedImage[images.length];
+		BufferedImage source = images[0];
+		int x = source.getWidth();
+		int y = source.getHeight();
+		WritableRaster raster = source.getColorModel().createCompatibleWritableRaster(x, y);
+		BufferedImage target = new BufferedImage(source.getColorModel(), raster, false, null);
+		
+		long count_z = 0;
+		
+		//fill up excess power-of-two space
+		for (int k = zSize; k < images.length; k++){
+			copy[k] = target;
+			setAlpha(target, getZero());
+			}
+		
+		for (int k = 0; k < zSize; k++){
+			source = images[k];
+			
+			raster = source.getColorModel().createCompatibleWritableRaster(x, y);
+			target = new BufferedImage(source.getColorModel(), raster, false, null);
+			setAlpha(target, -Double.MAX_VALUE);
+			
+			for (int i = 0; i < xSize; i++)
+				for (int j = 0; j < ySize; j++){
+					  
+					double[] p = new double[source.getColorModel().getNumComponents()];
+					if (mask[i][j][k]){
+						setToZero(p);
+						count_z++;
+					}else{
+						source.getRaster().getPixel(i, j, p);
+					}
+					
+					target.getRaster().setPixel(i, j, p);
+					}
+			copy[k] = target; 
+			}
+		
+		long nz = xSize * ySize * zSize - count_z;
+		InterfaceSession.log("Mask: " + count_z + " zeros; " + nz + " non-zeros..");
+		
+		return copy;
+	}
+	
+	public BufferedImage getImage(int z){
+		return getImage(0, z);
+	}
+			
+	
+	public BufferedImage getImage(int t, int z){
+		return images.get(t)[z];
+	}
+	
+	/*********************************
+	 * Sets <code>val</code> to the value of voxel at x,y,z, as a normalized
+	 * value.
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param val
+	 */
+	public void getValue(int x, int y, int z, float[] val){
+		getValue(x, y, z, 0, val);
+	}
+	
+	public void getValue(int x, int y, int z, int t, float[] val){
+		BufferedImage bImage = images.get(t)[z];
+		bImage.getRaster().getPixel(x, ySize - y - 1, val);
+	}
+	
+	public void getValue(int x, int y, int z, byte[] val){
+		getValue(x, y, z, 0, val);
+	}
+	
+	public void getValue(int x, int y, int z, int t, byte[] val){
+		BufferedImage bImage = images.get(t)[z];
+		int[] pixel = new int[dataSize];
+		bImage.getRaster().getPixel(x, ySize - y - 1, pixel);
+		for (int i = 0; i < pixel.length; i++)
+			val[i] = (byte)pixel[i];
+	}
+	
+	public double getNormalizedValue(int x, int y, int z, int channel){
+		return getNormalizedValue(getDoubleValue(x, y, z, channel));
+	}
+	
+	public double getNormalizedValueAtPoint(Point3f p, int channel){
+		return getNormalizedValue(getDoubleValueAtPoint(p, channel));
+	}
+	
+	public double getNormalizedValue(double val){
+		return (val - dataMin) / (dataMax - dataMin);
+	}	
+	
+	public double getDoubleValue(int x, int y, int z, int channel){
+		return getDoubleValue(x, y, z, 0, channel);
+	}
+	
+	public double getDoubleValue(int x, int y, int z, int t, int channel){
+		double[] d = new double[dataSize];
+		getValue(x, y, z, t, d);
+		return d[channel];
+	}
+	
+	public Object clone(){
+		ImageGrid3D out = new ImageGrid3D(xSize, ySize, zSize, tSize, (Box3D)bounds.clone(), colourModel);
+		//out.setColourModel(this.colourModel);
+		
+		byte[] b, b2;
+		for (int i = 0; i < xSize; i++)
+			for (int j = 0; j < ySize; j++)
+				for (int k = 0; k < zSize; k++){
+					b = new byte[dataSize];
+					getValue(i, j, k, b);
+					//System.arraycopy(b, 0, b2, 0, dataSize);
+					out.setValue(i, j, k, b);
+					}
+		return out;
+		
+	}
+	
+}

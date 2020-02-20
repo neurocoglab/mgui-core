@@ -1,0 +1,455 @@
+package ar.Interface.Shapes.Util;
+
+import java.util.ArrayList;
+
+import javax.media.j3d.Appearance;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.GeometryArray;
+import javax.media.j3d.Group;
+import javax.media.j3d.Material;
+import javax.media.j3d.Node;
+import javax.media.j3d.OrderedGroup;
+import javax.media.j3d.PolygonAttributes;
+import javax.media.j3d.QuadArray;
+import javax.media.j3d.RenderingAttributes;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Switch;
+import javax.media.j3d.TextureAttributes;
+import javax.media.j3d.TransparencyAttributes;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
+import ar.Geometry.Grid3D;
+import ar.Interface.Event.CameraEvent;
+import ar.Interface.Maps.Camera3DListener;
+
+/*******************************
+ * Class providing functions for rendering a Volume3DInt object. Based on the rendering 
+ * code provided in the VolRend package: org.jscience.medicine.volumetric
+ * 
+ * @author AndrewR
+ *
+ */
+
+public class Volume3DRenderer implements Camera3DListener {
+
+	//constants
+	static final int 	X_AXIS = 0;
+    static final int 	Y_AXIS = 1;
+    static final int 	Z_AXIS = 2;
+
+    static final int 	FRONT = 0;
+    static final int 	BACK = 1;
+
+    static final int 	PLUS_X = 0;
+    static final int 	PLUS_Y = 1;
+    static final int 	PLUS_Z = 2;
+    static final int 	MINUS_X = 3;
+    static final int 	MINUS_Y = 4;
+    static final int 	MINUS_Z = 5;
+	
+	//nodes n' stuff
+    BranchGroup 		root;
+    Switch 				axisSwitch;
+    int[][] 			axisIndex = new int[3][2];
+    OrderedGroup[][] 	groups = new OrderedGroup[3][2];
+    
+    //attributes n' stuff
+    TextureAttributes 	texAttr = new TextureAttributes();
+    TransparencyAttributes t = new TransparencyAttributes();
+    PolygonAttributes 	p = new PolygonAttributes();
+    Material 			m = new Material();
+    
+    //fields
+    protected float[] quadCoords;
+    Grid3D 			grid3D;
+    Volume3DTexture texture;
+    boolean 		fullReloadNeeded;
+    int 			curAxis = Z_AXIS;
+    int				curDir = FRONT;
+    boolean			autoAxisEnable = true;
+    int				autoAxis, autoDir;
+    
+	public Volume3DRenderer(){
+		init();
+	}
+	
+	public Volume3DRenderer(Grid3D grid){
+		init();
+		setGrid3D(grid);
+	}
+	
+	public void setGrid3D(Grid3D grid){
+		grid3D = grid;
+		texture = new Volume3DTexture(grid);
+	}
+	
+	private void init(){
+		axisIndex[X_AXIS][FRONT] = 0;
+		axisIndex[X_AXIS][BACK] = 1;
+		axisIndex[Y_AXIS][FRONT] = 2;
+		axisIndex[Y_AXIS][BACK] = 3;
+		axisIndex[Z_AXIS][FRONT] = 4;
+		axisIndex[Z_AXIS][BACK] = 5;
+
+        axisSwitch = new Switch();
+        axisSwitch.setCapability(Switch.ALLOW_SWITCH_READ);
+        axisSwitch.setCapability(Switch.ALLOW_SWITCH_WRITE);
+        axisSwitch.setCapability(Group.ALLOW_CHILDREN_READ);
+        axisSwitch.setCapability(Group.ALLOW_CHILDREN_WRITE);
+        axisSwitch.addChild(getOrderedGroup());
+        axisSwitch.addChild(getOrderedGroup());
+        axisSwitch.addChild(getOrderedGroup());
+        axisSwitch.addChild(getOrderedGroup());
+        axisSwitch.addChild(getOrderedGroup());
+        axisSwitch.addChild(getOrderedGroup());
+		
+        texAttr.setTextureMode(TextureAttributes.REPLACE);
+    	texAttr.setCapability(TextureAttributes.ALLOW_COLOR_TABLE_WRITE);
+    	t.setTransparencyMode(TransparencyAttributes.BLENDED);
+    	m.setLightingEnable(false);
+    	p.setCullFace(PolygonAttributes.CULL_NONE);
+        
+        root = new BranchGroup();
+    	root.addChild(axisSwitch);
+    	root.setCapability(BranchGroup.ALLOW_DETACH);
+    	root.setCapability(BranchGroup.ALLOW_LOCAL_TO_VWORLD_READ);
+		
+	}
+
+	//set current X coordinates to that at index i
+	protected void setCurCoordX(int i) {
+		float curX = i * grid3D.getSUnit();
+		Point3f p = new Point3f();
+		p.set(grid3D.getBox().getBasePt());
+		Vector3f v = new Vector3f();
+		v.set(grid3D.getBox().getSAxis());
+		v.normalize();
+		v.scale(curX);
+		p.add(v);
+		quadCoords[0] = p.x;
+		quadCoords[3] = p.x;
+		quadCoords[6] = p.x;
+		quadCoords[9] = p.x;
+    }
+
+	//set current Y coordinates to that at index i
+	protected void setCurCoordY(int i) {
+		float curY = i * grid3D.getTUnit();
+		Point3f p = new Point3f();
+		p.set(grid3D.getBox().getBasePt());
+		Vector3f v = new Vector3f();
+		v.set(grid3D.getBox().getTAxis());
+		v.normalize();
+		v.scale(curY);
+		p.add(v);
+		quadCoords[0] = p.y;
+		quadCoords[3] = p.y;
+		quadCoords[6] = p.y;
+		quadCoords[9] = p.y;
+    }
+
+    //set current Z coordinates to that at index i
+	protected void setCurCoordZ(int i) {
+		float curZ = i * grid3D.getRUnit();
+		Point3f p = new Point3f();
+		p.set(grid3D.getBox().getBasePt());
+		Vector3f v = new Vector3f();
+		v.set(grid3D.getBox().getRAxis());
+		v.normalize();
+		v.scale(curZ);
+		p.add(v);
+		quadCoords[0] = p.z;
+		quadCoords[3] = p.z;
+		quadCoords[6] = p.z;
+		quadCoords[9] = p.z;
+    }
+
+    private void checkCoords() {
+		if ((quadCoords == null) || (quadCoords.length != 12)) {
+		    quadCoords = new float[12];
+		}
+    }
+
+    //set y and z coordinates for some plane whose normal is the X-axis
+    protected void setCoordsX() {
+		checkCoords();
+		//need min y to max y and min z to max z
+		ArrayList<Point3f> nodes = grid3D.getNodes();
+		
+		// lower left
+		quadCoords[1] = nodes.get(0).y;
+		quadCoords[2] = nodes.get(0).z;
+		// lower right
+		quadCoords[4] = nodes.get(2).y;
+		quadCoords[5] = nodes.get(0).z;
+		// upper right
+		quadCoords[7] = nodes.get(2).y;
+		quadCoords[8] = nodes.get(3).z;
+		// upper left
+		quadCoords[10] = nodes.get(0).y;
+		quadCoords[11] = nodes.get(3).z;
+    }
+
+    //set x and z coordinates for some plane whose normal is the Y-axis
+    protected void setCoordsY() {
+		checkCoords();
+		//need min x to max x and min z to max z
+		ArrayList<Point3f> nodes = grid3D.getNodes();
+		
+		// lower left
+		quadCoords[1] = nodes.get(0).x;
+		quadCoords[2] = nodes.get(0).z;
+		// lower right
+		quadCoords[4] = nodes.get(0).x;
+		quadCoords[5] = nodes.get(3).z;
+		// upper right
+		quadCoords[7] = nodes.get(1).x;
+		quadCoords[8] = nodes.get(3).z;
+		// upper left
+		quadCoords[10] = nodes.get(1).x;
+		quadCoords[11] = nodes.get(0).z;
+		
+    }
+
+    //set x and y coordinates for some plane whose normal is the Z-axis
+    protected void setCoordsZ() {
+		checkCoords();
+		//need min y to max y and min z to max z
+		ArrayList<Point3f> nodes = grid3D.getNodes();
+		
+		// lower left
+		quadCoords[1] = nodes.get(0).x;
+		quadCoords[2] = nodes.get(0).y;
+		// lower right
+		quadCoords[4] = nodes.get(1).x;
+		quadCoords[5] = nodes.get(0).y;
+		// upper right
+		quadCoords[7] = nodes.get(1).x;
+		quadCoords[8] = nodes.get(2).y;
+		// upper left
+		quadCoords[10] = nodes.get(0).x;
+		quadCoords[11] = nodes.get(2).y;
+		
+    }
+	
+	protected OrderedGroup getOrderedGroup() {
+		OrderedGroup og = new OrderedGroup();
+		og.setCapability(Group.ALLOW_CHILDREN_READ);
+		og.setCapability(Group.ALLOW_CHILDREN_WRITE);
+		og.setCapability(Group.ALLOW_CHILDREN_EXTEND);
+		return og;
+	}
+	
+	//return the root node for this renderer
+	public BranchGroup getNode(){
+		root.detach();
+		return root;
+	}
+	
+	protected void clearData() {
+		clearGroup(axisSwitch.getChild(axisIndex[Z_AXIS][FRONT]));
+		clearGroup(axisSwitch.getChild(axisIndex[Z_AXIS][BACK]));
+		clearGroup(axisSwitch.getChild(axisIndex[Y_AXIS][FRONT]));
+		clearGroup(axisSwitch.getChild(axisIndex[Y_AXIS][BACK]));
+		clearGroup(axisSwitch.getChild(axisIndex[X_AXIS][FRONT]));
+		clearGroup(axisSwitch.getChild(axisIndex[X_AXIS][BACK]));
+	}
+	
+	protected void clearGroup(Node node) {
+		Group group = (Group) node;
+		int numChildren = group.numChildren();
+		for (int i = numChildren-1; i >= 0; i--)
+		    group.removeChild(i);
+		if ((numChildren = group.numChildren()) > 0)
+		    InterfaceSession.log("clearGroup(): still got a kid");
+	}
+	
+	
+	/*****************************
+	 * The following adapted from Axis3DRenderer
+	 *
+	 */
+	
+    public void loadTexture() {
+    	clearData();
+
+    	if (grid3D != null) {
+    	    System.out.print("Loading quads...");
+    	    loadQuads();
+    	    InterfaceSession.log("done");
+    		}
+    	setWhichChild();
+    	fullReloadNeeded = false;
+        }
+	
+	public void loadQuads() {
+		loadAxis(Z_AXIS);
+		loadAxis(Y_AXIS);
+		loadAxis(X_AXIS);
+    }
+
+    private void loadAxis(int axis) {
+		OrderedGroup frontGroup = null;
+		OrderedGroup backGroup = null;
+		int rSize = 0;
+
+		switch (axis) {
+		  case Z_AXIS:
+		    frontGroup = 
+			(OrderedGroup)axisSwitch.getChild(axisIndex[Z_AXIS][FRONT]);
+		    backGroup = 
+			(OrderedGroup)axisSwitch.getChild(axisIndex[Z_AXIS][BACK]);
+		    rSize = grid3D.getRSize();
+		    setCoordsZ();
+		    break;
+		  case Y_AXIS:
+		    frontGroup = 
+			(OrderedGroup)axisSwitch.getChild(axisIndex[Y_AXIS][FRONT]);
+		    backGroup = 
+			(OrderedGroup)axisSwitch.getChild(axisIndex[Y_AXIS][BACK]);
+		    rSize = grid3D.getTSize();
+		    setCoordsY();
+		    break;
+		  case X_AXIS:
+		    frontGroup = 
+			(OrderedGroup)axisSwitch.getChild(axisIndex[X_AXIS][FRONT]);
+		    backGroup = 
+			(OrderedGroup)axisSwitch.getChild(axisIndex[X_AXIS][BACK]);
+		    rSize = grid3D.getSSize();
+		    setCoordsX();
+		    break;
+		}
+
+		//for each plane in r direction
+		for (int i=0; i < rSize; i ++) { 
+		    switch (axis) {
+		      	case Z_AXIS:
+					setCurCoordZ(i);
+					break;
+		      	case Y_AXIS:
+					setCurCoordY(i);
+					break;
+		      	case X_AXIS:
+					setCurCoordX(i);
+					break;
+		    	}
+
+		    Appearance a = new Appearance();
+		    a.setMaterial(m);
+		    a.setTransparencyAttributes(t);
+		    a.setTextureAttributes(texAttr);
+		    a.setTexture(texture.getTexture());
+		    a.setTexCoordGeneration(texture.getTexGen());
+		    /**@todo make this an option **/
+		    //if (dbWriteEnable == false) {
+				RenderingAttributes r = new RenderingAttributes();
+				//r.setDepthBufferWriteEnable(dbWriteEnable);
+				r.setDepthBufferWriteEnable(true);
+				a.setRenderingAttributes(r);
+			    //}
+		    a.setPolygonAttributes(p);
+
+		    QuadArray quadArray = new QuadArray(4, GeometryArray.COORDINATES);
+		    quadArray.setCoordinates(0, quadCoords);
+
+		    Shape3D frontShape = new Shape3D(quadArray, a);
+
+		    BranchGroup frontShapeGroup = new BranchGroup();
+		    frontShapeGroup.setCapability(BranchGroup.ALLOW_DETACH);
+		    frontShapeGroup.addChild(frontShape);
+		    frontGroup.addChild(frontShapeGroup);
+
+		    Shape3D backShape = new Shape3D(quadArray, a);
+
+		    BranchGroup backShapeGroup = new BranchGroup();
+		    backShapeGroup.setCapability(BranchGroup.ALLOW_DETACH);
+		    backShapeGroup.addChild(backShape);
+		    backGroup.insertChild(backShapeGroup, 0);
+			} 
+    } 
+    
+    protected void setWhichChild() {
+    	axisSwitch.setWhichChild(axisIndex[curAxis][curDir]);
+    }
+	
+    //blank implementation
+    public void cameraChanged(CameraEvent e){
+    	
+    }
+    
+    //if camera changes, re-evaluate rendering planes
+    public void cameraAngleChanged(CameraEvent e){
+    	
+    	//if (true) return;
+    	
+    	Vector3f eyeVec = new Vector3f(e.getCamera().getLineOfSight());
+
+	    // compensate for different xyz resolution/scale
+	    eyeVec.x /= grid3D.getSUnit();
+	    eyeVec.y /= grid3D.getTUnit();
+	    eyeVec.z /= grid3D.getRUnit();
+
+	    // select the axis closest to eyeVec 
+	    int axis = X_AXIS;
+	    Vector3f v = grid3D.getBox().getSAxis();
+	    float dif = eyeVec.angle(v);
+	    float min = dif;
+	    float value = v.x - eyeVec.x;
+
+	    dif = eyeVec.angle(grid3D.getBox().getTAxis());
+	    if (dif < min){
+	    	min = dif;
+	    	axis = Y_AXIS;
+	    	value = v.y - eyeVec.y;
+	    	}
+	    dif = eyeVec.angle(grid3D.getBox().getRAxis());
+	    if (dif < min){
+	    	axis = Z_AXIS;
+	    	value = v.z - eyeVec.z;
+	    	}
+	    
+	    // select the direction based on the sign of the magnitude
+	    int dir;
+	    if (value > 0.0) {
+		dir = FRONT;
+	    } else {
+		dir = BACK;
+	    }
+
+	    //InterfaceSession.log("Selected axis: " + dirStrings[dir] + 
+	    //    axisStrings[axis]);
+
+	    if ((axis != autoAxis) || (dir != autoDir)) {
+			autoAxis = axis;
+			autoDir = dir;
+			if (autoAxisEnable) {
+				    autoSetAxis();
+				//}else{
+				    //InterfaceSession.log("Auto axis is " + dirStrings[dir] + 
+					//axisStrings[axis] + " current is " + dirStrings[curDir]
+					//	+ axisStrings[curAxis]);
+				}
+		    }
+    }
+    
+    private void setAutoAxisEnable(boolean flag) {
+    	if (autoAxisEnable != flag) {
+    	    autoAxisEnable = flag;
+    	    if (autoAxisEnable) {
+	    		autoSetAxis();
+	    	    }
+    		}
+        }
+
+    private void autoSetAxis() {
+    	setAxis(autoAxis, autoDir);
+    }
+
+    private void setAxis(int axis, int dir) {
+    	curAxis = axis;
+    	curDir = dir;
+    	setWhichChild();
+    }
+    
+}
