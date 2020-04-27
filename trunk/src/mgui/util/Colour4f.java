@@ -72,7 +72,7 @@ public class Colour4f extends Colour {
 	@Override
 	public float getAlpha() {
 		if (colour == null) return 0;
-		return colour.getW() / 255f;
+		return colour.getW();
 	}
 
 	@Override

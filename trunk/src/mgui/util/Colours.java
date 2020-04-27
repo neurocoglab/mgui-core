@@ -75,7 +75,7 @@ public class Colours {
 	}
 	
 	public static Color4f getColor4f(Color c) {
-		return new Color4f(c.getRed()/255f, c.getGreen()/255f, c.getBlue()/255f, 1);
+		return new Color4f(c.getRed()/255f, c.getGreen()/255f, c.getBlue()/255f, c.getAlpha()/255f);
 	}
 	
 	public static Colour4f getRandom(){
