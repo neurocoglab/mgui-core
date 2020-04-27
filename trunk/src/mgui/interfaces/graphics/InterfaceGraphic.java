@@ -39,7 +39,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.interfaces.InterfaceMouseListener;
 import mgui.interfaces.InterfaceMouseObject;

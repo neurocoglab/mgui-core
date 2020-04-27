@@ -24,10 +24,10 @@ package mgui.interfaces.shapes;
  * can then be modified by 
  */
 
-import javax.media.j3d.Geometry;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.GeometryUpdater;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.Geometry;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.GeometryUpdater;
+import org.jogamp.vecmath.Point3f;
 
 public class NodesUpdater implements GeometryUpdater {
 

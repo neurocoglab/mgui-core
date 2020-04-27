@@ -55,8 +55,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Grid3D;

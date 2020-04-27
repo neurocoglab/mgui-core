@@ -21,8 +21,8 @@ package mgui.interfaces.tools.shapes;
 
 import java.awt.Point;
 
-import javax.vecmath.Point2f;
-import javax.vecmath.Vector2f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Vector2f;
 
 import mgui.geometry.Ellipse2D;
 import mgui.geometry.Vector2D;

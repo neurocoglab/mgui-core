@@ -19,8 +19,8 @@
 
 package mgui.interfaces.graphs.util;
 
-import javax.media.j3d.BoundingSphere;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.interfaces.graphs.AbstractGraphNode;
 

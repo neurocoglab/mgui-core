@@ -24,7 +24,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.interfaces.ProgressUpdater;
 import mgui.interfaces.graphs.AbstractGraphNode;

@@ -56,7 +56,7 @@ import mgui.io.domestic.maps.ContinuousColourMapWriter;
 import mgui.io.domestic.maps.DiscreteColourMapLoader;
 import mgui.numbers.MguiFloat;
 import mgui.util.Colour4f;
-import mgui.util.MathFunctions;
+import mgui.util.Colours;
 
 
 /**************************************
@@ -454,7 +454,7 @@ public class InterfaceMapPanel extends InterfacePanel implements ActionListener,
 			}
 		
 		if (e.getActionCommand().equals(CMD_ANCHOR_COLOUR)){
-			Color thisColour = barContinuousColour.getSelectedAnchor().colour.getColor4f().get();
+			Color thisColour = Colours.getAwtColor(barContinuousColour.getSelectedAnchor().colour.getColor4f());
 			thisColour = JColorChooser.showDialog(null, "Select Colour", thisColour);
 			if (thisColour == null) return;
 			barContinuousColour.getSelectedAnchor().colour.set(thisColour);

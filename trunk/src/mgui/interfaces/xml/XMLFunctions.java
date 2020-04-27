@@ -32,16 +32,16 @@ import java.util.StringTokenizer;
 
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple2d;
-import javax.vecmath.Tuple2f;
-import javax.vecmath.Tuple3d;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector2d;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Tuple2d;
+import org.jogamp.vecmath.Tuple2f;
+import org.jogamp.vecmath.Tuple3d;
+import org.jogamp.vecmath.Tuple3f;
+import org.jogamp.vecmath.Vector2d;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.interfaces.InterfaceEnvironment;
 import mgui.interfaces.InterfaceSession;

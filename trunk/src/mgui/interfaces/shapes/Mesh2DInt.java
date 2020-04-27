@@ -22,7 +22,7 @@ package mgui.interfaces.shapes;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.geometry.Rect2D;
 import mgui.interfaces.InterfaceSession;

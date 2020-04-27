@@ -22,8 +22,8 @@ package mgui.geometry;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Point2f;
-import javax.vecmath.Vector2d;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Vector2d;
 
 import mgui.geometry.util.GeometryFunctions;
 import mgui.numbers.MguiFloat;

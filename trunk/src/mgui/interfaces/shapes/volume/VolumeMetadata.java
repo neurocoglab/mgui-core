@@ -23,8 +23,8 @@ import java.awt.image.DataBuffer;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.datasources.DataType;
 import mgui.geometry.Box3D;

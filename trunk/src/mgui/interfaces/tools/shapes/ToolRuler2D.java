@@ -22,7 +22,7 @@ package mgui.interfaces.tools.shapes;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.logs.LoggingType;

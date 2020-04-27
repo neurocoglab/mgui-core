@@ -21,17 +21,17 @@ package mgui.interfaces.tools.shapes;
 
 import java.util.ArrayList;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.Node;
-import javax.media.j3d.PickInfo;
-import javax.media.j3d.PickInfo.IntersectionInfo;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.PickInfo;
+import org.jogamp.java3d.PickInfo.IntersectionInfo;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.interfaces.queries.InterfaceQuery;
 import mgui.interfaces.queries.ObjectNotQueriableException;
@@ -48,9 +48,9 @@ import mgui.interfaces.tools.graphics.Tool3D;
 import mgui.interfaces.tools.queries.QueryTool;
 import mgui.numbers.MguiInteger;
 
-import com.sun.j3d.utils.geometry.Sphere;
-import com.sun.j3d.utils.pickfast.PickCanvas;
-import com.sun.j3d.utils.pickfast.PickIntersection;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.pickfast.PickIntersection;
 
 /**************************************************************
  * Tool allowing point-and-click vertex-wise querying of 3D objects, for a {@linkplain InterfaceGraphic3D} window.

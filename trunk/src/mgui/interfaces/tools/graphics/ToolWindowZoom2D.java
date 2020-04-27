@@ -24,7 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.interfaces.maps.Map2D;
 import mgui.interfaces.tools.Tool;

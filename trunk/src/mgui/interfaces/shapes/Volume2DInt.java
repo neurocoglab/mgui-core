@@ -23,9 +23,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import javax.media.j3d.BranchGroup;
-import javax.vecmath.Point2f;
-import javax.vecmath.Vector2f;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Vector2f;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.Polygon2D;

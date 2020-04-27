@@ -22,8 +22,8 @@ package mgui.interfaces.shapes;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.Polygon2D;

@@ -19,9 +19,10 @@
 
 package mgui.interfaces.maps;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Behavior;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.WakeupCriterion;
 
 public class Camera3DLight extends Behavior {
 
@@ -32,9 +33,9 @@ public class Camera3DLight extends Behavior {
 	}
 
 	@Override
-	public void processStimulus(Enumeration arg0) {
+	public void processStimulus(Iterator<WakeupCriterion> arg0) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

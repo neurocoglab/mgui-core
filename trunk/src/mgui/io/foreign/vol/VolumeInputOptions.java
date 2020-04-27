@@ -21,7 +21,7 @@ package mgui.io.foreign.vol;
 
 import java.io.File;
 
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.datasources.DataType;
 import mgui.interfaces.InterfaceOptions;

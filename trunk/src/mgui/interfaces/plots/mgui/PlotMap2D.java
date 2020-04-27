@@ -23,7 +23,7 @@ import java.awt.Point;
 import java.awt.Shape;
 import java.util.ArrayList;
 
-import javax.vecmath.Point2d;
+import org.jogamp.vecmath.Point2d;
 
 import mgui.geometry.Shape2D;
 import mgui.interfaces.InterfaceObject;

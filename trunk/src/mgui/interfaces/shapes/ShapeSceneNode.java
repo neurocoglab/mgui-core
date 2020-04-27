@@ -19,8 +19,8 @@
 
 package mgui.interfaces.shapes;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Group;
 
 import mgui.interfaces.shapes.util.ShapeEvent;
 import mgui.interfaces.shapes.util.ShapeListener;

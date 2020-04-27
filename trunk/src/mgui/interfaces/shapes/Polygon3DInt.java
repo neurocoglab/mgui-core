@@ -23,25 +23,26 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.IndexedTriangleArray;
-import javax.media.j3d.LineAttributes;
-import javax.media.j3d.LineStripArray;
-import javax.media.j3d.Material;
-import javax.media.j3d.PointArray;
-import javax.media.j3d.PointAttributes;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.TransparencyAttributes;
 import javax.swing.ImageIcon;
-import javax.vecmath.Color3f;
-import javax.vecmath.Matrix4d;
+
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.IndexedTriangleArray;
+import org.jogamp.java3d.LineAttributes;
+import org.jogamp.java3d.LineStripArray;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.PointArray;
+import org.jogamp.java3d.PointAttributes;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.TransparencyAttributes;
+import org.jogamp.java3d.utils.geometry.GeometryInfo;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Matrix4d;
 
 import mgui.geometry.Plane3D;
-import mgui.geometry.Polygon2D;
 import mgui.geometry.Polygon3D;
 import mgui.geometry.Shape;
 import mgui.geometry.util.GeometryFunctions;
@@ -54,8 +55,7 @@ import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiInteger;
 import mgui.numbers.MguiNumber;
-
-import com.sun.j3d.utils.geometry.GeometryInfo;
+import mgui.util.Colours;
 
 
 /****************
@@ -200,7 +200,7 @@ public class Polygon3DInt extends Shape3DInt {
 		setEdgeAppearance();
 		Color thisColour = (Color)this.getAttribute("3D.LineColour").getValue();
 		ColoringAttributes cAtt = new ColoringAttributes();
-		cAtt.setColor(new Color3f(thisColour));
+		cAtt.setColor(Colours.getColor3f(thisColour));
 		
 		if (((MguiBoolean)attributes.getValue("3D.AsCylinder")).getTrue()){
 			//render as cylinder
@@ -260,7 +260,7 @@ public class Polygon3DInt extends Shape3DInt {
 					Appearance fillApp = new Appearance();
 					Color c = (Color)attributes.getValue("3D.FillColour");
 					ColoringAttributes cAtt2 = new ColoringAttributes();
-					cAtt2.setColor(new Color3f(c));
+					cAtt2.setColor(Colours.getColor3f(c));
 					fillApp.setColoringAttributes(cAtt2);
 					fillApp.setMaterial(new Material());
 					if (((MguiFloat)attributes.getValue("3D.FillAlpha")).getFloat() > 0){
@@ -300,9 +300,9 @@ public class Polygon3DInt extends Shape3DInt {
 	
 			    // enlarge the points
 				p_app.setPointAttributes(new PointAttributes(getVertexScale(), true));
-				p_app.setColoringAttributes(new ColoringAttributes(new Color3f(getVertexColour()), ColoringAttributes.FASTEST));
+				p_app.setColoringAttributes(new ColoringAttributes(Colours.getColor3f(getVertexColour()), ColoringAttributes.FASTEST));
 	
-				javax.media.j3d.Shape3D shape3D = new javax.media.j3d.Shape3D(p_array, p_app);
+				org.jogamp.java3d.Shape3D shape3D = new org.jogamp.java3d.Shape3D(p_array, p_app);
 				shape3D.setUserData(this);
 				BranchGroup bg = new BranchGroup();
 				bg.setCapability(BranchGroup.ALLOW_DETACH);
@@ -318,7 +318,7 @@ public class Polygon3DInt extends Shape3DInt {
 				Appearance p_app = new Appearance();
 				p_app.setPointAttributes(new PointAttributes(getVertexScale(), true));
 	
-				javax.media.j3d.Shape3D shape3D = new javax.media.j3d.Shape3D(p_array, p_app);
+				org.jogamp.java3d.Shape3D shape3D = new org.jogamp.java3d.Shape3D(p_array, p_app);
 				shape3D.setUserData(this);
 				BranchGroup bg = new BranchGroup();
 				bg.setCapability(BranchGroup.ALLOW_DETACH);
@@ -357,7 +357,7 @@ public class Polygon3DInt extends Shape3DInt {
 		Appearance thisAppNode = new Appearance();
 		Color thisColour = (Color)attributes.getValue("LineColour");
 		ColoringAttributes cAtt = new ColoringAttributes();
-		cAtt.setColor(new Color3f(thisColour));
+		cAtt.setColor(Colours.getColor3f(thisColour));
 		thisAppNode.setColoringAttributes(cAtt);
 		thisAppNode.setMaterial(new Material());
 		thisShapeNode.setAppearance(thisAppNode);
@@ -365,7 +365,7 @@ public class Polygon3DInt extends Shape3DInt {
 		//Set colour
 		//Color thisColour = (Color)attributes.getValue("LineColour");
 		//for (int i = 0; i < getPolygon().nodes.size(); i++)
-		//	polyArray.setColor(i, new Color3f(thisColour));
+		//	polyArray.setColor(i, Colours.getColor3f(thisColour));
 		BranchGroup thisNode = new BranchGroup();
 		thisNode.addChild(thisShapeNode);
 		
@@ -387,7 +387,7 @@ public class Polygon3DInt extends Shape3DInt {
 			edge_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
 			}
 		
-		Color3f edgeColour = new Color3f((Color)getAttribute("3D.LineColour").getValue());
+		Color3f edgeColour = Colours.getColor3f((Color)getAttribute("3D.LineColour").getValue());
 		Material m = new Material();
 		m.setDiffuseColor(edgeColour);
 		m.setAmbientColor(edgeColour);

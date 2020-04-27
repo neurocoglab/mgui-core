@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector4d;
 
 import mgui.interfaces.ProgressUpdater;
 import mgui.interfaces.xml.XMLFunctions;

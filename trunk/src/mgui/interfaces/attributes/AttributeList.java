@@ -161,11 +161,23 @@ public class AttributeList extends AbstractInterfaceObject
 		add(thisAttr);
 	}
 	
+	/************************
+	 * Get the current value of the attribute named {@code name}.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public Object getValue(String name){
 		if (!attributes.containsKey(name)) return null;
 		return attributes.get(name).getValue();
 	}
 	
+	/**********************
+	 * Sets the given attribute. If an attribute by this name already exists, it is overriden.
+	 * 
+	 * @param thisAttr
+	 * @return
+	 */
 	public boolean setAttribute(Attribute<?> thisAttr){
 		return setAttribute(thisAttr, true);
 	}
@@ -187,10 +199,23 @@ public class AttributeList extends AbstractInterfaceObject
 		return false;
 	}
 	
+	/*************************
+	 * Returns the attribute at the specified index. Note: this function will be deprecated.
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public Attribute<?> getAttribute(int index){
 		return getAttribute(getKeys().get(index));
 	}
 	
+	/**************************
+	 * Gets the {@code Attribute} object for the specified name; returns {@code null} if
+	 * this attribute does not exist.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public Attribute<?> getAttribute(String name){
 		/*
 		int i = Collections.binarySearch(attributes, thisAttr, attrComp);

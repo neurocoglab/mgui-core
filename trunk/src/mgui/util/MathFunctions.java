@@ -19,7 +19,7 @@
 
 package mgui.util;
 
-import javax.vecmath.Point3d;
+import org.jogamp.vecmath.Point3d;
 
 import Jama.Matrix;
 

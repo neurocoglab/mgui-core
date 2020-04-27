@@ -48,9 +48,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.vecmath.Point2d;
-import javax.vecmath.Point2f;
-import javax.vecmath.Vector2f;
+import org.jogamp.vecmath.Point2d;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Vector2f;
 
 import mgui.geometry.Circle2D;
 import mgui.geometry.LineSegment2D;

@@ -36,8 +36,8 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.TransferHandler.TransferSupport;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.Rect2D;

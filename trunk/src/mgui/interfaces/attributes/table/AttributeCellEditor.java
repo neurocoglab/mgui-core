@@ -35,7 +35,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
-import javax.vecmath.Matrix4d;
+import org.jogamp.vecmath.Matrix4d;
 
 import mgui.interfaces.InterfaceEnvironment;
 import mgui.interfaces.attributes.Attribute;

@@ -30,32 +30,35 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.Geometry;
-import javax.media.j3d.GeometryUpdater;
-import javax.media.j3d.Group;
-import javax.media.j3d.Material;
-import javax.media.j3d.Node;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.QuadArray;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.TransferHandler.TransferSupport;
-import javax.vecmath.Color3f;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
+
+import org.apache.commons.collections15.Transformer;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.Geometry;
+import org.jogamp.java3d.GeometryUpdater;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.QuadArray;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Tuple3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Plane3D;
@@ -86,10 +89,7 @@ import mgui.interfaces.trees.InterfaceTreeNode;
 import mgui.interfaces.xml.XMLFunctions;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
-
-import org.apache.commons.collections15.Transformer;
-
-import com.sun.j3d.utils.geometry.Sphere;
+import mgui.util.Colours;
 
 /***********************************************************
  * Base class for all <code>Shape3D</code> interface objects. Provides default implementations of a number of
@@ -129,7 +129,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	protected BranchGroup scene3DObject;
 	protected ShapeSceneNode sceneNode;
 	public BranchGroup boundBoxNode;
-	protected javax.media.j3d.Shape3D bounds_shape;
+	protected org.jogamp.java3d.Shape3D bounds_shape;
 	protected BranchGroup group_node;
 	protected BranchGroup bounds_group;
 	protected BranchGroup shape_group;
@@ -351,10 +351,10 @@ public abstract class Shape3DInt extends InterfaceShape
 	//Attempt to avoid memory leaks!?
 	protected void releaseScene3DChildren(){
 		if (scene3DObject == null) return;
-		Enumeration children = this.scene3DObject.getAllChildren();
+		Iterator<Node> children = this.scene3DObject.getAllChildren();
 		
-		while (children.hasMoreElements()){
-			Node node = (Group)children.nextElement();
+		while (children.hasNext()){
+			Node node = children.next();
 			if (node instanceof BranchGroup)
 				((BranchGroup)node).detach();
 			}
@@ -744,7 +744,7 @@ public abstract class Shape3DInt extends InterfaceShape
 			Transform3D transform;
 			TransformGroup tg;
 			Material m = new Material();
-			m.setDiffuseColor(new Color3f((Color)attributes.getValue("SelectedVertexColour")));
+			m.setDiffuseColor(Colours.getColor3f((Color)attributes.getValue("SelectedVertexColour")));
 			Appearance app = new Appearance();
 			app.setMaterial(m);
 			
@@ -984,9 +984,9 @@ public abstract class Shape3DInt extends InterfaceShape
 		
 		//set up nodes
 		if (bounds_shape == null){
-			bounds_shape = new javax.media.j3d.Shape3D(quads);
-			bounds_shape.setCapability(javax.media.j3d.Shape3D.ALLOW_GEOMETRY_WRITE);
-			bounds_shape.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_WRITE);
+			bounds_shape = new org.jogamp.java3d.Shape3D(quads);
+			bounds_shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_GEOMETRY_WRITE);
+			bounds_shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_WRITE);
 		}else{
 			bounds_shape.setGeometry(quads);
 			}
@@ -999,7 +999,7 @@ public abstract class Shape3DInt extends InterfaceShape
 		pAtt.setPolygonMode(PolygonAttributes.POLYGON_LINE);
 		Color edgeColour = (Color)attributes.getValue("3D.BoundsColour");
 		ColoringAttributes cAtt = new ColoringAttributes();
-		cAtt.setColor(new Color3f(edgeColour));
+		cAtt.setColor(Colours.getColor3f(edgeColour));
 		thisAppNode.setPolygonAttributes(pAtt);
 		thisAppNode.setColoringAttributes(cAtt);
 		bounds_shape.setAppearance(thisAppNode);
@@ -1436,11 +1436,11 @@ public abstract class Shape3DInt extends InterfaceShape
 	 */
 	protected Appearance getVertexAppearance(int i){
 		//Material m = new Material();
-		//m.setDiffuseColor(new Color3f((Color)attributes.getValue("VertexColour")));
+		//m.setDiffuseColor(Colours.getColor3f((Color)attributes.getValue("VertexColour")));
 		//Appearance app = new Appearance();
 		//app.setMaterial(m);
-		Color3f colour = new Color3f(getVertexColour(i));
-		Material material = new Material(); //colour, new Color3f(Color.black), colour, colour, 100f);
+		Color3f colour = Colours.getColor3f(getVertexColour(i));
+		Material material = new Material(); //colour, Colours.getColor3f(Color.black), colour, colour, 100f);
 		material.setDiffuseColor(colour);
 		Appearance app = new Appearance();
 		app.setMaterial(material);
@@ -1569,8 +1569,8 @@ public abstract class Shape3DInt extends InterfaceShape
 			float scale = ((MguiFloat)attributes.getValue("VertexScale")).getFloat();
 			
 			//Uniform colour or colour with values?
-			Color3f colour = new Color3f((Color)attributes.getValue("VertexColour"));
-			Material material = new Material(colour, new Color3f(Color.black), colour, colour, 100f);
+			Color3f colour = Colours.getColor3f((Color)attributes.getValue("VertexColour"));
+			Material material = new Material(colour, Colours.getColor3f(Color.black), colour, colour, 100f);
 			Appearance appearance = new Appearance();
 			appearance.setMaterial(material);
 			

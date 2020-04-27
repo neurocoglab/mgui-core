@@ -26,7 +26,7 @@ import java.util.Comparator;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.vecmath.Color4f;
+import org.jogamp.vecmath.Color4f;
 
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.logs.LoggingType;

@@ -19,7 +19,7 @@
 
 package mgui.morph.sections;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 public class MorphNode2D implements Cloneable{
 

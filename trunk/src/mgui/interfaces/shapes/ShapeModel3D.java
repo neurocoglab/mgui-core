@@ -30,12 +30,14 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TreeSet;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
-import javax.media.j3d.Locale;
-import javax.media.j3d.VirtualUniverse;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Locale;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.VirtualUniverse;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
@@ -261,9 +263,9 @@ public class ShapeModel3D extends AbstractInterfaceObject implements ShapeListen
 	}
 	
 	public void removeTempShape(BranchGroup shape){
-		Enumeration e =	temp_shapes.getAllChildren();
-		while (e.hasMoreElements()){
-			Object o = e.nextElement();
+		Iterator<Node> e =	temp_shapes.getAllChildren();
+		while (e.hasNext()){
+			Object o = e.next();
 			if (o instanceof BranchGroup && o.equals(shape))
 				shape.detach();
 			}

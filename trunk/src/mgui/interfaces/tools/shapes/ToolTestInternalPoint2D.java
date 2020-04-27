@@ -21,7 +21,7 @@ package mgui.interfaces.tools.shapes;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.geometry.Point2D;
 import mgui.geometry.Polygon2D;

@@ -34,7 +34,7 @@ import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiInteger;
 import mgui.numbers.MguiNumber;
 
-import com.sun.j3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
 
 
 /********************************************

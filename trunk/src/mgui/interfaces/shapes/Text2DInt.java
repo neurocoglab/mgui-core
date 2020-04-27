@@ -23,7 +23,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.geometry.Rect2D;
 import mgui.geometry.Shape2D;

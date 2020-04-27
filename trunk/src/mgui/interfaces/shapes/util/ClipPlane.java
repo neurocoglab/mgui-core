@@ -21,10 +21,10 @@ package mgui.interfaces.shapes.util;
 
 import java.util.ArrayList;
 
-import javax.media.j3d.ModelClip;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4d;
+import org.jogamp.java3d.ModelClip;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector4d;
 
 import mgui.geometry.Plane3D;
 import mgui.interfaces.AbstractInterfaceObject;

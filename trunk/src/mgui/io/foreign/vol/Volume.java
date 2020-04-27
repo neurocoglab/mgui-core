@@ -51,9 +51,9 @@ package mgui.io.foreign.vol;
 
 import java.net.URL;
 
-import javax.media.j3d.LineArray;
-import javax.media.j3d.Shape3D;
-import javax.vecmath.Point3d;
+import org.jogamp.java3d.LineArray;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.vecmath.Point3d;
 
 import mgui.interfaces.InterfaceSession;
 

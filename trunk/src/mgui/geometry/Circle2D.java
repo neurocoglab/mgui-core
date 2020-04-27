@@ -21,8 +21,8 @@ package mgui.geometry;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Point2f;
-import javax.vecmath.Tuple2f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Tuple2f;
 
 /**********************************************
  * Represents a 2D circle.

@@ -26,7 +26,7 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.geometry.Rect2D;
 import mgui.interfaces.ProgressUpdater;

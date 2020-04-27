@@ -21,7 +21,7 @@ package mgui.geometry;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 /******************************************
  * Represents a set of 2D points.

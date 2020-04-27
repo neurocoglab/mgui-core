@@ -22,7 +22,7 @@ package mgui.interfaces.tools.graphics;
 import java.awt.Point;
 
 import javax.swing.ImageIcon;
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.graphics.util.DrawingEngine;

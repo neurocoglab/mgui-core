@@ -22,17 +22,17 @@ package mgui.interfaces.shapes;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.QuadArray;
-import javax.media.j3d.Shape3D;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.QuadArray;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Shape;
+import mgui.util.Colours;
 
 
 public class Box3DInt extends Shape3DInt {
@@ -135,7 +135,7 @@ public class Box3DInt extends Shape3DInt {
 		pAtt.setPolygonMode(PolygonAttributes.POLYGON_LINE);
 		Color edgeColour = (Color)attributes.getValue("3D.LineColour");
 		ColoringAttributes cAtt = new ColoringAttributes();
-		cAtt.setColor(new Color3f(edgeColour));
+		cAtt.setColor(Colours.getColor3f(edgeColour));
 		thisAppNode.setPolygonAttributes(pAtt);
 		thisAppNode.setColoringAttributes(cAtt);
 		thisShapeNode.setAppearance(thisAppNode);

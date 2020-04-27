@@ -26,11 +26,11 @@ import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
-import javax.media.j3d.ImageComponent;
-import javax.media.j3d.ImageComponent3D;
-import javax.media.j3d.ImageComponent3D.Updater;
-import javax.media.j3d.Texture;
-import javax.media.j3d.Texture3D;
+import org.jogamp.java3d.ImageComponent;
+import org.jogamp.java3d.ImageComponent3D;
+import org.jogamp.java3d.ImageComponent3D.Updater;
+import org.jogamp.java3d.Texture;
+import org.jogamp.java3d.Texture3D;
 
 import mgui.geometry.Grid3D;
 import mgui.geometry.volume.VolumeFunctions;

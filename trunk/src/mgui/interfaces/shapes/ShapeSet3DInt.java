@@ -30,19 +30,19 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
-import javax.media.j3d.ModelClip;
-import javax.media.j3d.Node;
-import javax.media.j3d.SharedGroup;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.ModelClip;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.SharedGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.TransferHandler.TransferSupport;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Plane3D;

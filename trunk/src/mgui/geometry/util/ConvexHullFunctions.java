@@ -22,7 +22,7 @@ package mgui.geometry.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Mesh3D;
 import mgui.geometry.mesh.MeshFunctionException;

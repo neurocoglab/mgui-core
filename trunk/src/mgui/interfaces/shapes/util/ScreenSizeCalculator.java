@@ -49,10 +49,10 @@ package mgui.interfaces.shapes.util;
  * redistribute the Software for such purposes.
  */
 
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.Node;
-import javax.vecmath.Point2d;
-import javax.vecmath.Point3d;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.Node;
+import org.jogamp.vecmath.Point2d;
+import org.jogamp.vecmath.Point3d;
 
 
 public class ScreenSizeCalculator {

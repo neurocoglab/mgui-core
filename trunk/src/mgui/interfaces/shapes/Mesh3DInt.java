@@ -25,29 +25,33 @@ import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.Group;
-import javax.media.j3d.IndexedTriangleArray;
-import javax.media.j3d.LineAttributes;
-import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.TransparencyAttributes;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
-import javax.vecmath.Color3f;
-import javax.vecmath.Color4f;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.IndexedTriangleArray;
+import org.jogamp.java3d.LineAttributes;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.RenderingAttributes;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.TransparencyAttributes;
+import org.jogamp.java3d.utils.geometry.GeometryInfo;
+import org.jogamp.java3d.utils.geometry.NormalGenerator;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Color4f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Mesh3D;
 import mgui.geometry.Plane3D;
-import mgui.geometry.PointSet3D;
 import mgui.geometry.Shape;
 import mgui.geometry.Shape3D;
 import mgui.geometry.Vector3D;
@@ -65,10 +69,7 @@ import mgui.interfaces.xml.XMLFunctions;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiNumber;
-
-import com.sun.j3d.utils.geometry.GeometryInfo;
-import com.sun.j3d.utils.geometry.NormalGenerator;
-import com.sun.j3d.utils.geometry.Sphere;
+import mgui.util.Colours;
 
 
 /**************************************
@@ -113,6 +114,8 @@ public class Mesh3DInt extends PointSet3DInt {
 		attributes.add(new Attribute<Stroke>("2D.LineStyle", new BasicStroke(2.0f)));
 		attributes.add(new Attribute<MguiBoolean>("3D.FlipNormals", new MguiBoolean(false)));
 		attributes.add(new Attribute<MguiBoolean>("3D.BackFlip", new MguiBoolean(true)));
+		attributes.add(new Attribute<MguiFloat>("3D.Offset", new MguiFloat(0f)));
+		attributes.add(new Attribute<MguiFloat>("3D.OffsetFactor", new MguiFloat(0f)));
 		attributes.add(new Attribute<MguiBoolean>("3D.ShowNormals", new MguiBoolean(false)));
 		attributes.add(new Attribute<Color>("3D.NormalColour", Color.blue));
 		
@@ -213,7 +216,7 @@ public class Mesh3DInt extends PointSet3DInt {
 		GeometryInfo gi = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);
         gi.setCoordinates(nodes);
         gi.setCoordinateIndices(indices);
-        
+       
         VertexDataColumn v_column = this.getCurrentDataColumn();
         
         //set colours if data exists and ShowData is true
@@ -260,7 +263,7 @@ public class Mesh3DInt extends PointSet3DInt {
             IndexedTriangleArray triArray = (IndexedTriangleArray)gi.getIndexedGeometryArray(false, true, false, false, false);
             
 	        //add geometry to shape node
-	        javax.media.j3d.Shape3D fillShapeNode = new javax.media.j3d.Shape3D(triArray);
+	        org.jogamp.java3d.Shape3D fillShapeNode = new org.jogamp.java3d.Shape3D(triArray);
 	        
 	        setFillAppearance();
 		
@@ -283,7 +286,7 @@ public class Mesh3DInt extends PointSet3DInt {
 			//set geometry
 			edgeArray.setCoordinates(0, nodes);
 			edgeArray.setCoordinateIndices(0, indices);
-			javax.media.j3d.Shape3D edgeShapeNode = new javax.media.j3d.Shape3D(edgeArray);
+			org.jogamp.java3d.Shape3D edgeShapeNode = new org.jogamp.java3d.Shape3D(edgeArray);
 			
 			setEdgeAppearance();
 			
@@ -316,7 +319,7 @@ public class Mesh3DInt extends PointSet3DInt {
 			TransformGroup tg;
 			BranchGroup constGroup = new BranchGroup();
 			Material m = new Material();
-			m.setDiffuseColor(new Color3f(Color.RED));
+			m.setDiffuseColor(Colours.getColor3f(Color.RED));
 			Appearance app = new Appearance();
 			app.setMaterial(m);
 			for (int i = 0; i < constraints.length; i++)
@@ -465,6 +468,7 @@ public class Mesh3DInt extends PointSet3DInt {
 			fill_appearance.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
 			fill_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
 			fill_appearance.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
+			fill_appearance.setCapability(Appearance.ALLOW_RENDERING_ATTRIBUTES_WRITE);
 			}
 		
 		AttributeList attributes = getAttributes();
@@ -474,16 +478,17 @@ public class Mesh3DInt extends PointSet3DInt {
 		//turn off back culling
 		PolygonAttributes pAtt = new PolygonAttributes(PolygonAttributes.POLYGON_FILL,
 													   PolygonAttributes.CULL_NONE,
-													   0f,
-													   getBackFlip());
+													   getPolygonOffset(),
+													   getBackFlip(),
+													   getPolygonOffsetFactor());
 		fill_appearance.setPolygonAttributes(pAtt);
 		Material m = new Material();
 		
 		float shininess = ((MguiFloat)attributes.getValue("3D.Shininess")).getFloat();
 		
 		m.setShininess(shininess * 127f + 1);
-		m.setSpecularColor(new Color3f(colour));
-		m.setDiffuseColor(new Color3f(colour));
+		m.setSpecularColor(Colours.getColor3f(colour));
+		m.setDiffuseColor(Colours.getColor3f(colour));
 		
 		fill_appearance.setMaterial(m);
 		
@@ -505,6 +510,21 @@ public class Mesh3DInt extends PointSet3DInt {
 			fill_appearance.setTransparencyAttributes(null);
 			}
 		
+		
+		RenderingAttributes ra = new RenderingAttributes();
+		ra.setDepthBufferEnable(true);
+		ra.setDepthTestFunction(RenderingAttributes.LESS_OR_EQUAL);
+		
+		fill_appearance.setRenderingAttributes(ra);
+		
+	}
+	
+	protected float getPolygonOffset() {
+		return (float)((MguiFloat)attributes.getValue("3D.Offset")).getValue();
+	}
+	
+	protected float getPolygonOffsetFactor() {
+		return (float)((MguiFloat)attributes.getValue("3D.OffsetFactor")).getValue();
 	}
 	
 	protected void setEdgeAppearance(){
@@ -516,7 +536,7 @@ public class Mesh3DInt extends PointSet3DInt {
 			edge_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
 			}
 		
-		Color3f edgeColour = new Color3f((Color)attributes.getValue("3D.LineColour"));
+		Color3f edgeColour = Colours.getColor3f((Color)attributes.getValue("3D.LineColour"));
 		Material m = new Material();
 		m.setDiffuseColor(edgeColour);
 		m.setAmbientColor(edgeColour);

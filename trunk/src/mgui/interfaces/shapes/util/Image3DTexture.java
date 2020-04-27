@@ -21,11 +21,11 @@ package mgui.interfaces.shapes.util;
 
 import java.awt.image.BufferedImage;
 
-import javax.media.j3d.ImageComponent;
-import javax.media.j3d.ImageComponent3D;
-import javax.media.j3d.Texture;
-import javax.media.j3d.Texture3D;
-import javax.vecmath.TexCoord3f;
+import org.jogamp.java3d.ImageComponent;
+import org.jogamp.java3d.ImageComponent3D;
+import org.jogamp.java3d.Texture;
+import org.jogamp.java3d.Texture3D;
+import org.jogamp.vecmath.TexCoord3f;
 
 public class Image3DTexture {
 

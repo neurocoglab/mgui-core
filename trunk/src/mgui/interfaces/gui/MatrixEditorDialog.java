@@ -30,8 +30,8 @@ import javax.swing.JTable;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.SingularMatrixException;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.SingularMatrixException;
 
 import mgui.interfaces.InterfaceDialogBox;
 import mgui.interfaces.InterfaceFrame;

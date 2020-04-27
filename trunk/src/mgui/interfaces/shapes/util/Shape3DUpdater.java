@@ -19,9 +19,9 @@
 
 package mgui.interfaces.shapes.util;
 
-import javax.media.j3d.Geometry;
+import org.jogamp.java3d.Geometry;
 
-public class Shape3DUpdater implements javax.media.j3d.GeometryUpdater {
+public class Shape3DUpdater implements org.jogamp.java3d.GeometryUpdater {
 
 	float[] coords;
 	

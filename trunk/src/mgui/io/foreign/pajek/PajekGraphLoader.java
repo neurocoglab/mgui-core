@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Graph3D;
 import mgui.interfaces.InterfaceSession;

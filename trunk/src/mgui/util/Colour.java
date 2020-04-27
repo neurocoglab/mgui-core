@@ -23,8 +23,8 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.vecmath.Color3f;
-import javax.vecmath.Color4f;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Color4f;
 
 import org.xml.sax.Attributes;
 

@@ -19,7 +19,7 @@
 
 package mgui.interfaces.shapes;
 
-import javax.media.j3d.Node;
+import org.jogamp.java3d.Node;
 
 import mgui.interfaces.shapes.selection.ShapeSelectionSet;
 import mgui.interfaces.shapes.util.ShapeEvent;

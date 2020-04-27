@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import javax.vecmath.Point2f;
-import javax.vecmath.Tuple2f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Tuple2f;
 
 import mgui.geometry.util.GeometryFunctions;
 import mgui.interfaces.gui.InterfaceProgressBar;

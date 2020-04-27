@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-import javax.vecmath.Matrix4d;
+import org.jogamp.vecmath.Matrix4d;
 
 import foxtrot.Worker;
 import mgui.geometry.Mesh3D;

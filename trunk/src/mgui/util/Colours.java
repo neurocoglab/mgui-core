@@ -19,6 +19,7 @@
 
 package mgui.util;
 
+import java.awt.Color;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -27,6 +28,9 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
+
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Color4f;
 
 import mgui.datasources.DataType;
 import mgui.datasources.DataTypes;
@@ -52,6 +56,26 @@ public class Colours {
 		
 		}
 		return -1;
+	}
+	
+	public static Color getAwtColor(Color3f c) {
+		return new Color(c.getX(), c.getY(), c.getZ());
+	}
+	
+	public static Color getAwtColor(Color4f c) {
+		return new Color(c.getX(), c.getY(), c.getZ());
+	}
+	
+	public static Color3f getColor3f(Color c) {
+		return new Color3f(c.getRed()/255f, c.getGreen()/255f, c.getBlue()/255f);
+	}
+	
+	public static Color3f getColor3f(Color4f c) {
+		return new Color3f(c.getX(), c.getY(), c.getZ());
+	}
+	
+	public static Color4f getColor4f(Color c) {
+		return new Color4f(c.getRed()/255f, c.getGreen()/255f, c.getBlue()/255f, 1);
 	}
 	
 	public static Colour4f getRandom(){

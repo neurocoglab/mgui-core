@@ -50,8 +50,8 @@ package mgui.io.foreign.vol;
  */
 
 
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
 
 public class CoordAttr extends Attr {
     Point3d value = new Point3d();

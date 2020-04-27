@@ -43,9 +43,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector2f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector2f;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.Rect2D;

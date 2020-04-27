@@ -22,18 +22,15 @@ package mgui.interfaces.graphs.layouts;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.media.j3d.BoundingSphere;
-import javax.vecmath.Point3f;
-
-import mgui.interfaces.graphs.AbstractGraphEdge;
-import mgui.interfaces.graphs.AbstractGraphNode;
-import mgui.interfaces.graphs.util.StaticLocationTransformer;
-
 import org.apache.commons.collections15.Transformer;
-import org.apache.commons.collections15.map.LazyMap;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.vecmath.Point3f;
 
 import edu.uci.ics.jung.algorithms.layout3d.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
+import mgui.interfaces.graphs.AbstractGraphEdge;
+import mgui.interfaces.graphs.AbstractGraphNode;
+import mgui.interfaces.graphs.util.StaticLocationTransformer;
 
 /********************************************************************
  * Layout for graph nodes in 3D, specifying fixed positions in R3.

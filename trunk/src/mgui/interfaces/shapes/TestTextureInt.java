@@ -21,16 +21,16 @@ package mgui.interfaces.shapes;
 
 import java.awt.image.BufferedImage;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.QuadArray;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.TextureAttributes;
-import javax.media.j3d.TransparencyAttributes;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.QuadArray;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.TextureAttributes;
+import org.jogamp.java3d.TransparencyAttributes;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Rect3D;
 import mgui.geometry.Sphere3D;

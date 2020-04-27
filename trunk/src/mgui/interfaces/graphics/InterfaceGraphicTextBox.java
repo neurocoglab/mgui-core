@@ -28,7 +28,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import javax.swing.event.MouseInputAdapter;
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.interfaces.InterfacePanel;
 import mgui.interfaces.InterfaceTextBox;

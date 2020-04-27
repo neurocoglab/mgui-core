@@ -32,12 +32,12 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import javax.media.j3d.IndexedTriangleArray;
+import org.jogamp.java3d.IndexedTriangleArray;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Grid3D;
@@ -67,8 +67,8 @@ import mgui.numbers.MguiNumber;
 import mgui.stats.StatFunctions;
 import Jama.Matrix;
 
-import com.sun.j3d.utils.geometry.GeometryInfo;
-import com.sun.j3d.utils.geometry.NormalGenerator;
+import org.jogamp.java3d.utils.geometry.GeometryInfo;
+import org.jogamp.java3d.utils.geometry.NormalGenerator;
 
 import foxtrot.Job;
 import foxtrot.Worker;

@@ -28,29 +28,29 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.CapabilityNotSetException;
-import javax.media.j3d.Material;
-import javax.media.j3d.ModelClip;
-import javax.media.j3d.Node;
-import javax.media.j3d.PickInfo;
-import javax.media.j3d.PickInfo.IntersectionInfo;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.vecmath.Color3f;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point2d;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4d;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.CapabilityNotSetException;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.ModelClip;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.PickInfo;
+import org.jogamp.java3d.PickInfo.IntersectionInfo;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Matrix4f;
+import org.jogamp.vecmath.Point2d;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector2f;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector4d;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Graph2D;
@@ -108,11 +108,11 @@ import mgui.numbers.MguiNumber;
 import mgui.util.Colour;
 import mgui.util.Colours;
 
-import com.sun.j3d.utils.geometry.Cylinder;
-import com.sun.j3d.utils.geometry.Primitive;
-import com.sun.j3d.utils.geometry.Sphere;
-import com.sun.j3d.utils.pickfast.PickCanvas;
-import com.sun.j3d.utils.pickfast.PickIntersection;
+import org.jogamp.java3d.utils.geometry.Cylinder;
+import org.jogamp.java3d.utils.geometry.Primitive;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.pickfast.PickIntersection;
 
 import foxtrot.Job;
 import foxtrot.Worker;
@@ -395,8 +395,8 @@ public class ShapeFunctions extends Utility {
 	public static TransformGroup getSphereAtPoint(float radius, Point3d point, boolean pickable){
 		Appearance app = new Appearance();
 		Material m = new Material();
-		m.setSpecularColor(new Color3f(Color.red));
-		m.setDiffuseColor(new Color3f(Color.red));
+		m.setSpecularColor(Colours.getColor3f(Color.red));
+		m.setDiffuseColor(Colours.getColor3f(Color.red));
 		app.setMaterial(m);
 		return getSphereAtPoint(radius, point, app, pickable);
 	}
@@ -512,10 +512,10 @@ public class ShapeFunctions extends Utility {
 	 */
 	public static boolean nodeHasChild(BranchGroup parent, Node child) throws CapabilityNotSetException{
 		
-		Enumeration children = parent.getAllChildren();
+		Iterator<Node> children = parent.getAllChildren();
 		
-		while (children.hasMoreElements())
-			if (children.nextElement().equals(child))
+		while (children.hasNext())
+			if (children.next().equals(child))
 				return true;
 		
 		return false;

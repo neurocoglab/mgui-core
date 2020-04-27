@@ -21,7 +21,7 @@ package mgui.io.domestic.maps;
 
 import java.awt.Color;
 
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.interfaces.maps.ContinuousColourMap;
 import mgui.util.Colour;

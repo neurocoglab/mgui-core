@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.ProgressUpdater;

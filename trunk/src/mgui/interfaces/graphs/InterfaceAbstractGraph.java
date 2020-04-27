@@ -33,6 +33,11 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import edu.uci.ics.jung.graph.SparseGraph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 import mgui.graphs.networks.NetworkGraphEvent;
 import mgui.graphs.networks.NetworkGraphListener;
 import mgui.interfaces.InterfaceObject;
@@ -55,12 +60,6 @@ import mgui.io.standard.xml.XMLOutputOptions;
 import mgui.numbers.MguiBoolean;
 import mgui.resources.icons.IconObject;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import edu.uci.ics.jung.graph.SparseGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
-
 /**********************************************
  * Abstract representation of a Graph in modelGUI; extends Jung's SparseGraph
  * 
@@ -69,7 +68,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * @since 1.0
  *
  */
-public abstract class InterfaceAbstractGraph extends SparseGraph<AbstractGraphNode,
+public class InterfaceAbstractGraph extends SparseGraph<AbstractGraphNode,
 																 AbstractGraphEdge>
 												   implements AttributeObject,
 												 			  AttributeListener,

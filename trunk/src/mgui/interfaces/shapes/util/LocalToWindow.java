@@ -73,13 +73,13 @@ package mgui.interfaces.shapes.util;
 import java.awt.Dimension;
 import java.awt.Point;
 
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.Node;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.View;
-import javax.vecmath.Point2d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3d;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.View;
+import org.jogamp.vecmath.Point2d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector3d;
 
 public class LocalToWindow {
 

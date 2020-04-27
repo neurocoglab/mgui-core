@@ -23,24 +23,28 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BadTransformException;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.LineArray;
-import javax.media.j3d.LineAttributes;
-import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.TransparencyAttributes;
 import javax.swing.ImageIcon;
-import javax.vecmath.Color3f;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BadTransformException;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.LineArray;
+import org.jogamp.java3d.LineAttributes;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.TransparencyAttributes;
+import org.jogamp.java3d.utils.geometry.Cone;
+import org.jogamp.java3d.utils.geometry.Primitive;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.Polygon3D;
@@ -54,10 +58,7 @@ import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiInteger;
 import mgui.numbers.MguiNumber;
-
-import com.sun.j3d.utils.geometry.Cone;
-import com.sun.j3d.utils.geometry.Primitive;
-import com.sun.j3d.utils.geometry.Sphere;
+import mgui.util.Colours;
 
 
 public class Vector3DInt extends Shape3DInt {
@@ -316,7 +317,7 @@ public class Vector3DInt extends Shape3DInt {
 			edge_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
 			}
 		
-		Color3f edgeColour = new Color3f((Color)attributes.getValue("LineColour"));
+		Color3f edgeColour = Colours.getColor3f((Color)attributes.getValue("LineColour"));
 		Material m = new Material();
 		m.setDiffuseColor(edgeColour);
 		m.setAmbientColor(edgeColour);
@@ -362,8 +363,8 @@ public class Vector3DInt extends Shape3DInt {
 		Material m = new Material();
 		
 		m.setShininess(95f);
-		m.setSpecularColor(new Color3f(colour));
-		m.setDiffuseColor(new Color3f(colour));
+		m.setSpecularColor(Colours.getColor3f(colour));
+		m.setDiffuseColor(Colours.getColor3f(colour));
 		
 		fill_appearance.setMaterial(m);
 		

@@ -19,7 +19,7 @@
 
 package mgui.morph.sections;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.interfaces.attributes.Attribute;
 import mgui.interfaces.attributes.AttributeList;

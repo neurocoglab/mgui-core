@@ -24,19 +24,21 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.Transform3D;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.vecmath.AxisAngle4d;
-import javax.vecmath.Color3f;
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector2d;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+
+import org.jogamp.java3d.DirectionalLight;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.vecmath.AxisAngle4d;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Matrix3d;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector2d;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
+import org.xml.sax.Attributes;
 
 import mgui.interfaces.AbstractInterfaceObject;
 import mgui.interfaces.InterfaceSession;
@@ -55,8 +57,7 @@ import mgui.io.standard.xml.XMLOutputOptions;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiDouble;
 import mgui.resources.icons.IconObject;
-
-import org.xml.sax.Attributes;
+import mgui.util.Colours;
 
 /**********************************************************
  * Represents a particular camera position in R3, defined by a center of
@@ -392,7 +393,7 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 		R.lookAt(eye, centerOfRotation, upVector);
 		try{
 			R.invert();
-		}catch (javax.vecmath.SingularMatrixException e){
+		}catch (org.jogamp.vecmath.SingularMatrixException e){
 			InterfaceSession.log("Matrix inversion error:");
 			printCamera();
 			}
@@ -429,7 +430,7 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 		R.lookAt(eye, center, upVector);
 		try{
 			R.invert();
-		}catch (javax.vecmath.SingularMatrixException e){
+		}catch (org.jogamp.vecmath.SingularMatrixException e){
 			InterfaceSession.log("Matrix inversion error:");
 			printCamera();
 			}
@@ -637,7 +638,7 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 			attributes.add(new Attribute("RotY", new MguiDouble(0)));
 			Color3f c = new Color3f();
 			source.getColor(c);
-			attributes.add(new Attribute("Colour", c.get()));
+			attributes.add(new Attribute("Colour", c));
 			attributes.add(new Attribute("IsEnabled", new MguiBoolean(source.getEnable())));
 			attributes.addAttributeListener(this);
 		}
@@ -674,7 +675,7 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 		
 		public void setColour(Color colour){
 			attributes.setValue("Colour", colour);
-			source.setColor(new Color3f(colour));
+			source.setColor(Colours.getColor3f(colour));
 		}
 		
 		public Color getColour(){
@@ -722,7 +723,7 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 				source.setEnable(getIsEnabled());
 				
 			if (e.getAttribute().getName().equals("Colour"))
-				source.setColor(new Color3f(getColour()));
+				source.setColor(Colours.getColor3f(getColour()));
 			
 			updateLightSources();
 		}

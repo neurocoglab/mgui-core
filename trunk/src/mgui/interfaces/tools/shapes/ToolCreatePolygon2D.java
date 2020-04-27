@@ -25,7 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 
 import javax.swing.ImageIcon;
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.geometry.Polygon2D;
 import mgui.interfaces.InterfaceSession;

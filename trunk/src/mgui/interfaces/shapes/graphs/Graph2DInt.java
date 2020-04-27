@@ -35,7 +35,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.vecmath.Point2d;
+import org.jogamp.vecmath.Point2d;
 
 import mgui.geometry.Graph2D;
 import mgui.geometry.Shape2D;

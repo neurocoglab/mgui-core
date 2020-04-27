@@ -21,9 +21,9 @@ package mgui.interfaces.tools.shapes;
 
 import java.util.ArrayList;
 
-import javax.media.j3d.Node;
-import javax.media.j3d.PickInfo;
-import javax.media.j3d.Shape3D;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.PickInfo;
+import org.jogamp.java3d.Shape3D;
 
 import mgui.geometry.mesh.MeshEngine;
 import mgui.interfaces.InterfaceSession;
@@ -35,7 +35,7 @@ import mgui.interfaces.tools.ToolInputEvent;
 import mgui.interfaces.tools.ToolListener;
 import mgui.interfaces.tools.graphics.Tool3D;
 
-import com.sun.j3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
 
 
 public class ToolSelectMeshBoundaryNodes extends Tool3D {

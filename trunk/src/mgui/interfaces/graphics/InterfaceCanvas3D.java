@@ -34,12 +34,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.GraphicsConfigTemplate3D;
-import javax.media.j3d.ImageComponent;
-import javax.media.j3d.ImageComponent2D;
-import javax.media.j3d.Screen3D;
-import javax.media.j3d.View;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.GraphicsConfigTemplate3D;
+import org.jogamp.java3d.ImageComponent;
+import org.jogamp.java3d.ImageComponent2D;
+import org.jogamp.java3d.Screen3D;
+import org.jogamp.java3d.View;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
@@ -47,7 +47,7 @@ import javax.swing.event.MouseInputAdapter;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.shapes.Shape2DInt;
 
-import com.sun.j3d.utils.universe.SimpleUniverse;
+import org.jogamp.java3d.utils.universe.SimpleUniverse;
 
 
 /*********************************

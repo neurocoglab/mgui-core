@@ -42,18 +42,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.media.j3d.AmbientLight;
-import javax.media.j3d.Background;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.Group;
-import javax.media.j3d.Light;
-import javax.media.j3d.PickInfo;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.View;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -64,18 +52,35 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.vecmath.Color3f;
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector2d;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
+
+import org.jogamp.java3d.AmbientLight;
+import org.jogamp.java3d.Background;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.DirectionalLight;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Light;
+import org.jogamp.java3d.PickInfo;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.universe.SimpleUniverse;
+import org.jogamp.java3d.utils.universe.Viewer;
+import org.jogamp.java3d.utils.universe.ViewingPlatform;
+import org.jogamp.vecmath.Matrix3d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector2d;
+import org.jogamp.vecmath.Vector2f;
+import org.jogamp.vecmath.Vector3f;
+import org.xml.sax.Attributes;
 
 import mgui.geometry.Sphere3D;
 import mgui.interfaces.InterfaceDisplayPanel;
 import mgui.interfaces.InterfaceEnvironment;
-import mgui.interfaces.InterfaceEnvironment.Snapshot3DMode;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.ProgressUpdater;
 import mgui.interfaces.attributes.Attribute;
@@ -115,14 +120,7 @@ import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiDouble;
 import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiInteger;
-
-import org.xml.sax.Attributes;
-
-import com.sun.j3d.utils.geometry.Sphere;
-import com.sun.j3d.utils.pickfast.PickCanvas;
-import com.sun.j3d.utils.universe.SimpleUniverse;
-import com.sun.j3d.utils.universe.Viewer;
-import com.sun.j3d.utils.universe.ViewingPlatform;
+import mgui.util.Colours;
 
 /********************
  * Interface class for Java3D display. Each InterfaceGraphic3D object contains its own
@@ -269,7 +267,7 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 		map3D.updateTargetTransform();
 		map3D.setView(viewer.getView());
 		
-		viewer.getView().setDepthBufferFreezeTransparent (false);
+		//viewer.getView().setDepthBufferFreezeTransparent (false);
 		
 		toolInput3DAdapter = new ToolBehavior3DAdapter(canvas3D.getCanvas(), map3D);
 		viewingPlatform.setViewPlatformBehavior(toolInput3DAdapter);
@@ -293,7 +291,7 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 		//lightSource2.setDirection(new Vector3f(0, 0, 0));
 		ambientLight.setInfluencingBounds(new BoundingSphere(new Point3d(0, 0, 0), Double.POSITIVE_INFINITY));
 		ambientLight.setEnable(true);
-		ambientLight.setColor(new Color3f(Color.WHITE));
+		ambientLight.setColor(Colours.getColor3f(Color.WHITE));
 		lightNode = new BranchGroup();
 		lightNode.setCapability(Group.ALLOW_CHILDREN_WRITE);
 		lightNode.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
@@ -307,7 +305,7 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 		viewingPlatform.addChild(lightNode);
 		viewingPlatform.addChild(background);
 		updateScene();
-		this.getView().setFrontClipDistance(0.01);
+		this.getView().setFrontClipDistance(0.1);
 		updateAxes();
 		
 		setDefaultTool(new ToolMouseOrbit3D(this));
@@ -412,7 +410,7 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 	
 	public void updateBackground(){
 		Color c = getBackgroundColour();
-		background.setColor(new Color3f(c));
+		background.setColor(Colours.getColor3f(c));
 		this.setBackground(c);
 		canvas3D.canvas3D.setBackground(c);
 	}

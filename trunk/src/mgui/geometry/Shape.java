@@ -19,7 +19,7 @@
 
 package mgui.geometry;
 
-import javax.vecmath.Matrix4d;
+import org.jogamp.vecmath.Matrix4d;
 
 import mgui.interfaces.xml.XMLObject;
 import Jama.Matrix;

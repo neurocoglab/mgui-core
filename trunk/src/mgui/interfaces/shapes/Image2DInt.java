@@ -23,8 +23,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.Rect2D;

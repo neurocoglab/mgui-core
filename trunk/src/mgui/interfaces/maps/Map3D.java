@@ -22,14 +22,14 @@ package mgui.interfaces.maps;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.media.j3d.BadTransformException;
-import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.View;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector2d;
+import org.jogamp.java3d.BadTransformException;
+import org.jogamp.java3d.DirectionalLight;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.View;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector2d;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

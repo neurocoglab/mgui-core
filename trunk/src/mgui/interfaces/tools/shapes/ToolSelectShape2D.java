@@ -40,8 +40,8 @@ package mgui.interfaces.tools.shapes;
 
 import java.util.ArrayList;
 
-import javax.media.j3d.Shape3D;
-import javax.vecmath.Point3d;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.vecmath.Point3d;
 
 import mgui.interfaces.graphics.util.PickInfoShape2D;
 import mgui.interfaces.shapes.selection.ShapeSelectionSet;

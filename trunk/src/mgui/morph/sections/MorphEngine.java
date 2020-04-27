@@ -22,10 +22,10 @@ package mgui.morph.sections;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.media.j3d.IndexedTriangleArray;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector2d;
+import org.jogamp.java3d.IndexedTriangleArray;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector2d;
 
 import mgui.geometry.Mesh3D;
 import mgui.geometry.Plane3D;
@@ -49,7 +49,7 @@ import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiDouble;
 import mgui.numbers.MguiInteger;
 
-import com.sun.j3d.utils.geometry.GeometryInfo;
+import org.jogamp.java3d.utils.geometry.GeometryInfo;
 
 
 /****************************

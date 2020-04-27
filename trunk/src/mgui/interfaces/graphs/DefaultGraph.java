@@ -21,8 +21,6 @@ package mgui.interfaces.graphs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,19 +28,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 
-import mgui.interfaces.InterfaceSession;
-import mgui.interfaces.ProgressUpdater;
-import mgui.interfaces.logs.LoggingType;
-import mgui.interfaces.menus.InterfacePopupMenu;
-import mgui.interfaces.shapes.graphs.Graph3DInt;
-import mgui.interfaces.xml.XMLFunctions;
-import mgui.interfaces.xml.XMLObject;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;
+import mgui.interfaces.InterfaceSession;
+import mgui.interfaces.menus.InterfacePopupMenu;
+import mgui.interfaces.shapes.graphs.Graph3DInt;
 
 
 /************************************************

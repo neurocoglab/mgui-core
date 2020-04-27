@@ -22,7 +22,7 @@ package mgui.interfaces.graphs;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.interfaces.AbstractInterfaceObject;
 import mgui.interfaces.ProgressUpdater;

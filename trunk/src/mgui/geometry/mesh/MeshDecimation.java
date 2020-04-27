@@ -26,8 +26,8 @@ import java.util.Comparator;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Mesh3D;
 import mgui.geometry.Plane3D;

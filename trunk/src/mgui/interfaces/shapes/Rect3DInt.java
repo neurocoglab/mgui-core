@@ -21,21 +21,20 @@ package mgui.interfaces.shapes;
 
 import java.awt.Color;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.QuadArray;
-import javax.media.j3d.Shape3D;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.QuadArray;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Rect3D;
 import mgui.geometry.Shape;
 import mgui.interfaces.attributes.Attribute;
-import mgui.morph.sections.RadialRep2D;
 import mgui.numbers.MguiBoolean;
+import mgui.util.Colours;
 
 
 public class Rect3DInt extends Shape3DInt {
@@ -97,7 +96,7 @@ public class Rect3DInt extends Shape3DInt {
 		QuadArray quadArray = new QuadArray(4, GeometryArray.COORDINATES);
 		quadArray.setCoordinates(0, coords);
 		thisShapeNode = new Shape3D(quadArray);
-		cAtt.setColor(new Color3f(thisColour));
+		cAtt.setColor(Colours.getColor3f(thisColour));
 		pAtt.setCullFace(PolygonAttributes.CULL_NONE);
 		pAtt.setBackFaceNormalFlip(true);
 	

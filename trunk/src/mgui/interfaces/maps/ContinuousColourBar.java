@@ -299,7 +299,6 @@ public class ContinuousColourBar extends InterfacePanel implements MouseListener
 					g2.drawString(str, pos, getHeight() - inset_top );
 				}else{
 					//draw vertical
-					//fucking eclipse breakpoints
 					//number
 					String str = MguiDouble.getString(number[noDivisions - i], formatStr);
 					

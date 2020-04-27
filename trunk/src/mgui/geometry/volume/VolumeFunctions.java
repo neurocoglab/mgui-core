@@ -33,16 +33,16 @@ import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.media.j3d.ImageComponent3D;
+import org.jogamp.java3d.ImageComponent3D;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Matrix4f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Tuple3f;
+import org.jogamp.vecmath.Vector2f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Grid3D;

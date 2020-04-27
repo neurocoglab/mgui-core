@@ -22,8 +22,8 @@ package mgui.interfaces.tools;
 import java.awt.AWTEvent;
 import java.util.Enumeration;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.WakeupOnAWTEvent;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.WakeupOnAWTEvent;
 
 public abstract class MouseBehavior extends Behavior {
 
@@ -42,10 +42,5 @@ public abstract class MouseBehavior extends Behavior {
 		
 	}
 	
-	@Override
-	public void processStimulus(Enumeration arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

@@ -23,25 +23,19 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.Group;
-import javax.media.j3d.LineAttributes;
-import javax.media.j3d.LineStripArray;
-import javax.media.j3d.Material;
-import javax.media.j3d.PointArray;
-import javax.media.j3d.PointAttributes;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.TransparencyAttributes;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.LineAttributes;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.TransparencyAttributes;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Box3D;
-import mgui.geometry.PointSet3D;
 import mgui.geometry.Polygon3D;
 import mgui.geometry.Shape;
 import mgui.geometry.Sphere3D;
@@ -51,7 +45,7 @@ import mgui.interfaces.shapes.util.ShapeEvent;
 import mgui.interfaces.shapes.util.ShapeFunctions;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
-import mgui.numbers.MguiInteger;
+import mgui.util.Colours;
 
 /****************************************************
  * Interface for a set of 3D polygons.
@@ -208,8 +202,8 @@ public class PolygonSet3DInt extends Shape3DInt {
 		Material m = new Material();
 		
 		m.setShininess(90f);
-		m.setSpecularColor(new Color3f(colour));
-		m.setDiffuseColor(new Color3f(colour));
+		m.setSpecularColor(Colours.getColor3f(colour));
+		m.setDiffuseColor(Colours.getColor3f(colour));
 		
 		fill_appearance.setMaterial(m);
 		
@@ -234,7 +228,7 @@ public class PolygonSet3DInt extends Shape3DInt {
 			edge_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
 			}
 		
-		Color3f edgeColour = new Color3f((Color)attributes.getValue("3D.LineColour"));
+		Color3f edgeColour = Colours.getColor3f((Color)attributes.getValue("3D.LineColour"));
 		Material m = new Material();
 		m.setDiffuseColor(edgeColour);
 		m.setAmbientColor(edgeColour);
@@ -300,7 +294,7 @@ public class PolygonSet3DInt extends Shape3DInt {
 //
 //		    // enlarge the points
 //			p_app.setPointAttributes(new PointAttributes(getVertexScale(), true));
-//			p_app.setColoringAttributes(new ColoringAttributes(new Color3f(getVertexColour()), ColoringAttributes.FASTEST));
+//			p_app.setColoringAttributes(new ColoringAttributes(Colours.getColor3f(getVertexColour()), ColoringAttributes.FASTEST));
 //			bg.addChild(new Shape3D(p_array, p_app));
 //			}
 //		

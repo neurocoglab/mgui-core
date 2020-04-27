@@ -24,13 +24,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
-import javax.media.j3d.Canvas3D;
+import org.jogamp.java3d.Canvas3D;
 import javax.swing.SwingUtilities;
 
 import mgui.interfaces.graphics.InterfaceGraphic3D;
 import mgui.interfaces.maps.Map3D;
 
-import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
+import org.jogamp.java3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
 
 
 /**************

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.interfaces.gui.InterfaceProgressBar;
 import mgui.interfaces.xml.XMLFunctions;

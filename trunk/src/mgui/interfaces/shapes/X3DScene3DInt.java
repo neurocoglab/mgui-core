@@ -19,10 +19,10 @@
 
 package mgui.interfaces.shapes;
 
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Sphere3D;
 

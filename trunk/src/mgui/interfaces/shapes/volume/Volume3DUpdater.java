@@ -19,8 +19,8 @@
 
 package mgui.interfaces.shapes.volume;
 
-import javax.media.j3d.ImageComponent3D;
-import javax.media.j3d.ImageComponent3D.Updater;
+import org.jogamp.java3d.ImageComponent3D;
+import org.jogamp.java3d.ImageComponent3D.Updater;
 
 /*******************************
  * Class implementing the ImageComponent3D.Updater interface, to allow modification

@@ -21,7 +21,7 @@ package mgui.interfaces.graphics;
 
 import java.util.EventObject;
 
-import javax.media.j3d.Canvas3D;
+import org.jogamp.java3d.Canvas3D;
 
 public class CanvasEvent extends EventObject {
 

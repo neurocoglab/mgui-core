@@ -19,7 +19,7 @@
 
 package mgui.interfaces.shapes.volume;
 
-import javax.media.j3d.ImageComponent3D;
+import org.jogamp.java3d.ImageComponent3D;
 
 import mgui.geometry.Grid3D;
 import mgui.geometry.volume.VolumeFunctions;

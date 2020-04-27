@@ -19,7 +19,7 @@
 
 package mgui.interfaces.graphs;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.interfaces.xml.XMLObject.XMLType;
 

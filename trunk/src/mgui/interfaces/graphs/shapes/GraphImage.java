@@ -21,7 +21,7 @@ package mgui.interfaces.graphs.shapes;
 
 import java.awt.image.BufferedImage;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.geometry.Rect2D;
 import mgui.interfaces.shapes.Image2DInt;

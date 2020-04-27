@@ -70,32 +70,32 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
-import javax.media.j3d.Alpha;
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.ImageComponent;
-import javax.media.j3d.ImageComponent3D;
-import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.QuadArray;
-import javax.media.j3d.RotationInterpolator;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.TexCoordGeneration;
-import javax.media.j3d.Texture;
-import javax.media.j3d.Texture3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.TexCoord3f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector4f;
+import org.jogamp.java3d.Alpha;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.ImageComponent;
+import org.jogamp.java3d.ImageComponent3D;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.QuadArray;
+import org.jogamp.java3d.RotationInterpolator;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.TexCoordGeneration;
+import org.jogamp.java3d.Texture;
+import org.jogamp.java3d.Texture3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.TexCoord3f;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector4f;
 
-import com.sun.j3d.utils.applet.MainFrame;
-import com.sun.j3d.utils.universe.SimpleUniverse;
+import org.jogamp.java3d.utils.applet.MainFrame;
+import org.jogamp.java3d.utils.universe.SimpleUniverse;
 
 
 public class Texture3DTest extends Applet {

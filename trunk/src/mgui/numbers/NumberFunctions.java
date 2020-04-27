@@ -22,8 +22,8 @@ package mgui.numbers;
 import java.awt.image.DataBuffer;
 import java.text.DecimalFormat;
 
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3d;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3d;
 
 import mgui.datasources.DataType;
 import mgui.datasources.DataTypes;

@@ -21,7 +21,7 @@ package mgui.interfaces.tools.graphics;
 
 import java.awt.Point;
 
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.interfaces.graphics.util.DrawingEngine;
 import mgui.interfaces.maps.Map2D;

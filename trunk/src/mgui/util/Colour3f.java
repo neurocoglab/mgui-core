@@ -21,9 +21,8 @@ package mgui.util;
 
 import java.awt.Color;
 
-import javax.vecmath.Color3f;
-import javax.vecmath.Color4f;
-
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Color4f;
 import org.xml.sax.Attributes;
 
 import mgui.interfaces.xml.XMLFunctions;
@@ -48,7 +47,7 @@ public class Colour3f extends Colour {
 	}
 	
 	public Colour3f(Color c){
-		colour = new Color3f(c);
+		colour = Colours.getColor3f(c);
 	}
 	
 	@Override

@@ -22,9 +22,9 @@ package mgui.interfaces.tools.graphics;
 import java.awt.Point;
 
 import javax.swing.ImageIcon;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector2d;
-import javax.vecmath.Vector3d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector2d;
+import org.jogamp.vecmath.Vector3d;
 
 import mgui.interfaces.InterfacePanel;
 import mgui.interfaces.InterfaceSession;

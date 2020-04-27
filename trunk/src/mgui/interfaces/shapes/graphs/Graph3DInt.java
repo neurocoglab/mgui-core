@@ -26,37 +26,53 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Font3D;
-import javax.media.j3d.FontExtrusion;
-import javax.media.j3d.Group;
-import javax.media.j3d.LineArray;
-import javax.media.j3d.Material;
-import javax.media.j3d.Node;
-import javax.media.j3d.OrientedShape3D;
-import javax.media.j3d.Text3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.TransparencyAttributes;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.vecmath.Color3f;
-import javax.vecmath.Color4f;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
 
+import org.apache.commons.collections15.BidiMap;
+import org.apache.commons.collections15.Transformer;
+import org.apache.commons.collections15.bidimap.DualHashBidiMap;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Font3D;
+import org.jogamp.java3d.FontExtrusion;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.LineArray;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.OrientedShape3D;
+import org.jogamp.java3d.Text3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.TransparencyAttributes;
+import org.jogamp.java3d.utils.geometry.Cylinder;
+import org.jogamp.java3d.utils.geometry.Primitive;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Color4f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
+
+import edu.uci.ics.jung.algorithms.layout.util.VisRunner;
+import edu.uci.ics.jung.algorithms.layout3d.Layout;
+import edu.uci.ics.jung.algorithms.util.IterativeContext;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.graph.util.Pair;
+import edu.uci.ics.jung.visualization3d.EdgeGroup;
+import edu.uci.ics.jung.visualization3d.PluggableRenderContext;
+import edu.uci.ics.jung.visualization3d.RenderContext;
+import edu.uci.ics.jung.visualization3d.VertexGroup;
+import edu.uci.ics.jung.visualization3d.layout.LayoutEventBroadcaster;
 import mgui.geometry.Graph3D;
-import mgui.geometry.Mesh3D;
 import mgui.geometry.Plane3D;
 import mgui.geometry.Shape;
 import mgui.geometry.Shape3D;
-import mgui.geometry.util.GeometryFunctions;
 import mgui.interfaces.InterfaceEnvironment;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.attributes.Attribute;
@@ -84,26 +100,7 @@ import mgui.numbers.MguiDouble;
 import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiNumber;
 import mgui.util.Colour;
-
-import org.apache.commons.collections15.BidiMap;
-import org.apache.commons.collections15.Transformer;
-import org.apache.commons.collections15.bidimap.DualHashBidiMap;
-
-import com.sun.j3d.utils.geometry.Cylinder;
-import com.sun.j3d.utils.geometry.Primitive;
-import com.sun.j3d.utils.geometry.Sphere;
-
-import edu.uci.ics.jung.algorithms.layout.util.VisRunner;
-import edu.uci.ics.jung.algorithms.layout3d.Layout;
-import edu.uci.ics.jung.algorithms.util.IterativeContext;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.Context;
-import edu.uci.ics.jung.graph.util.Pair;
-import edu.uci.ics.jung.visualization3d.EdgeGroup;
-import edu.uci.ics.jung.visualization3d.PluggableRenderContext;
-import edu.uci.ics.jung.visualization3d.RenderContext;
-import edu.uci.ics.jung.visualization3d.VertexGroup;
-import edu.uci.ics.jung.visualization3d.layout.LayoutEventBroadcaster;
+import mgui.util.Colours;
 
 /*************************************************************
  * Represents a graph as a 3D shape. Uses modified Jung code.
@@ -225,7 +222,7 @@ public class Graph3DInt extends PointSet3DInt {
 				AbstractGraphEdge edge = ec.element;
 				float scale = getEdgeScale(edge);
 				boolean as_cylinder = ((MguiBoolean)attributes.getValue("3D.EdgeAsCylinder")).getTrue();
-				Color4f colour = new Color4f((Color)edge_colour_transformer.transform(edge));
+				Color4f colour = Colours.getColor4f((Color)edge_colour_transformer.transform(edge));
 				
 				double cyl_min = ((MguiDouble)attributes.getValue("3D.EdgeCylinderMin")).getValue();
 				
@@ -236,19 +233,19 @@ public class Graph3DInt extends PointSet3DInt {
 					lineArray.setColor(1, colour);
 					lineArray.setCapability(LineArray.ALLOW_COLOR_READ);
 					lineArray.setCapability(LineArray.ALLOW_COLOR_WRITE);
-					javax.media.j3d.Shape3D shape = new javax.media.j3d.Shape3D();
+					org.jogamp.java3d.Shape3D shape = new org.jogamp.java3d.Shape3D();
 					shape.setGeometry(lineArray);
 					shape.setAppearance(getEdgeAppearance(edge));
-					shape.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_READ);
-					shape.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_WRITE);
+					shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_READ);
+					shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_WRITE);
 					return shape;
 				}else{
 					Cylinder cylinder =  new Cylinder(scale, 1, 
 													  Cylinder.GENERATE_NORMALS |
 													  Cylinder.ENABLE_GEOMETRY_PICKING,
 													  26, 26, getEdgeAppearance(edge));
-					cylinder.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_READ);
-					cylinder.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_WRITE);
+					cylinder.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_READ);
+					cylinder.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_WRITE);
 					return cylinder;
 					}
 			}};
@@ -418,9 +415,9 @@ public class Graph3DInt extends PointSet3DInt {
 	protected Appearance getEdgeAppearance(AbstractGraphEdge edge){
 		//if (edge_appearance == null)
 		Appearance appearance = new Appearance();
-		Color4f colour = new Color4f(getEdgeColour(edge));
+		Color4f colour = Colours.getColor4f(getEdgeColour(edge));
 		Material m = new Material();
-		Color3f c3f = new Color3f(colour.getX(), colour.getY(), colour.getZ());
+		Color3f c3f = Colours.getColor3f(colour);
 		m.setDiffuseColor(c3f);
 		if (hasAlpha()){
 			String trans_type = (String)attributes.getValue("3D.AlphaMode");
@@ -449,7 +446,7 @@ public class Graph3DInt extends PointSet3DInt {
 	protected Appearance getVertexAppearance(AbstractGraphNode node){
 		//if (vertex_appearance == null)
 		Appearance appearance = new Appearance();
-		Color3f colour = new Color3f(getVertexColour(node));
+		Color3f colour = Colours.getColor3f(getVertexColour(node));
 		Material m = new Material();
 		m.setDiffuseColor(colour);
 		appearance.setMaterial(m);
@@ -458,7 +455,7 @@ public class Graph3DInt extends PointSet3DInt {
 	
 	protected Appearance getLabelAppearance(AbstractGraphNode node){
 		Appearance appearance = new Appearance();
-		Color3f colour = new Color3f((Color)attributes.getValue("3D.LabelColour"));
+		Color3f colour = Colours.getColor3f((Color)attributes.getValue("3D.LabelColour"));
 		Material m = new Material();
 		m.setDiffuseColor(colour);
 		m.setAmbientColor(colour);
@@ -599,18 +596,18 @@ public class Graph3DInt extends PointSet3DInt {
 		for(AbstractGraphEdge edge : graph.getEdges()) {
 			Node node = renderContext.getEdgeShapeTransformer().transform(
 					Context.<Graph<AbstractGraphNode, AbstractGraphEdge>,AbstractGraphEdge>getInstance(graph, edge));
-			node.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_READ);
-			node.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_WRITE);
+			node.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_READ);
+			node.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_WRITE);
 			if (node instanceof Cylinder){
-				javax.media.j3d.Shape3D shape = ((Cylinder)node).getShape(Cylinder.BODY);
-				shape.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_READ);
-				shape.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_WRITE);
+				org.jogamp.java3d.Shape3D shape = ((Cylinder)node).getShape(Cylinder.BODY);
+				shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_READ);
+				shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_WRITE);
 				shape = ((Cylinder)node).getShape(Cylinder.TOP);
-				shape.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_READ);
-				shape.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_WRITE);
+				shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_READ);
+				shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_WRITE);
 				shape = ((Cylinder)node).getShape(Cylinder.BOTTOM);
-				shape.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_READ);
-				shape.setCapability(javax.media.j3d.Shape3D.ALLOW_APPEARANCE_WRITE);
+				shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_READ);
+				shape.setCapability(org.jogamp.java3d.Shape3D.ALLOW_APPEARANCE_WRITE);
 				}
 			EdgeGroup<AbstractGraphEdge> eg = new EdgeGroup<AbstractGraphEdge>(edge, node);
 			eg.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
@@ -666,9 +663,9 @@ public class Graph3DInt extends PointSet3DInt {
 		
 		for(AbstractGraphEdge edge : graph.getEdges()) {
 			Node node = edgeNodeMap.get(edge);
-			Color4f colour = new Color4f((Color)edge_colour_transformer.transform(edge));
-			if (node instanceof javax.media.j3d.Shape3D){
-				LineArray line_array = (LineArray)((javax.media.j3d.Shape3D)node).getGeometry();
+			Color4f colour = Colours.getColor4f((Color)edge_colour_transformer.transform(edge));
+			if (node instanceof org.jogamp.java3d.Shape3D){
+				LineArray line_array = (LineArray)((org.jogamp.java3d.Shape3D)node).getGeometry();
 				line_array.setColor(0, colour);
 				line_array.setColor(1, colour);
 			}else if (node instanceof Cylinder){

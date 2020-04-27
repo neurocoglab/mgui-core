@@ -37,8 +37,8 @@ import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.datasources.DataSourceException;
 import mgui.datasources.DataType;

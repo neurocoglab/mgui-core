@@ -49,13 +49,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ModelClip;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.ModelClip;
 import javax.swing.ImageIcon;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Plane3D;

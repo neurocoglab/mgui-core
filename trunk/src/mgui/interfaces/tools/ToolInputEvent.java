@@ -22,7 +22,7 @@ package mgui.interfaces.tools;
 import java.awt.Point;
 import java.util.EventObject;
 
-import javax.media.j3d.Canvas3D;
+import org.jogamp.java3d.Canvas3D;
 
 import mgui.interfaces.InterfacePanel;
 

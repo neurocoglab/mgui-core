@@ -21,7 +21,7 @@ package mgui.geometry;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 /**************************************************
  * Represents a 3D rectangle shape, defined by four 3D nodes representing BL, BR, TR, TL corners, respectively.

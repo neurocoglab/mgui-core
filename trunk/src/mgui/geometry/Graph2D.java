@@ -22,8 +22,8 @@ package mgui.geometry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.graphs.AbstractGraphNode;

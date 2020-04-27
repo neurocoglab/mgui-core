@@ -21,7 +21,7 @@ package mgui.geometry;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 /**********************************************
  * Represents a line segment in R3.

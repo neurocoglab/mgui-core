@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.media.j3d.BranchGroup;
+import org.jogamp.java3d.BranchGroup;
 import javax.swing.ImageIcon;
 import javax.swing.TransferHandler.TransferSupport;
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.geometry.Rect2D;
 import mgui.geometry.util.SpatialUnit;

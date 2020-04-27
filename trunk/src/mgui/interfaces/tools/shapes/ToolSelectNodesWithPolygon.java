@@ -22,20 +22,22 @@ package mgui.interfaces.tools.shapes;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
-import javax.media.j3d.Material;
-import javax.media.j3d.Node;
-import javax.media.j3d.PickInfo;
-import javax.media.j3d.PickInfo.IntersectionInfo;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point2d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.PickInfo;
+import org.jogamp.java3d.PickInfo.IntersectionInfo;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.pickfast.PickIntersection;
+import org.jogamp.vecmath.Point2d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Polygon2D;
 import mgui.geometry.mesh.MeshFunctions;
@@ -53,10 +55,7 @@ import mgui.interfaces.tools.ToolListener;
 import mgui.interfaces.tools.graphics.Tool3D;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
-
-import com.sun.j3d.utils.geometry.Sphere;
-import com.sun.j3d.utils.pickfast.PickCanvas;
-import com.sun.j3d.utils.pickfast.PickIntersection;
+import mgui.util.Colours;
 
 
 /********************************************
@@ -283,8 +282,8 @@ public class ToolSelectNodesWithPolygon extends Tool3D {
 		Sphere sphere = new Sphere(node_size);
 		Appearance app = new Appearance();
 		Material m = new Material();
-		m.setSpecularColor(new Color3f(colour));
-		m.setDiffuseColor(new Color3f(colour));
+		m.setSpecularColor(Colours.getColor3f(colour));
+		m.setDiffuseColor(Colours.getColor3f(colour));
 		app.setMaterial(m);
 		sphere.setAppearance(app);
 		tg.addChild(sphere);

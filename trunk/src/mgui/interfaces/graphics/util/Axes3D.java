@@ -26,27 +26,28 @@ import java.awt.Graphics2D;
 import java.awt.font.LineMetrics;
 import java.util.ArrayList;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.Font3D;
-import javax.media.j3d.FontExtrusion;
-import javax.media.j3d.Group;
-import javax.media.j3d.J3DGraphics2D;
-import javax.media.j3d.Material;
-import javax.media.j3d.OrientedShape3D;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Text3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
+
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.Font3D;
+import org.jogamp.java3d.FontExtrusion;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.J3DGraphics2D;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.OrientedShape3D;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Text3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Point2f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector2f;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.Text2D;
@@ -59,7 +60,6 @@ import mgui.interfaces.attributes.Attribute;
 import mgui.interfaces.attributes.AttributeEvent;
 import mgui.interfaces.attributes.AttributeList;
 import mgui.interfaces.attributes.AttributeListener;
-import mgui.interfaces.events.CameraEvent;
 import mgui.interfaces.graphics.InterfaceGraphic3D;
 import mgui.interfaces.maps.Camera3D;
 import mgui.interfaces.shapes.ShapeSet3DInt;
@@ -69,6 +69,7 @@ import mgui.interfaces.trees.InterfaceTreeNode;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
 import mgui.resources.icons.IconObject;
+import mgui.util.Colours;
 
 /************************************************
  * Renders 3D axes on a 3D window.
@@ -382,7 +383,7 @@ public class Axes3D extends AbstractInterfaceObject implements AttributeListener
 		BranchGroup bg = vector.getScene3DObject();
 		bg.detach();
 		Point3f label_pt = new Point3f(0f, 0f, axis_size);
-		TransformGroup label = getLabel(getAxisLabelZ(), label_pt, new Color3f(getAxisColourZ()), arrow_size);
+		TransformGroup label = getLabel(getAxisLabelZ(), label_pt, Colours.getColor3f(getAxisColourZ()), arrow_size);
 		lower_group.addChild(label);
 		lower_group.addChild(bg);
 		//X
@@ -392,7 +393,7 @@ public class Axes3D extends AbstractInterfaceObject implements AttributeListener
 		bg = vector.getScene3DObject();
 		bg.detach();
 		label_pt = new Point3f(axis_size, 0f ,0f);
-		label = getLabel(getAxisLabelX(), label_pt, new Color3f(getAxisColourX()), arrow_size);
+		label = getLabel(getAxisLabelX(), label_pt, Colours.getColor3f(getAxisColourX()), arrow_size);
 		lower_group.addChild(label);
 		lower_group.addChild(bg);
 		//Y
@@ -402,7 +403,7 @@ public class Axes3D extends AbstractInterfaceObject implements AttributeListener
 		bg = vector.getScene3DObject();
 		bg.detach();
 		label_pt = new Point3f(0f, axis_size, 0f);
-		label = getLabel(getAxisLabelY(), label_pt, new Color3f(getAxisColourY()), arrow_size);
+		label = getLabel(getAxisLabelY(), label_pt, Colours.getColor3f(getAxisColourY()), arrow_size);
 		lower_group.addChild(label);
 		lower_group.addChild(bg);
 		

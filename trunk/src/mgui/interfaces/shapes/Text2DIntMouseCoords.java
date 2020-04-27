@@ -23,8 +23,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelListener;
 
 import javax.swing.event.MouseInputAdapter;
-import javax.vecmath.Point2d;
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Point2d;
+import org.jogamp.vecmath.Point2f;
 
 import mgui.geometry.Text2D;
 import mgui.interfaces.graphics.GraphicMouseListener;

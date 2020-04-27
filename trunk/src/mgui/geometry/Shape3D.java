@@ -26,9 +26,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.util.GeometryFunctions;
 import mgui.interfaces.InterfaceSession;

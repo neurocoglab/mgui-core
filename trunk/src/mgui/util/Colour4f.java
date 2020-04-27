@@ -21,8 +21,8 @@ package mgui.util;
 
 import java.awt.Color;
 
-import javax.vecmath.Color3f;
-import javax.vecmath.Color4f;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Color4f;
 
 import mgui.interfaces.xml.XMLFunctions;
 import mgui.interfaces.xml.XMLObject;
@@ -43,7 +43,7 @@ public class Colour4f extends Colour {
 	}
 	
 	public Colour4f(Color c){
-		colour = new Color4f(c);
+		colour = Colours.getColor4f(c);
 		//setAlpha(1f);
 	}
 	
@@ -72,7 +72,7 @@ public class Colour4f extends Colour {
 	@Override
 	public float getAlpha() {
 		if (colour == null) return 0;
-		return colour.get().getAlpha() / 255f;
+		return colour.getW() / 255f;
 	}
 
 	@Override

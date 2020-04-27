@@ -24,26 +24,25 @@ import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.Material;
-import javax.media.j3d.Node;
-import javax.media.j3d.PointArray;
-import javax.media.j3d.PointAttributes;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.TransparencyAttributes;
 import javax.swing.ImageIcon;
-import javax.vecmath.Color3f;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Vector3f;
 
 import org.apache.commons.collections15.Transformer;
-
-import com.sun.j3d.utils.geometry.Primitive;
-import com.sun.j3d.utils.geometry.Sphere;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.PointArray;
+import org.jogamp.java3d.PointAttributes;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.TransparencyAttributes;
+import org.jogamp.java3d.utils.geometry.Primitive;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.PointSet3D;
@@ -62,7 +61,6 @@ import mgui.interfaces.maps.NameMap;
 import mgui.interfaces.shapes.util.ShapeFunctions;
 import mgui.interfaces.shapes.util.ShapeVertexObject;
 import mgui.interfaces.xml.XMLFunctions;
-import mgui.interfaces.xml.XMLObject.XMLType;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiDouble;
 import mgui.numbers.MguiFloat;
@@ -70,6 +68,7 @@ import mgui.numbers.MguiInteger;
 import mgui.numbers.MguiNumber;
 import mgui.numbers.MguiShort;
 import mgui.util.Colour;
+import mgui.util.Colours;
 
 /***************************************************
  * Shape interface for a set of 3D points.
@@ -123,7 +122,7 @@ public class PointSet3DInt extends Shape3DInt {
 	protected Appearance getVertexAppearance(int index){
 		//if (vertex_appearance == null)
 		Appearance appearance = new Appearance();
-		Color3f colour = new Color3f(getVertexColour(index));
+		Color3f colour = Colours.getColor3f(getVertexColour(index));
 		Material m = new Material();
 		float shininess = ((MguiFloat)attributes.getValue("3D.Shininess")).getFloat();
 		m.setShininess(shininess * 127f + 1);
@@ -182,7 +181,7 @@ public class PointSet3DInt extends Shape3DInt {
 	
 	protected Appearance getLabelAppearance(Integer index){
 		Appearance appearance = new Appearance();
-		Color3f colour = new Color3f((Color)attributes.getValue("3D.LabelColour"));
+		Color3f colour = Colours.getColor3f((Color)attributes.getValue("3D.LabelColour"));
 		Material m = new Material();
 		m.setDiffuseColor(colour);
 		m.setAmbientColor(colour);
@@ -300,7 +299,7 @@ public class PointSet3DInt extends Shape3DInt {
 		
 	}
 	
-	protected javax.media.j3d.Shape3D getVerticesAsPoints() {
+	protected org.jogamp.java3d.Shape3D getVerticesAsPoints() {
 		
 		PointSet3D point_set = (PointSet3D)shape3d;
 		float[] nodes = point_set.nodes;
@@ -312,9 +311,9 @@ public class PointSet3DInt extends Shape3DInt {
 
 		    // enlarge the points
 			p_app.setPointAttributes(new PointAttributes(getVertexScale(), true));
-			p_app.setColoringAttributes(new ColoringAttributes(new Color3f(getVertexColour()), ColoringAttributes.FASTEST));
+			p_app.setColoringAttributes(new ColoringAttributes(Colours.getColor3f(getVertexColour()), ColoringAttributes.FASTEST));
 
-			return new javax.media.j3d.Shape3D(p_array, p_app);
+			return new org.jogamp.java3d.Shape3D(p_array, p_app);
 			
 		}else{
 			PointArray p_array = new PointArray(point_set.n, GeometryArray.COORDINATES | GeometryArray.COLOR_4); // | GeometryArray.BY_REFERENCE);
@@ -332,7 +331,7 @@ public class PointSet3DInt extends Shape3DInt {
 		    // enlarge the points
 			p_app.setPointAttributes(new PointAttributes(getVertexScale(), true));
 
-			return new javax.media.j3d.Shape3D(p_array, p_app);
+			return new org.jogamp.java3d.Shape3D(p_array, p_app);
 
 			}
 	}

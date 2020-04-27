@@ -29,12 +29,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ImageComponent3D;
-import javax.media.j3d.ImageComponent3D.Updater;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.ImageComponent3D;
+import org.jogamp.java3d.ImageComponent3D.Updater;
 import javax.swing.ImageIcon;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3f;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Grid3D;
