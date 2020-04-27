@@ -26,8 +26,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.filechooser.FileFilter;
 
-import org.geotools.filter.Filter;
-
 /************************************************************
  * File filter allowing wildcard characters..
  * 

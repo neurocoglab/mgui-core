@@ -43,6 +43,8 @@ import foxtrot.Worker;
 /***********************************************************************
  * Provides a set of common functions operating on pipeline objects.
  * 
+ * TODO: Replace Foxtrot with native Java threading
+ * 
  * @author Andrew Reid
  * @version 1.0
  * @since 1.0
