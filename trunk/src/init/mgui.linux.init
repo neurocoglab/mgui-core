@@ -1,14 +1,8 @@
 # set version
 setVersion 1.0.29 [alpha]
 
-# set application data directory (if used, this should always be one of the first calls)
-# setApplicationDataDir
-
 # set locale
 setLocale en CA
-
-# set 3D snapshot mode; use to circumvent issue with OSX?
-setSnapshot3DMode ScreenCapture
 
 # set units
 addUnit spatial millimeter mm 0.001
@@ -24,10 +18,6 @@ setLoggingType debug
 # colour maps
 # This command loads all the colour maps found in the specified directory
 loadColourMaps cmaps
-
-# name maps
-# This command loads all the name maps found in the specified directory
-#loadNameMaps nmaps
 
 # node shapes
 # This command loads all the graph node shapes found in the specified directory
@@ -56,9 +46,9 @@ addKnownDataSourceDrivers
 # Java uses a "look-and-feel" concept to provide customized GUI rendering for Swing components. Such libraries
 # are available online, and can be used with mgui by setting them here. This command sets the look-and-feel
 # to "NimROD" (see http://personales.ya.com/nimrod/index-en.html)
-setLookAndFeel java
+#setLookAndFeel native
 #setLookAndFeel com.birosoft.liquid.LiquidLookAndFeel
-#setLookAndFeel com.nilo.plaf.nimrod.NimRODLookAndFeel
+setLookAndFeel com.nilo.plaf.nimrod.NimRODLookAndFeel
 #setLookAndFeel napkin.NapkinLookAndFeel
 #setLookAndFeel org.fife.plaf.Office2003.Office2003LookAndFeel
 #setLookAndFeel org.fife.plaf.OfficeXP.OfficeXPLookAndFeel
@@ -151,7 +141,6 @@ loadIOType Nifti_volume_in input mgui.io.standard.nifti.NiftiVolumeLoader mgui.i
 loadIOType Nifti_volume_out output mgui.io.standard.nifti.NiftiVolumeWriter mgui.io.domestic.shapes.VolumeOutputDialogBox mgui.io.domestic.shapes.VolumeOutputOptions "Nifti volumes (*.hdr, *.nii, *.gz)" hdr nii gz
 loadIOType FSL_surface_in input mgui.io.foreign.fsl.FSLSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "FSL surfaces (*.off)" off
 loadIOType Freesurfer_surface_in input mgui.io.foreign.freesurfer.FreesurferSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Freesurfer surfaces (*.*)" *
-loadIOType Freesurfer_surface_out output mgui.io.foreign.freesurfer.FreesurferSurfaceWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox  mgui.io.foreign.freesurfer.FreesurferSurfaceOutputOptions "Freesurfer surfaces (*.*)" *
 loadIOType Freesurfer_surface_data_in input mgui.io.foreign.freesurfer.FreesurferVertexDataLoader mgui.io.foreign.freesurfer.FreesurferVertexDataDialogBox mgui.io.foreign.freesurfer.FreesurferVertexDataInOptions "Freesurfer surface data (*.curv, *.annot, *.label)" *
 #loadIOType X3D_scene_in input mgui.io.standard.xml.x3d.X3DFileLoader null mgui.io.standard.xml.x3d.Vector3DInputOptions "X3D scenes (*.vrml, *.x3d)" vrml x3d
 loadIOType Pajek_graph_in input mgui.io.foreign.pajek.PajekGraphLoader mgui.io.foreign.pajek.PajekGraphInputDialog mgui.io.foreign.pajek.PajekGraphInputOptions "Pajek graphs (*.net)" net

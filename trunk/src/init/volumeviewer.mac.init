@@ -1,0 +1,28 @@
+# This is the default init file for the VolumeViewer application
+
+# set version
+setVersion 0.1 [alpha]
+
+# set logging
+setLogFileAndConsole volume_viewer_session
+setLoggingType debug
+
+# set units
+addUnit spatial millimeter mm 0.001
+
+# colour maps
+# This command loads all the colour maps found in the specified directory
+loadColourMaps cmaps
+
+# to "NimROD" (see http://personales.ya.com/nimrod/index-en.html)
+setLookAndFeel native
+#setLookAndFeel com.nilo.plaf.nimrod.NimRODLookAndFeel
+
+# Load I/O types
+loadIOType Minc_surf_in input mgui.io.foreign.minc.MincSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Minc surfaces (*.obj)" obj
+loadIOType Minc_surf_out output mgui.io.foreign.minc.MincSurfaceWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox mgui.io.domestic.shapes.SurfaceOutputOptions "Minc surfaces (*.obj)" obj
+loadIOType Minc_surf_data_out output mgui.io.foreign.minc.MincSurfaceDataWriter mgui.io.foreign.minc.MincSurfaceDataOutDialogBox mgui.io.foreign.minc.MincSurfaceDataOutOptions "Minc surface data (*.txt)" txt
+loadIOType Minc_surf_data_in input mgui.io.foreign.minc.MincSurfaceDataLoader mgui.io.domestic.shapes.SurfaceDataInputDialogBox mgui.io.domestic.shapes.SurfaceDataInputOptions "Minc surface data (*.txt)" txt
+loadIOType Minc_volume_in input mgui.io.foreign.minc.MincVolumeLoader mgui.io.domestic.shapes.VolumeInputDialogBox mgui.io.foreign.minc.MincVolumeInputOptions "Minc volumes (*.mnc)" mnc
+loadIOType Nifti_volume_in input mgui.io.standard.nifti.NiftiVolumeLoader mgui.io.domestic.shapes.VolumeInputDialogBox mgui.io.domestic.shapes.VolumeInputOptions "Nifti volumes (*.hdr, *.nii, *.gz)" hdr nii gz
+loadIOType Nifti_volume_out output mgui.io.standard.nifti.NiftiVolumeWriter mgui.io.domestic.shapes.VolumeOutputDialogBox mgui.io.domestic.shapes.VolumeOutputOptions "Nifti volumes (*.hdr, *.nii, *.gz)" hdr nii gz

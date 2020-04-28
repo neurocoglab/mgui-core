@@ -63,7 +63,7 @@ public class CommandFunctions extends Utility{
 	
 	static String getOSPrefix(){
 		switch(InterfaceEnvironment.getOsType()){
-			case WindowsXP:
+			case Windows:
 				return "cmd.exe /C ";
 			case Linux:
 				return ""; ///bin/bash -c ";

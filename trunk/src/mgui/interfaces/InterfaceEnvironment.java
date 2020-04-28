@@ -156,7 +156,7 @@ public class InterfaceEnvironment implements Environment {
 	static boolean is_init = false;
 	
 	public static enum OsType{
-		WindowsXP,
+		Windows,
 		Linux,
 		Mac;
 	}
@@ -172,7 +172,7 @@ public class InterfaceEnvironment implements Environment {
 		String os = System.getProperty("os.name").toLowerCase();
 		
 		if (os.contains("win"))
-			OS = OsType.WindowsXP;
+			OS = OsType.Windows;
 		if (os.contains("nux"))
 			OS = OsType.Linux;
 		if (os.contains("mac"))
@@ -261,7 +261,7 @@ public class InterfaceEnvironment implements Environment {
 	public static void initOSType(){
 		String os_string = System.getProperty("os.name").toLowerCase();
 		if (os_string.contains("windows") && os_string.contains("xp"))
-			OS = OsType.WindowsXP;
+			OS = OsType.Windows;
 		if (os_string.contains("linux") || os_string.contains("unix"))
 			OS = OsType.Linux;
 	}
