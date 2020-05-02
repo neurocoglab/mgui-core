@@ -638,7 +638,7 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 			attributes.add(new Attribute("RotY", new MguiDouble(0)));
 			Color3f c = new Color3f();
 			source.getColor(c);
-			attributes.add(new Attribute("Colour", c));
+			attributes.add(new Attribute("Colour", Colours.getAwtColor(c)));
 			attributes.add(new Attribute("IsEnabled", new MguiBoolean(source.getEnable())));
 			attributes.addAttributeListener(this);
 		}

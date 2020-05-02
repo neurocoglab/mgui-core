@@ -64,7 +64,7 @@ public class SortedMesh {
 	}
 	
 	public static Mesh3D.MeshFace3D getSortedFace(Mesh3D.MeshFace3D face){
-		Mesh3D.MeshFace3D newFace = new Mesh3D().new MeshFace3D(face);
+		Mesh3D.MeshFace3D newFace = new Mesh3D.MeshFace3D(face);
 		
 		newFace.A = face.A;
 		newFace.B = face.B;
@@ -91,7 +91,7 @@ public class SortedMesh {
 		ArrayList<Face> sorted = new ArrayList<Face>(faces.size());
 		for (int i = 0; i < faces.size(); i++){
 			Mesh3D.MeshFace3D face = faces.get(i);
-			Mesh3D.MeshFace3D newFace = new Mesh3D().new MeshFace3D(face);
+			Mesh3D.MeshFace3D newFace = new Mesh3D.MeshFace3D(face);
 			
 			newFace.A = face.A;
 			newFace.B = face.B;

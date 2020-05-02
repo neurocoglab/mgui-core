@@ -121,7 +121,17 @@ public abstract class ShapeTreeNode extends InterfaceTreeNode implements ShapeLi
 				return;
 			
 			case ShapeSetModified:
+				if (!(e.getShape() instanceof ShapeSet)) return;
+				set = (ShapeSet)e.getShape();
+				ArrayList<InterfaceShape> members = set.getMembers();
+				for (InterfaceShape member : members) {
+					if (!this.hasShapeNode(member)) {
+						addChild(member.issueTreeNode());
+						}
+					}
+				
 				this.objectChanged();
+				
 				return;
 				
 			}
@@ -155,6 +165,8 @@ public abstract class ShapeTreeNode extends InterfaceTreeNode implements ShapeLi
 	}
 	
 	public abstract void removeShapeNode(InterfaceShape shape);
+	
+	public abstract boolean hasShapeNode(InterfaceShape shape);
 	
 	public InterfaceShape getShape(){
 		return (InterfaceShape)getUserObject();

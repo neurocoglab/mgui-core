@@ -37,8 +37,11 @@ import mgui.numbers.MguiInteger;
 public class NeighbourhoodMesh {
 
 	public ArrayList<Neighbourhood> neighbourhoods = new ArrayList<Neighbourhood>();
+	public Mesh3D mesh;
 	
 	public NeighbourhoodMesh(Mesh3D mesh){
+		
+		this.mesh = mesh;
 		
 		for (int i = 0; i < mesh.n; i++)
 			neighbourhoods.add(new Neighbourhood(i));
@@ -54,6 +57,10 @@ public class NeighbourhoodMesh {
 			}
 	}
 	
+	public int getSize() {
+		return mesh.getSize();
+	}
+	
 	public Neighbourhood getNeighbourhood(int i){
 		return neighbourhoods.get(i);
 	}
@@ -65,12 +72,12 @@ public class NeighbourhoodMesh {
 	 * @param i node for which to find a neighbourhood
 	 * @return Neighbourhood whose neighbour list forms a connected ring
 	 */
-	public ArrayList<MguiInteger> getNeighbourhoodRing(int i){
+	public ArrayList<Integer> getNeighbourhoodRing(int i){
 		int[] nbrs = getNeighbourhood(i).getNeighbourList();
 		
 		if (nbrs.length < 3) return null;
-		ArrayList<MguiInteger> c = new ArrayList<MguiInteger>(nbrs.length);
-		c.add(new MguiInteger(nbrs[0]));
+		ArrayList<Integer> c = new ArrayList<Integer>(nbrs.length);
+		c.add(new Integer(nbrs[0]));
 		
 		int current = 0, next = 1;
 		Neighbourhood neighbours;
@@ -81,7 +88,7 @@ public class NeighbourhoodMesh {
 		while (next < nbrs.length){
 			//neighbours = getNeighbourhood(nbrs[current]);
 			if (!passed[next] && neighbours.hasNeighbour(nbrs[next])){
-				c.add(new MguiInteger(nbrs[next]));
+				c.add(new Integer(nbrs[next]));
 				passed[next] = true;
 				current = next;
 				neighbours = getNeighbourhood(nbrs[current]);
@@ -92,8 +99,8 @@ public class NeighbourhoodMesh {
 			
 		if (c.size() == nbrs.length){
 			//is there a cycle?
-			neighbours = getNeighbourhood(c.get(0).getInt());
-			if (neighbours.hasNeighbour(c.get(c.size() - 1).getInt()))
+			neighbours = getNeighbourhood(c.get(0));
+			if (neighbours.hasNeighbour(c.get(c.size() - 1)))
 				return c;
 			}
 		

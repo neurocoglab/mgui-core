@@ -23,10 +23,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import org.jogamp.vecmath.Matrix4d;
 
-import foxtrot.Worker;
 import mgui.geometry.Mesh3D;
 import mgui.geometry.Plane3D;
 import mgui.geometry.Shape3D;
@@ -42,11 +46,11 @@ import mgui.interfaces.maps.NameMap;
 import mgui.interfaces.shapes.InterfaceShape;
 import mgui.interfaces.shapes.Mesh3DInt;
 import mgui.interfaces.shapes.SectionSet3DInt;
-import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.shapes.VertexDataColumn;
 import mgui.interfaces.shapes.Volume3DInt;
+import mgui.interfaces.shapes.util.ShapeEvent;
 import mgui.interfaces.util.Engine;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiDouble;
@@ -637,6 +641,137 @@ public class MeshEngine implements Engine {
 		
 		return MeshFunctions.mapVolumeToMeshEV(mesh, volume, (String)attr.getValue("input_column"), no_value, radius, stat, progress_bar);
 	}
+	
+	/**********************************
+	 * 
+	 * Creates new mesh objects as a set of non-contiguous meshes from {@code mesh_int}, and adds
+	 * these to {@code shape_set}.
+	 * 
+	 * @param mesh 				Mesh from which to obtain parts
+	 * @param new_shape_set		Shape set in which to store new mesh objects
+	 *
+	 */
+	public void getMeshParts(Mesh3DInt mesh_int,
+							 ShapeSet3DInt shape_set) {
+		
+		getMeshParts(mesh_int, shape_set, false, null);
+		
+	}
+							 
+	
+	/**********************************
+	 * 
+	 * Creates new mesh objects as a set of non-contiguous meshes from {@code mesh_int}, and adds
+	 * these to {@code shape_set}.
+	 * 
+	 * @param mesh 				Mesh from which to obtain parts
+	 * @param new_shape_set		Shape set in which to store new mesh objects
+	 * @param retain			Whether to retain the original mesh object
+	 * @param copy_data 		Whether to copy vertex data from the original mesh object
+	 */
+	public void getMeshParts(Mesh3DInt mesh_int,
+							 ShapeSet3DInt shape_set,
+							 boolean copy_data,
+							 ProgressUpdater progress) {
+		
+		SwingWorker<ArrayList<Object>,Object> worker = new SwingWorker<ArrayList<Object>,Object>(){
+
+			@Override
+			protected ArrayList<Object> doInBackground() throws Exception {
+				ArrayList<Object> results = new ArrayList<Object>();
+				
+				ArrayList<HashMap<String,ArrayList<MguiNumber>>> parts_data = null;
+				HashMap<String,ArrayList<MguiNumber>> mesh_data = null;
+				Mesh3D mesh = mesh_int.getMesh();
+				
+				if (copy_data) {
+					parts_data = new ArrayList<HashMap<String,ArrayList<MguiNumber>>>();
+					mesh_data = mesh_int.getVertexDataMap();
+					}
+				
+				ArrayList<Mesh3D> parts = MeshFunctions.getMeshParts(mesh, mesh_data, parts_data);
+				results.add(parts);
+				results.add(parts_data);
+				
+				return results;
+				
+			}
+			
+		};
+		
+		if (progress != null) {
+			progress.register();
+			}
+		
+		worker.execute();
+		
+		Thread wait_thread = new Thread() {
+			
+			@Override
+			public void run() {
+				
+				while(!worker.isDone()) {
+					try {
+						Thread.sleep(200);
+					}catch (Exception ex) {
+						
+						}
+					}
+				
+				// Add parts to shape set
+				try {
+					
+					ArrayList<Object> results = worker.get();
+					ArrayList<Mesh3D> parts = (ArrayList<Mesh3D>)results.get(0);
+					ArrayList<HashMap<String,ArrayList<MguiNumber>>> parts_data = (ArrayList<HashMap<String,ArrayList<MguiNumber>>>)results.get(0);
+					
+					int i = 0;
+					for (Mesh3D part : parts) {
+						String name = mesh_int.getName() + "_part_" + (i+1);
+						Mesh3DInt new_mesh = new Mesh3DInt(part);
+						new_mesh.setName(name);
+						shape_set.addShape(new_mesh, false);
+						
+						if (copy_data) {
+							new_mesh.setVertexDataMap(parts_data.get(i));
+							}
+						
+						i++;
+						}
+					
+					shape_set.shapeUpdated(new ShapeEvent(shape_set, ShapeEvent.EventType.ShapeSetModified, true));
+					
+					if (progress != null) {
+						progress.deregister();
+						}
+					
+					InterfaceSession.log("Added " + parts.size() + " meshes to '" + shape_set.getName() + "'.", LoggingType.Debug);
+					
+					SwingUtilities.invokeLater(new Thread() {
+						
+						public void run() {
+							JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
+									  "Added " + parts.size()  + " parts of " + mesh_int.getName(),
+									  "Get Mesh Parts",
+									  JOptionPane.INFORMATION_MESSAGE);
+						}
+						
+					});
+					
+				} catch (Exception ex) {
+					InterfaceSession.handleException(ex);
+					}
+				
+			}
+			
+			
+		};
+		
+		wait_thread.start();
+		
+		
+	}
+	
 	
 	/**********************************
 	 * 

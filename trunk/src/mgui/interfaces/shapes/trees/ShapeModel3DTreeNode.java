@@ -19,6 +19,8 @@
 
 package mgui.interfaces.shapes.trees;
 
+import java.util.ArrayList;
+
 import javax.swing.JTree;
 
 import mgui.interfaces.shapes.InterfaceShape;
@@ -104,10 +106,30 @@ public class ShapeModel3DTreeNode extends InterfaceTreeNode implements ShapeList
 				return;
 				
 			case ShapeSetModified:
+				
+				if (!(e.getShape() instanceof ShapeSet3DInt)) return;
+				ShapeSet3DInt set3d = (ShapeSet3DInt)e.getShape();
+				if (!this.hasShapeNode(set3d)) {
+					addChild(set3d.issueTreeNode());
+					}
+				
 				this.objectChanged();
 				return;
 				
 			}
+	}
+	
+	public boolean hasShapeNode(InterfaceShape shape) {
+		
+		//search children for shape and remove if found
+		for (int i = 0; i < children.size(); i++)
+			if (children.get(i) instanceof Shape3DTreeNode &&
+					((Shape3DTreeNode)children.get(i)).getUserObject().equals(shape)){
+				return true;
+				}
+		
+		return false;
+		
 	}
 	
 	public void removeShapeNode(InterfaceShape shape){

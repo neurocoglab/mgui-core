@@ -21,6 +21,7 @@ package mgui.interfaces.shapes.mesh;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import mgui.interfaces.AbstractInterfaceObject;
 
@@ -61,7 +62,7 @@ public class VertexSelection extends AbstractInterfaceObject {
 		selected_nodes.set(i, true);
 	}
 	
-	public void select(ArrayList<Integer> indices){
+	public void select(List<Integer> indices){
 		for (Integer i : indices)
 			selected_nodes.set(i, true);
 	}

@@ -28,17 +28,25 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import org.jogamp.java3d.IndexedTriangleArray;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+
+import org.jogamp.java3d.IndexedTriangleArray;
+import org.jogamp.java3d.utils.geometry.GeometryInfo;
+import org.jogamp.java3d.utils.geometry.NormalGenerator;
 import org.jogamp.vecmath.Matrix4d;
 import org.jogamp.vecmath.Point3f;
 import org.jogamp.vecmath.Vector3f;
 
+import Jama.Matrix;
+import foxtrot.Job;
+import foxtrot.Worker;
 import mgui.geometry.Box3D;
 import mgui.geometry.Grid3D;
 import mgui.geometry.Mesh3D;
@@ -65,13 +73,6 @@ import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiInteger;
 import mgui.numbers.MguiNumber;
 import mgui.stats.StatFunctions;
-import Jama.Matrix;
-
-import org.jogamp.java3d.utils.geometry.GeometryInfo;
-import org.jogamp.java3d.utils.geometry.NormalGenerator;
-
-import foxtrot.Job;
-import foxtrot.Worker;
 
 /************************
  * Utility class containing static methods that perform some operation upon Mesh3D
@@ -85,6 +86,8 @@ import foxtrot.Worker;
  * with no updater which calls the first with a <code>null</code> updater (thus allowing
  * stand-alone calls to blocking methods).
  * 
+ * TODO: Remove all calls to {@code Worker} in this class. All functions should block.
+ * 
  * @author Andrew Reid
  * @version 1.0
  * @since 1.0
@@ -93,6 +96,8 @@ import foxtrot.Worker;
  *
  */
 public class MeshFunctions extends Utility {
+	
+	public static double tolerance = 10e-8;
 
 	public static JProgressBar progressBar;
 		
@@ -192,12 +197,39 @@ public class MeshFunctions extends Utility {
 		
 	}
 	
+	/***********************************
+	 * 
+	 * Returns a sub-mesh of {@code mesh_old} containing all vertices and associated faces
+	 * in {@code selection}.
+	 * 
+	 * @param mesh_old 			Mesh from which to obtain sub-mesh
+	 * @param selection			Selected vertices for sub-mesh
+	 * @param retain			Whether to retain the selection (otherwise it is removed)
+	 * 
+	 * @return Newly created sub-mesh
+	 */
 	public static Mesh3D getSubMesh(Mesh3D mesh_old, 
 									VertexSelection selection,
 									boolean retain){
 		return getSubMesh(mesh_old, selection, retain, false, null, null);
 	}
 	
+	/***********************************
+	 * 
+	 * Returns a sub-mesh of {@code mesh_old} containing all vertices and associated faces
+	 * in {@code selection}.
+	 * 
+	 * @param mesh_old 			Mesh from which to obtain sub-mesh
+	 * @param selection			Selected vertices for sub-mesh
+	 * @param retain			Whether to retain the selection (otherwise it is removed)
+	 * @param any_in_face 		Include faces with any vertices in selection? Otherwise, requires
+	 * 							all vertices to be in the selection.
+	 * @param data_old			Data from {@code mesh_old} to transfer to {@code mesh_new} (can be {@code null})
+	 * @param data_new 			New data for the sub-mesh; this should be a reference to an empty
+	 * 							{@code HashMap}
+	 * 
+	 * @return Newly created sub-mesh
+	 */
 	public static Mesh3D getSubMesh(Mesh3D mesh_old, 
 									VertexSelection selection,
 									boolean retain,
@@ -1196,6 +1228,7 @@ public class MeshFunctions extends Utility {
 	}
 	
 	/**************************************************
+	 * 
 	 * Returns a list of nodes which form the boundary of all regions defined by <code>value</code>, specified
 	 * by the vertex-wise list <code>values</code>.
 	 * 
@@ -1575,29 +1608,63 @@ public class MeshFunctions extends Utility {
 		return dups;
 	}
 	
+	/***************************
+	 * Removes all duplicate vertices from {@code mesh}, and changes {@code mesh} in place.
+	 * <p>Duplicates are determined as {@code pt1.distance(pt2) < MeshFunctions.tolerance}.
+	 * 
+	 * @param mesh
+	 * @return {@code true} if successful
+	 */
 	public static boolean removeDuplicateNodes(Mesh3D mesh){
 		
-		ArrayList<Boolean> dups = getDuplicateNodes(mesh);
+		SortedMesh s_mesh = new SortedMesh(mesh);
 		
+		int i = 0;
+		int l = 0;
+		HashMap<Integer,Integer> index_map = new HashMap<Integer,Integer>();
 		Mesh3D new_mesh = new Mesh3D();
-		HashMap<Integer, Integer> index_map = new HashMap<Integer, Integer>();
+		boolean[] is_dup = new boolean[mesh.n];
 		
-		int j = 0;
-		for (int i = 0; i < dups.size(); i++)
-			if (!dups.get(i).booleanValue()){
-				new_mesh.addVertex(mesh.getVertex(i));
-				index_map.put(i, j++);
+		// Identify duplicates
+		while (i < s_mesh.sorted_nodes.size()) {
+			if (!is_dup[i]) {
+				int j = 1;
+				ArrayList<Integer> dups = new ArrayList<Integer>();
+				while (i+j < s_mesh.sorted_nodes.size() &&
+						mesh.getVertex(s_mesh.sorted_nodes.get(i))
+							.distance(mesh.getVertex(s_mesh.sorted_nodes.get(i+j))) < MeshFunctions.tolerance) {
+					dups.add(s_mesh.sorted_nodes.get(i+j));
+					is_dup[i+j] = true;
+					j++;
+					}
+				
+				if (dups.size() > 0) {
+					for (Integer k : dups) {
+						index_map.put(k, l);
+						}
+					}
+				index_map.put(s_mesh.sorted_nodes.get(i), l);
+				new_mesh.addVertex(mesh.getVertex(s_mesh.sorted_nodes.get(i)));
+				l++;
 				}
-		
-		for (int i = 0; i < mesh.f; i++){
-			Mesh3D.MeshFace3D face = mesh.getFace(i);
-			if (!(dups.get(face.A) ||
-				  dups.get(face.B) ||
-				  dups.get(face.C)))
-				new_mesh.addFace(index_map.get(face.A),
-								 index_map.get(face.B),
-								 index_map.get(face.C));
+			i++;
 			}
+		
+		ArrayList<MeshFace3D> faces = new ArrayList<MeshFace3D>();
+		
+		for (i = 0; i < mesh.f; i++){
+			Mesh3D.MeshFace3D face = mesh.getFace(i);
+			Mesh3D.MeshFace3D new_face = new Mesh3D.MeshFace3D(index_map.get(face.A),
+															   index_map.get(face.B),
+															   index_map.get(face.C));
+			
+			int idx = Collections.binarySearch(faces, new_face);
+			if (idx < 0) {
+				faces.add(-idx-1,new_face);
+				}
+			}
+		
+		new_mesh.addFaces(faces);
 		
 		mesh.setFromMesh(new_mesh);
 			
@@ -1608,18 +1675,21 @@ public class MeshFunctions extends Utility {
 	 * Returns an array of booleans where true indicates a duplicate node
 	 * @return
 	 */
-	public static ArrayList<Boolean> getDuplicateNodes(Mesh3D mesh){
+	public static List<Integer> getDuplicateNodes(Mesh3D mesh){
 		SortedMesh s_mesh = new SortedMesh(mesh);
-		ArrayList<Boolean> dups = new ArrayList<Boolean> (mesh.n);
-		NodeComparator c = new NodeComparator();
-		dups.add(new Boolean(false));
 		
-		for (int i = 0; i < mesh.n - 1; i++){
-			dups.add(c.compare(mesh.getVertex(s_mesh.sorted_nodes.get(i)), 
-					   		   mesh.getVertex(s_mesh.sorted_nodes.get(i + 1))) == 0);
+		int i = 0;
+		TreeSet<Integer> dup_nodes = new TreeSet<Integer>();
+		
+		while (i < s_mesh.sorted_nodes.size()) {
+			if (mesh.getVertex(s_mesh.sorted_nodes.get(i))
+					.equals(mesh.getVertex(s_mesh.sorted_nodes.get(i+1)))) {
+				dup_nodes.add(s_mesh.sorted_nodes.get(i));
+				dup_nodes.add(s_mesh.sorted_nodes.get(i+1));
+				}
 			}
 		
-		return dups;
+		return new ArrayList<Integer>(dup_nodes);
 	}
 	
 	static class NodeComparator implements Comparator<Point3f>{
@@ -1985,7 +2055,7 @@ public class MeshFunctions extends Utility {
 		
 		//reindex and populate faces list
 		for (int i = 0; i < mesh.f; i++){
-			thisFace = newmesh.new MeshFace3D(mesh.getFace(i));
+			thisFace = new MeshFace3D(mesh.getFace(i));
 			thisFace.A = indexedNodes.get(thisFace.A).finalindex;
 			thisFace.B = indexedNodes.get(thisFace.B).finalindex;
 			thisFace.C = indexedNodes.get(thisFace.C).finalindex;
@@ -2020,6 +2090,19 @@ public class MeshFunctions extends Utility {
 		
 	}
 	
+	/**********
+	 * 
+	 * Inflate this mesh using the TRP method.
+	 * 
+	 * TODO: Remove worker here
+	 * 
+	 * @param mesh3D
+	 * @param lambda
+	 * @param beta
+	 * @param max_itr
+	 * @param progress
+	 * @return
+	 */
 	public static Mesh3D inflateMeshTRP(final Mesh3DInt mesh3D, final double lambda, final double beta, 
 										final long max_itr, final ProgressUpdater progress){
 		
@@ -2037,23 +2120,183 @@ public class MeshFunctions extends Utility {
 			
 			}
 	}
-
+	
+	public static ArrayList<Mesh3D> getMeshParts(Mesh3D mesh){
+		return getMeshParts(mesh, null, null, null);
+	}
+	
+	public static ArrayList<Mesh3D> getMeshParts(Mesh3D mesh,
+	 		 HashMap<String,ArrayList<MguiNumber>> old_data,
+	 		 ArrayList<HashMap<String,ArrayList<MguiNumber>>> parts_data){
+		
+		return getMeshParts(mesh, old_data, parts_data, null);
+		
+	}
+	
+	/*****************************
+	 * 
+	 * Returns a set of non-contiguous meshes from {@code mesh}. If mesh is a single contiguous 
+	 * surface, this method will return only that surface.
+	 * 
+	 * @param mesh 			Mesh from which to extract parts
+	 * @param old_data		Vertex data to be transferred to the new meshes
+	 * @param new_data 		Vertex data transferred to the new meshes. Should be an empty object.
+	 * 
+	 * @return 			List of created mesh parts 
+	 * 
+	 */
+	public static ArrayList<Mesh3D> getMeshParts(Mesh3D mesh,
+												 HashMap<String,ArrayList<MguiNumber>> old_data,
+												 ArrayList<HashMap<String,ArrayList<MguiNumber>>> parts_data,
+												 ProgressUpdater updater){
+		
+		ArrayList<Mesh3D> parts = new ArrayList<Mesh3D>();
+		ArrayList<Boolean> is_added = new ArrayList<Boolean>(Collections.nCopies(mesh.n, false));
+		
+		mesh = (Mesh3D)mesh.clone();
+		removeDuplicateNodes(mesh); // Required to properly instantiate neighbourhood mesh
+		
+		NeighbourhoodMesh n_mesh = new NeighbourhoodMesh(mesh);
+		
+		if (updater != null) {
+			updater.setMaximum(mesh.n);
+			}
+		
+		// Start at first node, search neighbours until there are none
+		int i = 0;
+		
+		while (i < mesh.n) {
+			
+			if (updater != null) {
+				updater.update(i);
+				}
+			
+			List<Integer> vertices = new ArrayList<Integer>(getAllNeighbours(n_mesh, i, Integer.MAX_VALUE));
+			VertexSelection selection = new VertexSelection(mesh.n);
+			selection.select(vertices);
+			
+			HashMap<String,ArrayList<MguiNumber>> new_data = null;
+			if (old_data != null) {
+				new_data = new HashMap<String,ArrayList<MguiNumber>>();
+				parts_data.add(new_data);
+				}
+			
+			parts.add(getSubMesh(mesh,
+								 selection,
+								 true,
+								 false,
+								 old_data,
+								 new_data
+								 ));
+			
+			for (Integer j : vertices) {
+				is_added.set(j, true);
+				}
+			
+			int j = i;
+			while (j <= mesh.n) {
+				if (j==mesh.n || !is_added.get(j)) {
+					i = j;
+					break;
+					}
+				j++;
+				}
+			
+			}
+		
+		int k = 0;
+		for (Mesh3D part : parts) {
+			System.out.println("Mesh " + k + ": ");
+			System.out.println("\tNodes: " + part.n);
+			System.out.println("\tFaces: " + part.f);
+			int[] copy = Arrays.copyOf(part.faces, part.faces.length);
+			Arrays.sort(copy);
+			System.out.println("\tMin/max index: " + copy[0] + ", " + copy[copy.length-1]);
+			}
+		
+		return parts;
+		
+	}
+	
+	// Recursively add neighbours until there are no more, up until max_depth
+//	private static Set<Integer> getAllNeighbours(NeighbourhoodMesh n_mesh, int i, int max_depth) {
+//		ArrayList<Boolean> is_processed = new ArrayList<Boolean>(Collections.nCopies(n_mesh.getSize(), false));
+//		return getAllNeighbours(new TreeSet<Integer>(), is_processed, n_mesh, i, max_depth, 0);
+//	}
+//	
+//	// Recursively add neighbours until there are no more, up until max_depth
+//	private static Set<Integer> getAllNeighbours(Set<Integer> nbrs, List<Boolean> is_processed, NeighbourhoodMesh n_mesh, int i, int max_depth, int this_depth) {
+//		
+//		if (this_depth >= max_depth) return nbrs;
+//		
+//		nbrs.add(i);
+//		is_processed.set(i, true);
+//		Neighbourhood hood = n_mesh.getNeighbourhood(i);
+//		//nbrs.addAll(hood.neighbours);
+//		
+//		for (Integer n : hood.neighbours) {
+//			if (!is_processed.get(n)) {
+//				nbrs = getAllNeighbours(nbrs, is_processed, n_mesh, n, max_depth, this_depth+1);
+//				}
+//			}
+//		
+//		return nbrs;
+//	}
+	
+	
+	private static Set<Integer> getAllNeighbours(NeighbourhoodMesh n_mesh, int i, int max_depth) {
+		
+		Set<Integer> nbr_set = new TreeSet<Integer>();
+		List<Boolean> is_processed = new ArrayList<Boolean>(Collections.nCopies(n_mesh.getSize(), false));
+		
+		nbr_set.add(i);
+		is_processed.set(i, true);
+		Neighbourhood hood = n_mesh.getNeighbourhood(i);
+		if (hood.neighbours.isEmpty()) return nbr_set;
+		
+		nbr_set.addAll(hood.neighbours);
+		
+		Stack<Integer> new_nbrs = new Stack<Integer>();
+		new_nbrs.addAll(hood.neighbours);
+		
+		int d = 0;
+		
+		do {
+			int j = new_nbrs.pop();
+			hood = n_mesh.getNeighbourhood(j);
+			
+			for (Integer k : hood.neighbours) {
+				if (!is_processed.get(k)) {
+					nbr_set.add(k);
+					new_nbrs.push(k);
+					is_processed.set(k, true);
+					}
+				}
+			d++;
+			} 
+		while (d < max_depth && !new_nbrs.isEmpty());
+		
+		return nbr_set;
+		
+	}
+		
 	
 	/**********************************
 	 * Returns a submesh defined by the connect ring <code>ring</code>.
 	 * Triangulation is performed by connecting n to n + 2, to n - 1, to n + 3, etc.
+	 * 
 	 * @return optimal submesh
 	 */
-	public static Mesh3D getSubmesh(Mesh3D mesh, ArrayList<MguiInteger> ring){
+	public static Mesh3D getSubMesh(Mesh3D mesh, ArrayList<Integer> ring){
 		
 		if (ring.size() < 3) return null;
 		
 		//trivial case
 		if (ring.size() == 3){
 			Mesh3D mesh2 = new Mesh3D();
-			mesh2.addVertex(mesh.getVertex(ring.get(0).getInt()));
-			mesh2.addVertex(mesh.getVertex(ring.get(1).getInt()));
-			mesh2.addVertex(mesh.getVertex(ring.get(2).getInt()));
+			mesh2.addVertex(mesh.getVertex(ring.get(0)));
+			mesh2.addVertex(mesh.getVertex(ring.get(1)));
+			mesh2.addVertex(mesh.getVertex(ring.get(2)));
 			mesh2.addFace(0, 1, 2);
 			return mesh2;
 		}
@@ -2065,7 +2308,7 @@ public class MeshFunctions extends Utility {
 		
 		//add nodes
 		for (int m = 0; m < ring.size(); m++)
-			new_mesh.addVertex(mesh.getVertex(ring.get(i).getInt()));
+			new_mesh.addVertex(mesh.getVertex(ring.get(i)));
 		
 		//first face
 		new_mesh.addFace(i, j, k);
@@ -3421,22 +3664,22 @@ public class MeshFunctions extends Utility {
 			double sigma_t = sigma_tangent;
 			if (setSigmaT.equals("From mean area")){
 				//for each neighbour pair, get area
-				ArrayList<MguiInteger> ring = n_mesh.getNeighbourhoodRing(m);
+				ArrayList<Integer> ring = n_mesh.getNeighbourhoodRing(m);
 				if (ring == null){
 					//in this case we have an edge vertex; handle differently..
 					InterfaceSession.log("Edge node.. setting sigma_t to parameter..", LoggingType.Debug);
 					
 				}else{
 					double area = 0;
-					Point3f n0 = mesh.getVertex(ring.get(0).getInt());
+					Point3f n0 = mesh.getVertex(ring.get(0));
 					for (int l = 1; l < ring.size(); l++){
-						Point3f n1 = mesh.getVertex(ring.get(l).getInt());
+						Point3f n1 = mesh.getVertex(ring.get(l));
 						area += GeometryFunctions.getArea(node, n0, n1);
 						n0 = n1;
 						}
 					//include last face
-					n0 = mesh.getVertex(ring.get(ring.size() - 1).getInt());
-					Point3f n1 = mesh.getVertex(ring.get(0).getInt());
+					n0 = mesh.getVertex(ring.get(ring.size() - 1));
+					Point3f n1 = mesh.getVertex(ring.get(0));
 					area += GeometryFunctions.getArea(node, n0, n1);
 					sigma_t = Math.sqrt(area / (ring.size() * Math.PI));
 					}
@@ -4127,6 +4370,14 @@ public class MeshFunctions extends Utility {
 		return voxels;
 	}
 	
+	/**********************
+	 * 
+	 * Gets a submesh from {@code mesh} consisting of the neighbourhood of vertex {@code i}. 
+	 * 
+	 * @param mesh
+	 * @param i
+	 * @return
+	 */
 	public static Mesh3D getNeighbourhoodSubmesh(Mesh3D mesh, int i){
 		
 		NeighbourhoodMesh n_mesh = new NeighbourhoodMesh(mesh);
@@ -4860,8 +5111,8 @@ public class MeshFunctions extends Utility {
 											//add two new faces to replace adjacent face
 											//[V_add    V_adj    V_opp ]
 											//[V_opp    V_adj    V_keep]
-											add_faces.add(this_mesh.new MeshFace3D(add_index + added_node_count, adj_idx, opps[e]));
-											add_faces.add(this_mesh.new MeshFace3D(opps[e], adj_idx, keep));
+											add_faces.add(new MeshFace3D(add_index + added_node_count, adj_idx, opps[e]));
+											add_faces.add(new MeshFace3D(opps[e], adj_idx, keep));
 											
 											}
 										}
@@ -5135,7 +5386,7 @@ public class MeshFunctions extends Utility {
 										}
 									}
 								
-								add_faces.add(this_mesh.new MeshFace3D(mid_idx[1], keep, mid_idx[0]));
+								add_faces.add(new MeshFace3D(mid_idx[1], keep, mid_idx[0]));
 								add_index += added_node_count;		//keep track of added nodes
 								
 							//Case 2: if one vertex is on the opposite side of the plane:
@@ -5229,12 +5480,12 @@ public class MeshFunctions extends Utility {
 								//[ V_add2    V_add3    V_keep2 ]
 								//[ V_keep1   V_adj     V_add3  ]
 								//[ V_add3    V_adj     V_keep2 ]
-								add_faces.add(this_mesh.new MeshFace3D(add1_idx, keep1, add3_idx));
-								add_faces.add(this_mesh.new MeshFace3D(add1_idx, add3_idx, add2_idx));
-								add_faces.add(this_mesh.new MeshFace3D(add2_idx, add3_idx, keep2));
+								add_faces.add(new MeshFace3D(add1_idx, keep1, add3_idx));
+								add_faces.add(new MeshFace3D(add1_idx, add3_idx, add2_idx));
+								add_faces.add(new MeshFace3D(add2_idx, add3_idx, keep2));
 								if (adj_idx != null){
-									add_faces.add(this_mesh.new MeshFace3D(keep1, adj_idx, add3_idx));
-									add_faces.add(this_mesh.new MeshFace3D(add3_idx, adj_idx, keep2));
+									add_faces.add(new MeshFace3D(keep1, adj_idx, add3_idx));
+									add_faces.add(new MeshFace3D(add3_idx, adj_idx, keep2));
 									if (keep1 == adj_idx || adj_idx == add3_idx || keep1 == add3_idx)
 										throw new MeshFunctionException("MeshFunctions.cutMeshWithPlane: illegal face added [" + 
 																		keep1 + ", " + adj_idx + ", " + add3_idx + "]!");
@@ -5840,6 +6091,11 @@ public class MeshFunctions extends Utility {
 //			InterfaceSession.log("MeshFunctions.getIsosurfaceFromVolume: Mesh may not be valid.", 
 //					LoggingType.Warnings);
 //			}
+		
+		if (!removeDuplicateNodes(isomesh)) {
+			InterfaceSession.log("MeshFunctions.getIsosurfaceFromVolume: Could not remove duplicate vertices.", 
+					LoggingType.Warnings);
+			}
 		
 		return isomesh;
 		

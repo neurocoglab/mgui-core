@@ -46,6 +46,7 @@ import org.jogamp.java3d.ColoringAttributes;
 import org.jogamp.java3d.Geometry;
 import org.jogamp.java3d.GeometryUpdater;
 import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Locale;
 import org.jogamp.java3d.Material;
 import org.jogamp.java3d.Node;
 import org.jogamp.java3d.PolygonAttributes;
@@ -282,6 +283,25 @@ public abstract class Shape3DInt extends InterfaceShape
 		
 		float value = (float)getDatumAtVertex(column, i).getValue();
 		return (float)Math.pow(general_scale * value, exp_scale);
+	}
+	
+	/*******************************
+	 * 
+	 * Returns the vertex at index {@code i}.
+	 * 
+	 * @param i
+	 * @return
+	 */
+	public Point3f getVertex(int i) {
+		if (shape3d == null) 
+			return null;
+		return shape3d.getVertex(i);
+	}
+	
+	public ArrayList<Point3f> getVertices(){
+		if (shape3d == null) 
+			return null;
+		return shape3d.getVertices();
 	}
 	
 	@Override
@@ -900,7 +920,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	 * <p>TODO: reconsider the access modifier of this method; probably doesn't need to be public
 	 * 
 	 */
-	public void setBoundBoxNode(){
+	protected void setBoundBoxNode(){
 		if (scene3DObject == null){
 			setScene3DObject();
 			return;
@@ -936,51 +956,8 @@ public abstract class Shape3DInt extends InterfaceShape
 			}
 		
 		if (boundBox == null) return;
-		
-		//points
-//		ArrayList<Point3f> points = boundBox.getVertices();
-//		Point3f[] coords = new Point3f[4];
-		
+	
 		QuadArray quads = (new Box3DInt(boundBox)).getFaces();
-		
-		//faces (6 of them)
-//		QuadArray quads = new QuadArray(24, GeometryArray.COORDINATES);
-//		//F1
-//		coords[0] = points.get(0);
-//		coords[1] = points.get(1);
-//		coords[2] = points.get(2);
-//		coords[3] = points.get(3);
-//		quads.setCoordinates(0 * 4, coords);
-//		//F2
-//		coords[0] = points.get(0);
-//		coords[1] = points.get(4);
-//		coords[2] = points.get(5);
-//		coords[3] = points.get(1);
-//		quads.setCoordinates(1 * 4, coords);
-//		//F3
-//		coords[0] = points.get(5);
-//		coords[1] = points.get(4);
-//		coords[2] = points.get(7);
-//		coords[3] = points.get(6);
-//		quads.setCoordinates(2 * 4, coords);
-//		//F4
-//		coords[0] = points.get(2);
-//		coords[1] = points.get(6);
-//		coords[2] = points.get(7);
-//		coords[3] = points.get(3);
-//		quads.setCoordinates(3 * 4, coords);
-//		//F5
-//		coords[0] = points.get(0);
-//		coords[1] = points.get(3);
-//		coords[2] = points.get(7);
-//		coords[3] = points.get(4);
-//		quads.setCoordinates(4 * 4, coords);
-//		//F6
-//		coords[0] = points.get(1);
-//		coords[1] = points.get(5);
-//		coords[2] = points.get(6);
-//		coords[3] = points.get(2);
-//		quads.setCoordinates(5 * 4, coords);
 		
 		//set up nodes
 		if (bounds_shape == null){
@@ -1023,9 +1000,19 @@ public abstract class Shape3DInt extends InterfaceShape
 		return modified_attribute;
 	}
 	
+	/***************************
+	 * 
+	 * Return's this shape's bounding box node. If it hasn't yet been set, this method
+	 * will set the bounding box node first.
+	 * 
+	 * @return boundBoxNode - 	A {@linkplain BranchGroup} that can be attached to a Java3D
+	 * 							scene for rendering
+	 */
 	public BranchGroup getBoundBoxNode(){
 		
-		if (boundBoxNode == null) setBoundBoxNode();
+		if (boundBoxNode == null) 
+			setBoundBoxNode();
+		
 		return boundBoxNode;
 		
 	}
@@ -1100,27 +1087,23 @@ public abstract class Shape3DInt extends InterfaceShape
 		//reactivateClips();
 	}
 	
+	/*****************************
+	 * 
+	 * Sets the scene node for this shape, either by creating a new node or setting the
+	 * current shape node to an existing scene node. 
+	 * 
+	 * <p>The scene node can be attached to a Java3D {@linkplain org.jogamp.java3d.Locale} object 
+	 * for rendering.
+	 * 
+	 */
 	public void setShapeSceneNode(){
-		//if (getModel() == null || !getModel().isLive3D())
-		//deactivateClips();
-		if (sceneNode == null)
+
+		if (sceneNode == null) {
 			sceneNode = new Shape3DSceneNode(this, null); //, parent2D);
-		else{
+		}else{
 			sceneNode.setNode(this);
 			}
-		//reactivateClips();
-	}
-	
-	public ArrayList<Point3f> getVertices(){
-		if (shape3d != null)
-			return shape3d.getVertices();
-		return null;
-	}
-	
-	public Point3f getVertex(int index){
-		if (shape3d != null)
-			return shape3d.getVertex(index);
-		return null;
+		
 	}
 	
 	/******************************

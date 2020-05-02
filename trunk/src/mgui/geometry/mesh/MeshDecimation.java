@@ -338,17 +338,17 @@ public class MeshDecimation extends Utility {
 		InterfaceSession.log("Retriangulating.");
 		for (int i = 0; i < remove.size(); i++)
 			if (remove.get(i).getTrue()){
-				ArrayList<MguiInteger> n = n_mesh.getNeighbourhoodRing(i);
+				ArrayList<Integer> n = n_mesh.getNeighbourhoodRing(i);
 				
 				if (n != null){
-					Mesh3D patch = MeshFunctions.getSubmesh(mesh, n);
+					Mesh3D patch = MeshFunctions.getSubMesh(mesh, n);
 					
 					//add faces in patch
 					for (int k = 0; k < patch.f; k++){
 						Mesh3D.MeshFace3D face = patch.getFace(k);
-						new_mesh.addFace(list.get(n.get(face.A).getInt()),
-										 list.get(n.get(face.B).getInt()),
-										 list.get(n.get(face.C).getInt()));
+						new_mesh.addFace(list.get(n.get(face.A)),
+										 list.get(n.get(face.B)),
+										 list.get(n.get(face.C)));
 						}
 					}
 				}

@@ -108,7 +108,7 @@ public class ConvexHullFunctions extends Utility {
 		for (int i = 0; i < tris.size(); i++){
 			if (tris.elementAt(i) instanceof Triangle3d){
 				Triangle3d tri = (Triangle3d)tris.elementAt(i);
-				Mesh3D.MeshFace3D face = hull.new MeshFace3D();
+				Mesh3D.MeshFace3D face = new Mesh3D.MeshFace3D();
 				
 				Point3d[] pts = tri.tri;
 				

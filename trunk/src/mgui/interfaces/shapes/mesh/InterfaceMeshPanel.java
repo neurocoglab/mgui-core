@@ -161,6 +161,13 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 	JCheckBox chkSubmeshData = new JCheckBox("Copy vertex data");
 	JButton cmdSubmesh = new JButton("Apply");
 	
+	CategoryTitle lblMeshParts = new CategoryTitle("MESH PARTS");
+	
+	JCheckBox chkMeshPartsShapeSet = new JCheckBox("Create new shape set:");
+	JTextField txtMeshPartsShapeSet = new JTextField("-");
+	JCheckBox chkMeshPartsData = new JCheckBox("Copy vertex data");
+	JButton cmdMeshParts = new JButton("Apply");
+	
 	CategoryTitle lblVolume = new CategoryTitle("VOLUME TO MESH");
 	JLabel lblVolumeSource = new JLabel("Source Volume");
 	InterfaceComboBox cmbVolumeSource = new InterfaceComboBox(RenderMode.LongestItem, true, 200);
@@ -280,6 +287,7 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 		lblSmoothing.setHorizontalAlignment(JLabel.CENTER);
 		lblDecimation.setHorizontalAlignment(JLabel.CENTER);
 		lblSubmesh.setHorizontalAlignment(JLabel.CENTER);
+		lblMeshParts.setHorizontalAlignment(JLabel.CENTER);
 	
 		cmdSubdivide.setActionCommand(CMD_SUBDIVIDE);
 		cmdSubdivide.addActionListener(this);
@@ -298,6 +306,9 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 		
 		cmdSubmesh.setActionCommand("Submesh Apply");
 		cmdSubmesh.addActionListener(this);
+		
+		cmdMeshParts.setActionCommand("Mesh Parts Apply");
+		cmdMeshParts.addActionListener(this);
 		
 		cmdVolume.setActionCommand("Volume To Mesh");
 		cmdVolume.addActionListener(this);
@@ -371,6 +382,10 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 		txtSubmeshCreate.setEnabled(false);
 		chkSubmeshCreate.setActionCommand("Submesh Create");
 		chkSubmeshCreate.addActionListener(this);
+		
+		txtMeshPartsShapeSet.setEnabled(false);
+		chkMeshPartsShapeSet.setActionCommand("Mesh Parts ShapeSet");
+		chkMeshPartsShapeSet.addActionListener(this);
 		
 		cmbCurvatureMethod.addItem("Compute Mean Curvature");
 		cmdCurvature.setActionCommand("Curvature Apply");
@@ -513,6 +528,19 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 		add(chkSubmeshData, c);
 		c = new CategoryLayoutConstraints("SUBMESH", 10, 10, 0.1, 0.8, 1);
 		add(cmdSubmesh, c);
+		
+		c = new CategoryLayoutConstraints();
+		lblMeshParts.isExpanded = false;
+		lblMeshParts.setParentObj(this);
+		add(lblMeshParts, c);
+		c = new CategoryLayoutConstraints("MESH PARTS", 1, 1, 0.05, 0.9, 1);
+		add(chkMeshPartsShapeSet, c);
+		c = new CategoryLayoutConstraints("MESH PARTS", 2, 2, 0.05, 0.9, 1);
+		add(txtMeshPartsShapeSet, c);
+		c = new CategoryLayoutConstraints("MESH PARTS", 3, 3, 0.05, 0.9, 1);
+		add(chkMeshPartsData, c);
+		c = new CategoryLayoutConstraints("MESH PARTS", 4, 4, 0.05, 0.9, 1);
+		add(cmdMeshParts, c);
 		
 		c = new CategoryLayoutConstraints();
 		lblVolume.isExpanded = false;
@@ -1255,6 +1283,47 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 				}
 			
 		}
+		
+		if (e.getActionCommand().startsWith("Mesh Parts")){
+			
+			if (e.getActionCommand().endsWith("ShapeSet")) {
+				
+				txtMeshPartsShapeSet.setEnabled(chkMeshPartsShapeSet.isSelected());
+				return;
+				
+			}
+			
+			
+			if (e.getActionCommand().endsWith("Apply")) {
+				
+				if (chkMeshPartsShapeSet.isSelected()) {
+					String txt = txtMeshPartsShapeSet.getText();
+					if (txt == null || txt.length() == 0 || txt.equals("-")) {
+						JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
+													  "Invalid name for new shape set!", 
+													  "Get Mesh Parts", 
+													  JOptionPane.ERROR_MESSAGE);
+						return;
+						}
+					}
+			
+				// Create new Shape Set
+				ShapeSet3DInt shape_set = InterfaceSession.getDisplayPanel().getCurrentShapeSet();
+				
+				if (chkMeshPartsShapeSet.isSelected()) {
+					ShapeSet3DInt new_set = new ShapeSet3DInt(txtMeshPartsShapeSet.getText());
+					shape_set.addShape(new_set, true);
+					shape_set = new_set;
+					}
+					
+				InterfaceProgressBar progress_bar = new InterfaceProgressBar(" Getting mesh parts for '" + 
+																			 currentMesh.getName() + "': ");
+	
+				meshEngine.getMeshParts(currentMesh, shape_set, chkMeshPartsData.isSelected(), progress_bar);
+				
+				return;
+				}
+			}
 		
 		if (e.getActionCommand().equals("Decimate Options")){
 			updateParameters();

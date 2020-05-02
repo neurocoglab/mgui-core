@@ -83,6 +83,20 @@ public class Shape3DTreeNode extends ShapeTreeNode implements ShapeListener{
 	}
 	
 	@Override
+	public boolean hasShapeNode(InterfaceShape shape) {
+		
+		//search children for shape and remove if found
+		for (int i = 0; i < children.size(); i++)
+			if (children.get(i) instanceof Shape3DTreeNode &&
+					((Shape3DTreeNode)children.get(i)).getUserObject().equals(shape)){
+				return true;
+				}
+		
+		return false;
+		
+	}
+	
+	@Override
 	public Object clone(){
 		return new Shape3DTreeNode(getUserObject());
 	}

@@ -28,18 +28,20 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
+
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
+import javax.swing.TransferHandler.TransferSupport;
 
 import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.Group;
 import org.jogamp.java3d.ModelClip;
 import org.jogamp.java3d.Node;
 import org.jogamp.java3d.SharedGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
-import javax.swing.TransferHandler.TransferSupport;
 import org.jogamp.vecmath.Matrix4d;
 import org.jogamp.vecmath.Point2f;
 import org.jogamp.vecmath.Point3f;
@@ -738,6 +740,30 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		return addShape(shape, -1, updateShape, updateListeners);
 	}
 	
+	protected String validateName(String name) {
+		return validateName(name, name, 1);
+	}
+	
+	/*******
+	 * 
+	 * Returns a name that doesn't conflict with existing member names, by adding an integer to
+	 * the end.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	protected String validateName(String name, String base, int i) {
+		
+		for (Shape3DInt member : members) {
+			if (member.getName().equals(name)) {
+				return validateName(base + "_" + i, base, i+1);
+				}
+			}
+		
+		return name;
+		
+	}
+	
 	/****************************************************
 	 * Adds <code>shape</code> to this shape set. If <code>updateShape</code> is <code>true</code>, performs updates on the
 	 * shape, sets this set as its parent set and registers itself as a shape listener on <code>shape</code>, registers 
@@ -757,7 +783,10 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		
 		if (shape instanceof ShapeSet3DInt && isAncestorSet((ShapeSet3DInt)shape)) return false;
 		if (shape.equals(this)) return false;
-	
+		
+		String name  = validateName(shape.getName());
+		shape.setName(name);
+		
 		if (index < 0)
 			members.add(shape);
 		else
@@ -766,47 +795,21 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		shape.register();
 		
 		if (updateShape){
-			//shape bounds update
-			shape.updateShape();
-			updateShape();
-			
-			//set this as parent (will remove it from an existing parent, and add this as a shape listener)
-			shape.setParentSet(this);
-			
-			//register camera listeners
-			if (shape instanceof ShapeSet3DInt){
-				((ShapeSet3DInt)shape).registerCameras(registered_cameras);
-			} else if (shape.hasCameraListener) {
-				for (int i = 0; i < registered_cameras.size(); i++)
-					shape.registerCameraListener(registered_cameras.get(i));
-				}
-			
-			//set model
-			if (getModel() != null)
-				shape.setID(getModel().getNextID());
-			
-			//set shape's scene node
-			shape.setScene3DObject();
-			
-			//set this set's scene node
-			if (scene3DObject == null){
-				setScene3DObject();
-			}else{
-				ShapeSceneNode node = shape.getShapeSceneNode();
-				if (node == null){
-					InterfaceSession.log("ShapeSet3DInt: Error adding shape '" + shape.getName() + "' (null shape node).", 
-										 LoggingType.Errors);
-					return false;
-					}
-				if (node.getParent() != null)
-					node.detach();
+			ShapeSceneNode node = updateNewShape(shape);
+			if (node != null) {
+						
 				try{
+					if (node.getParent() != null)
+						node.detach();
 					scene3DObject.addChild(node);
 				}catch (Exception e){
-					node.detach();
-					scene3DObject.addChild(node);
+					InterfaceSession.handleException(e);
 					}
+				
 				}
+			
+		} else {
+			new_shapes.push(shape);
 			}
 
 		//alert listeners; this includes any tree nodes
@@ -826,6 +829,99 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			}
 		
 		return true;
+		
+	}
+	
+	Stack<Shape3DInt> new_shapes = new Stack<Shape3DInt>();
+	
+	protected boolean updateNewShapes() {
+		
+		if (new_shapes.isEmpty()) return true;
+		
+		boolean success = true;
+		ArrayList<ShapeSceneNode> nodes = new ArrayList<ShapeSceneNode>();
+		
+		while (!new_shapes.isEmpty()) {
+			ShapeSceneNode node = updateNewShape(new_shapes.pop());
+			if (node == null) {
+				success &= false;
+			}else {
+				nodes.add(node);
+				}
+			}
+		
+		if (nodes.isEmpty()) return false;
+		
+		ShapeSceneNode parent = getShapeSceneNode();
+		scene3DObject.detach();
+		
+		for (ShapeSceneNode node : nodes) {
+			try{
+				if (node.getParent() != null)
+					node.detach();
+				scene3DObject.addChild(node);
+			}catch (Exception e){
+				InterfaceSession.handleException(e);
+				}
+			}
+		
+		try {
+			
+			if (parent != null) parent.setNode(this);
+			
+		}catch (Exception ex) {
+			InterfaceSession.handleException(ex);
+			
+			// Remove new nodes (one is causing an exception)
+			for (ShapeSceneNode node : nodes) {
+				node.detach();
+				}
+			
+			return false;
+			}
+		
+		return success;
+		
+	}
+	
+	protected ShapeSceneNode updateNewShape(Shape3DInt shape) {
+		
+		//shape bounds update
+		shape.updateShape();
+		updateShape();
+		
+		//set this as parent (will remove it from an existing parent, and add this as a shape listener)
+		shape.setParentSet(this);
+		
+		//register camera listeners
+		if (shape instanceof ShapeSet3DInt){
+			((ShapeSet3DInt)shape).registerCameras(registered_cameras);
+		} else if (shape.hasCameraListener) {
+			for (int i = 0; i < registered_cameras.size(); i++)
+				shape.registerCameraListener(registered_cameras.get(i));
+			}
+		
+		//set model
+		if (getModel() != null) {
+			shape.setID(getModel().getNextID());
+			}
+		
+		//set shape's scene node
+		shape.setScene3DObject();
+		
+		//set this set's scene node
+		if (scene3DObject == null){
+			setScene3DObject();
+			}
+		
+		ShapeSceneNode node = shape.getShapeSceneNode();
+		if (node == null){
+//			InterfaceSession.log("ShapeSet3DInt: Error adding shape '" + shape.getName() + "' (null shape node).", 
+//								 LoggingType.Errors);
+			return null;
+			}
+			
+		return node;
 		
 	}
 	
@@ -1062,11 +1158,18 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 				fireShapeModified();
 				return;
 			case ShapeModified:
+			case ShapeSetModified:
+				updateMembers();
 				updateShape();
+				updateNewShapes();
+				updateTreeNodes();
 				if (e.modifiesShapeSet())
 					fireShapeModified();
 				else
 					fireShapeListeners(e);
+				if (model != null && model.getModelSet() == this && sceneNode != null && !sceneNode.isLive()) {
+					model.refreshModel();
+					}
 				return;
 			case AttributeModified:
 			case ClipModified:
@@ -1119,13 +1222,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			
 			return;
 			}
-		
-//		if (((MguiBoolean)this.getAttribute("IsOverriding").getValue()).getTrue()) {
-//			if (needsRedraw3D(e.getAttribute())) {
-//				this.
-//				}
-//			}
-		
+
 		if (needsRedraw3D(e.getAttribute())) { 
 			if (scene3DObject != null)
 				setScene3DObject();
@@ -1606,17 +1703,21 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 						((SectionSet3DInt)thisShape).setScene3DObject(filter, false);
 					else
 						thisShape.setScene3DObject();
-					n = thisShape.getShapeSceneNode();
+					//n = thisShape.getShapeSceneNode();
 				//	}
 				//if (n.getParent() != null && n.getParent() != scene3DObject)
-				if (n.getParent() != scene3DObject){
+				if (n.getParent() != scene3DObject || !n.isLive()){
 					n.detach();
 					scene3DObject.addChild(n);
 					}
 				}
 			}
 		
-		if (make_live) setShapeSceneNode();
+		if (make_live) {
+			setShapeSceneNode();
+			}
+		
+		
 	}
 	
 	/*****************************************************
@@ -1671,10 +1772,19 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		return thisSet;
 	}
 	
+	/*******************
+	 * Returns the center point of this shape set. This can be updated by calling {@code updateShape}.
+	 * 
+	 * @return
+	 */
 	public Point3f getCenterPoint(){
 		return centerPt;
 	}
 	
+	/********************
+	 * Calling this function causes all members to update themselves by calling {@code updateShape}.
+	 * 
+	 */
 	public void updateMembers(){
 		for (int i = 0; i < members.size(); i++)
 			members.get(i).updateShape();
@@ -1798,7 +1908,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	 * @param recurse Specifies whether to include all shapes in all subsets
 	 * @return a list of nodes
 	 */
-	public ArrayList<Point3f> getNodes(boolean recurse){
+	protected ArrayList<Point3f> getNodes(boolean recurse){
 		ArrayList<Point3f> nodes = new ArrayList<Point3f>();
 		for (int i = 0; i < members.size(); i++)
 			if (recurse || !(members.get(i) instanceof ShapeSet3DInt))
@@ -1815,11 +1925,6 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		// TODO Auto-generated method stub
 	}
 	
-//	public void windowUpdated(InterfaceGraphic<?> g) {
-//		
-//		setSectionNodes();
-//		
-//	}
 	
 	@Override
 	public String getLocalName() {

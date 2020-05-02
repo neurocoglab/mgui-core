@@ -30,8 +30,9 @@ import java.util.TreeSet;
 
 import org.jogamp.vecmath.Point3f;
 import org.jogamp.vecmath.Vector3f;
-
 import org.xml.sax.SAXException;
+
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 import mgui.geometry.mesh.MeshFunctions;
 import mgui.geometry.util.GeometryFunctions;
@@ -41,9 +42,6 @@ import mgui.interfaces.logs.LoggingType;
 import mgui.interfaces.xml.XMLFunctions;
 import mgui.io.standard.xml.XMLOutputOptions;
 import mgui.io.util.IoFunctions;
-import mgui.numbers.MguiDouble;
-
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 /*******************
  * Geometry class to represent a 3D triangular mesh. This is implemented as an array
@@ -564,7 +562,7 @@ public class Mesh3D extends Shape3D {
 	 * @author Andrew Reid
 	 *
 	 */
-	public class MeshFace3D{
+	public static class MeshFace3D implements Comparable<MeshFace3D>{
 		//indices of this face's nodes, in clockwise order of A, B, C
 		public int A, B, C;
 		
@@ -664,6 +662,17 @@ public class Mesh3D extends Shape3D {
 				}
 			
 			return false;
+		}
+
+		@Override
+		public int compareTo(MeshFace3D f2) {
+			if (A > f2.A) return 1;
+			if (A < f2.A) return -1;
+			if (B > f2.B) return 1;
+			if (B < f2.B) return -1;
+			if (C > f2.C) return 1;
+			if (C < f2.C) return -1;
+			return 0;
 		}
 		
 	}
