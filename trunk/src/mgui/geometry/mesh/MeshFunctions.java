@@ -56,6 +56,7 @@ import mgui.geometry.Polygon3D;
 import mgui.geometry.Triangle3D;
 import mgui.geometry.util.ConvexHullFunctions;
 import mgui.geometry.util.GeometryFunctions;
+import mgui.interfaces.InterfaceEnvironment;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.ProgressUpdater;
 import mgui.interfaces.Utility;
@@ -2135,7 +2136,7 @@ public class MeshFunctions extends Utility {
 	
 	/*****************************
 	 * 
-	 * Returns a set of non-contiguous meshes from {@code mesh}. If mesh is a single contiguous 
+	 * Returns a set of non-contiguous meshes from {@code mesh}. If {@code mesh} is a single contiguous 
 	 * surface, this method will return only that surface.
 	 * 
 	 * @param mesh 			Mesh from which to extract parts
@@ -2205,13 +2206,16 @@ public class MeshFunctions extends Utility {
 			}
 		
 		int k = 0;
-		for (Mesh3D part : parts) {
-			System.out.println("Mesh " + k + ": ");
-			System.out.println("\tNodes: " + part.n);
-			System.out.println("\tFaces: " + part.f);
-			int[] copy = Arrays.copyOf(part.faces, part.faces.length);
-			Arrays.sort(copy);
-			System.out.println("\tMin/max index: " + copy[0] + ", " + copy[copy.length-1]);
+		
+		if (InterfaceEnvironment.getLoggingType() == LoggingType.Debug) {
+			for (Mesh3D part : parts) {
+				InterfaceSession.log("Mesh " + k + ": ", LoggingType.Debug);
+				InterfaceSession.log("\tNodes: " + part.n, LoggingType.Debug);
+				InterfaceSession.log("\tFaces: " + part.f, LoggingType.Debug);
+				int[] copy = Arrays.copyOf(part.faces, part.faces.length);
+				Arrays.sort(copy);
+				InterfaceSession.log("\tMin/max index: " + copy[0] + ", " + copy[copy.length-1], LoggingType.Debug);
+				}
 			}
 		
 		return parts;
