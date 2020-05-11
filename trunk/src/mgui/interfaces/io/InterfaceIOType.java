@@ -21,6 +21,7 @@ package mgui.interfaces.io;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -60,6 +61,8 @@ public class InterfaceIOType implements IconObject, NamedObject, TreeObject {
 	protected Class<InterfaceIOOptions> options;
 	protected int type;
 	
+	protected List<String> extensions = new ArrayList<String>();
+	
 	public void setType(String t){
 		t = t.toLowerCase();
 		if (t.equals("input")) type = TYPE_INPUT;
@@ -87,6 +90,14 @@ public class InterfaceIOType implements IconObject, NamedObject, TreeObject {
 	
 	public void setIO(Class<InterfaceIO> io){
 		this.io = io;
+	}
+	
+	public void addExtension(String ext) {
+		extensions.add(ext);
+	}
+	
+	public List<String> getExtensions(){
+		return extensions;
 	}
 	
 	public void setDialog(Class<InterfaceIODialogBox> dialog){

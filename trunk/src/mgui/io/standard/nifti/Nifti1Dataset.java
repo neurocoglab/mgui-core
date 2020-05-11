@@ -2253,7 +2253,7 @@ public class Nifti1Dataset {
 	//create a temp file by unzipping the specified file
 	protected String getGzTempFile(String file_name){
 		try{ 
-			File file = IoFunctions.unzipArchive(new File(file_name));
+			File file = IoFunctions.unzipArchiveToFile(new File(file_name));
 			if (file == null) return null;
 			return file.getAbsolutePath();
 		}catch (IOException e){

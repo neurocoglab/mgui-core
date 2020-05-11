@@ -1589,8 +1589,11 @@ public class InterfaceEnvironment implements Environment {
 				String[] ext = new String[tokens.countTokens()];
 				
 				a = 0;
-				while (tokens.hasMoreTokens())
-					ext[a++] = "*." + tokens.nextToken();
+				while (tokens.hasMoreTokens()) {
+					String exti = tokens.nextToken();
+					ext[a++] = "*." + exti;
+					type.addExtension(exti);
+					}
 				
 				type.setFilter(new WildcardFileFilter(ext, filter));
 						

@@ -23,7 +23,9 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -117,8 +119,8 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 	public final String CMD_CHANGE_TYPE = "Change Type";
 	public final String CMD_CHANGE_STROKE = "Change Stroke";
 	
-	public int cell_width = 375;
-	public int value_width = 125;
+//	public int cell_width = 375;
+//	public int value_width = 125;
 	
 	public AttributeTreeCellEditor(){
 		
@@ -166,6 +168,9 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 									            boolean leaf,
 									            int row){
 
+		int cell_width = AttributeTreeCellRenderer.CELL_WIDTH;
+		int value_width = AttributeTreeCellRenderer.VALUE_WIDTH;
+		
 		Font font = tree.getFont().deriveFont(Font.BOLD);
 		Color fore = Color.BLUE;
 		
@@ -184,6 +189,7 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				JLabel thisLabel = new JLabel("<html><u>" + attribute.getName() + "</u>");
 				thisLabel.setFont(font);
 				thisLabel.setForeground(fore);
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				if (sel)
 					thisLabel.setBackground(selectedBG);
 				else
@@ -192,10 +198,19 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
-				cell.setLayout(new BorderLayout());
-				cell.add(thisLabel, BorderLayout.WEST);
-				cell.add(colourButton, BorderLayout.EAST);
+//				cell.setLayout(new BorderLayout());
+//				cell.add(thisLabel, BorderLayout.WEST);
+//				cell.add(colourButton, BorderLayout.EAST);
+//				cell.setPreferredSize(new Dimension(cell_width, height));
+				
+				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
+				cell.add(thisLabel);
+				cell.add(colourButton);
+				thisLabel.setPreferredSize(new Dimension(cell_width - value_width, height));
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				cell.setPreferredSize(new Dimension(cell_width, height));
+				cell.setMaximumSize(new Dimension(cell_width, height));
+				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
 				return cell;
 				}
@@ -217,6 +232,7 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 					thisLabel.setBackground(selectedBG);
 				else
 					thisLabel.setBackground(tree.getBackground());
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				if (sel)
 					cell.setBackground(selectedBG);
 				else
@@ -235,11 +251,12 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				JLabel thisLabel = new JLabel("<html><u>" + attribute.getName() + "</u>");
 				thisLabel.setFont(font);
 				thisLabel.setForeground(fore);
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				//cell.setBackground(tree.getBackground());
-				cell.setLayout(new BorderLayout());
-				cell.add(thisLabel, BorderLayout.WEST);
-				cell.add(fontButton, BorderLayout.EAST);
-				cell.setPreferredSize(new Dimension(cell_width, height));
+//				cell.setLayout(new BorderLayout());
+//				cell.add(thisLabel, BorderLayout.WEST);
+//				cell.add(fontButton, BorderLayout.EAST);
+//				cell.setPreferredSize(new Dimension(cell_width, height));
 				if (sel)
 					thisLabel.setBackground(selectedBG);
 				else
@@ -248,6 +265,15 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
+				
+				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
+				cell.add(thisLabel);
+				cell.add(fontButton);
+				thisLabel.setPreferredSize(new Dimension(cell_width - value_width, height));
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
+				cell.setPreferredSize(new Dimension(cell_width, height));
+				cell.setMaximumSize(new Dimension(cell_width, height));
+				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
 				return cell;
 				}
@@ -264,11 +290,12 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				JLabel thisLabel = new JLabel("<html><u>" + attribute.getName() + "</u>");
 				thisLabel.setForeground(fore);
 				thisLabel.setFont(font);
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				//cell.setBackground(tree.getBackground());
-				cell.setLayout(new BorderLayout());
-				cell.add(thisLabel, BorderLayout.WEST);
-				cell.add(strokeSample, BorderLayout.EAST);
-				cell.setPreferredSize(new Dimension(cell_width, height));
+//				cell.setLayout(new BorderLayout());
+//				cell.add(thisLabel, BorderLayout.WEST);
+//				cell.add(strokeSample, BorderLayout.EAST);
+//				cell.setPreferredSize(new Dimension(cell_width, height));
 				if (sel)
 					thisLabel.setBackground(selectedBG);
 				else
@@ -277,6 +304,15 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
+				
+				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
+				cell.add(thisLabel);
+				cell.add(strokeSample);
+				thisLabel.setPreferredSize(new Dimension(cell_width - value_width, height));
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
+				cell.setPreferredSize(new Dimension(cell_width, height));
+				cell.setMaximumSize(new Dimension(cell_width, height));
+				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
 				return cell;
 			}
@@ -307,6 +343,7 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				thisLabel.setBackground(new Color(210, 210, 210));
 				thisLabel.setFont(font);
 				thisLabel.setForeground(fore);
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				//thisLabel.setBackground(back);
 				//cell.setBackground(tree.getBackground());
 				cell.setLayout(new BorderLayout());
@@ -349,6 +386,7 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				thisLabel.setBackground(new Color(210, 210, 210));
 				thisLabel.setFont(font);
 				thisLabel.setForeground(fore);
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				//thisLabel.setBackground(back);
 				//cell.setBackground(tree.getBackground());
 				cell.setLayout(new BorderLayout());
@@ -381,11 +419,12 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				//thisLabel.setBackground(new Color(210, 210, 210));
 				thisLabel.setFont(font);
 				thisLabel.setForeground(fore);
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				//cell.setBackground(tree.getBackground());
-				cell.setLayout(new BorderLayout());
-				cell.add(thisLabel, BorderLayout.WEST);
-				cell.add(cmbSel, BorderLayout.EAST);
-				cell.setPreferredSize(new Dimension(cell_width, height));
+//				cell.setLayout(new BorderLayout());
+//				cell.add(thisLabel, BorderLayout.WEST);
+//				cell.add(cmbSel, BorderLayout.EAST);
+//				cell.setPreferredSize(new Dimension(cell_width, height));
 				
 				if (sel)
 					thisLabel.setBackground(selectedBG);
@@ -395,6 +434,15 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
+				
+				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
+				cell.add(thisLabel);
+				cell.add(cmbSel);
+				thisLabel.setPreferredSize(new Dimension(cell_width - value_width, height));
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
+				cell.setPreferredSize(new Dimension(cell_width, height));
+				cell.setMaximumSize(new Dimension(cell_width, height));
+				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
 				return cell;
 			}
@@ -412,10 +460,11 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				JLabel thisLabel = new JLabel("<html><u>" + attribute.getName() + "</u>");
 				thisLabel.setFont(font);
 				thisLabel.setForeground(fore);
-				cell.setLayout(new BorderLayout());
-				cell.add(thisLabel, BorderLayout.WEST);
-				cell.add(cmbSel, BorderLayout.EAST);
-				cell.setPreferredSize(new Dimension(cell_width, height));
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
+//				cell.setLayout(new BorderLayout());
+//				cell.add(thisLabel, BorderLayout.WEST);
+//				cell.add(cmbSel, BorderLayout.EAST);
+//				cell.setPreferredSize(new Dimension(cell_width, height));
 				
 				if (sel)
 					thisLabel.setBackground(selectedBG);
@@ -425,6 +474,15 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
+				
+				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
+				cell.add(thisLabel);
+				cell.add(strokeSample);
+				thisLabel.setPreferredSize(new Dimension(cell_width - value_width, height));
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
+				cell.setPreferredSize(new Dimension(cell_width, height));
+				cell.setMaximumSize(new Dimension(cell_width, height));
+				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
 				return cell;
 			}
@@ -440,6 +498,7 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				JLabel thisLabel = new JLabel("<html><u>" + attribute.getName() + "</u>");
 				thisLabel.setFont(font);
 				thisLabel.setForeground(fore);
+				//thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				//cell.setBackground(tree.getBackground());
 				cell.setLayout(new BorderLayout());
 				cell.add(thisLabel, BorderLayout.EAST);
@@ -472,11 +531,12 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				JLabel thisLabel = new JLabel("<html><u>" + attribute.getName() + "</u>" + ": ");
 				thisLabel.setFont(font);
 				thisLabel.setForeground(fore);
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				//cell.setBackground(tree.getBackground());
-				cell.setLayout(new BorderLayout());
-				cell.add(thisLabel, BorderLayout.WEST);
-				cell.add(valueBox, BorderLayout.EAST);
-				cell.setPreferredSize(new Dimension(cell_width, height));
+//				cell.setLayout(new BorderLayout());
+//				cell.add(thisLabel, BorderLayout.WEST);
+//				cell.add(valueBox, BorderLayout.EAST);
+//				cell.setPreferredSize(new Dimension(cell_width, height));
 				if (sel)
 					thisLabel.setBackground(selectedBG);
 				else
@@ -485,6 +545,15 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
+				
+				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
+				cell.add(thisLabel);
+				cell.add(valueBox);
+				thisLabel.setPreferredSize(new Dimension(cell_width - value_width, height));
+				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
+				cell.setPreferredSize(new Dimension(cell_width, height));
+				cell.setMaximumSize(new Dimension(cell_width, height));
+				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 			
 				return cell;
 				}

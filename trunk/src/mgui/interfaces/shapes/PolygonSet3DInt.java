@@ -124,7 +124,7 @@ public class PolygonSet3DInt extends Shape3DInt {
 				setScene3DObject();
 			else{
 				setEdgeAppearance();
-				scene_group.addChild(getPolygonNode(poly, edge_appearance));
+				scene_group.addChild(getPolygonNode(poly));
 				}
 				
 			}
@@ -167,7 +167,7 @@ public class PolygonSet3DInt extends Shape3DInt {
 		
 		//add nodes for each member object
 		for (LPolygon3DInt polygon : polygons){
-			BranchGroup bg = getPolygonNode(polygon, edge_appearance);
+			BranchGroup bg = getPolygonNode(polygon);
 			scene_group.addChild(bg);
 			}
 		
@@ -234,72 +234,41 @@ public class PolygonSet3DInt extends Shape3DInt {
 		m.setAmbientColor(edgeColour);
 		m.setLightingEnable(true);
 		
+		
 		ColoringAttributes cAtt = new ColoringAttributes();
 		cAtt.setColor(edgeColour);
 		
 		//TODO: set dash
 		float width = ((BasicStroke)attributes.getValue("3D.LineStyle")).getLineWidth();
-		LineAttributes lAtt = new LineAttributes(width,
+		LineAttributes line_attributes = new LineAttributes(width,
 												 LineAttributes.PATTERN_SOLID,
 												 true);
-		PolygonAttributes pAtt = new PolygonAttributes();
-		pAtt.setPolygonMode(PolygonAttributes.POLYGON_LINE);
-		pAtt.setCullFace(PolygonAttributes.CULL_NONE);
-		pAtt.setBackFaceNormalFlip(true);
+		PolygonAttributes polygon_attributes = new PolygonAttributes();
+		polygon_attributes.setPolygonMode(PolygonAttributes.POLYGON_LINE);
+		polygon_attributes.setCullFace(PolygonAttributes.CULL_NONE);
+		polygon_attributes.setBackFaceNormalFlip(true);
 		
-		edge_appearance.setLineAttributes(lAtt);
+		edge_appearance.setLineAttributes(line_attributes);
 		edge_appearance.setColoringAttributes(cAtt);
-		edge_appearance.setPolygonAttributes(pAtt);
+		edge_appearance.setPolygonAttributes(polygon_attributes);
 		edge_appearance.setMaterial(m);
+		
+		if (((MguiBoolean)attributes.getValue("3D.HasAlpha")).getTrue()){
+			TransparencyAttributes ta = new TransparencyAttributes();
+			ta.setTransparency(((MguiFloat)attributes.getValue("3D.Alpha")).getFloat());
+			ta.setTransparencyMode(TransparencyAttributes.NICEST);
+			ta.setSrcBlendFunction(TransparencyAttributes.BLEND_SRC_ALPHA);
+			edge_appearance.setTransparencyAttributes(ta);
+		}else{
+			edge_appearance.setTransparencyAttributes(null);
+			}
 		
 	}
 	
-	public BranchGroup getPolygonNode(LPolygon3DInt polygon, Appearance app){
+	public BranchGroup getPolygonNode(LPolygon3DInt polygon){
 		
 		return polygon.getScene3DObject();
 		
-//		Polygon3D poly3d = polygon.getPolygon();
-//		int n = poly3d.n;
-//		
-//		float[] nodes = poly3d.nodes;
-//	    int[] lineStrip = new int[1];
-//	    BranchGroup bg = new BranchGroup();
-//	    bg.setCapability(BranchGroup.ALLOW_DETACH);
-//	    
-//	    if (((MguiBoolean)attributes.getValue("3D.AsCylinder")).getTrue()){
-//			//render as cylinder
-//			BranchGroup cyl = ShapeFunctions.getCylinderPolygon(polygon.getPolygon(), 
-//																((MguiFloat)attributes.getValue("3D.CylRadius")).getFloat(), 
-//																((MguiInteger)attributes.getValue("3D.CylEdges")).getInt(),
-//																fill_appearance);
-//			//cyl.setCapability(BranchGroup.ALLOW_DETACH);
-//			bg.addChild(cyl);
-//		}else{
-//			lineStrip[0] = n;
-//			
-//			LineStripArray polyArray = new LineStripArray(n,
-//														  GeometryArray.COORDINATES | GeometryArray.BY_REFERENCE,
-//														  lineStrip);
-//			
-//			polyArray.setCoordRefFloat(nodes);
-//			polyArray.setCapability(GeometryArray.ALLOW_REF_DATA_READ);
-//		    polyArray.setCapability(GeometryArray.ALLOW_REF_DATA_WRITE);
-//		    bg.addChild(new Shape3D(polyArray, app));
-//			}
-//	    
-//	    if (showVertices()){
-//	    	PointArray p_array = new PointArray(n, GeometryArray.COORDINATES);
-//			p_array.setCoordinates(0, nodes);
-//			Appearance p_app = new Appearance();
-//
-//		    // enlarge the points
-//			p_app.setPointAttributes(new PointAttributes(getVertexScale(), true));
-//			p_app.setColoringAttributes(new ColoringAttributes(Colours.getColor3f(getVertexColour()), ColoringAttributes.FASTEST));
-//			bg.addChild(new Shape3D(p_array, p_app));
-//			}
-//		
-//		
-//	    return bg;
 		
 	}
 	

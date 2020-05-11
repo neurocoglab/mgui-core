@@ -143,6 +143,8 @@ public class PolygonSet3DLoader extends FileLoader {
 	
 	protected ShapeSet3DInt loadPolygonSetBlocking(ProgressUpdater progress_bar) throws IOException{
 		
+		try {
+		
 		//load in domestic format
 		BufferedReader reader = new BufferedReader(new FileReader(dataFile));
 		String line = reader.readLine();
@@ -235,6 +237,11 @@ public class PolygonSet3DLoader extends FileLoader {
 
 		reader.close();
 		return polygons;
+		
+		} catch (NumberFormatException ex) {
+			throw new IOException("PolygonSet3DLoader: Bad number format: " + ex.getMessage());
+			}
+		
 	}
 	
 }

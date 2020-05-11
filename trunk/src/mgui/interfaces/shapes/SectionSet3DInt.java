@@ -247,6 +247,15 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		return ((MguiBoolean) attributes.getValue("3D.ShowSection")).getTrue();
 	}
 
+	/*****************************
+	 * 
+	 * Returns the index of {@code set} in this section set object, if it exists.
+	 * Otherwise, returns {@code Integer.MAX_VALUE}.
+	 * 
+	 * @param set 		The set to check
+	 * @return			The index of {@code set}, or {@code Integer.MAX_VALUE} if it is not in this 
+	 * 					section set.
+	 */
 	public int getSectionOf(ShapeSet2DInt set) {
 		Iterator<Integer> itr = sections.keySet().iterator();
 		while (itr.hasNext()) {
@@ -352,10 +361,21 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		boundBox2D = thisBox;
 	}
 
+	/************************
+	 * 
+	 * Gets the reference plane (i.e., at index 0) for this section set.
+	 * 
+	 */
 	public Plane3D getRefPlane() {
 		return (Plane3D) shape3d;
 	}
 
+	/************************
+	 * 
+	 * Sets the reference plane (i.e., at index 0) for this section set.
+	 * 
+	 * @param thisPlane
+	 */
 	public void setRefPlane(Plane3D thisPlane) {
 		shape3d = thisPlane;
 	}
@@ -365,6 +385,12 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		return ((MguiFloat) attributes.getValue("Spacing")).getFloat();
 	}
 
+	/***************************
+	 * 
+	 * Sets the spacing distance for this section set.
+	 * 
+	 * @param s
+	 */
 	public void setSpacing(float s) {
 		// spacing = s;
 		attributes.getAttribute("3D.ClipDistUp").setValue(new MguiFloat(s), false);
@@ -382,18 +408,40 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		attributes.setValue("ApplyClip", new MguiBoolean(apply));
 	}
 
+	/***************************
+	 * 
+	 * Gets the upwards clipping distance for this section set
+	 * 
+	 */
 	public float getClipDistUp() {
 		return ((MguiFloat) attributes.getValue("3D.ClipDistUp")).getFloat();
 	}
 
+	/***************************
+	 * 
+	 * Sets the upwards clipping distance for this section set
+	 * 
+	 * @param dist
+	 */
 	public void setClipDistUp(float dist) {
 		attributes.setValue("ClipDistUp", new MguiFloat(dist));
 	}
 
+	/***************************
+	 * 
+	 * Gets the downwards clipping distance for this section set
+	 * 
+	 */
 	public float getClipDistDown() {
 		return ((MguiFloat) attributes.getValue("3D.ClipDistDown")).getFloat();
 	}
 
+	/***************************
+	 * 
+	 * Sets the downwards clipping distance for this section set
+	 * 
+	 * @param dist
+	 */
 	public void setClipDistDown(float dist) {
 		attributes.setValue("3D.ClipDistDown", new MguiFloat(dist));
 	}
@@ -443,6 +491,15 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		addShape2D(thisShape, section, update, true);
 	}
 
+	/*******************************
+	 * 
+	 * Adds a 2D shape to the section shape set at index {@code section}.
+	 * 
+	 * @param shape
+	 * @param section
+	 * @param updateShape
+	 * @param updateListeners
+	 */
 	public void addShape2D(Shape2DInt shape, int section, boolean updateShape,
 			boolean updateListeners) {
 
@@ -458,6 +515,14 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 
 	}
 
+	/**********************************
+	 * 
+	 * Add a section shape set to this section set.
+	 * 
+	 * @param section
+	 * @param updateShape
+	 * @return
+	 */
 	public ShapeSet2DInt addSection(int section, boolean updateShape) {
 		if (hasSection(section))
 			return sections.get(new Integer(section));
@@ -479,8 +544,16 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		return thisSect;
 	}
 
-	public boolean removeSection(int section, boolean updateShape,
-			boolean updateListeners) {
+	/*****************************
+	 * 
+	 * Remove the section at index {@code section}.
+	 * 
+	 * @param section
+	 * @param updateShape
+	 * @param updateListeners
+	 * @return
+	 */
+	public boolean removeSection(int section, boolean updateShape, boolean updateListeners) {
 
 		if (!hasSection(section))
 			return false;
@@ -511,6 +584,15 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		return getShapeSet(section, 0);
 	}
 
+	/**********************************
+	 * 
+	 * Return a {@linkplain ShapeSet2DInt} of all objects intersected by the current section
+	 * plane and its upper and lower bounds. 
+	 * 
+	 * @param section
+	 * @param sectionWidth
+	 * @return
+	 */
 	public ShapeSet2DInt getShapeSet(int section, double sectionWidth) {
 
 		Integer s = new Integer(section);
@@ -527,19 +609,20 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		// return a set of all shapes within sectionWidth of keyVal
 		int half = section - (int) ((sectionWidth / 2) / getSpacing());
 		ShapeSet2DInt retSet = new ShapeSet2DInt();
+		
 		Object thisSet = null;
 		for (int i = section - half; i <= section + half; i++) {
-			thisSet = sections.get(new Integer(i));
+			thisSet = sections.get(i);
 			if (thisSet != null)
 				retSet.addUnionSet((ShapeSet2DInt) thisSet);
 		}
 
-		if (retSet == null)
-			retSet = new ShapeSet2DInt();
+		
 		retSet.setName(getName() + "." + section);
 		return retSet;
 	}
 
+	@Override
 	public InterfaceTreeNode issueTreeNode() {
 		Shape3DTreeNode treeNode = new Shape3DTreeNode(this);
 		setTreeNode(treeNode);
@@ -547,6 +630,7 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		return treeNode;
 	}
 
+	@Override
 	public void setTreeNode(InterfaceTreeNode treeNode) {
 		super.setTreeNode(treeNode);
 
@@ -555,22 +639,45 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 			treeNode.add(itr.next().issueTreeNode());
 	}
 
+	/****************************
+	 * 
+	 * Checks whether a section exists at index {@code i}.
+	 * 
+	 * @param i
+	 * @return
+	 */
 	public boolean hasSection(int i) {
-		return sections.containsKey(new Integer(i));
+		return sections.containsKey(i);
 	}
 
+	/***************************
+	 * 
+	 * Checks whether any sections have yet been set for this section set.
+	 * 
+	 * @return
+	 */
 	public boolean hasSections() {
 		return sections.size() > 0;
 	}
 
+	/****************************
+	 * 
+	 * Gets the distance of the section plane at index {@code i} from the reference plance
+	 * (i.e., at index 0).
+	 * 
+	 * @param i
+	 * @return
+	 */
 	public double getSectionDist(int i) {
 		return getSpacing() * (double) i;
 	}
 
+	@Override
 	public String toString() {
 		return getName() + " [" + getID() + "]";
 	}
 
+	@Override
 	public void shapeUpdated(ShapeEvent e) {
 
 		if (e.alreadyResponded(this))
@@ -687,7 +794,7 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		return shape;
 	}
 
-	public Shape2DInt getShape2D(Plane3D plane, float above_dist,float below_dist) {
+	public Shape2DInt getShape2D(Plane3D plane, float above_dist, float below_dist) {
 		if (!getShowSection3D())
 			return null;
 		SectionSet2DInt set = new SectionSet2DInt(this, plane);
@@ -712,6 +819,7 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		}
 	}
 
+	@Override
 	public BranchGroup getScene3DObject(ShapeSelectionSet selSet) {
 		if (selSet == null)
 			return getScene3DObject();
@@ -721,10 +829,12 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		return s.getScene3DObject();
 	}
 
+	@Override
 	public void setScene3DObject() {
 		setScene3DObject(null, true);
 	}
 
+	@Override
 	public void setScene3DObject(boolean make_live) {
 		setScene3DObject(null, make_live);
 	}
@@ -968,8 +1078,7 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 	 */
 	public ArrayList<Shape2DInt> get2DShapes(boolean recurse) {
 
-		ArrayList<ShapeSet2DInt> section_sets = new ArrayList<ShapeSet2DInt>(
-				sections.values());
+		ArrayList<ShapeSet2DInt> section_sets = new ArrayList<ShapeSet2DInt>(sections.values());
 		ArrayList<Shape2DInt> list = new ArrayList<Shape2DInt>();
 
 		for (int i = 0; i < section_sets.size(); i++) {

@@ -553,7 +553,12 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 		grid.removeDisplayListener(this);
 	}
 	
-	public void set3DObjects(){
+	/******************************
+	 * 
+	 * Sets the 2D section-projected shapes from the 3D objects in the current model.
+	 * 
+	 */
+	protected void set3DObjects(){
 		SectionSet3DInt section_set = getCurrentSectionSet();
 		if (shape3DObjects != null){
 			shape3DObjects.removeShapeListener(this);
@@ -563,7 +568,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 		shape3DObjects = new ShapeSet2DInt();
 		shape3DObjects.addShapeListener(this);
 		
-		if (section_set == null) return;
+		if (section_set == null || section_set.getModel() == null) return;
 		ShapeSet2DInt set3D = (ShapeSet2DInt)section_set.getModel().getModelSet().getShape2DInt(getCurrentPlane(), 
 																							    section_set.getClipDistUp(), 
 																							    section_set.getClipDistDown(), 
@@ -972,10 +977,22 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 		set.addShapeListener(this);
 	}
 	
+	/**************************
+	 * 
+	 * Sets the current section set for this graphic object.
+	 * 
+	 * @return
+	 */
 	public SectionSet3DInt getCurrentSectionSet(){
 		return (SectionSet3DInt)attributes.getValue("CurrentSectSet");
 	}
 	
+	/********************************
+	 * 
+	 * Sets the current section for the section set to be rendered in this graphic object.
+	 * 
+	 * @param i
+	 */
 	public void setCurrentSection(int i){
 		updateBorder();
 		section_changed = true;
@@ -983,6 +1000,12 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 		title_panel.updateTitle();
 	}
 	
+	/********************************
+	 * 
+	 * Gets the current section for the section set being rendered.
+	 * 
+	 * @return
+	 */
 	public int getCurrentSection(){
 		return ((MguiInteger)attributes.getValue("CurrentSect")).getInt();
 	}

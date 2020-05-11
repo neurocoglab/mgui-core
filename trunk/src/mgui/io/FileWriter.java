@@ -60,6 +60,14 @@ public abstract class FileWriter implements InterfaceIO {
 		dataURL = url;
 	}
 	
+	public File getFile() {
+		return dataFile;
+	}
+	
+	public URL getURL() {
+		return dataURL;
+	}
+	
 	@Override
 	public void setOptions(InterfaceIOOptions options){
 		this.options = options;

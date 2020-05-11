@@ -121,9 +121,8 @@ addGraphicsWindow Graphic3D "3D Window"
 # If no such class is available, the string "null" is used. Finally, the file description and associated extensions 
 # are provided, which are used by the file browser.
 loadIOType Workspace_out output mgui.io.domestic.WorkspaceWriter null mgui.io.domestic.WorkspaceOutputOptions "Mgui Workspaces (*.workspace)" workspace
-loadIOType ShapeModel3D_out output mgui.io.domestic.shapes.ShapeModel3DWriter mgui.io.domestic.shapes.ShapeModel3DOutputDialog mgui.io.domestic.shapes.ShapeModel3DOutputOptions "Mgui shape models (*.smod, *.smod.gz, *.xml)" smod smod.gz xml
-loadIOType ShapeModel3D_in input mgui.io.domestic.shapes.ShapeModel3DLoader null mgui.io.domestic.shapes.ShapeModel3DInputOptions "Mgui Shape models (*.smod, *.smod.gz, *.xml)" smod smod.gz xml
-loadIOType Minc_surf_in input mgui.io.foreign.minc.MincSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Minc surfaces (*.obj)" obj
+loadIOType ShapeModel3D_out output mgui.io.domestic.shapes.ShapeModel3DWriter mgui.io.domestic.shapes.ShapeModel3DOutputDialog mgui.io.domestic.shapes.ShapeModel3DOutputOptions "Mgui shape models (*.smod, *.smod.gz, *.smodz, *.xml)" smod smod.gz smodz xml
+loadIOType ShapeModel3D_in input mgui.io.domestic.shapes.ShapeModel3DLoader null mgui.io.domestic.shapes.ShapeModel3DInputOptions "Mgui shape models (*.smod, *.smod.gz, *.smodz, *.xml)" smod smod.gz smodz xmlloadIOType Minc_surf_in input mgui.io.foreign.minc.MincSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Minc surfaces (*.obj)" obj
 loadIOType Minc_surf_out output mgui.io.foreign.minc.MincSurfaceWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox mgui.io.domestic.shapes.SurfaceOutputOptions "Minc surfaces (*.obj)" obj
 loadIOType Minc_surf_data_out output mgui.io.foreign.minc.MincSurfaceDataWriter mgui.io.foreign.minc.MincSurfaceDataOutDialogBox mgui.io.foreign.minc.MincSurfaceDataOutOptions "Minc surface data (*.txt)" txt
 loadIOType Minc_surf_data_in input mgui.io.foreign.minc.MincSurfaceDataLoader mgui.io.domestic.shapes.SurfaceDataInputDialogBox mgui.io.domestic.shapes.SurfaceDataInputOptions "Minc surface data (*.txt)" txt

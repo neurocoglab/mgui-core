@@ -36,8 +36,12 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.DeflaterInputStream;
@@ -46,6 +50,19 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.io.IOUtils;
+import org.rauschig.jarchivelib.ArchiveFormat;
+import org.rauschig.jarchivelib.Archiver;
+import org.rauschig.jarchivelib.ArchiverFactory;
+import org.rauschig.jarchivelib.CompressionType;
 
 import mgui.datasources.DataType;
 import mgui.datasources.DataTypes;
@@ -57,12 +74,6 @@ import mgui.interfaces.Utility;
 import mgui.interfaces.io.InterfaceIOType;
 import mgui.interfaces.logs.LoggingType;
 import mgui.interfaces.shapes.InterfaceShape;
-
-import org.apache.commons.io.IOUtils;
-import org.rauschig.jarchivelib.ArchiveFormat;
-import org.rauschig.jarchivelib.Archiver;
-import org.rauschig.jarchivelib.ArchiverFactory;
-import org.rauschig.jarchivelib.CompressionType;
 
 /*******************************************************************
  * Utility class which provides functions for common I/O operations.
@@ -191,6 +202,45 @@ public class IoFunctions extends Utility {
 		
 	}
 	
+//	public static File unzipArchiveToFolder(File archive, File target) throws IOException {
+//		
+//		int BUFFER = 2048;
+//		String archive_str = archive.getAbsolutePath();
+//		FileType type = getFileType(archive);
+//		String path = getParentPath(archive.getAbsolutePath());
+//		if (target != null)
+//			path = target.getAbsolutePath();
+//		
+//		if (type == null) return null;
+//		
+//		switch (type){
+//		
+//			case Gzip:
+//				
+//				String new_file = archive.getAbsolutePath();
+//				if (target != null)
+//					new_file = target.getAbsolutePath() + File.separator + archive.getName();
+//				new_file = new_file.substring(0, new_file.lastIndexOf(".gz"));
+//				
+//				fis = new FileInputStream(archive_str);
+//				GZIPInputStream gs = new GZIPInputStream(fis);
+//				
+//				gs.
+//				
+//				
+//				break;
+//			
+//			default:
+//				
+//				InterfaceSession.log("Unzip type not recognised: " + type.toString(), LoggingType.Errors);
+//			
+//			
+//		}
+//		
+//		
+//		
+//	}
+	
 	/********************************
 	 * Unzips the contents of <code>archive</code> to the current folder, and returns the path to the folder.
 	 * <code>archive</code> must be either a zip or a gzip archive, as specified by its extension.
@@ -198,19 +248,20 @@ public class IoFunctions extends Utility {
 	 * @param archive
 	 * @return the resulting unzipped archive (parent path or file, depending on zip type)
 	 */
-	public static File unzipArchive(File archive) throws IOException{
-		return unzipArchive(archive, null);
+	public static File unzipArchiveToFile(File archive) throws IOException{
+		return unzipArchiveToFile(archive, null);
 	}
 	
 	/********************************
-	 * Unzips the contents of <code>archive</code> to a new folder, and returns the path to the folder.
+	 * 
+	 * Unzips the contents of <code>archive</code> to a new file, and returns the path to the file.
 	 * <code>archive</code> must be either a zip or a gzip archive, as specified by its extension.
 	 * 
 	 * @param archive
 	 * @param target 			The target directory; if {@code null}, the archive directory is used.
 	 * @return the resulting unzipped archive (parent path or file, depending on zip type)
 	 */
-	public static File unzipArchive(File archive, File target) throws IOException{
+	public static File unzipArchiveToFile(File archive, File target) throws IOException{
 		
 		int BUFFER = 2048;
 		String archive_str = archive.getAbsolutePath();
@@ -362,6 +413,8 @@ public class IoFunctions extends Utility {
 	 * 
 	 * @param file_in File to compress
 	 * @param file_out File for output
+	 * 
+	 * @throws IOException If the compression operation failed
 	 */
 	public static void gzipFile(File file_in, File file_out) throws IOException{
 		
@@ -384,6 +437,115 @@ public class IoFunctions extends Utility {
         out.close();
         
 	}
+	
+	/**************************
+	 * 
+	 * Compresses <code>file</code> using tar/gzip compression.
+	 * 
+	 * @param zip_files 	List of paths for files to add to archive
+	 * @param file_out 		File for output
+	 * @param root_dir 		Root directory, will be removed from item names
+	 * 
+	 * @throws IOException If the compression operation failed
+	 */
+	public static void gzipAndTarFiles(List<File> zip_files, File file_out) throws IOException{
+		gzipAndTarFiles(zip_files, file_out, null);
+	}
+	
+	/**************************
+	 * 
+	 * Compresses <code>file</code> using tar/gzip compression.
+	 * 
+	 * @param zip_files 	List of paths for files to add to archive
+	 * @param file_out 		File for output
+	 * 
+	 * @throws IOException If the compression operation failed
+	 */
+	public static void gzipAndTarFiles(List<File> zip_files, File file_out, String root_dir) throws IOException{
+		
+		OutputStream fo = Files.newOutputStream(Paths.get(file_out.toURI()));
+				
+		OutputStream gzo = new GzipCompressorOutputStream(fo);
+		ArchiveOutputStream o = new TarArchiveOutputStream(gzo);
+		
+		for (File file : zip_files) {
+			// maybe skip directories for formats like AR that don't store directories
+			String name = file.getAbsolutePath();
+			
+			// Remove root dir if specified, to make name relative
+			if (root_dir != null) {
+				name = name.replace(root_dir + "/", "");
+				}
+			ArchiveEntry entry = o.createArchiveEntry(file, name);
+	        
+			o.putArchiveEntry(entry);
+			if (file.isFile()) {
+				
+				InputStream i = Files.newInputStream(file.toPath());
+				IOUtils.copy(i, o);
+				
+				InterfaceSession.log(file_out.getName() + ": Added " + entry.getName(), LoggingType.Debug);
+				
+	        } else {
+	        	throw new IOException( "File " + file.getAbsolutePath() + " not found." );
+	        	}
+			
+	        o.closeArchiveEntry();
+	    	}
+		
+	    o.finish();
+	    o.close();
+	    
+	}
+	
+	/*****************************
+	 * 
+	 * Decompresses the contents of the tar.gz archive in the file {@code archive} to {@code target_dir}.
+	 * 
+	 * @param archive
+	 * @param target_dir
+	 * 
+	 * @throws IOException
+	 */
+	public static void gunzipAndTarFiles(File archive, File target_dir) throws IOException {
+		
+		//int len = 1024;
+		
+		InputStream fi = Files.newInputStream(Paths.get(archive.toURI()));
+		InputStream bi = new BufferedInputStream(fi);
+		InputStream gzi = new GzipCompressorInputStream(bi);
+		TarArchiveInputStream ain = new TarArchiveInputStream(gzi);
+		
+		TarArchiveEntry entry = ain.getNextTarEntry();
+		
+		while (entry != null) {
+			
+			File file_out = new File(target_dir.getAbsolutePath() + File.separator + entry.getName());
+			
+			Path parent = Paths.get(file_out.getParent());
+			if (!Files.isDirectory(parent))
+				Files.createDirectories(parent);
+			
+			OutputStream out = Files.newOutputStream(Paths.get(file_out.toURI()));
+			
+			int len = (int)entry.getSize();
+			byte[] buffer = new byte[len];
+			
+			ain.read(buffer, 0, len);
+			out.write(buffer, 0, len);
+
+			out.close();
+			
+			InterfaceSession.log(archive.getName() + ": Extracted " + entry.getName(), LoggingType.Debug);
+			
+			entry = ain.getNextTarEntry();
+			}
+		
+		ain.close();
+		
+		
+	}
+	
 	
 	/*************************************************************
 	 * Decompresses a gzipped byte array.

@@ -22,11 +22,22 @@ package mgui.io.domestic.shapes;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.commons.io.FileUtils;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+import foxtrot.Job;
+import foxtrot.Worker;
+import mgui.interfaces.InterfaceEnvironment;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.ProgressUpdater;
 import mgui.interfaces.shapes.ShapeModel3D;
@@ -35,13 +46,6 @@ import mgui.io.FileLoader;
 import mgui.io.InterfaceIOOptions;
 import mgui.io.domestic.shapes.xml.ShapeModel3DXMLHandler;
 import mgui.io.util.IoFunctions;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
-import foxtrot.Job;
-import foxtrot.Worker;
 
 /*********************************************************
  * Loader for a {@linkplain ShapeModel3D}.
@@ -144,14 +148,31 @@ public class ShapeModel3DLoader extends FileLoader {
 			
 			File write_file = dataFile;
 			
+			File temp_dir = null;
+			
 			// Is it compressed? If so, decompress to a temporary file
 			if (dataFile.getAbsolutePath().endsWith(".gz")){
 				String temp = dataFile.getAbsolutePath();
 				temp = temp + ".~";
 				write_file = IoFunctions.unzipFile(dataFile, new File(temp));
+			} else if (dataFile.getAbsolutePath().endsWith(".smodz")){
+				String tdir = IoFunctions.getTempDir().getAbsolutePath() + File.separator + "mgui" +
+																		InterfaceEnvironment.getNow("yyyyMMdd");
+				
+				temp_dir = new File(tdir);
+				if (temp_dir.exists())
+					FileUtils.deleteDirectory(temp_dir);
+				Files.createDirectory(Paths.get(tdir));
+				
+				IoFunctions.gunzipAndTarFiles(dataFile, temp_dir);
+				String fn = dataFile.getName();
+				fn = fn.replace(".smodz", ".smod");
+				
+				write_file = new File(temp_dir.getAbsolutePath() + File.separator + fn);
+
 				}
 			
-			handler.setRootDir(dataFile.getParent());
+			handler.setRootDir(write_file.getParent());
 			reader.setContentHandler(handler);
 			reader.setErrorHandler(handler);
 			reader.parse(new InputSource(new FileReader(write_file)));
@@ -159,6 +180,8 @@ public class ShapeModel3DLoader extends FileLoader {
 			// Clean up if necessary
 			if (dataFile.getAbsolutePath().endsWith(".gz")){
 				write_file.delete();
+			} else if (dataFile.getAbsolutePath().endsWith(".smodz")){
+				FileUtils.deleteDirectory(temp_dir);
 				}
 			
 			return handler.getShapeModel();

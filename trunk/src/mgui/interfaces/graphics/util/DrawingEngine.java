@@ -412,8 +412,10 @@ public class DrawingEngine implements Engine {
 		if (thisPoly.getSize() == 0) return;
 		
 		drawPolygon2DLine(g, thisPoly);
+		
 		if (((MguiBoolean)drawing_attributes.getValue("2D.ShowVertices")).getTrue())
 			drawPolygon2DNodes(g, thisPoly);
+		
 		if (((MguiBoolean)drawing_attributes.getValue("2D.ShowVertexLabels")).getTrue()){
 			Text2DInt thisText = (Text2DInt)drawing_attributes.getValue("LabelObj");
 			g.setFont((Font)thisText.getAttributes().getValue("2D.LabelFont"));
@@ -453,13 +455,16 @@ public class DrawingEngine implements Engine {
 			g.fill(drawPoly);
 			g.setComposite(c);
 			}
+		
 		g.setPaint((Color)drawing_attributes.getValue("2D.LineColour"));
 		g.setStroke((Stroke)drawing_attributes.getValue("2D.LineStyle"));
 		g.draw(drawPoly);
 	}
 	
 	/*******************************
+	 * 
 	 * Draw a mesh intersection with the current line colour
+	 * 
 	 * @param g
 	 * @param edges
 	 */

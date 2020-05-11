@@ -169,6 +169,8 @@ public class NiftiVolumeWriter extends VolumeFileWriter {
 		if (!dataset.compress && fn.endsWith(".gz"))
 			fn = fn.substring(0,fn.lastIndexOf(".gz"));
 		
+		this.dataFile = new File(fn);
+		
 		dataset.setHeaderFilename(fn);
 		dataset.setDataFilename(fn);
 		

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -436,9 +437,14 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	@Override
 	public AttributeList getAttributes() {
 		if (hasParentShape() && inheritAttributesFromParent()) {
-			if (getParentSet() instanceof InterfaceShape) {
+			if (getParentSet() instanceof InterfaceShape ) {
 				// Return intersection of parent attributes
 				AttributeList parent_attributes = ((InterfaceShape)getParentSet()).getAttributes();
+				if (parent_attributes.hasAttribute("IsOverriding")) {
+					if (!((MguiBoolean)parent_attributes.getValue("IsOverriding")).getTrue()) {
+						return attributes;
+						}
+					}
 				AttributeList overridden_attributes = (AttributeList)attributes.clone();
 				overridden_attributes.setIntersection(parent_attributes);
 				return overridden_attributes;
@@ -1913,24 +1919,10 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 			}
 		
 		if (localName.equals("InterfaceShape")){
-			
-			if (xml_current_type == XMLType.Reference){
-				if (xml_current_loader == null)		// Shouldn't happen
-					throw new SAXException("InterfaceShape.handleXMLElementEnd: No loader defined!");
-				try{
-					InterfaceShape shape = (InterfaceShape)xml_current_loader.loadObject(xml_current_shape_options);
-					this.setGeometry(shape.getGeometry());
-					this.finalizeAfterXML();
-				}catch (IOException e){
-					throw new SAXException("InterfaceShape.handleXMLElementEnd: Error reading shape '" +
-											this.getName() + "'.\nDetails: " + e.getLocalizedMessage());
-					}
-				}
-			
+
 			xml_current_loader = null;
 			xml_current_url = null;
 			xml_current_shape_options = null;
-			//xml_current_encoding = null;
 			
 			return;
 			}
@@ -2000,9 +1992,24 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		writeXML(tab, writer, new XMLOutputOptions(), null);
 	}
 	
+	List<String> by_reference_urls = null;
+	
+	/****************************
+	 * 
+	 * Returns a URL string for the latest call to {@linkplain writeXML}. Is {@code null} if no call has yet
+	 * been made, or the latest write was not by reference.
+	 * 
+	 * @return
+	 */
+	public List<String> getByReferenceUrls() {
+		return by_reference_urls;
+	}
+	
 	@Override
 	public void writeXML(int tab, Writer writer, XMLOutputOptions options, ProgressUpdater progress_bar) throws IOException{
 	
+		by_reference_urls = null;
+		
 		XMLOutputOptions shape_options = null;
 		ShapeModel3DOutputOptions model_options = null;
 		if (options instanceof ShapeModel3DOutputOptions){
@@ -2048,8 +2055,29 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 				FileWriter shape_writer = null;
 				FileLoader shape_loader = null;
 				if (model_options != null){
+					
+					shape_writer = shape_options.writer;
+					if (shape_writer == null)
+						throw new IOException("No shape writer assigned for shape '" + this.getFullName() + "'.");
+					
 					// Set up from model
 					String filename = shape_options.filename;
+					
+					// Add extension if not defined
+					List<String> exts = shape_writer.getIOType().getExtensions();
+					if (exts.size() > 0) {
+						boolean has_ext = false;
+						for (String ext : exts) {
+							if (filename.endsWith("." + ext)) {
+								has_ext = true;
+								break;
+								}
+							}
+						if (!has_ext) {
+							filename = filename + "." + exts.get(0);
+							}
+						}
+					
 					File root_dir = options.getFiles()[0].getParentFile();
 					File shapes_dir = IoFunctions.fullFile(root_dir, model_options.shapes_folder);
 					File file = IoFunctions.fullFile(shapes_dir, filename);
@@ -2062,12 +2090,11 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 					if (!shapes_dir.exists() && !IoFunctions.createDirs(shapes_dir))
 						throw new IOException("Could not create the path to '" + file.getAbsolutePath() + "'.");
 					url_ref = "{root}" + File.separator + model_options.shapes_folder + File.separator + filename;
+					by_reference_urls = new ArrayList<String>();
+					by_reference_urls.add(url_ref);
 					url_ref2 = file.getAbsolutePath();
 					io_options = shape_options.io_options;
 					//io_options = model_options.shape_io_options.get(this);
-					shape_writer = shape_options.writer;
-					if (shape_writer == null)
-						throw new IOException("No shape writer assigned for shape '" + this.getFullName() + "'.");
 					if (io_options == null){
 						// Get default options
 						io_options = shape_writer.getIOType().getOptionsInstance();
@@ -2093,6 +2120,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 						throw new IOException("Shape writer '" + shape_writer.getClass().getCanonicalName() + 
 											  "' has no complementary loader.");
 					io_options = shape_writer.getIOType().getOptionsInstance();
+					
 					// Set up the URL, replace the full path with the root tag, if applicable
 					if (this.getModel() != null){
 						String root_dir = (String)getModel().getModelSet().getAttribute("RootURL").getValue();
@@ -2133,6 +2161,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 				if (progress_bar != null){
 					progress_bar.setMessage("Writing '" + getName() + "':");
 					}
+				
 				// Does parent directory exist?
 				File parent_dir = output_file.getParentFile();
 				if (!parent_dir.exists()){

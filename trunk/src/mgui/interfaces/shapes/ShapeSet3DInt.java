@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -1950,6 +1951,19 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		
 	}
 	
+	List<String> by_reference_urls = null;
+	
+	/****************************
+	 * 
+	 * Returns a list of URL strings for the latest call to {@linkplain writeXML}. Is an empty list 
+	 * if no call has yet been made, or the latest write contained no by reference shapes.
+	 * 
+	 * @return
+	 */
+	public List<String> getByReferenceUrls() {
+		return by_reference_urls;
+	}
+	
 	@Override
 	public void writeXML(int tab, Writer writer, XMLOutputOptions options, ProgressUpdater progress_bar) throws IOException{
 		String _tab = XMLFunctions.getTab(tab);
@@ -1958,6 +1972,8 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		String _type = "full";
 		XMLType type = options.type;
 		if (type.equals(XMLType.Reference)) _type = "reference";
+		
+		by_reference_urls = new ArrayList<String>();
 		
 		writer.write(_tab + "<ShapeSet3DInt \n" +
 					 _tab2 + "name = '" + getName() + "'\n" +
@@ -1987,6 +2003,9 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 					if (add_set){
 						members.get(i).writeXML(tab + 2, writer, options, progress_bar);
 						writer.write("\n");
+						
+						by_reference_urls.addAll(((ShapeSet3DInt)members.get(i)).getByReferenceUrls());
+						
 						}
 					}
 			}else{
@@ -1994,6 +2013,11 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 						((ShapeModel3DOutputOptions)options).include_shape.get(members.get(i))){
 					members.get(i).writeXML(tab + 2, writer, options, progress_bar);
 					writer.write("\n");
+					
+					List<String> urls = members.get(i).getByReferenceUrls();
+					if (urls != null) {
+						by_reference_urls.addAll(urls);
+						}
 					}
 				}
 			}

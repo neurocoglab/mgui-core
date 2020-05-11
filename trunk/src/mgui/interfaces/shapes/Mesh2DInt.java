@@ -21,9 +21,17 @@ package mgui.interfaces.shapes;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeSet;
 
 import org.jogamp.vecmath.Point2f;
 
+import mgui.geometry.Polygon2D;
 import mgui.geometry.Rect2D;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.attributes.Attribute;
@@ -94,13 +102,170 @@ public class Mesh2DInt extends Shape2DInt {
 		if (((MguiBoolean)attributes.getValue("2D.HasAlpha")).getTrue())
 			alpha = ((MguiFloat)attributes.getValue("2D.Alpha")).getFloat();
 		
-		//d.drawingAttr.setIntersection(attributes);
+		if (((MguiBoolean)attributes.getValue("2D.HasFill")).getTrue()) {
+			ArrayList<Polygon2D> polygons = getAsPolygons();
+			
+			if (polygons.size() > 0) {
+				for (Polygon2D polygon : polygons) {
+					d.drawPolygon2D(g, polygon);
+					}
+				return;
+				}
+			}
 		
 		if (colours == null)
 			d.drawMesh2D(g, edges, alpha);
 		else
 			d.drawMesh2D(g, edges, colours, alpha);
 	
+	}
+	
+	class PolyNode {
+		
+		public PolyNode(Point2f node) {
+			this.node = node;
+		}
+		
+		public Point2f node; 
+		PolyNode next = null, prev = null;
+		
+		public PolyNode addNeighbour(Point2f nbr) {
+			if (next == null) {
+				next = new PolyNode(nbr);
+				next.prev = this;
+				return next;
+			} else if (prev == null) {
+				prev = new PolyNode(nbr);
+				prev.next = this;
+				return prev;
+				}
+			return null;
+		}
+		
+		public LinkedList<Point2f> getVertices(){
+			LinkedList<Point2f> vertices = new LinkedList<Point2f>();
+			vertices.add(node);
+			if (next != null) {
+				next.getVertices(vertices, false);
+				}
+			if (prev != null) {
+				prev.getVertices(vertices, true);
+				}
+			
+			return vertices;
+		}
+		
+		public void getVertices(LinkedList<Point2f> vertices, boolean before){
+			
+			if (vertices.contains(node)) return;
+			
+			if (before) {
+				vertices.addFirst(node);
+			} else {
+				vertices.addLast(node);
+				}
+			
+			if (next != null) {
+				next.getVertices(vertices, false);
+				}
+			if (prev != null) {
+				prev.getVertices(vertices, true);
+				}
+		}
+		
+	}
+	
+	private ArrayList<Polygon2D> getAsPolygons() {
+		
+		ArrayList<Polygon2D> polygons = new ArrayList<Polygon2D>();
+		double tolerance = 0.00001;
+		
+		Comparator<Point2f> pt_comp = new Comparator<Point2f>() {
+			public int compare(Point2f p1, Point2f p2) {
+				if (p1.x - p2.x > tolerance) return 1;
+				if (p2.x - p1.x > tolerance) return -1;
+				if (p1.y - p2.y > tolerance) return 1;
+				if (p2.y - p1.y > tolerance) return -1;
+				return 0;
+			}
+		};
+		
+		HashMap<Point2f,Set<Point2f>> connected = new HashMap<Point2f,Set<Point2f>>();
+		Set<Point2f> vset = new TreeSet<Point2f>(pt_comp);
+		
+		// For each edge, sort points, add p1 -> p2
+		for (Point2f[] edge : edges) {
+			
+			if (pt_comp.compare(edge[0], edge[1]) == 0) {
+				// Edge is a single point; discard it
+				
+			}else {
+				
+				if (connected.get(edge[0]) == null) {
+					connected.put(edge[0], new TreeSet<Point2f>(pt_comp));
+					}
+				
+				if (connected.get(edge[1]) == null) {
+					connected.put(edge[1], new TreeSet<Point2f>(pt_comp));
+					}
+				
+				connected.get(edge[0]).add(edge[1]);
+				connected.get(edge[1]).add(edge[0]);
+				
+				vset.add(edge[0]);
+				vset.add(edge[1]);
+				}
+			}
+		
+		Stack<Point2f> unprocessed = new Stack<Point2f>();
+		unprocessed.addAll(vset);
+		Point2f pt = unprocessed.pop();
+		
+		if (pt == null) {
+			InterfaceSession.log("Mesh2DInt.draw: No polygons found.", LoggingType.Debug);
+			return polygons;
+			}
+		
+		Stack<PolyNode> nodes_to_process = null;
+		
+		while (!unprocessed.isEmpty()) {
+			
+			PolyNode start_node = new PolyNode(pt);
+			nodes_to_process = new Stack<PolyNode>();
+			nodes_to_process.add(start_node);
+			
+			while (!nodes_to_process.isEmpty()) {
+				
+				PolyNode node = nodes_to_process.pop();
+				Set<Point2f> conns = connected.get(node.node);
+				for (Point2f pti : conns) {
+					if (unprocessed.contains(pti)) {
+						PolyNode nbr = node.addNeighbour(pti);
+						if (nbr != null) {
+							unprocessed.remove(pti);
+							nodes_to_process.push(nbr);
+							}
+						}
+					}
+				
+				}
+			
+			// No more nodes, make new polygon
+			ArrayList<Point2f> vertices = new ArrayList<Point2f>(start_node.getVertices());
+			vertices.add(vertices.get(0));
+			
+			if (vertices.size() > 2) {
+				polygons.add(new Polygon2D(vertices));
+				}
+			
+			if (!unprocessed.isEmpty()) {
+				pt = unprocessed.pop();
+				}
+			
+			}
+		
+		return polygons;
+		
 	}
 	
 	@Override

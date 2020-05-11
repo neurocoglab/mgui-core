@@ -63,8 +63,10 @@ public class PolygonFunctions {
 	}
 	
 	/****************************
+	 * 
 	 * Sets the polygon direction of each polygon in <code>polygons</code> to the specified
 	 * direction.
+	 * 
 	 * @param polygons
 	 * @param direction
 	 */
@@ -89,5 +91,7 @@ public class PolygonFunctions {
 			}
 		
 	}
+	
+	
 	
 }

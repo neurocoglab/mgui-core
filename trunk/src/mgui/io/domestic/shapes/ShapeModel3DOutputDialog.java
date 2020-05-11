@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -281,7 +282,7 @@ public class ShapeModel3DOutputDialog extends InterfaceIODialogBox {
 		if (table_model == null) return;
 		ArrayList<InterfaceShape> shapes = table_model.shapes;
 		if (shapes == null || shapes.size() == 0) return;
-		boolean is_flat = chkShapesInFolder.isSelected();
+		boolean is_flat = true; //chkShapesInFolder.isSelected();
 		
 		for (int i = 0; i < shapes.size(); i++){
 			InterfaceShape shape = shapes.get(i);
@@ -294,6 +295,23 @@ public class ShapeModel3DOutputDialog extends InterfaceIODialogBox {
 				filename = filename.replace(File.separator, ".");
 			else
 				filename = filename.replace(".", File.separator);
+			
+//			if (table_model.options.get(shape).writer != null) {
+//				List<String> exts = table_model.options.get(shape).writer.getIOType().getExtensions();
+//				if (exts.size() > 0) {
+//					boolean has_ext = false;
+//					for (String ext : exts) {
+//						if (filename.endsWith("." + ext)) {
+//							has_ext = true;
+//							break;
+//							}
+//						}
+//					if (!has_ext) {
+//						filename = filename + "." + exts.get(0);
+//						}
+//					}
+//				}
+			
 			table_model.options.get(shape).filename = filename;
 			}
 		

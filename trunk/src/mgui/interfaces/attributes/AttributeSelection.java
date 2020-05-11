@@ -160,11 +160,20 @@ public class AttributeSelection<V> extends Attribute<V> implements ItemListener 
 	 * @return
 	 */
 	public InterfaceComboBox getComboBox(){
+		return getComboBox(500);
+	}
+	
+	/*********************
+	 * Return a combo box containing this list, and with the specified list width
+	 * 
+	 * @return
+	 */
+	public InterfaceComboBox getComboBox(int width){
 		if (combo_box != null){
 			combo_box.removeItemListener(this);
 			}
 		ensure_updated();
-		combo_box = new InterfaceComboBox(InterfaceComboBox.RenderMode.LongestItem, true, 500);
+		combo_box = new InterfaceComboBox(InterfaceComboBox.RenderMode.LongestItem, true, width);
 		combo_box.addItem(null);
 		for (int i = 0; i < list.size(); i++)
 			combo_box.addItem(list.get(i));

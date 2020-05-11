@@ -385,6 +385,7 @@ public class Polygon3DInt extends Shape3DInt {
 			edge_appearance.setCapability(Appearance.ALLOW_LINE_ATTRIBUTES_WRITE);
 			edge_appearance.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
 			edge_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
+			edge_appearance.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
 			}
 		
 		Color3f edgeColour = Colours.getColor3f((Color)getAttribute("3D.LineColour").getValue());
@@ -410,6 +411,16 @@ public class Polygon3DInt extends Shape3DInt {
 		edge_appearance.setColoringAttributes(cAtt);
 		edge_appearance.setPolygonAttributes(pAtt);
 		edge_appearance.setMaterial(m);
+		
+		if (((MguiBoolean)getAttribute("3D.HasAlpha").getValue()).getTrue()){
+			TransparencyAttributes ta = new TransparencyAttributes();
+			ta.setTransparency(((MguiFloat)getAttribute("3D.Alpha").getValue()).getFloat());
+			ta.setTransparencyMode(TransparencyAttributes.NICEST);
+			ta.setSrcBlendFunction(TransparencyAttributes.BLEND_SRC_ALPHA);
+			edge_appearance.setTransparencyAttributes(ta);
+		}else{
+			edge_appearance.setTransparencyAttributes(null);
+			}
 		
 	}
 	

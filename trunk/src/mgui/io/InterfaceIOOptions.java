@@ -36,6 +36,7 @@ import mgui.interfaces.xml.XMLObject.XMLType;
 import mgui.io.standard.xml.XMLOutputOptions;
 
 /***********************************
+ * 
  * Extends <code>InterfaceOptions</code> specifically for I/O methods. This class should be
  * used to specify parameters/variables/objects required for specific I/O operations. It also specifies a number of
  * standard variables (e.g., a file/URL list) and abstract methods. 

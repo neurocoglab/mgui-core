@@ -33,6 +33,7 @@ import mgui.interfaces.xml.XMLFunctions;
 import org.xml.sax.Attributes;
 
 /********************************************
+ * 
  * Represents a series of connected 2D points, defining either a polyline
  * or a closed polygon.
  * 

@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
-import org.jogamp.vecmath.Point3f;
-import org.jogamp.vecmath.Vector3f;
 
+import foxtrot.Job;
+import foxtrot.Worker;
 import mgui.geometry.Box3D;
 import mgui.geometry.Grid3D;
 import mgui.image.util.WindowedColourModel;
@@ -38,11 +38,7 @@ import mgui.interfaces.ProgressUpdater;
 import mgui.interfaces.shapes.InterfaceShape;
 import mgui.interfaces.shapes.Volume3DInt;
 import mgui.interfaces.shapes.volume.VolumeMetadata;
-import mgui.io.FileLoader;
 import mgui.io.InterfaceIOOptions;
-import mgui.io.domestic.variables.MatrixFileLoader;
-import foxtrot.Job;
-import foxtrot.Worker;
 
 /************************************************************
  * Loader for reading from a volume (3D grid) file into a {@link Volume3DInt} object.
@@ -52,7 +48,7 @@ import foxtrot.Worker;
  * @since 1.0
  *
  */
-public abstract class VolumeFileLoader extends FileLoader {
+public abstract class VolumeFileLoader extends InterfaceShapeLoader {
 	
 	//setting alpha from intensity
     protected boolean setAlpha = true;
@@ -67,6 +63,14 @@ public abstract class VolumeFileLoader extends FileLoader {
     public VolumeFileLoader(){
     	
     }
+    
+    @Override
+	public InterfaceShape loadShape(ShapeInputOptions options, ProgressUpdater progress_bar) throws IOException {
+    	if (!(options instanceof VolumeInputOptions)) {
+    		throw new IOException("Options are not an instance of VolumeInputOptions.");
+    		}
+		return loadVolume((VolumeInputOptions)options, progress_bar);
+	}
     
     public int getVolCount(){return 1;}
 	
@@ -109,6 +113,7 @@ public abstract class VolumeFileLoader extends FileLoader {
     	try{
     		return (Volume3DInt)loadObject(progress_bar, options);
     	}catch (IOException e){
+    		InterfaceSession.handleException(e);
     		return null;
     		}
     }
@@ -219,59 +224,7 @@ public abstract class VolumeFileLoader extends FileLoader {
 	    	VolumeMetadata metadata = this.getVolumeMetadata();
 	    	
 	    	Box3D box = metadata.getBounds();
-	    	
-//	    	int[] dim = metadata.getDataDims();
-//	    	int xDim = dim[0];
-//			int yDim = dim[1];
-//			int zDim = dim[2];
-//			int tDim = 1;
-//			if (dim.length > 3)
-//				tDim = dim[3];
-//			
-//			if (options.set_dims){
-//				xDim = options.dim_x;
-//				yDim = options.dim_y;
-//				zDim = options.dim_z;
-//			}
-//			
-//			//TODO throw exception here
-//			if (v > tDim) return null;
-//			
-//			//add 1 to dims to account for 0.5 of start and end voxels
-//			float[] geom_dim = metadata.getGeomDims();
-//			
-//			float xSpace = geom_dim[0];
-//			float ySpace = geom_dim[1];
-//			float zSpace = geom_dim[2];
-//			
-//			if (options.set_geom){
-//				xSpace = options.geom_x;
-//				ySpace = options.geom_y;
-//				zSpace = options.geom_z;
-//				}
-//			
-//			Point3f origin = metadata.getOrigin();
-//			
-//			if (options.set_origin){
-//				origin.x = options.origin_x;
-//				origin.y = options.origin_y;
-//				origin.z = options.origin_z;
-//			}
-//			
-//			Vector3f[] axes = metadata.getAxes();
-//			axes[0].normalize();
-//			axes[0].scale(xSpace);
-//			axes[1].normalize();
-//			axes[1].scale(ySpace);
-//			axes[2].normalize();
-//			axes[2].scale(zSpace);
-			
-//			Box3D box = new Box3D(origin,
-//								  axes[0],
-//								  axes[1],
-//								  axes[2]);
-			
-			
+
 			WindowedColourModel model = new WindowedColourModel(options.colour_map,
 																options.scale, options.intercept,
 																options.window_mid, options.window_width,

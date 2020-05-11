@@ -21,10 +21,18 @@ package mgui.io.domestic.shapes;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import foxtrot.Job;
+import foxtrot.Worker;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.ProgressUpdater;
 import mgui.interfaces.logs.LoggingType;
@@ -32,8 +40,6 @@ import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.io.InterfaceIOOptions;
 import mgui.io.standard.xml.XMLWriter;
 import mgui.io.util.IoFunctions;
-import foxtrot.Job;
-import foxtrot.Worker;
 
 /************************************************
  * Writes a {@link ShapeModel3D} object to XML.
@@ -93,12 +99,31 @@ public class ShapeModel3DWriter extends XMLWriter {
 		
 		try{
 			File write_file = dataFile;
+			File archive_file = null;
 			if (options.gzip_xml){
 				String unzip = write_file.getAbsolutePath(); 
 				if (unzip.endsWith(".gz")){
 					unzip = unzip.substring(0, unzip.lastIndexOf(".gz"));
+				} else if (unzip.endsWith(".smodz")){
+					archive_file = new File(write_file.getAbsolutePath());
+					unzip = unzip.substring(0, unzip.length()-1);
+				} else {
+					archive_file = new File(write_file.getAbsolutePath() + "z");
 					}
+				
 				write_file = new File(unzip);
+				}
+			
+			if (!write_file.getName().contains(".")) {
+				write_file = new File(write_file.getAbsolutePath() + ".smod");
+				if (options.gzip_xml) {
+					archive_file = new File(write_file.getAbsolutePath() + "z");
+					}
+				}
+			
+			if (archive_file != null) {
+				if (archive_file.exists() && !archive_file.delete())
+					throw new ShapeIOException("ShapeModel3DWriter: cannot delete existing file '" + archive_file.getAbsolutePath() + "'");
 				}
 			
 			if (write_file.exists() && !write_file.delete())
@@ -108,22 +133,27 @@ public class ShapeModel3DWriter extends XMLWriter {
 				throw new ShapeIOException("ShapeModel3DWriter: cannot create output file '" + write_file.getAbsolutePath() + "'");
 			
 			File root_dir = write_file.getParentFile();
+			File ref_dir = null;
+			String shapes_dir = "resources";
 			File orig_file = dataFile;
 			dataFile = write_file;
 			
 			if (options.containsByReferenceShapes() && 
-					!options.as_subfolders &&
 					options.shapes_folder != null && 
 					options.shapes_folder.length() > 0){
-				root_dir = IoFunctions.fullFile(root_dir, options.shapes_folder);
-				if (root_dir.exists() && !root_dir.isDirectory()){
-					throw new ShapeIOException("ShapeModel3DWriter: " + root_dir.getAbsolutePath() + 
+				
+				shapes_dir = options.shapes_folder;
+				
+				ref_dir = IoFunctions.fullFile(root_dir, options.shapes_folder);
+				if (ref_dir.exists() && !ref_dir.isDirectory()){
+					throw new ShapeIOException("ShapeModel3DWriter: " + ref_dir.getAbsolutePath() + 
 											   File.separator + options.shapes_folder + " is not a valid directory...");
 					}
-				if (!root_dir.exists() && !IoFunctions.createDirs(root_dir)){
-					throw new ShapeIOException("ShapeModel3DWriter: " + root_dir.getAbsolutePath() + 
+				if (!ref_dir.exists() && !IoFunctions.createDirs(ref_dir)){
+					throw new ShapeIOException("ShapeModel3DWriter: " + ref_dir.getAbsolutePath() + 
 											   File.separator + options.shapes_folder + " could not be created...");
 					}
+				
 				}
 			
 			if (progress_bar == null){
@@ -152,12 +182,30 @@ public class ShapeModel3DWriter extends XMLWriter {
 			dataFile = orig_file;
 			
 			// Compress?
-			if (success && options.gzip_xml){
-				String zipped = write_file.getAbsolutePath();
-				zipped = zipped + ".gz";
-				File newFile = new File(zipped);
-				IoFunctions.gzipFile(write_file, newFile);
-				write_file.delete();
+			if (success && archive_file != null){
+				
+				ArrayList<File> zip_files = new ArrayList<File>();
+				zip_files.add(write_file);
+				
+				if (options.containsByReferenceShapes()) {
+					// Get list of files to add to archive
+					
+					List<String> urls = options.getModel().getModelSet().getByReferenceUrls();
+					
+					for ( String url : urls) {
+						url = url.replace("{root}", root_dir.getAbsolutePath());
+						zip_files.add(new File(url));
+						}
+					
+					}
+				
+				IoFunctions.gzipAndTarFiles(zip_files, archive_file, root_dir.getAbsolutePath());
+				
+				// Remove zipped files
+				for (File file : zip_files) {
+					Files.delete(Paths.get(file.toURI()));
+					}
+				
 				}
 		
 		}catch (IOException e){

@@ -1947,6 +1947,11 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 	
 		xml_current_type = type;
 		
+		if (xml_current_column != null){
+			xml_current_column.handleXMLElementStart(localName, attributes, type);
+			return;
+		}
+		
 		if (xml_is_reading_composite_order){
 			if (localName.equals("Column")){
 				String name = attributes.getValue("name");
@@ -2068,6 +2073,8 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 	@Override
 	public void writeXML(int tab, Writer writer, XMLOutputOptions options, ProgressUpdater progress_bar) throws IOException{
 	
+		by_reference_urls = null;
+		
 		XMLOutputOptions shape_options = null;
 		ShapeModel3DOutputOptions model_options = null;
 		if (options instanceof ShapeModel3DOutputOptions){
@@ -2119,9 +2126,12 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 		writer.write("\n" + _tab2 + "<VertexData>\n");
 		
 		ArrayList<String> names = getVertexDataColumnNames();
+		if (names.size() > 0)
+			this.by_reference_urls = new ArrayList<String>(names.size());
 		for (int i = 0; i < names.size(); i++){
 			GridVertexDataColumn column = (GridVertexDataColumn)getVertexDataColumn(names.get(i));
 			column.writeXML(tab + 2, writer, options, progress_bar);
+			by_reference_urls.add(column.getByReferenceUrl());
 			}
 		
 		writer.write("\n" + _tab2 + "</VertexData>\n");

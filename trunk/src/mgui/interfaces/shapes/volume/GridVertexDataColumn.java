@@ -29,7 +29,13 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 import mgui.datasources.DataType;
 import mgui.datasources.DataTypes;
@@ -45,7 +51,6 @@ import mgui.interfaces.io.InterfaceIOType;
 import mgui.interfaces.logs.LoggingType;
 import mgui.interfaces.maps.ColourMap;
 import mgui.interfaces.maps.NameMap;
-import mgui.interfaces.shapes.InterfaceShape;
 import mgui.interfaces.shapes.VertexDataColumn;
 import mgui.interfaces.shapes.VertexDataColumnEvent;
 import mgui.interfaces.shapes.VertexDataColumnEvent.EventType;
@@ -68,11 +73,6 @@ import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiInteger;
 import mgui.numbers.MguiNumber;
 import mgui.numbers.NumberFunctions;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 /********************************************************
  * Vertex data column defined for a {@link Volume3DInt}.
@@ -637,9 +637,24 @@ public class GridVertexDataColumn extends VertexDataColumn {
 		super.handleXMLElementEnd(localName);
 	}
 	
+	String by_reference_url = null;
+	
+	/****************************
+	 * 
+	 * Returns a URL string for the latest call to {@linkplain writeXML}. Is {@code null} if no call has yet
+	 * been made, or the latest write was not by reference.
+	 * 
+	 * @return
+	 */
+	public String getByReferenceUrl() {
+		return by_reference_url;
+	}
+	
 	
 	@Override
 	public void writeXML(int tab, Writer writer, XMLOutputOptions options, ProgressUpdater progress_bar) throws IOException {
+		
+		by_reference_url = null;
 		
 		if (data == null || data.size() == 0)
 			throw new IOException("GridVertexDataColumn '" + this.getName() + "': no data to write!");
@@ -659,6 +674,8 @@ public class GridVertexDataColumn extends VertexDataColumn {
 			writeXMLFull(tab, writer, options, progress_bar);
 			return;
 			}
+		
+		
 		
 		// Write column as reference file
 		String _tab = XMLFunctions.getTab(tab);
@@ -692,16 +709,20 @@ public class GridVertexDataColumn extends VertexDataColumn {
 									 LoggingType.Warnings);
 				return;
 				}
+			
 			//File parent_dir = file.getParentFile();
 			if (!shapes_dir.exists() && !IoFunctions.createDirs(shapes_dir))
 				throw new IOException("Could not create the path to '" + file.getAbsolutePath() + "'.");
+			
 			url_ref = "{root}" + File.separator + model_options.shapes_folder + File.separator + filename;
+			
 			url_ref2 = file.getAbsolutePath();
 			io_options = shape_options.io_options;
 			//io_options = model_options.shape_io_options.get(this);
 			shape_writer = shape_options.writer;
 			if (shape_writer == null)
 				throw new IOException("No shape writer assigned for shape '" + volume.getFullName() + "'.");
+			
 			if (io_options == null){
 				// Get default options
 				io_options = shape_writer.getIOType().getOptionsInstance();
@@ -713,6 +734,7 @@ public class GridVertexDataColumn extends VertexDataColumn {
 		}else{
 			// Get from shape itself
 			url_ref = (String)attributes.getValue("UrlReference");
+			by_reference_url = url_ref;
 			if (url_ref == null || url_ref == ""){
 				throw new IOException("Shape [" + this.getClass().getCanonicalName() + ": " + 
 									  this.getName() + "]: URL reference not set for XML write of type 'reference'.");
@@ -738,10 +760,39 @@ public class GridVertexDataColumn extends VertexDataColumn {
 				}
 			}
 		
+		
+		// Add extension if not defined
+		String extension = "";
+		List<String> exts = shape_writer.getIOType().getExtensions();
+		if (exts.size() > 0) {
+			boolean has_ext = false;
+			for (String ext : exts) {
+				if (url_ref.endsWith("." + ext)) {
+					has_ext = true;
+					extension = ext;
+					break;
+					}
+				}
+			if (!has_ext) {
+				extension = exts.get(0);
+				}
+			}
+		
+		if (extension.length() > 0) {
+			if (url_ref.endsWith(extension)) {
+				url_ref = url_ref.substring(0,url_ref.lastIndexOf("." + extension));
+				}
+			if (url_ref2.endsWith(extension)) {
+				url_ref2 = url_ref2.substring(0,url_ref2.lastIndexOf("." + extension));
+				}
+			}
+		
 		// Modify URL for this column
-		url_ref = url_ref + "." + this.getName();
-		url_ref2 = url_ref2 + "." + this.getName();
+		url_ref = url_ref + "." + this.getName() + "." + extension;
+		url_ref2 = url_ref2 + "." + this.getName() + "." + extension;;
 		File output_file = new File(url_ref2);
+		
+		by_reference_url = url_ref;
 		
 		// Data
 		writer.write("\n" + _tab2 + "<Data\n" + 
@@ -780,6 +831,11 @@ public class GridVertexDataColumn extends VertexDataColumn {
 		if (!shape_writer.write(volume_options, progress_bar)){
 			throw new IOException("Column '" + getName() + "' for shape '" + volume.getFullName() + "': " +  
 		  			  			  "writer failed.");
+			}
+		
+		if (shape_writer.getFile() != null) {
+			by_reference_url = "{root}" + File.separator + model_options.shapes_folder + File.separator +
+					shape_writer.getFile().getName();
 			}
 		
 		// Colour map

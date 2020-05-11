@@ -49,7 +49,7 @@ public class ShapeModel3DOutputOptions extends XMLOutputOptions {
 	//public HashMap<InterfaceShape,InterfaceIOOptions> shape_io_options = new HashMap<InterfaceShape,InterfaceIOOptions>();		// Options used for by-reference
 	public HashMap<InterfaceShape,Boolean> include_shape = new HashMap<InterfaceShape,Boolean>();
 	public boolean as_subfolders = false;
-	public String shapes_folder = "";			// Root shapes directory, for by-reference writes; 
+	public String shapes_folder = "resources";			// Root shapes directory, for by-reference writes; 
 												// this is relative to the parent of the XML file
 	public boolean gzip_xml = true; 			// Compress final XML file?
 	public boolean overwrite_existing = true; 	// Clobber?
