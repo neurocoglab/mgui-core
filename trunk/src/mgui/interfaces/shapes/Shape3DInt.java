@@ -46,13 +46,13 @@ import org.jogamp.java3d.ColoringAttributes;
 import org.jogamp.java3d.Geometry;
 import org.jogamp.java3d.GeometryUpdater;
 import org.jogamp.java3d.Group;
-import org.jogamp.java3d.Locale;
 import org.jogamp.java3d.Material;
 import org.jogamp.java3d.Node;
 import org.jogamp.java3d.PolygonAttributes;
 import org.jogamp.java3d.QuadArray;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.utils.geometry.Primitive;
 import org.jogamp.java3d.utils.geometry.Sphere;
 import org.jogamp.vecmath.Color3f;
 import org.jogamp.vecmath.Matrix4d;
@@ -66,6 +66,7 @@ import mgui.geometry.Plane3D;
 import mgui.geometry.Shape;
 import mgui.geometry.Shape3D;
 import mgui.geometry.Sphere3D;
+import mgui.geometry.mesh.MeshFunctions;
 import mgui.geometry.util.GeometryFunctions;
 import mgui.interfaces.InterfaceEnvironment;
 import mgui.interfaces.InterfaceSession;
@@ -73,9 +74,11 @@ import mgui.interfaces.attributes.Attribute;
 import mgui.interfaces.attributes.AttributeEvent;
 import mgui.interfaces.attributes.AttributeSelection;
 import mgui.interfaces.graphics.util.DrawingEngine;
+import mgui.interfaces.graphs.AbstractGraphNode;
 import mgui.interfaces.logs.LoggingType;
 import mgui.interfaces.maps.Camera3D;
 import mgui.interfaces.maps.Camera3DListener;
+import mgui.interfaces.maps.ColourMap;
 import mgui.interfaces.menus.InterfaceMenu;
 import mgui.interfaces.menus.InterfacePopupMenu;
 import mgui.interfaces.shapes.attributes.ShapeAttribute;
@@ -90,6 +93,7 @@ import mgui.interfaces.trees.InterfaceTreeNode;
 import mgui.interfaces.xml.XMLFunctions;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
+import mgui.util.Colour;
 import mgui.util.Colours;
 
 /***********************************************************
@@ -137,6 +141,10 @@ public abstract class Shape3DInt extends InterfaceShape
 	protected BranchGroup vertices_group;
 	protected BranchGroup selected_vertices_group;
 	
+	VertexShapeTransformer vertex_transformer; // = new VertexShapeTransformer();
+	
+	ArrayList<Node> vertex_map = new ArrayList<Node>();
+	
 	protected boolean has_3d_node = false;
 	
 	Attribute<?> modified_attribute;
@@ -159,6 +167,7 @@ public abstract class Shape3DInt extends InterfaceShape
 		
 		attributes.add(new AttributeSelection<String>("3D.AlphaMode", render_modes, String.class, "Nicest"));
 		
+		vertex_transformer = new VertexShapeTransformer(this);
 				
 	}
 	
@@ -192,7 +201,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public Font getLabelFont(){
-		return (Font)attributes.getValue("3D.LabelFont");
+		return (Font)getAttributeValue("3D.LabelFont");
 	}
 	
 	@Override
@@ -203,7 +212,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public float getLabelScale(){
-		return ((MguiFloat)attributes.getValue("3D.LabelScale")).getFloat();
+		return ((MguiFloat)getAttributeValue("3D.LabelScale")).getFloat();
 	}
 	
 	@Override
@@ -214,7 +223,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public Color getLabelColour(){
-		return (Color)attributes.getValue("3D.LabelColour");
+		return (Color)getAttributeValue("3D.LabelColour");
 	}
 	
 	@Override
@@ -224,7 +233,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public boolean hasAlpha(){
-		return ((MguiBoolean)attributes.getValue("3D.HasAlpha")).getTrue();
+		return ((MguiBoolean)getAttributeValue("3D.HasAlpha")).getTrue();
 	}
 	
 	@Override
@@ -235,7 +244,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public float getAlpha(){
-		return ((MguiFloat)attributes.getValue("3D.Alpha")).getFloat();
+		return ((MguiFloat)getAttributeValue("3D.Alpha")).getFloat();
 	}
 	
 	@Override
@@ -247,7 +256,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public boolean showVertices(){
-		return ((MguiBoolean)attributes.getValue("3D.ShowVertices")).getTrue();
+		return ((MguiBoolean)getAttributeValue("3D.ShowVertices")).getTrue();
 	}
 
 	@Override
@@ -259,7 +268,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public float getVertexScale(){
-		return ((MguiFloat)attributes.getValue("3D.VertexScale")).getFloat();
+		return ((MguiFloat)getAttributeValue("3D.VertexScale")).getFloat();
 	}
 	
 	/**************************************************
@@ -271,14 +280,14 @@ public abstract class Shape3DInt extends InterfaceShape
 	 */
 	public float getVertexScale(int i){
 		
-		boolean scale_vertices = ((MguiBoolean)attributes.getValue("ScaleVertices")).getTrue();
-		float general_scale = ((MguiFloat)attributes.getValue("3D.VertexScale")).getFloat();
-		float exp_scale = ((MguiFloat)attributes.getValue("3D.VertexScaleExp")).getFloat();
+		boolean scale_vertices = ((MguiBoolean)getAttributeValue("ScaleVertices")).getTrue();
+		float general_scale = ((MguiFloat)getAttributeValue("3D.VertexScale")).getFloat();
+		float exp_scale = ((MguiFloat)getAttributeValue("3D.VertexScaleExp")).getFloat();
 		
 		if (!scale_vertices)
 			return general_scale;
 		
-		String column = (String)attributes.getValue("ScaleData");
+		String column = (String)getAttributeValue("ScaleData");
 		if (column == null) return general_scale;
 		
 		float value = (float)getDatumAtVertex(column, i).getValue();
@@ -306,28 +315,49 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public Color getVertexColour(){
-		return (Color)attributes.getValue("3D.VertexColour");
+		return (Color)getAttributeValue("3D.VertexColour");
 	}
 	
 	/************************************
-	 * Returns the colour of vertex i; depends on whether <code>ColourVertexValues</code>
-	 * is set.
+	 * Returns the colour of vertex i; depends on whether the <code>ShowData</code> attribute
+	 * is {@code true}, and this shape has a current vertex data column.
 	 * 
 	 * @param i
 	 * @return
 	 */
 	public Color getVertexColour(int i){
-		return getVertexColour();
+		
+		if (((MguiBoolean)getAttributeValue("ShowData")).getTrue()) {
+			
+			// Get the colour-mapped colour for this vertex
+			VertexDataColumn column = getCurrentDataColumn();
+			
+			if (column == null) {
+				return getVertexColour();
+				}
+			
+			ColourMap cmap = column.getColourMap();
+			
+			if (cmap == null) {
+				return getVertexColour();
+				}
+			
+			Colour clr = cmap.getColour(column.getValueAtVertex(i));
+			return clr.getColor();
+			
+		} else {
+			return getVertexColour();
+			}
 	}
 	
 	@Override
 	public Color getLineColour(){
-		return (Color)attributes.getValue("3D.LineColour");
+		return (Color)getAttributeValue("3D.LineColour");
 	}
 	
 	@Override
 	public Stroke getLineStyle(){
-		return (Stroke)attributes.getValue("3D.LineStyle");
+		return (Stroke)getAttributeValue("3D.LineStyle");
 	}
 	
 	@Override
@@ -522,12 +552,12 @@ public abstract class Shape3DInt extends InterfaceShape
 		if (inheritAttributesFromParent())
 			prefix = "3D.";
 		
-		if (((MguiBoolean)attributes.getValue(prefix + "ShowBounds")).getTrue()){
+		if (((MguiBoolean)getAttributeValue(prefix + "ShowBounds")).getTrue()){
 			Box3D bounds = getBoundBox();
 			
 			Polygon2DInt poly = new Polygon2DInt(ShapeFunctions.getIntersectionPolygon(bounds, p));
 			if (poly != null){
-				poly.setAttribute(prefix + "LineColour", attributes.getValue(prefix + "BoundsColour"));
+				poly.setAttribute(prefix + "LineColour", getAttributeValue(prefix + "BoundsColour"));
 				draw2D(poly, g, d, p, above_dist, below_dist);
 				}
 			}
@@ -694,7 +724,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	 */
 	public void updateVertices(){
 		if (group_node == null) return;
-		if (((MguiBoolean)attributes.getValue("3D.ShowVertices")).getTrue() 
+		if (((MguiBoolean)getAttributeValue("3D.ShowVertices")).getTrue() 
 				&& this.getVertexCount() < InterfaceEnvironment.getMaxDisplayVertices()){
 			if (vertices_group == null){
 				vertices_group = new BranchGroup();
@@ -729,7 +759,7 @@ public abstract class Shape3DInt extends InterfaceShape
 			if (vertices_group != null){
 				vertices_group.removeAllChildren();
 				}
-			if (((MguiBoolean)attributes.getValue("3D.ShowVertices")).getTrue()){
+			if (((MguiBoolean)getAttributeValue("3D.ShowVertices")).getTrue()){
 				InterfaceSession.log("Shape3DInt: Prevented rendering of vertices > max_display_vertices" +
 									 " (this value is set in InterfaceEnvironment)", 
 									 LoggingType.Warnings);
@@ -746,7 +776,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	 */
 	public void updateSelectedVertices(){
 		if (group_node == null) return;
-		if (selected_nodes != null && ((MguiBoolean)attributes.getValue("3D.ShowSelectedVertices")).getTrue()
+		if (selected_nodes != null && ((MguiBoolean)getAttributeValue("3D.ShowSelectedVertices")).getTrue()
 				&& this.getVertexSelection().getSelectedCount() < InterfaceEnvironment.getMaxDisplayVertices()){
 			if (selected_vertices_group == null){
 				selected_vertices_group = new BranchGroup();
@@ -764,7 +794,7 @@ public abstract class Shape3DInt extends InterfaceShape
 			Transform3D transform;
 			TransformGroup tg;
 			Material m = new Material();
-			m.setDiffuseColor(Colours.getColor3f((Color)attributes.getValue("SelectedVertexColour")));
+			m.setDiffuseColor(Colours.getColor3f((Color)getAttributeValue("SelectedVertexColour")));
 			Appearance app = new Appearance();
 			app.setMaterial(m);
 			
@@ -793,7 +823,7 @@ public abstract class Shape3DInt extends InterfaceShape
 				selected_vertices_group.removeAllChildren();
 				//System.out.println("UpdateSelectedVertices: not visible.. removing children...");
 				}
-			if (((MguiBoolean)attributes.getValue("3D.ShowSelectedVertices")).getTrue()){
+			if (((MguiBoolean)getAttributeValue("3D.ShowSelectedVertices")).getTrue()){
 				InterfaceSession.log("Shape3DInt: Prevented rendering of selected vertices > max_display_vertices" +
 									 " (this value is set in InterfaceEnvironment)", 
 									 LoggingType.Warnings);
@@ -947,7 +977,7 @@ public abstract class Shape3DInt extends InterfaceShape
 			
 			}
 		
-		if (!((MguiBoolean)attributes.getValue("3D.ShowBounds")).getTrue() ||
+		if (!((MguiBoolean)getAttributeValue("3D.ShowBounds")).getTrue() ||
 			!show3D() ||
 			!isVisible()){
 			if (bounds_group != null)
@@ -974,7 +1004,7 @@ public abstract class Shape3DInt extends InterfaceShape
 		pAtt.setCullFace(PolygonAttributes.CULL_NONE);
 		pAtt.setBackFaceNormalFlip(true);
 		pAtt.setPolygonMode(PolygonAttributes.POLYGON_LINE);
-		Color edgeColour = (Color)attributes.getValue("3D.BoundsColour");
+		Color edgeColour = (Color)getAttributeValue("3D.BoundsColour");
 		ColoringAttributes cAtt = new ColoringAttributes();
 		cAtt.setColor(Colours.getColor3f(edgeColour));
 		thisAppNode.setPolygonAttributes(pAtt);
@@ -1268,6 +1298,40 @@ public abstract class Shape3DInt extends InterfaceShape
 		return new Shape3DSceneNode(this, s);
 	}
 	
+	/******************************
+	 * 
+	 * Sets the live status of this shape's scene 3D object node. 
+	 * 
+	 * <p>If {@code live} is {@code true}, adds the scene 3D object node to the shape 
+	 * scene node if one exists.
+	 * 
+	 * <p>If {@code live} is {@code false}, detaches the scene 3D object node to the shape 
+	 * scene node if it is currently live.
+	 * 
+	 * @param live
+	 */
+	public void setLive(boolean live) {
+		
+		if (scene3DObject == null) return;
+		
+		if (live) {
+			if (this.scene3DObject.isLive())
+				return;
+			if (this.sceneNode != null) {
+				sceneNode.addChild(scene3DObject);
+				}
+		} else {
+			if (scene3DObject.isLive())
+				scene3DObject.detach();
+			}
+		
+	}
+	
+	public boolean isLive() {
+		if (scene3DObject == null) return false;
+		return scene3DObject.isLive();
+	}
+	
 	public void updateData(Geometry geometry) {
 		
 	}
@@ -1403,7 +1467,7 @@ public abstract class Shape3DInt extends InterfaceShape
 		if (item.getText().equals("Clear selection")){
 			//TODO: Implement vertex selection listener
 			getVertexSelection().clear();
-			if (((MguiBoolean)attributes.getValue("3D.ShowSelectedVertices")).getTrue())
+			if (((MguiBoolean)getAttributeValue("3D.ShowSelectedVertices")).getTrue())
 				updateSelectedVertices();
 			}
 		
@@ -1418,13 +1482,11 @@ public abstract class Shape3DInt extends InterfaceShape
 	 * @return
 	 */
 	protected Appearance getVertexAppearance(int i){
-		//Material m = new Material();
-		//m.setDiffuseColor(Colours.getColor3f((Color)attributes.getValue("VertexColour")));
-		//Appearance app = new Appearance();
-		//app.setMaterial(m);
 		Color3f colour = Colours.getColor3f(getVertexColour(i));
-		Material material = new Material(); //colour, Colours.getColor3f(Color.black), colour, colour, 100f);
+		float shininess = ((MguiFloat)getAttributeValue("3D.Shininess")).getFloat() * 255f;
+		Material material = new Material(); //colour, Colours.getColor3f(Color.black), colour, colour, shininess);
 		material.setDiffuseColor(colour);
+		material.setShininess(shininess);
 		Appearance app = new Appearance();
 		app.setMaterial(material);
 		return app;
@@ -1433,8 +1495,6 @@ public abstract class Shape3DInt extends InterfaceShape
 	public void setCurrentColumn(String key, boolean update){
 		super.setCurrentColumn(key, update);
 		
-//		if (showData())
-//			setScene3DObject(update);
 	}
 
 	public void showPopupMenu(MouseEvent e) {
@@ -1520,6 +1580,7 @@ public abstract class Shape3DInt extends InterfaceShape
 		return success;
 	}
 	
+	
 	/*
 	public class ShapeNodeRef {
 		public int node;
@@ -1542,28 +1603,31 @@ public abstract class Shape3DInt extends InterfaceShape
 	 */
 	protected class VertexShapeTransformer implements Transformer<Integer, Node>{
 
-		public VertexShapeTransformer(){
-			
+		Shape3DInt me;
+		
+		public VertexShapeTransformer(Shape3DInt shape){
+			me = shape;
 		}
 		
 		@Override
 		public Node transform(Integer i) {
-			//Uniform scale or scale with values?
-			float scale = ((MguiFloat)attributes.getValue("VertexScale")).getFloat();
 			
-			//Uniform colour or colour with values?
-			Color3f colour = Colours.getColor3f((Color)attributes.getValue("VertexColour"));
-			Material material = new Material(colour, Colours.getColor3f(Color.black), colour, colour, 100f);
-			Appearance appearance = new Appearance();
-			appearance.setMaterial(material);
-			
-			Sphere sphere = new Sphere(scale, 
+			MguiBoolean show = (MguiBoolean)attributes.getValue("3D.ShowVertices");
+			if (!show.getTrue() || me.getVertexScale(i) < ShapeFunctions.tolerance) {
+				return null;
+				}
+				
+			Sphere sphere = new Sphere(1f,
 									   Sphere.GENERATE_NORMALS | 
 									   Sphere.ENABLE_GEOMETRY_PICKING |
 									   Sphere.ENABLE_APPEARANCE_MODIFY, 
-									   appearance);
+									  	getVertexAppearance(i));
+			
+			sphere.getShape().setUserData(new ShapeVertexObject(me, i));
+			sphere.setCapability(Primitive.ENABLE_APPEARANCE_MODIFY);
 			
 			return sphere;
+			
 		}
 		
 		

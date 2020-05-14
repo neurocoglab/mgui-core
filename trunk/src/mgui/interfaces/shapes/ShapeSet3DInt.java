@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Andrew Reid and the ModelGUI Project <http://www.modelgui.org>
+* Copyright (C) 2014 Andrew Reid and the ModelGUI Project <http://mgui.wikidot.com>
 * 
 * This file is part of ModelGUI[core] (mgui-core).
 * 
@@ -253,7 +253,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	}
 	
 	public void setUnit(SpatialUnit unit){
-		attributes.setValue("Unit", unit);
+		setAttribute("Unit", unit);
 	}
 	
 	/**************************
@@ -335,7 +335,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	 */
 	public void applyOverride(){
 		//((MguiBoolean)attributes.getValue("IsOverriding")).value = true;
-		attributes.setValue("IsOverriding", new MguiBoolean(true));
+		setAttribute("IsOverriding", new MguiBoolean(true));
 		
 		//apply to each member
 		for (int i = 0; i < members.size(); i++)
@@ -348,7 +348,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	 */
 	public void removeOverride(){
 		//((MguiBoolean)attributes.getValue("IsOverriding")).value = false;
-		attributes.setValue("IsOverriding", new MguiBoolean(false));
+		setAttribute("IsOverriding", new MguiBoolean(false));
 		
 		//apply to each member
 		for (int i = 0; i < members.size(); i++)
@@ -373,7 +373,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			GeometryFunctions.transform((Box3D)bounds.clone(), transform);
 			}
 		Polygon2DInt poly = new Polygon2DInt(ShapeFunctions.getIntersectionPolygon(bounds, plane));
-		poly.attributes.setValue("LineColour", attributes.getValue("2D.BoundsColour"));
+		poly.setAttribute("LineColour", attributes.getValue("2D.BoundsColour"));
 		return poly;
 	}
 	
@@ -795,26 +795,26 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		
 		shape.register();
 		
-		if (updateShape){
-			ShapeSceneNode node = updateNewShape(shape);
-			if (node != null) {
-						
-				try{
-					if (node.getParent() != null)
-						node.detach();
-					scene3DObject.addChild(node);
-				}catch (Exception e){
-					InterfaceSession.handleException(e);
-					}
-				
+		//if (updateShape){
+		ShapeSceneNode node = updateNewShape(shape);
+		if (node != null) {
+					
+			try{
+				if (node.getParent() != null)
+					node.detach();
+				scene3DObject.addChild(node);
+			}catch (Exception e){
+				InterfaceSession.handleException(e);
 				}
-			
-		} else {
-			new_shapes.push(shape);
 			}
+			
+//		} else {
+//			shape.setParentSet(this);
+//			new_shapes.push(shape);
+//			}
 
 		//alert listeners; this includes any tree nodes
-		if (updateListeners){
+		//if (updateListeners){
 			if (index < 0){
 				last_added = shape;
 				ShapeEvent e = new ShapeEvent(this, ShapeEvent.EventType.ShapeAdded);
@@ -827,69 +827,70 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 				fireShapeListeners(e);
 				last_inserted = null;
 				}
-			}
+			//}
+			
+		updateShape();
 		
 		return true;
 		
 	}
 	
-	Stack<Shape3DInt> new_shapes = new Stack<Shape3DInt>();
+	//Stack<Shape3DInt> new_shapes = new Stack<Shape3DInt>();
 	
-	protected boolean updateNewShapes() {
-		
-		if (new_shapes.isEmpty()) return true;
-		
-		boolean success = true;
-		ArrayList<ShapeSceneNode> nodes = new ArrayList<ShapeSceneNode>();
-		
-		while (!new_shapes.isEmpty()) {
-			ShapeSceneNode node = updateNewShape(new_shapes.pop());
-			if (node == null) {
-				success &= false;
-			}else {
-				nodes.add(node);
-				}
-			}
-		
-		if (nodes.isEmpty()) return false;
-		
-		ShapeSceneNode parent = getShapeSceneNode();
-		scene3DObject.detach();
-		
-		for (ShapeSceneNode node : nodes) {
-			try{
-				if (node.getParent() != null)
-					node.detach();
-				scene3DObject.addChild(node);
-			}catch (Exception e){
-				InterfaceSession.handleException(e);
-				}
-			}
-		
-		try {
-			
-			if (parent != null) parent.setNode(this);
-			
-		}catch (Exception ex) {
-			InterfaceSession.handleException(ex);
-			
-			// Remove new nodes (one is causing an exception)
-			for (ShapeSceneNode node : nodes) {
-				node.detach();
-				}
-			
-			return false;
-			}
-		
-		return success;
-		
-	}
+//	protected boolean updateNewShapes() {
+//		
+//		if (new_shapes.isEmpty()) return true;
+//		
+//		boolean success = true;
+//		ArrayList<ShapeSceneNode> nodes = new ArrayList<ShapeSceneNode>();
+//		
+//		while (!new_shapes.isEmpty()) {
+//			ShapeSceneNode node = updateNewShape(new_shapes.pop());
+//			if (node == null) {
+//				success &= false;
+//			}else {
+//				nodes.add(node);
+//				}
+//			}
+//		
+//		if (nodes.isEmpty()) return false;
+//		
+//		ShapeSceneNode parent = getShapeSceneNode();
+//		scene3DObject.detach();
+//		
+//		for (ShapeSceneNode node : nodes) {
+//			try{
+//				if (node.getParent() != null)
+//					node.detach();
+//				scene3DObject.addChild(node);
+//			}catch (Exception e){
+//				InterfaceSession.handleException(e);
+//				}
+//			}
+//		
+//		try {
+//			
+//			if (parent != null) parent.setNode(this);
+//			
+//		}catch (Exception ex) {
+//			InterfaceSession.handleException(ex);
+//			
+//			// Remove new nodes (one is causing an exception)
+//			for (ShapeSceneNode node : nodes) {
+//				node.detach();
+//				}
+//			
+//			return false;
+//			}
+//		
+//		return success;
+//		
+//	}
 	
 	protected ShapeSceneNode updateNewShape(Shape3DInt shape) {
 		
 		//shape bounds update
-		shape.updateShape();
-		updateShape();
+		//shape.updateShape();
 		
 		//set this as parent (will remove it from an existing parent, and add this as a shape listener)
 		shape.setParentSet(this);
@@ -908,7 +909,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			}
 		
 		//set shape's scene node
-		shape.setScene3DObject();
+		//shape.setScene3DObject();
 		
 		//set this set's scene node
 		if (scene3DObject == null){
@@ -916,12 +917,12 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			}
 		
 		ShapeSceneNode node = shape.getShapeSceneNode();
-		if (node == null){
-//			InterfaceSession.log("ShapeSet3DInt: Error adding shape '" + shape.getName() + "' (null shape node).", 
-//								 LoggingType.Errors);
-			return null;
-			}
 			
+//		last_added = shape;
+//		ShapeEvent e = new ShapeEvent(this, ShapeEvent.EventType.ShapeAdded);
+//		fireShapeListeners(e);
+//		last_added = null;
+		
 		return node;
 		
 	}
@@ -1019,9 +1020,11 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			}
 		
 		//fire model as a listener
-		ShapeModel3D model = getModel();
-		if (model != null)
-			model.shapeUpdated(e);
+		//if (this.isLive()) {
+			//ShapeModel3D model = getModel();
+			if (model != null)
+				model.shapeUpdated(e);
+		//	}
 	}
 	
 	/******************************************************
@@ -1051,7 +1054,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		members.remove(shape);
 		shape.removeShapeListener(this);
 		shape.parent_set = null;
-		shape.destroy();
+		//shape.destroy();
 		if (this.scene3DObject != null)
 			shape.getShapeSceneNode().detach();
 		
@@ -1152,17 +1155,18 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	
 		if (e.alreadyResponded(this)) return;
 		e.responded(this);
+		Shape3DInt shape = (Shape3DInt)e.getShape();
 		
 		switch (e.eventType){
 			case ShapeAdded:
 				updateShape();
-				fireShapeModified();
+				updateTreeNodes();
+				fireShapeListeners(e);
 				return;
 			case ShapeModified:
 			case ShapeSetModified:
 				updateMembers();
 				updateShape();
-				updateNewShapes();
 				updateTreeNodes();
 				if (e.modifiesShapeSet())
 					fireShapeModified();
@@ -1173,9 +1177,12 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 					}
 				return;
 			case AttributeModified:
+				updateShape();
+				return;
 			case ClipModified:
 			case ShapeDestroyed:
 				updateShape();
+				updateTreeNodes();
 				return;
 			case VertexColumnChanged:
 				fireShapeModified();
@@ -1698,16 +1705,16 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			if (filter == null || 
 				thisShape instanceof SectionSet3DInt || 
 				filter.hasShape(thisShape)){
+				
 				ShapeSceneNode n = members.get(i).getShapeSceneNode();
 				//if (n == null || ((MguiBoolean)getAttribute("IsOverriding").getValue()).getTrue()){
 					if (filter != null && thisShape instanceof SectionSet3DInt)
 						((SectionSet3DInt)thisShape).setScene3DObject(filter, false);
 					else
 						thisShape.setScene3DObject();
-					//n = thisShape.getShapeSceneNode();
-				//	}
-				//if (n.getParent() != null && n.getParent() != scene3DObject)
-				if (n.getParent() != scene3DObject || !n.isLive()){
+				if (n == null) {
+					InterfaceSession.log("Shape scene node can't be created for " + members.get(i).getName());
+				}else if (n.getParent() != scene3DObject || !n.isLive()){
 					n.detach();
 					scene3DObject.addChild(n);
 					}
@@ -1717,7 +1724,6 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		if (make_live) {
 			setShapeSceneNode();
 			}
-		
 		
 	}
 	
@@ -1797,6 +1803,10 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		//need to get a union of each sphere
 		//System.out.print("Update shape set..");
 		
+//		if (!new_shapes.empty()) {
+//			updateNewShapes();
+//			}
+		
 		if (members.size() == 0){
 			boundSphere = new Sphere3D(new Point3f(0,0,0), 0.1f);
 			boundBox = null;
@@ -1805,7 +1815,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			setBoundBoxNode();
 			return;
 		}
-		//updateMembers();
+		
 		int j = 0;
 		boundSphere = members.get(j).boundSphere;
 		while (j < members.size() && !GeometryFunctions.isValidSphere(boundSphere)){

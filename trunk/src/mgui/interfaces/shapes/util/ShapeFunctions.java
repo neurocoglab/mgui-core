@@ -126,6 +126,8 @@ import foxtrot.Worker;
  *
  */
 public class ShapeFunctions extends Utility {
+	
+	public static final double tolerance = 0.0000001;
 
 	public static Shape3DInt getShape(Shape3D shape){
 		Object obj = shape.getUserData();

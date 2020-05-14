@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Andrew Reid and the ModelGUI Project <http://www.modelgui.org>
+* Copyright (C) 2014 Andrew Reid and the ModelGUI Project <http://mgui.wikidot.com>
 * 
 * This file is part of ModelGUI[core] (mgui-core).
 * 
@@ -74,7 +74,13 @@ public class PolygonSet3DLoader extends FileLoader {
 			
 		}else{
 			parent_set = (ShapeSet3DInt)_options.shape_set;
+			if (parent_set == null) {
+				failure_msg = "No shape set specified!";
+				return false;
+				}
 			}
+		
+		parent_set.setLive(false);
 		
 		for (int i = 0; i < _options.getFiles().length; i++){
 			setFile(_options.getFiles()[i]);
@@ -83,35 +89,56 @@ public class PolygonSet3DLoader extends FileLoader {
 				skip = _options.skip;
 				skip_min_nodes = _options.skip_min_nodes;
 				min_nodes = _options.min_nodes;
-				Shape3DInt set = (Shape3DInt)loadObject(progress_bar,_options);
-				if (set == null)
+				Shape3DInt polygon_int = (Shape3DInt)loadObject(progress_bar,_options);
+				if (polygon_int == null)
 					success = false;
 				else{
-					set.setName(_options.names[i]);
+					polygon_int.setName(_options.names[i]);
 					if (_options.new_shape_set) {
-						set.setAttribute("InheritFromParent", new MguiBoolean(true));
+						polygon_int.setAttribute("InheritFromParent", new MguiBoolean(true));
 						}
-					System.out.print("Adding Polygon3D set..");
-					parent_set.addShape(set);
+					System.out.print("Adding Polygon3D object..");
+					parent_set.addShape(polygon_int, false);
 					InterfaceSession.log("done.");
 					}
 			}catch (IOException e){
 				InterfaceSession.log("PolygonSet3DLoader: I/O Error reading data from " + this.dataFile.getAbsolutePath());
+				failure_msg = "Couldn't read data from " + dataFile.getAbsolutePath();
 				success = false;
 			}catch (Exception e){
 				InterfaceSession.log("PolygonSet3DLoader: Error reading data from " + this.dataFile.getAbsolutePath());
-				e.printStackTrace();
+				failure_msg = "Couldn't read data from " + dataFile.getAbsolutePath();
+				InterfaceSession.handleException(e);
 				success = false;
 				}
 			}
 		
+		parent_set.setLive(true);
+		
 		return success;
+	}
+	
+	String failure_msg = null;
+	
+	@Override
+	public String getFailureMessage() {
+		
+		if (failure_msg == null || failure_msg.length() == 0) {
+			return super.getFailureMessage();
+			}
+		
+		String msg = failure_msg;
+		failure_msg = null;
+		
+		return msg;
+		
 	}
 	
 	@Override
 	public Object loadObject(ProgressUpdater progress_bar, InterfaceIOOptions options) throws IOException{
 		ShapeSet3DInt shape_set = loadPolygonSet(progress_bar);
-		if (shape_set == null || embed_single_polygon || shape_set.getSize() > 1) return shape_set;
+		if (shape_set == null || embed_single_polygon || shape_set.getSize() > 1) 
+			return shape_set;
 		
 		// This is a single, polygon, return as a Polygon3DInt object
 		Polygon3DInt polygon = (Polygon3DInt)shape_set.members.get(0);
@@ -146,7 +173,7 @@ public class PolygonSet3DLoader extends FileLoader {
 		return polygon_set;
 	}
 	
-protected ShapeSet3DInt loadPolygonSetBlocking(ProgressUpdater progress_bar) throws IOException{
+	protected ShapeSet3DInt loadPolygonSetBlocking(ProgressUpdater progress_bar) throws IOException{
 		
 		try {
 		
@@ -321,7 +348,5 @@ protected ShapeSet3DInt loadPolygonSetBlocking(ProgressUpdater progress_bar) thr
 		
 		
 	}
-	
-	
 	
 }

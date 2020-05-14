@@ -21,7 +21,6 @@ package mgui.interfaces.shapes;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
@@ -33,14 +32,17 @@ import org.jogamp.java3d.IndexedTriangleArray;
 import org.jogamp.java3d.LineAttributes;
 import org.jogamp.java3d.LineStripArray;
 import org.jogamp.java3d.Material;
+import org.jogamp.java3d.Node;
 import org.jogamp.java3d.PointArray;
-import org.jogamp.java3d.PointAttributes;
 import org.jogamp.java3d.PolygonAttributes;
 import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
 import org.jogamp.java3d.TransparencyAttributes;
 import org.jogamp.java3d.utils.geometry.GeometryInfo;
 import org.jogamp.vecmath.Color3f;
 import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Vector3f;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.Polygon3D;
@@ -49,12 +51,10 @@ import mgui.geometry.util.GeometryFunctions;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.attributes.Attribute;
 import mgui.interfaces.attributes.AttributeEvent;
-import mgui.interfaces.maps.ColourMap;
 import mgui.interfaces.shapes.util.ShapeFunctions;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiInteger;
-import mgui.numbers.MguiNumber;
 import mgui.util.Colours;
 
 
@@ -197,27 +197,29 @@ public class Polygon3DInt extends Shape3DInt {
 		BranchGroup sceneGroup = new BranchGroup();
 		sceneGroup.setCapability(BranchGroup.ALLOW_DETACH);
 		
+		Polygon3D polygon = getPolygon();
+		
 		setEdgeAppearance();
-		Color thisColour = (Color)this.getAttribute("3D.LineColour").getValue();
+		Color thisColour = (Color)getAttributeValue("3D.LineColour");
 		ColoringAttributes cAtt = new ColoringAttributes();
 		cAtt.setColor(Colours.getColor3f(thisColour));
 		
-		if (((MguiBoolean)attributes.getValue("3D.AsCylinder")).getTrue()){
+		if (((MguiBoolean)getAttributeValue("3D.AsCylinder")).getTrue()){
 			//render as cylinder
 			sceneGroup = ShapeFunctions.getCylinderPolygon(
 							getPolygon(), 
-							((MguiFloat)attributes.getValue("3D.CylRadius")).getFloat(), 
-							((MguiInteger)attributes.getValue("3D.CylEdges")).getInt(), 
+							((MguiFloat)getAttributeValue("3D.CylRadius")).getFloat(), 
+							((MguiInteger)getAttributeValue("3D.CylEdges")).getInt(), 
 							edge_appearance);
 			
 			sceneGroup.setCapability(BranchGroup.ALLOW_DETACH);
 		}else{
 			//render as polylines
-			int n = getPolygon().n;
+			int n = polygon.n;
 			
 			if (n > 1){
 				
-				float[] nodes = getPolygon().getCoords();
+				float[] nodes = polygon.getCoords();
 				
 				//if closed, add first node at end
 				if (isClosed()){
@@ -258,15 +260,15 @@ public class Polygon3DInt extends Shape3DInt {
 					
 					thisShapeNode = new Shape3D(tris);
 					Appearance fillApp = new Appearance();
-					Color c = (Color)attributes.getValue("3D.FillColour");
+					Color c = (Color)getAttributeValue("3D.FillColour");
 					ColoringAttributes cAtt2 = new ColoringAttributes();
 					cAtt2.setColor(Colours.getColor3f(c));
 					fillApp.setColoringAttributes(cAtt2);
 					fillApp.setMaterial(new Material());
-					if (((MguiFloat)attributes.getValue("3D.FillAlpha")).getFloat() > 0){
-						String trans_type = (String)attributes.getValue("3D.AlphaMode");
+					if (((MguiFloat)getAttributeValue("3D.FillAlpha")).getFloat() > 0){
+						String trans_type = (String)getAttributeValue("3D.AlphaMode");
 						TransparencyAttributes ta = new TransparencyAttributes();
-						ta.setTransparency(((MguiFloat)attributes.getValue("3D.FillAlpha")).getFloat());
+						ta.setTransparency(((MguiFloat)getAttributeValue("3D.FillAlpha")).getFloat());
 						if (trans_type.equals("Screen Door")){
 							ta.setTransparencyMode(TransparencyAttributes.SCREEN_DOOR);
 						}else if (trans_type.equals("Fastest")){
@@ -295,37 +297,30 @@ public class Polygon3DInt extends Shape3DInt {
 			int n = nodes.length / 3;
 			PointArray p_array = new PointArray(n, GeometryArray.COORDINATES); // | GeometryArray.BY_REFERENCE);
 			p_array.setCoordinates(0, nodes);
-			if (!showData()){
-				Appearance p_app = new Appearance();
-	
-			    // enlarge the points
-				p_app.setPointAttributes(new PointAttributes(getVertexScale(), true));
-				p_app.setColoringAttributes(new ColoringAttributes(Colours.getColor3f(getVertexColour()), ColoringAttributes.FASTEST));
-	
-				org.jogamp.java3d.Shape3D shape3D = new org.jogamp.java3d.Shape3D(p_array, p_app);
-				shape3D.setUserData(this);
-				BranchGroup bg = new BranchGroup();
-				bg.setCapability(BranchGroup.ALLOW_DETACH);
-				bg.addChild(shape3D);
-				sceneGroup.addChild(bg);
-			}else{
-				ArrayList<MguiNumber> data = getCurrentVertexData();
-				ColourMap cmap = getColourMap();
+
+			BranchGroup bg = new BranchGroup();
+			bg.setCapability(BranchGroup.ALLOW_DETACH);
+			
+			// TODO: Map these and update more efficiently
+			for (int i = 0; i < n; i++) {
 				
-				for (int i = 0; i < n; i++)
-					p_array.setColor(i, cmap.getColour(data.get(i)).getColor4f());
-					
-				Appearance p_app = new Appearance();
-				p_app.setPointAttributes(new PointAttributes(getVertexScale(), true));
-	
-				org.jogamp.java3d.Shape3D shape3D = new org.jogamp.java3d.Shape3D(p_array, p_app);
-				shape3D.setUserData(this);
-				BranchGroup bg = new BranchGroup();
-				bg.setCapability(BranchGroup.ALLOW_DETACH);
-				bg.addChild(shape3D);
-				sceneGroup.addChild(bg);
+				Node node = vertex_transformer.transform(i);
+				
+				if (node != null) {
+					Vector3f pv = new Vector3f(polygon.getVertex(i));
+					Transform3D tx = new Transform3D();
+					tx.setTranslation(pv);
+					tx.setScale(getVertexScale());
+					TransformGroup tg = new TransformGroup();
+					tg.addChild(node);
+					tg.setTransform(tx);
+					bg.addChild(tg);
+					}
 				
 				}
+			
+			sceneGroup.addChild(bg);
+			
 			}
 		
 		sceneGroup.setUserData(this);
