@@ -208,6 +208,13 @@ public class PulseTrainUpdater extends SimpleEnvironmentUpdater {
 		public AttributeList getAttributes() {
 			return attributes;
 		}
+		
+		@Override
+		public Object getAttributeValue(String name) {
+			Attribute<?> attribute = getAttribute(name);
+			if (attribute == null) return null;
+			return attribute.getValue();
+		}
 
 		public void setAttribute(String attrName, Object newValue) {
 			attributes.setValue(attrName, newValue);	

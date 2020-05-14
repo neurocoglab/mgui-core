@@ -64,8 +64,15 @@ public abstract class SimpleEnvironmentUpdater extends AbstractInterfaceObject i
 	protected abstract boolean doUpdate(DynamicModelEnvironment<?> c, double timeStep);
 
 	
-	public Attribute getAttribute(String attrName) {	
+	public Attribute<?> getAttribute(String attrName) {	
 		return attributes.getAttribute(attrName);
+	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
 	}
 
 	public AttributeList getAttributes() {

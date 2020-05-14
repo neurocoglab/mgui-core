@@ -61,5 +61,12 @@ public abstract class InterfacePlotObject extends AbstractInterfaceObject
 	public void setAttributes(AttributeList attributes) {
 		this.attributes = attributes;
 	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
+	}
 
 }

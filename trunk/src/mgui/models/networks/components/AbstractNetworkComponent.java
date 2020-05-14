@@ -21,6 +21,7 @@ package mgui.models.networks.components;
 
 import mgui.interfaces.AbstractInterfaceObject;
 import mgui.interfaces.InterfaceObject;
+import mgui.interfaces.attributes.Attribute;
 import mgui.interfaces.attributes.AttributeListener;
 import mgui.interfaces.attributes.AttributeObject;
 import mgui.interfaces.trees.TreeObject;
@@ -54,5 +55,12 @@ public abstract class AbstractNetworkComponent extends AbstractInterfaceObject
 
 	@Override
 	public Object clone(){return null;}	//?
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
+	}
 	
 }

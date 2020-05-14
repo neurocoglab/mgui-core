@@ -508,6 +508,13 @@ public class ShapeEngine implements Engine {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
+	}
 
 	@Override
 	public String getName() {

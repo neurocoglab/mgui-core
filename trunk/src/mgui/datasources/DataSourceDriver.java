@@ -358,6 +358,13 @@ public class DataSourceDriver implements PersistentObject,
 			return null;
 		return attributes.getAttribute(attrName);
 	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
+	}
 
 	@Override
 	public void setAttributes(AttributeList thisList) {

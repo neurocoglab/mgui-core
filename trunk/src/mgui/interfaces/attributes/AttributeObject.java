@@ -62,4 +62,14 @@ public interface AttributeObject extends NamedObject {
 	 */
 	public void setAttribute(String name, Object value);
 	
+	/********************************************
+	 * Gets the value of attribute {@code name}, or {@code null} if it does not exist.
+	 * 
+	 * @param name Name of the attribute
+	 * @return the value of attribute {@code name}, or {@code null} if it does not exist
+	 */
+	public Object getAttributeValue(String name);
+	
+	
+	
 }

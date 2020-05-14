@@ -665,8 +665,15 @@ public class ShapeSelectionSet extends AbstractInterfaceObject implements ShapeS
 	}
 	
 	@Override
-	public Attribute getAttribute(String attrName) {
+	public Attribute<?> getAttribute(String attrName) {
 		return attributes.getAttribute(attrName);
+	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
 	}
 
 	@Override

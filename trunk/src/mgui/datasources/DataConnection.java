@@ -176,7 +176,7 @@ public class DataConnection extends AbstractInterfaceObject
 		treeNode.add(attributes.issueTreeNode());
 	}
 	
-	public Attribute getAttribute(String attrName) {	
+	public Attribute<?> getAttribute(String attrName) {	
 		return attributes.getAttribute(attrName);
 	}
 
@@ -190,6 +190,13 @@ public class DataConnection extends AbstractInterfaceObject
 
 	public void setAttributes(AttributeList thisList) {
 		attributes = thisList;
+	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
 	}
 
 	public boolean setFromFile(File file) throws IOException{

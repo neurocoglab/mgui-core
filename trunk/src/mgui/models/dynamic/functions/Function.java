@@ -57,7 +57,7 @@ public abstract class Function extends AbstractInterfaceObject
 	 */
 	public abstract double[] evaluate(double[] d);
 		
-	public Attribute getAttribute(String attrName) {	
+	public Attribute<?> getAttribute(String attrName) {	
 		return attributes.getAttribute(attrName);
 	}
 
@@ -71,6 +71,13 @@ public abstract class Function extends AbstractInterfaceObject
 
 	public void setAttributes(AttributeList thisList) {
 		attributes = thisList;
+	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
 	}
 
 	public InterfaceTreeNode getTreeNodeCopy() {

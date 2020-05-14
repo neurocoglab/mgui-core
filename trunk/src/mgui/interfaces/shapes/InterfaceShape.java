@@ -391,7 +391,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	 * @param b
 	 */
 	public void setVisible(boolean b){
-		attributes.setValue("IsVisible", new MguiBoolean(b));
+		setAttribute("IsVisible", new MguiBoolean(b));
 	}
 	
 	public boolean inheritAttributesFromParent(){
@@ -430,6 +430,13 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 			return this.getParentAttribute(attrName);
 			}
 		return attributes.getAttribute(attrName);
+	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
 	}
 	
 	protected abstract Attribute<?> getParentAttribute(String attrName);

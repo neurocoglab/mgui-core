@@ -103,7 +103,7 @@ public abstract class AbstractNetworkModel extends InterfaceAbstractModel
 			modelListeners.get(i).componentRemoved(c);
 	}
 	
-	public Attribute getAttribute(String attrName) {
+	public Attribute<?> getAttribute(String attrName) {
 		return attributes.getAttribute(attrName);
 	}
 
@@ -117,6 +117,13 @@ public abstract class AbstractNetworkModel extends InterfaceAbstractModel
 
 	public void setAttributes(AttributeList thisList) {
 		attributes = thisList;
+	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
 	}
 
 	

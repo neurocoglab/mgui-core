@@ -248,6 +248,13 @@ public class MeshEngine implements Engine {
 	}
 	
 	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
+	}
+	
+	@Override
 	public AttributeList getAttributes(String operation, String method){
 		if (method != null)
 			return getAttributes(operation + "(" + method + ")");

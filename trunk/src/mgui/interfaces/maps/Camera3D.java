@@ -529,6 +529,13 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 		attributes = thisList;
 	}
 	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
+	}
+	
 	/************************************
 	 * Sets this camera from {@code camera}.
 	 * 
@@ -695,12 +702,20 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 			return source;
 		}
 		
-		public Attribute getAttribute(String attrName) {	
+		@Override
+		public Attribute<?> getAttribute(String attrName) {	
 			return attributes.getAttribute(attrName);
 		}
 
 		public AttributeList getAttributes() {
 			return attributes;
+		}
+		
+		@Override
+		public Object getAttributeValue(String name) {
+			Attribute<?> attribute = getAttribute(name);
+			if (attribute == null) return null;
+			return attribute.getValue();
 		}
 
 		public void setAttribute(String attrName, Object newValue) {

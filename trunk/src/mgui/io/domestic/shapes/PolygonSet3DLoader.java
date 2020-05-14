@@ -27,17 +27,22 @@ import java.util.StringTokenizer;
 
 import foxtrot.Job;
 import foxtrot.Worker;
+import mgui.datasources.DataTypes;
 import mgui.geometry.Polygon3D;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.ProgressUpdater;
+import mgui.interfaces.maps.NameMap;
 import mgui.interfaces.shapes.Polygon3DInt;
 import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.io.FileLoader;
 import mgui.io.InterfaceIOOptions;
 import mgui.numbers.MguiBoolean;
+import mgui.numbers.MguiDouble;
 import mgui.numbers.MguiFloat;
+import mgui.numbers.MguiInteger;
 import mgui.numbers.MguiNumber;
+import mgui.numbers.MguiShort;
 
 /**************************************
  * Loads a set of 3D polygon objects (*.poly3d) from text.
@@ -141,7 +146,7 @@ public class PolygonSet3DLoader extends FileLoader {
 		return polygon_set;
 	}
 	
-	protected ShapeSet3DInt loadPolygonSetBlocking(ProgressUpdater progress_bar) throws IOException{
+protected ShapeSet3DInt loadPolygonSetBlocking(ProgressUpdater progress_bar) throws IOException{
 		
 		try {
 		
@@ -187,11 +192,44 @@ public class PolygonSet3DLoader extends FileLoader {
 				}
 			
 			String[] hdr = null;
+			int[] type = null;
 			int n_vals = 0;
-			ArrayList<ArrayList<MguiNumber>> values = null;
+			NameMap[] name_maps = null;
+			Integer[] indices = null;
+ 			ArrayList<ArrayList<MguiNumber>> values = null;
 			if (parts.length > 3) {
 				hdr = new String[parts.length - 3];
+				type = new int[parts.length - 3];
+				name_maps = new NameMap[parts.length - 3];
+				indices = new Integer[parts.length - 3];
 				for (int j = 3; j < parts.length; j++) {
+					String str = parts[j];
+					if (str.contains("%")) {
+						String t = str.substring(str.lastIndexOf("%s")+1);
+						switch(t) {
+							case "f":
+								type[j-3] = DataTypes.FLOAT;
+								break;
+							case "i":
+								type[j-3] = DataTypes.INTEGER;
+								break;
+							case "d":
+								type[j-3] = DataTypes.DOUBLE;
+								break;
+							case "s":
+								type[j-3] = DataTypes.SHORT;
+								break;
+							case "q":
+								type[j-3] = DataTypes.STRING;
+								name_maps[j-3] = new NameMap(name);
+								indices[j-3] = 0;
+								break;
+							default:
+								throw new IOException("PolygonSet3DLoader: invalid data type '" + t + "'.");
+							}
+					} else {
+						type[j-3] = DataTypes.FLOAT;
+						}
 					hdr[j-3] = parts[j];
 					}
 				n_vals = hdr.length;
@@ -215,7 +253,25 @@ public class PolygonSet3DLoader extends FileLoader {
 				nodes[(j * 3) + 2] = Float.valueOf(tokens.nextToken());
 				
 				for (int k = 0; k < n_vals; k++) {
-					values.get(k).add(new MguiFloat(tokens.nextToken()));
+					String str = tokens.nextToken();
+					MguiNumber num = null;
+					if (type[k] == DataTypes.STRING) {
+						Integer index = name_maps[k].get(str);
+						if (index == -Integer.MAX_VALUE) {
+							indices[k]++;
+							num = new MguiInteger(indices[k]);
+						} else {
+							num = new MguiInteger(index);
+							}
+					}else {
+						 getNumber(str, type[k]);
+						if (num == null) {
+							// Shouldn't happen
+							reader.close();
+							throw new IOException("PolygonSet3DLoader: Bad data type: '" + type[k] + "'.");
+							}
+						}
+					values.get(k).add(num);
 					}
 				}
 			
@@ -243,5 +299,29 @@ public class PolygonSet3DLoader extends FileLoader {
 			}
 		
 	}
+	
+	private MguiNumber getNumber( String str, int type) {
+		
+		switch(type) {
+			case DataTypes.FLOAT:
+				return new MguiFloat(str);
+				
+			case DataTypes.INTEGER:
+				return new MguiInteger(str);
+				
+			case DataTypes.DOUBLE:
+				return new MguiDouble(str);
+				
+			case DataTypes.SHORT:
+				return new MguiShort(str);
+				
+			default:
+					return null;
+			}
+		
+		
+	}
+	
+	
 	
 }

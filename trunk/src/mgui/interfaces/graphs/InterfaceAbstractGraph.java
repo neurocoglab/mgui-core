@@ -168,8 +168,15 @@ public class InterfaceAbstractGraph extends SparseGraph<AbstractGraphNode,
 			fireGraphListeners(InterfaceGraphEvent.GE_GENERAL);
 	}
 	
-	public Attribute getAttribute(String attrName) {	
+	public Attribute<?> getAttribute(String attrName) {	
 		return attributes.getAttribute(attrName);
+	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
 	}
 
 	public AttributeList getAttributes() {

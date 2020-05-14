@@ -98,9 +98,16 @@ public abstract class InterfaceTableModel extends AbstractTableModel implements 
 	}
 	
 	@Override
-	public Attribute getAttribute(String attrName) {
+	public Attribute<?> getAttribute(String attrName) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
 	}
 
 	@Override

@@ -397,6 +397,13 @@ public class VolumeEngine implements Engine {
 		// TODO Auto-generated method stub
 
 	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
+	}
 
 	@Override
 	public void setAttribute(String attrName, Object newValue) {

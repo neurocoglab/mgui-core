@@ -173,8 +173,15 @@ public class Graphic2DGrid extends AbstractInterfaceObject implements AttributeO
 		return (Stroke)attributes.getValue("Style");
 	}
 	
-	public Attribute getAttribute(String attrName) {	
+	public Attribute<?> getAttribute(String attrName) {	
 		return attributes.getAttribute(attrName);
+	}
+	
+	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
 	}
 
 	public AttributeList getAttributes() {
