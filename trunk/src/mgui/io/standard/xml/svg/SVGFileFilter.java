@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 Andrew Reid and the ModelGUI Project <http://mgui.wikidot.com>
+* Copyright (C) 2020 Andrew Reid and the ModelGUI Project <http://www.modelgui.org>
 * 
 * This file is part of ModelGUI[core] (mgui-core).
 * 
