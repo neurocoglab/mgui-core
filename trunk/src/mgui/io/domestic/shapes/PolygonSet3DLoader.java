@@ -80,6 +80,11 @@ public class PolygonSet3DLoader extends FileLoader {
 				}
 			}
 		
+		if (_options.getFiles() == null) {
+			failure_msg = "No input files specified!";
+			return false;
+			}
+		
 		parent_set.setLive(false);
 		
 		for (int i = 0; i < _options.getFiles().length; i++){
@@ -291,7 +296,7 @@ public class PolygonSet3DLoader extends FileLoader {
 							num = new MguiInteger(index);
 							}
 					}else {
-						 getNumber(str, type[k]);
+						num = getNumber(str, type[k]);
 						if (num == null) {
 							// Shouldn't happen
 							reader.close();

@@ -33,6 +33,7 @@ import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -97,7 +98,8 @@ public class CategoryTitle extends JButton implements PopupMenuObject,
 			parentObj.updateUI();
 	}
 	
-	public InterfacePopupMenu getPopupMenu() {
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 		
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		menu.addMenuItem(new JMenuItem("Expand all"));
@@ -106,6 +108,12 @@ public class CategoryTitle extends JButton implements PopupMenuObject,
 		
 		return menu;
 	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
 
 	public void handlePopupEvent(ActionEvent e) {
 		

@@ -31,6 +31,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
@@ -1202,6 +1203,11 @@ public class VertexDataColumn extends AbstractInterfaceObject implements Compara
 	
 	@Override
 	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selection) {
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		
 		menu.addMenuItem(new JMenuItem("Set current"));

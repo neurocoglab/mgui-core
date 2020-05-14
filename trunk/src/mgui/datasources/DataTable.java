@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -424,7 +425,13 @@ public class DataTable extends AbstractInterfaceObject implements Cloneable,
 	return getName();
 	}
 
+	@Override
 	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		
 		menu.addMenuItem(new JMenuItem("DataTable: " + getName(), getObjectIcon()));

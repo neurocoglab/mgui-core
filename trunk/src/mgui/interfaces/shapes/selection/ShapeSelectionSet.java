@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -584,13 +585,20 @@ public class ShapeSelectionSet extends AbstractInterfaceObject implements ShapeS
 		return -1;
 	}
 	
-	public InterfacePopupMenu getPopupMenu() {
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selection) {
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		menu.addMenuItem(new JMenuItem("ShapeSelectionSet Menu Item 1"));
 		menu.addMenuItem(new JMenuItem("ShapeSelectionSet Menu Item 2"));
 		
 		return menu;
 	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
 
 	public void handlePopupEvent(ActionEvent e) {
 		
@@ -601,6 +609,7 @@ public class ShapeSelectionSet extends AbstractInterfaceObject implements ShapeS
 		if (menu == null) return;
 		menu.show(e);
 	}
+	
 	
 	@Override
 	public Object getTransferData(DataFlavor flavor)

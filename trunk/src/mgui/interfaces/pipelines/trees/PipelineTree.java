@@ -30,6 +30,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -148,7 +149,13 @@ public class PipelineTree extends JTree implements PopupMenuObject,
 		return model;
 	}
 	
-	public InterfacePopupMenu getPopupMenu(){
+	@Override
+	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu((List<Object>)null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 		return null;
 	}
 	

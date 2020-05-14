@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -226,7 +227,13 @@ public class InterfaceToolPanel extends InterfacePanel implements ActionListener
 			tool_button.addActionListener(this);
 		}
 		
+		@Override
 		public InterfacePopupMenu getPopupMenu() {
+			return getPopupMenu(null);
+		}
+		
+		@Override
+		public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 			return tool.getPopupMenu();
 		}
 

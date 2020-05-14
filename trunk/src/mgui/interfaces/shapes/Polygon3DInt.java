@@ -307,14 +307,19 @@ public class Polygon3DInt extends Shape3DInt {
 				Node node = vertex_transformer.transform(i);
 				
 				if (node != null) {
-					Vector3f pv = new Vector3f(polygon.getVertex(i));
-					Transform3D tx = new Transform3D();
-					tx.setTranslation(pv);
-					tx.setScale(getVertexScale());
-					TransformGroup tg = new TransformGroup();
-					tg.addChild(node);
-					tg.setTransform(tx);
-					bg.addChild(tg);
+					float scale = getVertexScale(i);
+					if (((MguiBoolean)getAttributeValue("ScaleVerticesAbs")).getTrue())
+						scale = Math.abs(scale);
+					if (scale > ShapeFunctions.tolerance) {
+						Vector3f pv = new Vector3f(polygon.getVertex(i));
+						Transform3D tx = new Transform3D();
+						tx.setTranslation(pv);
+						tx.setScale(scale);
+						TransformGroup tg = new TransformGroup();
+						tg.addChild(node);
+						tg.setTransform(tx);
+						bg.addChild(tg);
+						}
 					}
 				
 				}

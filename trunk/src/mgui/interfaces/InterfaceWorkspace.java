@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.swing.Icon;
@@ -736,7 +737,13 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 		
 		PopupMenuObject handler = new PopupMenuObject(){
 
+			@Override
 			public InterfacePopupMenu getPopupMenu() {
+				return getPopupMenu(null);
+			}
+			
+			@Override
+			public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 				InterfacePopupMenu menu = new InterfacePopupMenu(this);
 				menu.addMenuItem(new JMenuItem("Add new"));
 				return menu;
@@ -787,7 +794,13 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 		
 		PopupMenuObject handler = new PopupMenuObject(){
 
+			@Override
 			public InterfacePopupMenu getPopupMenu() {
+				return getPopupMenu(null);
+			}
+			
+			@Override
+			public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 				InterfacePopupMenu menu = new InterfacePopupMenu(this);
 				menu.addMenuItem(new JMenuItem("Add new"));
 				return menu;

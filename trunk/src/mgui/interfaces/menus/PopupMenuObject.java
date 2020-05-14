@@ -21,6 +21,7 @@ package mgui.interfaces.menus;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 /*****************************************
  * Interface which should be implemented for all graphical objects which require popup menu
@@ -39,6 +40,14 @@ public interface PopupMenuObject {
 	 * @return
 	 */
 	public InterfacePopupMenu getPopupMenu();
+	
+	/**********************************************
+	 * Produces and returns a popup menu for this object. Allows an associated list
+	 * of objects to be passed as an argument.
+	 * 
+	 * @return
+	 */
+	public InterfacePopupMenu getPopupMenu(List<Object> selection);
 	
 	/**********************************************
 	 * Handles an event on this object's popup menu.

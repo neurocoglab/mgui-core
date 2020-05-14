@@ -353,9 +353,8 @@ public class Graph3DInt extends PointSet3DInt {
 	}
 	
 	@Override
-	public boolean isHeritableAttribute(Attribute<?> attribute){
-		if (!super.isHeritableAttribute(attribute)) return false;
-		String name = attribute.getName();
+	public boolean isHeritableAttribute(String name){
+		if (!super.isHeritableAttribute(name)) return false;
 		if (name.equals("3D.VertexScale") ||
 				name.equals("3D.EdgeScale") ||
 				name.equals("3D.ShowVertexLabels")){

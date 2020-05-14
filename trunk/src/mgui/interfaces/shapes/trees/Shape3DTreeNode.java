@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Andrew Reid and the ModelGUI Project <http://www.modelgui.org>
+* Copyright (C) 2014 Andrew Reid and the ModelGUI Project <http://mgui.wikidot.com>
 * 
 * This file is part of ModelGUI[core] (mgui-core).
 * 
@@ -51,8 +51,8 @@ public class Shape3DTreeNode extends ShapeTreeNode implements ShapeListener{
 		
 		Shape3DInt shape = (Shape3DInt)obj;
 		
-		if (shape.getAttributes() != null)
-			add(shape.getAttributes().issueTreeNode());
+		if (shape.getLocalAttributes() != null)
+			add(shape.getLocalAttributes().issueTreeNode());
 
 	}
 	

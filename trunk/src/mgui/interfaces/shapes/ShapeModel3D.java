@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.jogamp.java3d.BranchGroup;
@@ -330,6 +331,11 @@ public class ShapeModel3D extends AbstractInterfaceObject implements ShapeListen
 
 	@Override
 	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selection) {
 		
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		

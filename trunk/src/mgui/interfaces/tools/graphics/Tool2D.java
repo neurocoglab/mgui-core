@@ -22,6 +22,7 @@ package mgui.interfaces.tools.graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -139,7 +140,13 @@ public abstract class Tool2D implements Tool {
 			InterfaceSession.log("Cannot find resource: mgui/resources/icons/tools/tool_3d_30.png");
 	}
 	
+	@Override
 	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selected){
 		return null;
 	}
 

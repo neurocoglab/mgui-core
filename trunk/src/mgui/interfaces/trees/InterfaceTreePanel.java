@@ -27,6 +27,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -115,6 +116,7 @@ public class InterfaceTreePanel extends InterfacePanel implements TreeListener,
 		if (menu == null) return;
 		menu.show(e);
 	}
+
 	
 	public InterfacePopupMenu getPopupMenu(MouseEvent e){
 		
@@ -124,7 +126,15 @@ public class InterfaceTreePanel extends InterfacePanel implements TreeListener,
 		
 		if (!(path.getLastPathComponent() instanceof InterfaceTreeNode)) return super.getPopupMenu();
 		
-		return ((InterfaceTreeNode)path.getLastPathComponent()).getPopupMenu();
+		TreePath[] selection_paths = tree.getSelectionPaths();
+		ArrayList<Object> selected = new ArrayList<Object>();
+		
+		for (TreePath this_path : selection_paths) {
+			InterfaceTreeNode node = (InterfaceTreeNode)this_path.getLastPathComponent();
+			selected.add(node.getUserObject());
+			}
+		
+		return ((InterfaceTreeNode)path.getLastPathComponent()).getPopupMenu(selected);
 		
 	}
 	

@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -223,6 +224,11 @@ public class InterfaceAbstractGraph extends SparseGraph<AbstractGraphNode,
 	
 	@Override
 	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 		return null;
 	}
 

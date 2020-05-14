@@ -22,6 +22,7 @@ package mgui.interfaces.tools.dialogs;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -171,8 +172,13 @@ public abstract class DialogTool implements Tool {
 		return icon;
 	}
 
+	@Override
 	public InterfacePopupMenu getPopupMenu() {
-		
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selected){
 		return null;
 	}
 

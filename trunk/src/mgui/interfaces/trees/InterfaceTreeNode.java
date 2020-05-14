@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.JMenuItem;
 import javax.swing.JTree;
@@ -252,12 +253,18 @@ public class InterfaceTreeNode extends DefaultMutableTreeNode implements Cloneab
 		this.popup_menu = menu;
 	}
 	
+	@Override
 	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selection) {
 		if (popup_menu != null)
 			return popup_menu;
 		
 		if (getUserObject() instanceof PopupMenuObject)
-			return ((PopupMenuObject)getUserObject()).getPopupMenu();
+			return ((PopupMenuObject)getUserObject()).getPopupMenu(selection);
 		
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		menu.addMenuItem(new JMenuItem("Tree Node Menu Item 1"));

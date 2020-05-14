@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.swing.Icon;
@@ -613,6 +614,11 @@ public class InterfaceProject extends AbstractInterfaceObject implements Attribu
 	
 	@Override
 	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 		
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		menu.addMenuItem(new JMenuItem("Project '" + getName() + "'", getObjectIcon()));

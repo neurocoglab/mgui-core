@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -944,6 +945,11 @@ public class DataSource extends AbstractInterfaceObject implements Cloneable,
 	  
 	  @Override
 	  public InterfacePopupMenu getPopupMenu() {
+			return getPopupMenu(null);
+	  }
+		
+	  @Override
+	  public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 		  InterfacePopupMenu menu = new InterfacePopupMenu(this);
 			
 		  menu.addMenuItem(new JMenuItem(getName(), getObjectIcon()));

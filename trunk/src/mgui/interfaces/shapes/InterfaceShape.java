@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Andrew Reid and the ModelGUI Project <http://www.modelgui.org>
+* Copyright (C) 2014 Andrew Reid and the ModelGUI Project <http://mgui.wikidot.com>
 * 
 * This file is part of ModelGUI[core] (mgui-core).
 * 
@@ -68,6 +68,7 @@ import mgui.interfaces.maps.ColourMap;
 import mgui.interfaces.maps.ContinuousColourMap;
 import mgui.interfaces.maps.NameMap;
 import mgui.interfaces.math.VariableObject;
+import mgui.interfaces.menus.InterfacePopupMenu;
 import mgui.interfaces.menus.PopupMenuObject;
 import mgui.interfaces.queries.InterfaceQuery;
 import mgui.interfaces.shapes.attributes.ShapeAttribute;
@@ -264,6 +265,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		attributes.add(new ShapeAttribute<MguiBoolean>("IsSelectable", new MguiBoolean(true), false));
 		attributes.add(new AttributeSelection<String>("ScaleData", data_columns, String.class));
 		attributes.add(new ShapeAttribute<MguiBoolean>("ScaleVertices", new MguiBoolean(false), true));
+		attributes.add(new ShapeAttribute<MguiBoolean>("ScaleVerticesAbs", new MguiBoolean(false), true));
 		attributes.add(new ShapeAttribute<Font>("3D.LabelFont", new Font("Arial", Font.PLAIN, 12), true));
 		attributes.add(new ShapeAttribute<MguiFloat>("3D.LabelScale", new MguiFloat(1f), true));
 		attributes.add(new ShapeAttribute<MguiFloat>("3D.LabelOffset", new MguiFloat(0.5f), true));
@@ -363,7 +365,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	 * @param attribute
 	 * @return
 	 */
-	public abstract boolean isHeritableAttribute(Attribute<?> attribute);
+	public abstract boolean isHeritableAttribute(String name);
 	
 	/***********************************
 	 * Does this child attribute inherit values from a parent shape?
@@ -391,7 +393,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	 * @param b
 	 */
 	public void setVisible(boolean b){
-		setAttribute("IsVisible", new MguiBoolean(b));
+		attributes.setValue("IsVisible", new MguiBoolean(b));
 	}
 	
 	public boolean inheritAttributesFromParent(){
@@ -425,6 +427,13 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	}
 	
 	@Override
+	public Object getAttributeValue(String name) {
+		Attribute<?> attribute = getAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
+	}
+	
+	@Override
 	public Attribute<?> getAttribute(String attrName) {	
 		if (hasParentShape() && inheritAttributesFromParent()) {
 			return this.getParentAttribute(attrName);
@@ -432,15 +441,19 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		return attributes.getAttribute(attrName);
 	}
 	
-	@Override
-	public Object getAttributeValue(String name) {
-		Attribute<?> attribute = getAttribute(name);
-		if (attribute == null) return null;
-		return attribute.getValue();
-	}
-	
 	protected abstract Attribute<?> getParentAttribute(String attrName);
 
+	/***************************
+	 * 
+	 * Returns this shape's local attribute list, rather than its current attributes based
+	 * on whether it is overridden.
+	 * 
+	 * @return
+	 */
+	public AttributeList getLocalAttributes() {
+		return attributes;
+	}
+	
 	@Override
 	public AttributeList getAttributes() {
 		if (hasParentShape() && inheritAttributesFromParent()) {
@@ -485,7 +498,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 								 LoggingType.Warnings);
 			name = getLegalName(name);
 			}
-		attributes.setValue("Name", name);
+		setAttribute("Name", name);
 	}
 	
 	@Override
@@ -561,7 +574,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	 * @param b
 	 */
 	public void show2D(boolean b){
-		attributes.setValue("2D.Show", new MguiBoolean(b));
+		setAttribute("2D.Show", new MguiBoolean(b));
 	}
 	
 	/*********************************************************
@@ -572,6 +585,12 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	public void show3D(boolean b){
 		attributes.setValue("3D.Show", new MguiBoolean(b));
 	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
 	
 	/*********************************************************
 	 * Queries whether this shape has transparency.
@@ -2310,6 +2329,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 			}
 		
 		//fire tree node listeners; remove any which are destroyed
+		
 		ArrayList<InterfaceTreeNode> temp = new ArrayList<InterfaceTreeNode>(tree_nodes);
 		for (int i = 0; i < temp.size(); i++)
 			if (temp.get(i).isDestroyed())
@@ -2530,6 +2550,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		if (parent_set != null)
 			parent_set.removeShape(this);
 		parent_set = set;
+		
 		if (set != null)
 			this.addShapeListener(parent_set);
 	}

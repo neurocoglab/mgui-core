@@ -170,7 +170,7 @@ public class ShapeFunctions extends Utility {
 			String name = keys.get(i);
 			Attribute<?> parent_attribute = parent_attributes.getAttribute(name);
 			
-			if (parent.isHeritableAttribute(parent_attribute)){
+			if (parent.isHeritableAttribute(parent_attribute.getName())){
 				Attribute<?> inheriting_attribute = parent.getInheritingAttribute(parent_attribute);
 				String name2 = inheriting_attribute.getName();
 				if (child_attributes.hasAttribute(name2))

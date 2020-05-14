@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 
 import javax.swing.ImageIcon;
@@ -72,6 +71,7 @@ import mgui.interfaces.maps.Camera3D;
 import mgui.interfaces.maps.Camera3DListener;
 import mgui.interfaces.menus.InterfacePopupMenu;
 import mgui.interfaces.shapes.selection.ShapeSelectionSet;
+import mgui.interfaces.shapes.trees.ShapeTreeNode;
 import mgui.interfaces.shapes.util.ShapeEvent;
 import mgui.interfaces.shapes.util.ShapeEvent.EventType;
 import mgui.interfaces.shapes.util.ShapeFunctions;
@@ -1054,19 +1054,35 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		members.remove(shape);
 		shape.removeShapeListener(this);
 		shape.parent_set = null;
-		//shape.destroy();
+		
 		if (this.scene3DObject != null)
 			shape.getShapeSceneNode().detach();
 		
-		if (updateShape){
-			updateShape();
+		updateShape();
+		updateTreeNodes();
+	
+		last_removed = shape;
+		fireShapeListeners(new ShapeEvent(this, ShapeEvent.EventType.ShapeRemoved));
+		last_removed = null;
+	}
+	
+	@Override
+	public void updateTreeNodes(){
+		ArrayList<InterfaceTreeNode> nodes = new ArrayList<InterfaceTreeNode>(tree_nodes);
+		for (int i = 0; i < nodes.size(); i++){
+			nodes.get(i).objectChanged();
 			}
 		
-		if (updateListeners){
-			last_removed = shape;
-			fireShapeListeners(new ShapeEvent(this, ShapeEvent.EventType.ShapeRemoved));
-			last_removed = null;
+		for (InterfaceTreeNode node : nodes) {
+			if (node.isDestroyed()) {
+				tree_nodes.remove(node);
+			} else if (node instanceof ShapeTreeNode) {
+				if (!members.contains(((ShapeTreeNode)node).getShape())) {
+					tree_nodes.remove(node);
+					}
+				}
 			}
+		
 	}
 	
 	public void removeShape2D(Shape2DInt shape, boolean updateShape, boolean updateListeners){

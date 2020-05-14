@@ -21,6 +21,8 @@ package mgui.interfaces;
 
 import java.util.ArrayList;
 
+import mgui.interfaces.shapes.InterfaceShape;
+import mgui.interfaces.shapes.trees.ShapeTreeNode;
 import mgui.interfaces.trees.InterfaceTreeNode;
 import mgui.interfaces.util.InterfaceFunctions;
 
@@ -78,10 +80,16 @@ public abstract class AbstractInterfaceObject implements InterfaceObject{
 			nodes.get(i).objectChanged();
 			}
 		
-		for (int i = 0; i < nodes.size(); i++){
-			if (nodes.get(i).isDestroyed())
-				tree_nodes.remove(nodes.get(i));
+		for (InterfaceTreeNode node : nodes) {
+			if (node.isDestroyed()) {
+				tree_nodes.remove(node);
+				}
 			}
+		
+//		for (int i = 0; i < nodes.size(); i++){
+//			if (nodes.get(i).isDestroyed() || node.)
+//				tree_nodes.remove(nodes.get(i));
+//			}
 		
 	}
 

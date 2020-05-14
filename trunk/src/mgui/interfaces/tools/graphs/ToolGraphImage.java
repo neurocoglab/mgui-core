@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -183,12 +184,7 @@ public class ToolGraphImage extends ToolGraph {
 		return false;
 	}
 
-	@Override
-	public InterfacePopupMenu getPopupMenu() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public void handlePopupEvent(ActionEvent e) {
 		// TODO Auto-generated method stub

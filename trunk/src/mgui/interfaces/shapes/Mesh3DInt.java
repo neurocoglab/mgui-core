@@ -377,12 +377,11 @@ public class Mesh3DInt extends PointSet3DInt {
 	}
 	
 	@Override
-	public boolean isHeritableAttribute(Attribute<?> attribute){
-		String name = attribute.getName();
+	public boolean isHeritableAttribute(String name){
 		if (name.equals("2D.LineStyle")){
 			return true;
 			}
-		if (!super.isHeritableAttribute(attribute)) return false;
+		if (!super.isHeritableAttribute(name)) return false;
 		
 		if (name.equals("3D.VertexScale") ||
 				name.equals("3D.LineColour") ||

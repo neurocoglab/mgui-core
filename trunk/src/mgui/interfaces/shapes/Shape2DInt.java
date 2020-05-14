@@ -122,7 +122,7 @@ public abstract class Shape2DInt extends InterfaceShape
 	
 	@Override
 	protected Attribute<?> getParentAttribute(String attrName){
-		if (!this.hasParentShape() || !isHeritableAttribute(attributes.getAttribute(attrName))) {
+		if (!this.hasParentShape() || !isHeritableAttribute(attrName)) {
 			return attributes.getAttribute(attrName);
 			}
 		return ((ShapeSet2DInt)parent_set).getAttribute(attrName);
@@ -364,8 +364,8 @@ public abstract class Shape2DInt extends InterfaceShape
 	}
 	
 	@Override
-	public boolean isHeritableAttribute(Attribute<?> attribute){
-		return (attribute.getName().startsWith("2D."));
+	public boolean isHeritableAttribute(String name){
+		return name.startsWith("2D.");
 	}
 	
 	@Override
@@ -653,7 +653,13 @@ public abstract class Shape2DInt extends InterfaceShape
 		
 	}
 	
+	@Override
 	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		menu.addMenuItem(new JMenuItem("Shape2DInt Menu Item 1"));
 		menu.addMenuItem(new JMenuItem("Shape2DInt Menu Item 2"));

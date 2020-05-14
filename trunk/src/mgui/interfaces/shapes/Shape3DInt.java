@@ -31,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -66,15 +67,14 @@ import mgui.geometry.Plane3D;
 import mgui.geometry.Shape;
 import mgui.geometry.Shape3D;
 import mgui.geometry.Sphere3D;
-import mgui.geometry.mesh.MeshFunctions;
 import mgui.geometry.util.GeometryFunctions;
 import mgui.interfaces.InterfaceEnvironment;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.attributes.Attribute;
 import mgui.interfaces.attributes.AttributeEvent;
+import mgui.interfaces.attributes.AttributeList;
 import mgui.interfaces.attributes.AttributeSelection;
 import mgui.interfaces.graphics.util.DrawingEngine;
-import mgui.interfaces.graphs.AbstractGraphNode;
 import mgui.interfaces.logs.LoggingType;
 import mgui.interfaces.maps.Camera3D;
 import mgui.interfaces.maps.Camera3DListener;
@@ -173,7 +173,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	protected Attribute<?> getParentAttribute(String attrName){
-		if (!hasParentShape() || !isHeritableAttribute(attributes.getAttribute(attrName))) {
+		if (!hasParentShape() || !isHeritableAttribute(attrName)) {
 			return attributes.getAttribute(attrName);
 			}
 		ShapeSet3DInt parent = (ShapeSet3DInt)parent_set;
@@ -182,10 +182,9 @@ public abstract class Shape3DInt extends InterfaceShape
 	}
 	
 	@Override
-	public boolean isHeritableAttribute(Attribute<?> attribute){
-		if (!attribute.getName().startsWith("3D.")) return false;
-		if (attribute.getName().equals("3D.Show")) return false;
-		String name = attribute.getName();
+	public boolean isHeritableAttribute(String name){
+		if (!name.startsWith("3D.")) return false;
+		if (name.equals("3D.Show")) return false;
 		name = name.replaceFirst("3D.", "2D.");
 		return attributes.hasAttribute(name);
 	}
@@ -291,7 +290,9 @@ public abstract class Shape3DInt extends InterfaceShape
 		if (column == null) return general_scale;
 		
 		float value = (float)getDatumAtVertex(column, i).getValue();
-		return (float)Math.pow(general_scale * value, exp_scale);
+		value = (float)Math.pow(general_scale * value, exp_scale);
+		if (Float.isNaN(value)) return 0;
+		return value;
 	}
 	
 	/*******************************
@@ -336,13 +337,13 @@ public abstract class Shape3DInt extends InterfaceShape
 				return getVertexColour();
 				}
 			
-			ColourMap cmap = column.getColourMap();
+			ColourMap cmap = getColourMap(column.getName());
 			
 			if (cmap == null) {
 				return getVertexColour();
 				}
 			
-			Colour clr = cmap.getColour(column.getValueAtVertex(i));
+			Colour clr = cmap.getColour(column.getValueAtVertex(i).getValue(), column.getColourMin(), column.getColourMax());
 			return clr.getColor();
 			
 		} else {
@@ -1218,11 +1219,8 @@ public abstract class Shape3DInt extends InterfaceShape
 
 		
 		if (inheritAttributesFromParent()){
-			// Don't update child if it is inheriting this attribute from its parent
-//			if (isInheritingAttribute(a)) 
-//				return;
-			// Inherit 3D value if this attribute is heritable
-			if (isHeritableAttribute(a)){
+			
+			if (isHeritableAttribute(a.getName())){
 				Attribute<?> attr2 = this.getInheritingAttribute(a);
 				String name = attr2.getName();
 				for (int i = 0; i < children2D.size(); i++){
@@ -1247,7 +1245,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	 * @return The inheriting attribute, or {@code null} if attribute is not heritable
 	 */
 	public Attribute<?> getInheritingAttribute(Attribute<?> attribute){
-		if (!isHeritableAttribute(attribute)) return null;
+		if (!isHeritableAttribute(attribute.getName())) return null;
 		String name = attribute.getName();
 		String name2 = name.replace("3D.", "2D.");
 		return attributes.getAttribute(name2);
@@ -1362,7 +1360,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	 * this top-level menu and add items to it. 
 	 * 
 	 */
-	public InterfacePopupMenu getPopupMenu() {
+	public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		
 		menu.addMenuItem(new JMenuItem("Shape3DInt", getIcon()));
@@ -1371,6 +1369,13 @@ public abstract class Shape3DInt extends InterfaceShape
 		menu.add(new JSeparator(), 1);
 		
 		menu.addMenuItem(new JMenuItem("Edit attributes.."));
+		menu.addMenuItem(new JMenuItem("Copy attributes"));
+		
+		Object clipped = InterfaceSession.getClipboard().getContent();
+		if (clipped != null && clipped instanceof AttributeList) {
+			menu.addMenuItem(new JMenuItem("Paste attributes"));
+			}
+		
 		menu.add(new JSeparator(), 4);
 		
 		menu.addMenuItem(new JMenuItem("Copy"));
@@ -1434,6 +1439,7 @@ public abstract class Shape3DInt extends InterfaceShape
 				}else{
 					if (getParentSet() == null) return;	//shouldn't happen
 					getParentSet().removeShape(this);
+					this.destroy();
 					return;
 					}
 				}
@@ -1441,6 +1447,16 @@ public abstract class Shape3DInt extends InterfaceShape
 		
 		if (item.getText().equals("Edit attributes..")){
 			InterfaceSession.getWorkspace().showAttributeDialog(this);
+			return;
+			}
+		
+		if (item.getText().equals("Copy attributes")){
+			
+			return;
+			}
+		
+		if (item.getText().equals("Paste attributes")){
+			
 			return;
 			}
 		
@@ -1612,8 +1628,12 @@ public abstract class Shape3DInt extends InterfaceShape
 		@Override
 		public Node transform(Integer i) {
 			
-			MguiBoolean show = (MguiBoolean)attributes.getValue("3D.ShowVertices");
-			if (!show.getTrue() || me.getVertexScale(i) < ShapeFunctions.tolerance) {
+			float scale = me.getVertexScale(i);
+			if (((MguiBoolean)getAttributeValue("ScaleVerticesAbs")).getTrue())
+				scale = Math.abs(scale);
+			
+			MguiBoolean show = (MguiBoolean)getAttributeValue("3D.ShowVertices");
+			if (!show.getTrue() || scale < ShapeFunctions.tolerance) {
 				return null;
 				}
 				
@@ -1623,6 +1643,7 @@ public abstract class Shape3DInt extends InterfaceShape
 									   Sphere.ENABLE_APPEARANCE_MODIFY, 
 									  	getVertexAppearance(i));
 			
+			sphere.setAppearance(me.getVertexAppearance(i));
 			sphere.getShape().setUserData(new ShapeVertexObject(me, i));
 			sphere.setCapability(Primitive.ENABLE_APPEARANCE_MODIFY);
 			

@@ -63,6 +63,8 @@ public class InterfaceSession {
 	
 	static InterfaceWorkspace workspace;
 	
+	static Clipboard clipboard = new Clipboard();
+	
 	/*******************************************
 	 * Main entry point into modelGUI application, without a frame being created. 
 	 * Initializes <code>InterfaceEnvironment</code>
@@ -489,6 +491,17 @@ public class InterfaceSession {
 			default:
 				break;
 			}
+	}
+	
+	/*********************************
+	 * 
+	 * Returns the clipboard for the current session. This can be used for simple copy/paste
+	 * procedures.
+	 * 
+	 * @return
+	 */
+	public static Clipboard getClipboard() {
+		return clipboard;
 	}
 	
 	

@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -166,7 +167,13 @@ public class DataQuery extends AbstractInterfaceObject implements PopupMenuObjec
 		 //return "SQL: '" + getSQLStatement(20) + "'";
 	}
 	
+	@Override
 	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selected) {
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		
 		menu.addMenuItem(new JMenuItem("DataQuery", getObjectIcon()));

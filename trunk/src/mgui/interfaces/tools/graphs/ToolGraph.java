@@ -23,6 +23,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -30,6 +31,7 @@ import javax.swing.ImageIcon;
 import mgui.interfaces.InterfacePanel;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.graphs.InterfaceGraphDisplay;
+import mgui.interfaces.menus.InterfacePopupMenu;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.tools.Tool;
 import mgui.interfaces.tools.ToolConstants;
@@ -108,6 +110,16 @@ public abstract class ToolGraph implements Tool {
 				}
 				
 			}
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu() {
+		return getPopupMenu(null);
+	}
+	
+	@Override
+	public InterfacePopupMenu getPopupMenu(List<Object> selection) {
+		return null;
 	}
 	
 	public Icon getObjectIcon(){

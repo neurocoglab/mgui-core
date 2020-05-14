@@ -28,16 +28,15 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import mgui.classes.ClassFunctions;
 import mgui.interfaces.attributes.Attribute;
 import mgui.interfaces.attributes.AttributeEvent;
 import mgui.interfaces.attributes.AttributeList;
@@ -113,8 +112,12 @@ public abstract class InterfacePanel extends JPanel implements InterfaceObject,
 		
 	}
 	
-	//subclass should override this to provide a popup menu
 	public InterfacePopupMenu getPopupMenu(){
+		return getPopupMenu(null);
+	}
+	
+	//subclass should override this to provide a popup menu
+	public InterfacePopupMenu getPopupMenu(List<Object> selection){
 		//temp
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
 		menu.addMenuItem(new JMenuItem("Item1"));
