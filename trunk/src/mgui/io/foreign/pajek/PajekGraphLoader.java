@@ -418,7 +418,7 @@ public class PajekGraphLoader extends GraphFileLoader {
 	        int v_id = Integer.parseInt(index) - 1; // go from 1-based to 0-based index
 	        if (v_id >= num_vertices || v_id < 0)
 	            throw new IllegalArgumentException("Vertex number " + v_id +
-	                    "is not in the range [1," + num_vertices + "]");
+	                    " is not in the range [1," + num_vertices + "]");
 	        node = id.get(v_id);
 	        //TODO: make this work
 	        // only attach the label if there's one to attach

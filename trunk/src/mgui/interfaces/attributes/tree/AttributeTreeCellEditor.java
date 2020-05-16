@@ -477,7 +477,7 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 				
 				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 				cell.add(thisLabel);
-				cell.add(strokeSample);
+				cell.add(cmbSel);
 				thisLabel.setPreferredSize(new Dimension(cell_width - value_width, height));
 				thisLabel.setMaximumSize(new Dimension(cell_width - value_width, height));
 				cell.setPreferredSize(new Dimension(cell_width, height));
