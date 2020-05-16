@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jogamp.java3d.Transform3D;
 import javax.swing.Icon;
@@ -543,11 +544,10 @@ public class InterfaceSectionSetPanel extends InterfacePanel implements ShapeLis
 		cmbUpdateSet.removeAllItems();
 		cmbUpdateSet.addItem(NEW_SET);
 		
-		SectionSet3DInt sset = new SectionSet3DInt();
-		ShapeSet3DInt sectionSets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(sset, true);
-		for (int i = 0; i < sectionSets.members.size(); i++){
-			cmbSectionSet.addItem(sectionSets.members.get(i));
-			cmbUpdateSet.addItem(sectionSets.members.get(i));
+		List<Shape3DInt> section_sets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new SectionSet3DInt());
+		for (Shape3DInt set : section_sets) {
+			cmbSectionSet.addItem(set);
+			cmbUpdateSet.addItem(set);
 			}
 		if (currentWindow != null && currentWindow.getPanel() instanceof InterfaceGraphic2D){
 			InterfaceGraphic2D panel = (InterfaceGraphic2D)currentWindow.getPanel();

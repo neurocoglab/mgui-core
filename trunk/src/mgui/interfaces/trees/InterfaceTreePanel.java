@@ -127,11 +127,14 @@ public class InterfaceTreePanel extends InterfacePanel implements TreeListener,
 		if (!(path.getLastPathComponent() instanceof InterfaceTreeNode)) return super.getPopupMenu();
 		
 		TreePath[] selection_paths = tree.getSelectionPaths();
-		ArrayList<Object> selected = new ArrayList<Object>();
+		ArrayList<Object> selected = null;
 		
-		for (TreePath this_path : selection_paths) {
-			InterfaceTreeNode node = (InterfaceTreeNode)this_path.getLastPathComponent();
-			selected.add(node.getUserObject());
+		if (selection_paths != null) {
+			selected = new ArrayList<Object>();
+			for (TreePath this_path : selection_paths) {
+				InterfaceTreeNode node = (InterfaceTreeNode)this_path.getLastPathComponent();
+				selected.add(node.getUserObject());
+				}
 			}
 		
 		return ((InterfaceTreeNode)path.getLastPathComponent()).getPopupMenu(selected);

@@ -176,9 +176,11 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 			ShapeSet3DInt model_set = models.get(i).getModelSet();
 			combo_box.addItem(model_set);
 			
-			ShapeSet3DInt all_sets = model_set.getShapeType(model_set, true);
-			for (Shape3DInt shape : all_sets.members)
-				combo_box.addItem(shape);
+			List<Shape3DInt> all_sets = model_set.getShapeType(model_set);
+			
+			for (Shape3DInt set : all_sets) {
+				combo_box.addItem(set);
+				}
 			}
 	}
 	
@@ -191,9 +193,11 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 			ShapeSet3DInt model_set = models.get(i).getModelSet();
 			if (shape instanceof ShapeSet3DInt)
 				combo_box.addItem(model_set);
-			ShapeSet3DInt all_sets = model_set.getShapeType(shape, true);
-			for (Shape3DInt _shape : all_sets.members)
-				combo_box.addItem(_shape);
+			List<Shape3DInt> all_sets = model_set.getShapeType(model_set);
+			
+			for (Shape3DInt set : all_sets) {
+				combo_box.addItem(set);
+				}
 			}
 		
 	}
@@ -622,10 +626,11 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 		ArrayList<View3D> list = new ArrayList<View3D>(views3D);
 		
 		//add section set views
-		ShapeSet3DInt sets = display_panel.getCurrentShapeSet().getShapeType(new SectionSet3DInt(), true);
+		List<Shape3DInt> sets = display_panel.getCurrentShapeSet().getShapeType(new SectionSet3DInt());
 		
-		for (int i = 0; i < sets.members.size(); i++)
-			list.add(((SectionSet3DInt)sets.members.get(i)).getView3D(1.0));
+		for (Shape3DInt set : sets) {
+			list.add(((SectionSet3DInt)set).getView3D(1.0));
+			}
 		
 		return list;
 	}

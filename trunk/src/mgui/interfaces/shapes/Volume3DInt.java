@@ -162,9 +162,9 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 	public boolean renameVertexDataColumn(String old_name, String new_name){
 		if (!hasColumn(old_name)) return false;
 		if (hasColumn(new_name)) return false;
-		VertexDataColumn column = vertexData.get(old_name);
-		vertexData.remove(old_name);
-		vertexData.put(new_name, column);
+		VertexDataColumn column = vertex_data.get(old_name);
+		vertex_data.remove(old_name);
+		vertex_data.put(new_name, column);
 		column.setName(new_name);
 		
 		// Update all the hash maps
@@ -329,14 +329,14 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 			return false;
 			}
 		VertexDataColumn v_column = null;
-		boolean is_new = !vertexData.containsKey(column);
+		boolean is_new = !vertex_data.containsKey(column);
 		if (!is_new){
-			v_column = vertexData.get(column);
+			v_column = vertex_data.get(column);
 			v_column.setValues(data, false);
 		}else{
 			v_column = new GridVertexDataColumn(column, this, data);
 			v_column.resetDataLimits(false);
-			vertexData.put(column, v_column);
+			vertex_data.put(column, v_column);
 			v_column.addListener(this);
 			}
 		
@@ -2206,7 +2206,7 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 			// Masks
 			
 			// Vertex data here
-			if (type == XMLType.Full && this.vertexData.size() > 0){
+			if (type == XMLType.Full && this.vertex_data.size() > 0){
 				
 				writer.write(_tab2 + "<VertexData>\n");
 				

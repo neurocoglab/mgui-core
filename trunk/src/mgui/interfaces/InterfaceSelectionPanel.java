@@ -26,6 +26,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -45,6 +46,8 @@ import mgui.interfaces.layouts.CategoryLayoutConstraints;
 import mgui.interfaces.layouts.CategoryTitle;
 import mgui.interfaces.maps.Map;
 import mgui.interfaces.shapes.InterfaceShape;
+import mgui.interfaces.shapes.SectionSet3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.interfaces.shapes.ShapeSet;
 import mgui.interfaces.shapes.ShapeSet3DInt;
@@ -459,11 +462,13 @@ public class InterfaceSelectionPanel extends InterfacePanel
 				if (!current_model.selections.get(i).equals(current_set))
 					modActionSets.addElement(current_model.selections.get(i));
 		}else if (current_model.getModelSet() != null){
-			ShapeSet3DInt set = current_model.getModelSet().getShapeType(new ShapeSet3DInt());
+			//ShapeSet3DInt set = current_model.getModelSet().getShapeType(new ShapeSet3DInt());
+			
+			List<Shape3DInt> sets = current_model.getModelSet().getShapeType(new ShapeSet3DInt());
+			
 			modActionSets.addElement(current_model.getModelSet());
-			if (set != null)
-				for (int i = 0; i < set.members.size(); i++)
-					modActionSets.addElement(set.members.get(i));
+			for (Shape3DInt set : sets)
+				modActionSets.addElement(set);
 			}
 		updateDisplay();
 	}

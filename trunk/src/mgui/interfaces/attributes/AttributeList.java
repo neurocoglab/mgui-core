@@ -24,9 +24,12 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import org.xml.sax.Attributes;
 
 import mgui.interfaces.AbstractInterfaceObject;
 import mgui.interfaces.InterfaceObject;
@@ -39,8 +42,6 @@ import mgui.interfaces.xml.XMLFunctions;
 import mgui.interfaces.xml.XMLObject;
 import mgui.io.standard.xml.XMLOutputOptions;
 import mgui.resources.icons.IconObject;
-
-import org.xml.sax.Attributes;
 
 /*******************************************************
  * Stores a list of {@link Attribute} objects, and provides methods to access and modify them, as well as
@@ -281,6 +282,12 @@ public class AttributeList extends AbstractInterfaceObject
 			}
 	}
 
+	/*****************************
+	 * 
+	 * @param <V>
+	 * @param attribute
+	 * @return
+	 */
 	public <V> boolean setValue(Attribute<V> attribute){
 		
 		try{
@@ -293,7 +300,7 @@ public class AttributeList extends AbstractInterfaceObject
 			
 			return true;
 		}catch (ClassCastException e){
-			InterfaceSession.log("AttributeList: Attribute value is wrong class type.", 
+			InterfaceSession.log("AttributeList: Attribute value (" + attribute.getName() + ") is wrong class type.", 
 								 LoggingType.Errors);
 			return false;
 			}
@@ -390,6 +397,20 @@ public class AttributeList extends AbstractInterfaceObject
 			if (attr != null)
 				attr.setValue(list.getValue(name), fire, true);
 			}
+	}
+	
+	/*********************
+	 * Set any attributes which intersect with the passed list.
+	 *
+	 */
+	public void setIntersection(List<Attribute<?>> list, boolean fire){
+		
+		for (Attribute<?> attribute : list) {
+			Attribute<?> attr = getAttribute(attribute.getName());
+			if (attr != null)
+				attr.setValue(attribute.getValue(), fire, true);
+			}
+		
 	}
 	
 	/************************************************

@@ -21,6 +21,7 @@ package mgui.io.domestic.shapes;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
@@ -35,7 +36,7 @@ import mgui.interfaces.io.InterfaceIODialogBox;
 import mgui.interfaces.layouts.LineLayout;
 import mgui.interfaces.layouts.LineLayoutConstraints;
 import mgui.interfaces.shapes.PointSet3DInt;
-import mgui.interfaces.shapes.ShapeSet3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.io.InterfaceIOOptions;
 import mgui.io.InterfaceIOPanel;
 
@@ -95,9 +96,10 @@ public class PointSet3DDataInputDialogBox extends InterfaceIODialogBox {
 		
 		cmbPointSet.removeAllItems();
 		
-		ShapeSet3DInt sets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new PointSet3DInt());
-		for (int i = 0; i < sets.members.size(); i++)
-			cmbPointSet.addItem(sets.members.get(i));
+		List<Shape3DInt> sets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new PointSet3DInt());
+		for (Shape3DInt set : sets) {
+			cmbPointSet.addItem(set);
+			}
 		
 		if (cmbPointSet.getItemCount() == 0) return;
 		

@@ -147,7 +147,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	protected boolean isImageShape = false;
 	protected AttributeList overrideAttr;
 	protected boolean isOverridden = false;
-	protected HashMap<String, VertexDataColumn> vertexData = new HashMap<String, VertexDataColumn>();
+	protected HashMap<String, VertexDataColumn> vertex_data = new HashMap<String, VertexDataColumn>();
 	public ArrayList<String> data_columns = new ArrayList<String>();
 	protected boolean[] constraints;
 	protected VertexSelection selected_nodes;
@@ -219,33 +219,33 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	
 	protected void _init(){
 		attributes = new AttributeList();
-		attributes.add(new ShapeAttribute<String>("Name", "no-name", false));
-		attributes.add(new ShapeAttribute<BasicStroke>("3D.LineStyle", new BasicStroke(), true));
-		attributes.add(new ShapeAttribute<BasicStroke>("2D.LineStyle", new BasicStroke(), true));
-		attributes.add(new ShapeAttribute<Color>("3D.LineColour", Color.BLUE, true));	
-		attributes.add(new ShapeAttribute<Color>("2D.LineColour", Color.BLUE, true));	
-		attributes.add(new ShapeAttribute<Color>("3D.FillColour", Color.BLUE, true));	
-		attributes.add(new ShapeAttribute<Color>("2D.FillColour", Color.BLUE, true));	
-		attributes.add(new ShapeAttribute<MguiBoolean>("3D.HasFill", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("2D.HasFill", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("IsVisible", new MguiBoolean(true), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("3D.HasAlpha", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<MguiFloat>("3D.Alpha", new MguiFloat(1.0f), true));
+		attributes.add(new ShapeAttribute<String>("Name", "no-name", false, false, true, false));
+		attributes.add(new ShapeAttribute<BasicStroke>("3D.LineStyle", new BasicStroke()));
+		attributes.add(new ShapeAttribute<BasicStroke>("2D.LineStyle", new BasicStroke()));
+		attributes.add(new ShapeAttribute<Color>("3D.LineColour", Color.BLUE));	
+		attributes.add(new ShapeAttribute<Color>("2D.LineColour", Color.BLUE));	
+		attributes.add(new ShapeAttribute<Color>("3D.FillColour", Color.BLUE));	
+		attributes.add(new ShapeAttribute<Color>("2D.FillColour", Color.BLUE));	
+		attributes.add(new ShapeAttribute<MguiBoolean>("3D.HasFill", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("2D.HasFill", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("IsVisible", new MguiBoolean(true)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("3D.HasAlpha", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiFloat>("3D.Alpha", new MguiFloat(1.0f)));
 		attributes.add(new ShapeAttribute<MguiBoolean>("2D.Show", new MguiBoolean(true), true, false));
 		attributes.add(new ShapeAttribute<MguiBoolean>("3D.Show", new MguiBoolean(true), false, true));
 		attributes.add(new ShapeAttribute<MguiBoolean>("2D.HasAlpha", new MguiBoolean(false), true, false));
 		attributes.add(new ShapeAttribute<MguiFloat>("2D.Alpha", new MguiFloat(1.0f), true));
 		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowBounds", new MguiBoolean(false), false, true));
 		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowBounds", new MguiBoolean(false), true, false));
-		attributes.add(new ShapeAttribute<Color>("3D.BoundsColour", Color.BLUE, true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowVertices", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowVertices", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowSelectedVertices", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowSelectedVertices", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<Color>("3D.VertexColour", Color.BLUE, true));
-		attributes.add(new ShapeAttribute<Color>("2D.VertexColour", Color.BLUE, true));
-		attributes.add(new ShapeAttribute<Color>("2D.VertexOutlineColour", Color.BLACK, true));
-		attributes.add(new ShapeAttribute<Color>("SelectedVertexColour", Color.RED, true));
+		attributes.add(new ShapeAttribute<Color>("3D.BoundsColour", Color.BLUE));
+		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowVertices", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowVertices", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowSelectedVertices", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowSelectedVertices", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<Color>("3D.VertexColour", Color.BLUE));
+		attributes.add(new ShapeAttribute<Color>("2D.VertexColour", Color.BLUE));
+		attributes.add(new ShapeAttribute<Color>("2D.VertexOutlineColour", Color.BLACK));
+		attributes.add(new ShapeAttribute<Color>("SelectedVertexColour", Color.RED));
 		attributes.add(new ShapeAttribute<MguiBoolean>("ShowData", new MguiBoolean(false), true));
 		attributes.add(new AttributeSelection<String>("CurrentData", data_columns, String.class));	
 		AttributeSelection<ColourMap> dcm = new AttributeSelection<ColourMap>("DefaultColourMap", InterfaceEnvironment.getColourMaps(), ColourMap.class);
@@ -256,32 +256,32 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 			}
 		dcm.select(cmap);
 		attributes.add(dcm);
-		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowConstraints", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowConstraints", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<MguiFloat>("3D.VertexScale", new MguiFloat(1f), true));
-		attributes.add(new ShapeAttribute<MguiFloat>("3D.VertexScaleExp", new MguiFloat(1f), true));
-		attributes.add(new ShapeAttribute<MguiFloat>("2D.VertexScale", new MguiFloat(1f), true));
-		attributes.add(new ShapeAttribute<MguiFloat>("2D.VertexScaleExp", new MguiFloat(1f), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("IsSelectable", new MguiBoolean(true), false));
+		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowConstraints", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowConstraints", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiFloat>("3D.VertexScale", new MguiFloat(1f)));
+		attributes.add(new ShapeAttribute<MguiFloat>("3D.VertexScaleExp", new MguiFloat(1f)));
+		attributes.add(new ShapeAttribute<MguiFloat>("2D.VertexScale", new MguiFloat(1f)));
+		attributes.add(new ShapeAttribute<MguiFloat>("2D.VertexScaleExp", new MguiFloat(1f)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("IsSelectable", new MguiBoolean(true), false, false, false, false));
 		attributes.add(new AttributeSelection<String>("ScaleData", data_columns, String.class));
-		attributes.add(new ShapeAttribute<MguiBoolean>("ScaleVertices", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("ScaleVerticesAbs", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<Font>("3D.LabelFont", new Font("Arial", Font.PLAIN, 12), true));
-		attributes.add(new ShapeAttribute<MguiFloat>("3D.LabelScale", new MguiFloat(1f), true));
-		attributes.add(new ShapeAttribute<MguiFloat>("3D.LabelOffset", new MguiFloat(0.5f), true));
-		attributes.add(new ShapeAttribute<Color>("3D.LabelColour", Color.BLACK, true));
-		attributes.add(new ShapeAttribute<String>("3D.LabelFormat", "#0.0", true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowVertexLabels", new MguiBoolean(false), true));
-		attributes.add(new ShapeAttribute<Font>("2D.LabelFont", new Font("Arial", Font.PLAIN, 12), true));
-		attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelScale", new MguiFloat(1f), true));
-		attributes.add(new ShapeAttribute<Color>("2D.LabelColour", Color.BLACK, true));
-		attributes.add(new ShapeAttribute<Color>("2D.LabelOutlineColour", Color.WHITE, true));
-		attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelOutlineWidth", new MguiFloat(0), true));
-		attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelBackgroundAlpha", new MguiFloat(1f), true));
-		attributes.add(new ShapeAttribute<Color>("2D.LabelBackgroundColour", Color.LIGHT_GRAY, true));
-		attributes.add(new ShapeAttribute<String>("2D.LabelFormat", "#0.0", true));
-		attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelOffset", new MguiFloat(0.5f), true));
-		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowVertexLabels", new MguiBoolean(false), true));
+		attributes.add(new ShapeAttribute<MguiBoolean>("ScaleVertices", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("ScaleVerticesAbs", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<Font>("3D.LabelFont", new Font("Arial", Font.PLAIN, 12)));
+		attributes.add(new ShapeAttribute<MguiFloat>("3D.LabelScale", new MguiFloat(1f)));
+		attributes.add(new ShapeAttribute<MguiFloat>("3D.LabelOffset", new MguiFloat(0.5f)));
+		attributes.add(new ShapeAttribute<Color>("3D.LabelColour", Color.BLACK));
+		attributes.add(new ShapeAttribute<String>("3D.LabelFormat", "#0.0"));
+		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowVertexLabels", new MguiBoolean(false)));
+		attributes.add(new ShapeAttribute<Font>("2D.LabelFont", new Font("Arial", Font.PLAIN, 12)));
+		attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelScale", new MguiFloat(1f)));
+		attributes.add(new ShapeAttribute<Color>("2D.LabelColour", Color.BLACK));
+		attributes.add(new ShapeAttribute<Color>("2D.LabelOutlineColour", Color.WHITE));
+		attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelOutlineWidth", new MguiFloat(0)));
+		attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelBackgroundAlpha", new MguiFloat(1f)));
+		attributes.add(new ShapeAttribute<Color>("2D.LabelBackgroundColour", Color.LIGHT_GRAY));
+		attributes.add(new ShapeAttribute<String>("2D.LabelFormat", "#0.0"));
+		attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelOffset", new MguiFloat(0.5f)));
+		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowVertexLabels", new MguiBoolean(false)));
 		AttributeSelection<String> pos = 
 				new AttributeSelection<String>("2D.LabelPosition", GraphFunctions.getLabelPositions(), String.class, "SE");
 		attributes.add(pos);
@@ -289,17 +289,20 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		attributes.add(new AttributeSelection<String>("LabelData", data_columns, String.class));	
 		attributes.add(new Attribute<MguiBoolean>("InheritFromParent", new MguiBoolean(false)));
 		
-		Attribute<MguiDouble> attr = new Attribute<MguiDouble>("DataMax", new MguiDouble(1.0));
+		attributes.add(new AttributeSelection<SpatialUnit>("Unit", InterfaceEnvironment.getSpatialUnits(), SpatialUnit.class, true, false));
+		setUnit(InterfaceEnvironment.getSpatialUnit("meter"));
+		
+		Attribute<MguiDouble> attr = new Attribute<MguiDouble>("DataMax", new MguiDouble(1.0), true, false);
 		attributes.add(attr);
-		attr = new Attribute<MguiDouble>("DataMin", new MguiDouble(0.0));
+		attr = new Attribute<MguiDouble>("DataMin", new MguiDouble(0.0), true, false);
 		attributes.add(attr);
-		Attribute<String> a = new Attribute<String>("UrlReference", "");
+		Attribute<String> a = new Attribute<String>("UrlReference", "", true, false);
 		a.setEditable(false);
 		attributes.add(a);
-		a = new Attribute<String>("FileLoader", "");
+		a = new Attribute<String>("FileLoader", "", true, false);
 		a.setEditable(false);
 		attributes.add(a);
-		a = new Attribute<String>("FileWriter", "");
+		a = new Attribute<String>("FileWriter", "", true, false);
 		a.setEditable(false);
 		attributes.add(a);
 		
@@ -355,9 +358,62 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		is_registered = true;
 	}
 	
+/********** GEOMETRY ********************************/	
+	
+	
+	/***********************************************
+	 * Returns the spatial unit for this shape set.
+	 * 
+	 * @return the spatial unit for this shape set
+	 */
+	public SpatialUnit getUnit(){
+		SpatialUnit unit = (SpatialUnit)attributes.getValue("Unit");
+		if (unit != null) return unit;
+		
+		return InterfaceEnvironment.getDefaultSpatialUnit();
+	}
+	
+	public void setUnit(SpatialUnit unit){
+		setAttribute("Unit", unit);
+	}
 	
 /********** ATTRIBUTES STUFF ****************************/
 	
+	/***********************************
+	 * Copies {@code attributes} to this shape. The shape should determine which attributes
+	 * may be copied.
+	 * 
+	 * @param attributes
+	 * @return
+	 */
+	public boolean copyAttributes(InterfaceShape source_shape) {
+		
+		ArrayList<Attribute<?>> to_copy = new ArrayList<Attribute<?>>();
+		
+		AttributeList source_attributes = source_shape.getAttributes();
+		
+		for (Attribute<?> attribute : source_attributes.getAsList()) {
+			if (attribute.isCopiable()) {
+				to_copy.add(attribute);
+				}
+			}
+		
+		boolean success = false;
+		
+		if (to_copy.size() > 0) {
+			this.attributes.setIntersection(to_copy, true);
+			
+			// Copy all vertex column attributes
+			// Don't fail if columns don't copy perfectly
+			for (VertexDataColumn source_column : source_shape.getVertexDataColumns()) {
+				VertexDataColumn target_column = this.getVertexDataColumn(source_column.getName());
+				target_column.copyAttributes(source_column);
+				}
+			success = true;
+			}
+		
+		return success;
+	}
 	
 	/***********************************
 	 * Is this parent attribute inherited by a child shape?
@@ -400,7 +456,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		if (this.hasParentShape()) {
 			if (getParentSet() instanceof InterfaceShape) {
 				MguiBoolean overriding = (MguiBoolean)((InterfaceShape)getParentSet()).getAttribute("IsOverriding").getValue();
-				if (overriding.getTrue()) return true;
+				if (!overriding.getTrue()) return false;
 				}
 			}
 		return ((MguiBoolean)attributes.getValue("InheritFromParent")).getTrue();
@@ -453,6 +509,17 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	public AttributeList getLocalAttributes() {
 		return attributes;
 	}
+	
+	/****************************
+	 * Determines whether this object has an attribute named {@code name}.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public boolean hasAttribute(String name) {
+		return attributes.hasAttribute(name);
+	}
+	
 	
 	@Override
 	public AttributeList getAttributes() {
@@ -908,12 +975,12 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 				
 			case NameChanged:
 				last_column_changed = (VertexDataColumn)event.getSource();
-				ArrayList<String> names = new ArrayList<String>(vertexData.keySet());
+				ArrayList<String> names = new ArrayList<String>(vertex_data.keySet());
 				for (int i = 0; i < names.size(); i++){
-					VertexDataColumn column_i = vertexData.get(names.get(i));
+					VertexDataColumn column_i = vertex_data.get(names.get(i));
 					if (column_i == column){
-						vertexData.remove(names.get(i));
-						vertexData.put(column.getName(), column);
+						vertex_data.remove(names.get(i));
+						vertex_data.put(column.getName(), column);
 						if (getCurrentColumn() != null && getCurrentColumn().equals(names.get(i))){
 							this.setCurrentColumn(column.getName());
 							}
@@ -973,7 +1040,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	 * @return
 	 */
 	public ArrayList<VertexDataColumn> getVertexDataColumns(){
-		ArrayList<VertexDataColumn> data_columns = new ArrayList<VertexDataColumn>(vertexData.values());
+		ArrayList<VertexDataColumn> data_columns = new ArrayList<VertexDataColumn>(vertex_data.values());
 		Collections.sort(data_columns);
 		return data_columns;
 	}
@@ -986,7 +1053,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	 */
 	public VertexDataColumn getVertexDataColumn(String name){
 		if (name.contains(".{")) name = name.substring(0, name.indexOf(".{"));
-		return vertexData.get(name);
+		return vertex_data.get(name);
 	}
 	
 	/*******************
@@ -1055,9 +1122,9 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	public boolean renameVertexDataColumn(String old_name, String new_name){
 		if (!hasColumn(old_name)) return false;
 		if (hasColumn(new_name)) return false;
-		VertexDataColumn column = vertexData.get(old_name);
-		vertexData.remove(old_name);
-		vertexData.put(new_name, column);
+		VertexDataColumn column = vertex_data.get(old_name);
+		vertex_data.remove(old_name);
+		vertex_data.put(new_name, column);
 		column.setName(new_name);
 		updateDataColumns();
 		if (getCurrentColumn() != null && getCurrentColumn().equals(old_name))
@@ -1085,13 +1152,13 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 			return false;
 			}
 		
-		if (vertexData.containsKey(key)){
-			VertexDataColumn column = vertexData.get(key);
+		if (vertex_data.containsKey(key)){
+			VertexDataColumn column = vertex_data.get(key);
 			column.removeListener(this);
 			}
 		
 		VertexDataColumn column = new VertexDataColumn(key, data);
-		vertexData.put(key, column);
+		vertex_data.put(key, column);
 		if (nmap != null) column.setNameMap(nmap);
 		if (cmap != null) column.setColourMap(cmap);
 		column.addListener(this);
@@ -1132,12 +1199,12 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 			}
 		
 		if (this.hasColumn(column.getName())){
-			VertexDataColumn old = vertexData.get(column.getName());
+			VertexDataColumn old = vertex_data.get(column.getName());
 			old.removeListener(this);
 			old.destroy();
 			}
 			
-		vertexData.put(column.getName(), column);
+		vertex_data.put(column.getName(), column);
 		column.addListener(this);
 		this.updateDataColumns();
 		last_column_added = column;
@@ -1201,7 +1268,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		VertexDataColumn column = getVertexDataColumn(key);
 		if (column == null) return;
 		column.removeListener(this);
-		vertexData.remove(key);
+		vertex_data.remove(key);
 		
 		updateDataColumns();
 		AttributeSelection<String> a = (AttributeSelection<String>)attributes.getAttribute("CurrentData");
@@ -1261,9 +1328,9 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	public HashMap<String, ArrayList<MguiNumber>> getVertexDataMap(){
 		
 		HashMap<String, ArrayList<MguiNumber>> map = new HashMap<String, ArrayList<MguiNumber>>();
-		ArrayList<String> keys = new ArrayList<String>(vertexData.keySet());
+		ArrayList<String> keys = new ArrayList<String>(vertex_data.keySet());
 		for (int i = 0; i < keys.size(); i++)
-			map.put(keys.get(i), vertexData.get(keys.get(i)).getData());
+			map.put(keys.get(i), vertex_data.get(keys.get(i)).getData());
 		
 		return map;
 	}
@@ -1274,10 +1341,10 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	 * @param data
 	 */
 	public void setVertexDataMap(HashMap<String, ArrayList<MguiNumber>> data){
-		vertexData.clear();
+		vertex_data.clear();
 		ArrayList<String> keys = new ArrayList<String>(data.keySet());
 		for (int i = 0; i < keys.size(); i++)
-			vertexData.put(keys.get(i), new VertexDataColumn(keys.get(i), data.get(keys.get(i))));
+			vertex_data.put(keys.get(i), new VertexDataColumn(keys.get(i), data.get(keys.get(i))));
 		
 	}
 	
@@ -1339,7 +1406,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		LinkedDataStream stream = getDataLink(column_field[0], column_field[1]);
 		if (stream == null) return null;
 		
-		VertexDataColumn column = vertexData.get(column_field[0]);
+		VertexDataColumn column = vertex_data.get(column_field[0]);
 		NameMap name_map = getNameMap(column_field[0]);
 		
 		try{
@@ -1372,7 +1439,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		String[] column_field = parseLinkColumn(linked_column);
 		LinkedDataStream<?> stream = getDataLink(column_field[0], column_field[1]);
 		if (stream == null) return null;
-		ArrayList<MguiNumber> column_data = vertexData.get(column_field[0]).getData();
+		ArrayList<MguiNumber> column_data = vertex_data.get(column_field[0]).getData();
 		ArrayList<MguiNumber> linked_data = new ArrayList<MguiNumber>();
 		NameMap name_map = getNameMap(column_field[0]);
 		
@@ -1410,7 +1477,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		String key = s;
 		if (s.contains(".{"))
 			key = parseLinkColumn(s)[0];
-		return vertexData.containsKey(key);
+		return vertex_data.containsKey(key);
 	}
 	
 	public void setCurrentColumn(String key){
@@ -1446,8 +1513,8 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	 */
 	public ArrayList<MguiNumber> getVertexData(String column){
 		if (column.contains(".{")) return getLinkedVertexData(column);
-		if (!vertexData.containsKey(column)) return null;
-		return vertexData.get(column).getData();
+		if (!vertex_data.containsKey(column)) return null;
+		return vertex_data.get(column).getData();
 	}
 	
 	/********************************************
@@ -1489,7 +1556,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		if (!hasColumn(column)) return null;
 		if (column.contains(".{"))
 			return this.getLinkedVertexDatum(column, index);
-		return vertexData.get(column).getValueAtVertex(index);
+		return vertex_data.get(column).getValueAtVertex(index);
 	}
 	
 	/**********************************************
@@ -1516,7 +1583,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		if (!hasColumn(column)) return false;
 		if (column.contains(".{"))
 			return false;	// Can't update a linked column
-		vertexData.get(column).setValueAtVertex(index, datum);
+		vertex_data.get(column).setValueAtVertex(index, datum);
 		return true;
 	}
 	
@@ -1544,12 +1611,12 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		if (!hasColumn(column)) return false;
 		if (column.contains(".{"))
 			return false;	// Can't update a linked column
-		vertexData.get(column).setDoubleValueAtVertex(index, datum);
+		vertex_data.get(column).setDoubleValueAtVertex(index, datum);
 		return true;
 	}
 	
 	public boolean hasData(){
-		return vertexData != null; 
+		return vertex_data != null; 
 	}
 	
 	public void showData(boolean b){
@@ -1576,16 +1643,16 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	
 	protected void updateDataColumns(){
 		data_columns.clear();
-		if (vertexData.size() == 0) return;
+		if (vertex_data.size() == 0) return;
 		
-		ArrayList<String> cols = new ArrayList<String>(vertexData.keySet());
+		ArrayList<String> cols = new ArrayList<String>(vertex_data.keySet());
 		Collections.sort(cols);
 		
 		for (int i = 0; i < cols.size(); i++){
 			String thisCol = cols.get(i);
 			data_columns.add(thisCol);
 			//linked data?
-			VertexDataColumn column = vertexData.get(thisCol);
+			VertexDataColumn column = vertex_data.get(thisCol);
 			ArrayList<String> names = column.getLinkedDataNames();
 			for (int j = 0; j < names.size(); j++){
 				LinkedDataStream<?> stream = column.getLinkedData(names.get(j));
@@ -2221,7 +2288,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 			}
 		
 		// Vertex data here
-		if (type == XMLType.Full && this.vertexData.size() > 0){
+		if (type == XMLType.Full && this.vertex_data.size() > 0){
 			
 			writer.write("\n" + _tab2 + "<VertexData>\n");
 			
@@ -2268,13 +2335,13 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		super.setTreeNode(treeNode);
 		if (!hasData()) return;
 		
-		ArrayList<String> list = new ArrayList<String>(vertexData.keySet());
+		ArrayList<String> list = new ArrayList<String>(vertex_data.keySet());
 		//if (list == null) return;
 		
 		InterfaceTreeNode node = new InterfaceTreeNode(new VertexDataSet("Vertex Data"));
 
 		for (int i = 0; i < list.size(); i++)
-			node.add(vertexData.get(list.get(i)).issueTreeNode());
+			node.add(vertex_data.get(list.get(i)).issueTreeNode());
 		
 		treeNode.add(node);
 	}
@@ -2365,7 +2432,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		vars.add(toVariable("Coords.x"));
 		vars.add(toVariable("Coords.y"));
 		vars.add(toVariable("Coords.z"));
-		Iterator<String> itr = vertexData.keySet().iterator();
+		Iterator<String> itr = vertex_data.keySet().iterator();
 		while (itr.hasNext())
 			vars.add(toVariable(itr.next()));
 		Collections.sort(vars);
@@ -2585,18 +2652,18 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		return this.constraints;
 	}
 	
-	/*****************************************
-	 * Returns the spatial unit for this section set. This is the unit of the parent set, if one is set;
-	 * otherwise it is the default from <code>InterfaceEnvironment</code>. 
-	 * 
-	 */
-	public SpatialUnit getUnit(){
-		if (getParentSet() != null){
-			SpatialUnit unit = getParentSet().getUnit();
-			if (unit != null) return unit;
-			}
-		return InterfaceEnvironment.getDefaultSpatialUnit();
-	}
+//	/*****************************************
+//	 * Returns the spatial unit for this section set. This is the unit of the parent set, if one is set;
+//	 * otherwise it is the default from <code>InterfaceEnvironment</code>. 
+//	 * 
+//	 */
+//	public SpatialUnit getUnit(){
+//		if (getParentSet() != null){
+//			SpatialUnit unit = getParentSet().getUnit();
+//			if (unit != null) return unit;
+//			}
+//		return InterfaceEnvironment.getDefaultSpatialUnit();
+//	}
 	
 	
 	

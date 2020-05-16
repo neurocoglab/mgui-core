@@ -20,6 +20,7 @@
 package mgui.interfaces.shapes.mesh;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -101,10 +102,11 @@ public class MeshPlaneMaskOptionsDialog extends InterfaceOptionsDialogBox {
 		cmbSectionSet.removeAllItems();
 		
 		ShapeSet3DInt model_set = InterfaceSession.getDisplayPanel().getCurrentShapeSet();
-		ShapeSet3DInt section_sets = model_set.getShapeType(new SectionSet3DInt(), true);
+		List<Shape3DInt> section_sets = model_set.getShapeType(new SectionSet3DInt());
 		
-		for (Shape3DInt shape : section_sets.members)
-			cmbSectionSet.addItem(shape);
+		for (Shape3DInt set : section_sets) {
+			cmbSectionSet.addItem(set);
+			}
 		
 	}
 	

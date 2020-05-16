@@ -27,6 +27,7 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.swing.DefaultCellEditor;
@@ -72,6 +73,7 @@ import mgui.interfaces.maps.ContinuousColourBar;
 import mgui.interfaces.math.MathExpressionDialogBox;
 import mgui.interfaces.math.MathExpressionOptions;
 import mgui.interfaces.shapes.Mesh3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.shapes.Volume3DInt;
 import mgui.interfaces.shapes.selection.ShapeSelectionSet;
@@ -751,9 +753,11 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 			cmbCurrentSet.addItem(sets.get(i));
 		if (current_sel_set != null) cmbCurrentSet.setSelectedItem(current_sel_set);
 		
-		ShapeSet3DInt meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
-		for (int i = 0; i < meshes.members.size(); i++){
-			cmbCurrentMesh.addItem((Mesh3DInt)meshes.members.get(i));
+		//ShapeSet3DInt meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+		
+		List<Shape3DInt> meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+		for (Shape3DInt mesh : meshes) {
+			cmbCurrentMesh.addItem((Mesh3DInt)mesh);
 			//cmbDataOpsMesh.addItem(meshes.members.get(i));
 			}
 		
@@ -779,12 +783,18 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 		
 		cmbVolumeSource.removeAllItems();
 		cmbMesh2VolumeSource.removeAllItems();
-		ShapeSet3DInt volumes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Volume3DInt());
+		//ShapeSet3DInt volumes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Volume3DInt());
 		
-		for (int i = 0; i < volumes.members.size(); i++){
-			cmbVolumeSource.addItem(volumes.members.get(i));
-			cmbMesh2VolumeSource.addItem(volumes.members.get(i));
+		List<Shape3DInt> volumes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Volume3DInt());
+		for (Shape3DInt volume : volumes) {
+			cmbVolumeSource.addItem(volume);
+			cmbMesh2VolumeSource.addItem(volume);
 			}
+		
+//		for (int i = 0; i < volumes.members.size(); i++){
+//			cmbVolumeSource.addItem(volumes.members.get(i));
+//			cmbMesh2VolumeSource.addItem(volumes.members.get(i));
+//			}
 		
 	}
 	
@@ -913,12 +923,15 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 				/**@TODO allow for various subdivision schemes here ***/
 				
 				//subdivide all meshes
-				ShapeSet3DInt meshSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+				//ShapeSet3DInt meshSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
 				Mesh3DInt thisMeshInt;
 				
+				List<Shape3DInt> meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+				
+				
 				if (chkAll.isSelected()){
-					for (int i = 0; i < meshSet.members.size(); i++){
-						thisMeshInt = (Mesh3DInt)meshSet.members.get(i);
+					for (Shape3DInt mesh : meshes) {
+						thisMeshInt = (Mesh3DInt)mesh;
 						meshEngine.SubdivideButterflyScheme(thisMeshInt);
 						thisMeshInt.setScene3DObject();
 						thisMeshInt.fireShapeModified();
@@ -951,11 +964,14 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 			if (chkAll.isSelected()){
 				
 				//transform all meshes
-				ShapeSet3DInt meshSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+				//ShapeSet3DInt meshSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
 				Mesh3DInt thisMeshInt;
 				
-				for (int i = 0; i < meshSet.members.size(); i++){
-					thisMeshInt = (Mesh3DInt)meshSet.members.get(i);
+				List<Shape3DInt> meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+				for (Shape3DInt mesh : meshes) {
+				
+				//for (int i = 0; i < meshSet.members.size(); i++){
+					thisMeshInt = (Mesh3DInt)mesh;
 					currentDone |= (thisMeshInt == currentMesh);
 					InterfaceProgressBar progress_bar = new InterfaceProgressBar("Mapping '" + 
 																				thisMeshInt.getName() + "': ");
@@ -1098,12 +1114,14 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 			if (e.getActionCommand().endsWith("Apply")){
 				
 				if (item.equals("Local Relaxation")){
-					ShapeSet3DInt meshSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+					//ShapeSet3DInt meshSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+					
 					Mesh3DInt thisMeshInt;
+					List<Shape3DInt> meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
 					
 					if (chkAll.isSelected()){
-						for (int i = 0; i < meshSet.members.size(); i++){
-							thisMeshInt = (Mesh3DInt)meshSet.members.get(i);
+						for (Shape3DInt mesh : meshes) {
+							thisMeshInt = (Mesh3DInt)mesh;
 							meshEngine.SmoothEM(thisMeshInt);
 							thisMeshInt.setScene3DObject();
 							thisMeshInt.fireShapeModified();
@@ -1356,12 +1374,14 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 				/**@TODO allow for various decimation schemes here ***/
 				
 				//subdivide all meshes
-				ShapeSet3DInt meshSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+				//ShapeSet3DInt meshSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+				List<Shape3DInt> meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+				
 				Mesh3DInt thisMeshInt;
 				Mesh3D thisMesh, newMesh = null;
 				
-				for (int i = 0; i < meshSet.members.size(); i++){
-					thisMeshInt = (Mesh3DInt)meshSet.members.get(i);
+				for (Shape3DInt mesh : meshes) {
+					thisMeshInt = (Mesh3DInt)mesh;
 					currentDone |= (thisMeshInt == currentMesh);
 					thisMesh = thisMeshInt.getMesh();
 					newMesh = new Mesh3D();
@@ -1387,9 +1407,9 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 			
 			boolean currentDone = false;
 			if (chkAll.isSelected()){
-				ShapeSet3DInt meshSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
-				for (int i = 0; i < meshSet.members.size(); i++){
-					Mesh3DInt thisMesh =  (Mesh3DInt)meshSet.getMember(i);
+				List<Shape3DInt> meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+				for (Shape3DInt mesh : meshes) {
+					Mesh3DInt thisMesh =  (Mesh3DInt)mesh;
 					currentDone |= (thisMesh == currentMesh);
 					InterfaceProgressBar progress = new InterfaceProgressBar("Inflating surface:");
 					meshEngine.inflateMesh(thisMesh, method, progress);
@@ -1530,10 +1550,10 @@ public class InterfaceMeshPanel extends InterfacePanel implements ActionListener
 		panel.setLayout(new LineLayout(InterfaceEnvironment.getLineHeight(), 5, 200));
 		JLabel lblMesh = new JLabel("Second mesh:");
 		cmbValidateMesh2.removeAllItems();
-		ShapeSet3DInt meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
-		for (int i = 0; i < meshes.members.size(); i++){
-			if (meshes.members.get(i) != this.currentMesh)
-				cmbValidateMesh2.addItem(meshes.members.get(i));
+		List<Shape3DInt> meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+		for (Shape3DInt mesh : meshes) {
+			if (mesh != this.currentMesh)
+				cmbValidateMesh2.addItem(mesh);
 			}
 		if (cmbValidateMesh2.getItemCount() > 0)
 			cmbValidateMesh2.setSelectedIndex(0);

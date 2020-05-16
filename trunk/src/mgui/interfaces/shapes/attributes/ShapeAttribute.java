@@ -36,27 +36,88 @@ public class ShapeAttribute<V> extends Attribute<V> {
 	protected boolean needsRedraw2D = false;
 	protected boolean needsRedraw3D = false;
 	
+	/**************************
+	 * Instantiates a {@code ShapeAttribute}
+	 * 
+	 * @param name			Name of the attribute
+	 * @param clazz 		Class of the attribute value
+	 * 
+	 */
 	public ShapeAttribute(String name, Class<V> clazz){
 		super(name, clazz);
 	}
 	
+	/**************************
+	 * Instantiates a {@code ShapeAttribute}
+	 * 
+	 * @param name			Name of the attribute
+	 * @param value 		Value of the attribute
+	 * 
+	 */
 	public ShapeAttribute (String name, V value){
-		super(name, value);
+		this(name, value, true, true, true, true);
 	}
 	
+	/**************************
+	 * Instantiates a {@code ShapeAttribute}
+	 * 
+	 * @param name			Name of the attribute
+	 * @param value 		Value of the attribute
+	 * @param needsRedraw2D	Does changing this attribute require a 2D/3D redraw?
+	 * 
+	 */
 	public ShapeAttribute (String name, V value, boolean needsRedraw){
-		this(name, value, needsRedraw, needsRedraw);
+		this(name, value, needsRedraw, needsRedraw, true, true);
 	} 
 	
+	/**************************
+	 * Instantiates a {@code ShapeAttribute}
+	 * 
+	 * @param name			Name of the attribute
+	 * @param value 		Value of the attribute
+	 * @param needsRedraw2D	Does changing this attribute require a 2D redraw?
+	 * @param needsRedraw3D	Does changing this attribute require a 3D redraw?
+	 * 
+	 */
 	public ShapeAttribute (String name, V value, boolean needsRedraw2D, boolean needsRedraw3D){
-		this(name, value, needsRedraw2D, needsRedraw3D, true);
+		this(name, value, needsRedraw2D, needsRedraw3D, true, true);
 	} 
 	
+	/**************************
+	 * Instantiates a {@code ShapeAttribute}
+	 * 
+	 * @param name			Name of the attribute
+	 * @param value 		Value of the attribute
+	 * @param needsRedraw2D	Does changing this attribute require a 2D redraw?
+	 * @param needsRedraw3D	Does changing this attribute require a 3D redraw?
+	 * @param isEditable 	Is this attribute editable?
+	 * 
+	 */
 	public ShapeAttribute (String name, V value, boolean needsRedraw2D, boolean needsRedraw3D, boolean isEditable){
+		this(name, value, needsRedraw2D, needsRedraw3D, isEditable, true);
+	}
+	
+	/**************************
+	 * Instantiates a {@code ShapeAttribute}
+	 * 
+	 * @param name			Name of the attribute
+	 * @param value 		Value of the attribute
+	 * @param needsRedraw2D	Does changing this attribute require a 2D redraw?
+	 * @param needsRedraw3D	Does changing this attribute require a 3D redraw?
+	 * @param isEditable 	Is this attribute editable?
+	 * @param isCopiable 	Is this attribute copiable?
+	 * 
+	 */
+	public ShapeAttribute (String name, V value, boolean needsRedraw2D, 
+						   boolean needsRedraw3D, boolean isEditable, 
+						   boolean isCopiable){
+		
 		super(name, value);
 		this.needsRedraw2D = needsRedraw2D;
 		this.needsRedraw3D = needsRedraw3D;
 		this.isEditable = isEditable;
+		this.isCopiable = isCopiable;
+		
 	} 
 	
 	/********************************

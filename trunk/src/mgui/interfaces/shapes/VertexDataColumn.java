@@ -116,14 +116,14 @@ public class VertexDataColumn extends AbstractInterfaceObject implements Compara
 	}
 	
 	private void init(){
-		attributes.add(new Attribute<String>("Name", "no-name"));
+		attributes.add(new Attribute<String>("Name", "no-name", true, false));
 		attributes.add(new Attribute<MguiBoolean>("ShowLabels2D", new MguiBoolean(false)));
 		attributes.add(new Attribute<MguiBoolean>("ShowLabels3D", new MguiBoolean(false)));
 		attributes.add(new Attribute<Font>("LabelFont", new Font("Courier", Font.PLAIN, 10)));
 		attributes.add(new Attribute<Color>("LabelBackColour", Color.white));
 		attributes.add(new Attribute<Color>("LabelColour", Color.blue));
-		attributes.add(new Attribute<MguiDouble>("DataMin", new MguiDouble(0)));
-		attributes.add(new Attribute<MguiDouble>("DataMax", new MguiDouble(1)));
+		attributes.add(new Attribute<MguiDouble>("DataMin", new MguiDouble(0), true, false));
+		attributes.add(new Attribute<MguiDouble>("DataMax", new MguiDouble(1), true, false));
 		attributes.add(new Attribute<MguiDouble>("ColourMin", new MguiDouble(0)));
 		attributes.add(new Attribute<MguiDouble>("ColourMax", new MguiDouble(1)));
 		ArrayList<String> style = new ArrayList<String> ();
@@ -146,6 +146,34 @@ public class VertexDataColumn extends AbstractInterfaceObject implements Compara
 		attributes.add(list);
 		
 		attributes.addAttributeListener(this);
+	}
+	
+	/************************************
+	 * Copies the attributes of {@code source_column} to this column.
+	 * 
+	 * @param source_column
+	 * @return
+	 */
+	public boolean copyAttributes( VertexDataColumn source_column ) {
+		
+		AttributeList source_attributes = source_column.getAttributes();
+		ArrayList<Attribute<?>> to_copy = new ArrayList<Attribute<?>>();
+		
+		for (Attribute<?> attribute : source_attributes.getAsList()) {
+			if (attribute.isCopiable()) {
+				to_copy.add(attribute);
+				}
+			}
+		
+		if (to_copy.size() > 0) {
+			this.attributes.setIntersection(to_copy, true);
+			}
+		
+		return true;
+	}
+	
+	public AttributeList getAttributes() {
+		return this.attributes;
 	}
 	
 	/**********************************************************

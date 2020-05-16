@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.Icon;
@@ -73,9 +74,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+
 import org.jogamp.vecmath.Point3f;
 import org.jogamp.vecmath.Vector3f;
 
+import foxtrot.Job;
+import foxtrot.Worker;
 import mgui.datasources.DataTypes;
 import mgui.geometry.Box3D;
 import mgui.geometry.Grid3D;
@@ -111,6 +115,7 @@ import mgui.interfaces.maps.ColourMap;
 import mgui.interfaces.maps.ContinuousColourMap;
 import mgui.interfaces.menus.InterfacePopupMenu;
 import mgui.interfaces.shapes.SectionSet3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.shapes.Volume3DInt;
 import mgui.interfaces.shapes.util.ShapeEvent;
@@ -130,8 +135,6 @@ import mgui.numbers.MguiInteger;
 import mgui.numbers.NumberFunctions;
 import mgui.stats.Histogram;
 import mgui.util.JMultiLineToolTip;
-import foxtrot.Job;
-import foxtrot.Worker;
 
 /****************************************************************
  * Interface panel which allows the user to interact with {@linkplain Volume3DInt} objects.
@@ -1355,10 +1358,10 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 		cmbGrid.addItem(NEW_GRID);
 		//cmbGrid.addItem(NEW_OVERLAY_SET);
 		
-		ShapeSet3DInt gridSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Volume3DInt(), true);
-		for (int i = 0; i < gridSet.members.size(); i++){
-			cmbGrid.addItem(gridSet.members.get(i));
-			if (currentVolume != null && gridSet.members.get(i).equals(currentVolume))
+		List<Shape3DInt> volumes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Volume3DInt());
+		for (Shape3DInt volume : volumes) {
+			cmbGrid.addItem(volume);
+			if (currentVolume != null && volume.equals(currentVolume))
 				current_found = true;
 			}
 		
@@ -1376,11 +1379,12 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 		ShapeSet3DInt current_set = InterfaceSession.getDisplayPanel().getCurrentShapeSet();
 		cmbParentSet.addItem(current_set);
 		cmbIsosurfShapeSet.addItem(current_set);
-		ShapeSet3DInt all_sets = current_set.getShapeType(current_set, true);
+		//ShapeSet3DInt all_sets = current_set.getShapeType(current_set, true);
 		
-		for (int i = 0; i < all_sets.members.size(); i++){
-			cmbParentSet.addItem(all_sets.members.get(i));
-			cmbIsosurfShapeSet.addItem(all_sets.members.get(i));
+		List<Shape3DInt> all_sets = current_set.getShapeType(current_set, true);
+		for (Shape3DInt set : all_sets) {
+			cmbParentSet.addItem(set);
+			cmbIsosurfShapeSet.addItem(set);
 			}
 		
 		updateDisplay();
@@ -1612,10 +1616,10 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 		// V2V operation list
 		Object sel = cmbV2VTarget.getSelectedItem();
 		cmbV2VTarget.removeAllItems();
-		ShapeSet3DInt gridSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Volume3DInt(), true);
-		for (int i = 0; i < gridSet.members.size(); i++){
-			if (currentVolume == null || gridSet.members.get(i) != currentVolume)
-				cmbV2VTarget.addItem(gridSet.members.get(i));
+		List<Shape3DInt> volumes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Volume3DInt());
+		for (Shape3DInt volume : volumes){
+			if (currentVolume == null || volume != currentVolume)
+				cmbV2VTarget.addItem(volume);
 			}
 		if (sel != null)
 			cmbV2VTarget.setSelectedItem(sel);
@@ -1847,10 +1851,11 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 			
 			cmbMaskShapeCombo1 = new JComboBox();
 			SectionSet3DInt section_set = new SectionSet3DInt();
-			ShapeSet3DInt shape_set = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(section_set, true);
+			List<Shape3DInt> shape_sets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(section_set);
 			
-			for (int i = 0; i < shape_set.members.size(); i++)
-				cmbMaskShapeCombo1.addItem(shape_set.members.get(i));
+			for (Shape3DInt set : shape_sets) {
+				cmbMaskShapeCombo1.addItem(set);
+				}
 			
 			pnlMaskShape.add(cmbMaskShapeCombo1, c);
 			txtMaskShapeText1 = new JTextField("0");

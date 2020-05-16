@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -41,7 +42,7 @@ import mgui.interfaces.io.InterfaceFilePanel;
 import mgui.interfaces.layouts.LineLayout;
 import mgui.interfaces.layouts.LineLayoutConstraints;
 import mgui.interfaces.shapes.SectionSet3DInt;
-import mgui.interfaces.shapes.ShapeSet3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 
 
 public class SVGOptionsDialog extends JDialog implements ActionListener {
@@ -222,9 +223,10 @@ public class SVGOptionsDialog extends JDialog implements ActionListener {
 	
 	private void setSectionSets(){
 		cmbSectionSet.removeAllItems();
-		ShapeSet3DInt sectionSets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new SectionSet3DInt());
-		for (int i = 0; i < sectionSets.members.size(); i++)
-			cmbSectionSet.addItem(sectionSets.members.get(i));
+		List<Shape3DInt> section_sets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new SectionSet3DInt());
+		for (Shape3DInt set : section_sets) {
+			cmbSectionSet.addItem(set);
+			}
 	}
 	
 	public void updateDialog(){

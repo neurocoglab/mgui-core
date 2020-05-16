@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -64,6 +65,7 @@ import mgui.interfaces.maps.Map2D;
 import mgui.interfaces.maps.MapEvent;
 import mgui.interfaces.menus.InterfacePopupMenu;
 import mgui.interfaces.shapes.InterfaceShape;
+import mgui.interfaces.shapes.Mesh3DInt;
 import mgui.interfaces.shapes.SectionSet3DInt;
 import mgui.interfaces.shapes.Shape2DInt;
 import mgui.interfaces.shapes.Shape3DInt;
@@ -1346,10 +1348,12 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 		ArrayList<ShapeModel3D> models = InterfaceSession.getWorkspace().getShapeModels();
 		for (int i = 0; i < models.size(); i++){
 			ShapeModel3D model = models.get(i);
-			ShapeSet3DInt shapes = model.getModelSet().getShapeType(new SectionSet3DInt(), true);
-			for (int j = 0; j < shapes.members.size(); j++){
+			//ShapeSet3DInt shapes = model.getModelSet().getShapeType(new SectionSet3DInt(), true);
+			
+			List<Shape3DInt> shapes = model.getModelSet().getShapeType(new ShapeSet3DInt());
+			for (Shape3DInt shape : shapes) {
 				has_source = true;
-				String comp_name = models.get(i).getName() + "." + shapes.members.get(j).getName();
+				String comp_name = models.get(i).getName() + "." + shape.getName();
 				JMenuItem item = new JMenuItem(comp_name);
 				item.setActionCommand("Set source." + comp_name);
 				submenu.add(item);
@@ -1440,14 +1444,25 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 			ArrayList<ShapeModel3D> models = InterfaceSession.getWorkspace().getShapeModels();
 			for (int i = 0; i < models.size(); i++){
 				if (models.get(i).getName().equals(model)){
-					ShapeSet3DInt shapes = models.get(i).getModelSet().getShapeType(new SectionSet3DInt(), true);
-					for (int j = 0; j < shapes.members.size(); j++){
-						SectionSet3DInt sections = (SectionSet3DInt)shapes.getShape(set);
-						if (sections != null){
-							this.setSource(sections);
+					//ShapeSet3DInt shapes = models.get(i).getModelSet().getShapeType(new SectionSet3DInt(), true);
+					
+					List<Shape3DInt> shapes = models.get(i).getModelSet().getShapeType(new SectionSet3DInt(), true);
+					
+					for (Shape3DInt shape : shapes) {
+						if (shape.getName().equals(set)) {
+							this.setSource(shape);
 							return;
 							}
+						
 						}
+					
+//					for (int j = 0; j < shapes.size(); j++){
+//						SectionSet3DInt sections = (SectionSet3DInt)shapes.getShape(set);
+//						if (sections != null){
+//							this.setSource(sections);
+//							return;
+//							}
+//						}
 					}
 				}
 			

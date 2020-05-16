@@ -22,8 +22,8 @@ package mgui.geometry.mesh;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -43,9 +43,9 @@ import mgui.interfaces.attributes.AttributeSelection;
 import mgui.interfaces.gui.InterfaceProgressBar;
 import mgui.interfaces.logs.LoggingType;
 import mgui.interfaces.maps.NameMap;
-import mgui.interfaces.shapes.InterfaceShape;
 import mgui.interfaces.shapes.Mesh3DInt;
 import mgui.interfaces.shapes.SectionSet3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.shapes.VertexDataColumn;
@@ -223,9 +223,13 @@ public class MeshEngine implements Engine {
 		for (int i = 0; i < models.size(); i++){
 			ShapeSet3DInt m_set = models.get(i).getModelSet();
 			if (m_set != null){
-				ArrayList<InterfaceShape> members = m_set.getShapeType(new SectionSet3DInt(), true).getMembers();
-				for (int j = 0; j < members.size(); j++)
-					sets.add((SectionSet3DInt)members.get(j));
+				//ArrayList<InterfaceShape> members = m_set.getShapeType(new SectionSet3DInt(), true).getMembers();
+				List<Shape3DInt> members = m_set.getShapeType(new SectionSet3DInt(), true);
+				for (Shape3DInt member : members) {
+					sets.add((SectionSet3DInt)member);
+					}
+//				for (int j = 0; j < members.size(); j++)
+//					sets.add((SectionSet3DInt)members.get(j));
 				}
 			}
 		

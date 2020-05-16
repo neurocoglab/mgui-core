@@ -66,6 +66,7 @@ public class Attribute<V> extends AbstractInterfaceObject implements Cloneable,
 	protected Class<V> object_class; // = Object.class;
 	protected boolean isNumeric;
 	protected boolean isEditable = true;
+	protected boolean isCopiable = true;
 	protected boolean isSecret = false;
 	private ArrayList<AttributeListener> attributeListeners = new ArrayList<AttributeListener>();
 	
@@ -74,31 +75,64 @@ public class Attribute<V> extends AbstractInterfaceObject implements Cloneable,
 		
 	}
 
+	/*******************
+	 * Instantiates a new {@code Attribute} object.
+	 * 
+	 * @param thisName		Name of the attribute
+	 * @param clazz			Class of this attribute's value
+	 */
 	public Attribute(String name, Class<V> clazz) {
 		this.name = name;
 		object_class = clazz;
 	}
 	
-	public Attribute (String thisName, V value){
-		name = thisName;
+	/*******************
+	 * Instantiates a new {@code Attribute} object.
+	 * 
+	 * @param name			Name of the attribute
+	 * @param value 		Value of the attribute
+	 */
+	public Attribute (String name, V value){
+		this(name, value, true, true);
+	}
+	
+	/*******************
+	 * Instantiates a new {@code Attribute} object.
+	 * 
+	 * @param name			Name of the attribute
+	 * @param value 		Value of the attribute
+	 * @param isEditable 	Is this attribute editable?
+	 */
+	public Attribute (String name, V value, boolean isEditable){
+		this(name, value, isEditable, true);
+	}
+	
+	
+	/*******************
+	 * Instantiates a new {@code Attribute} object.
+	 * 
+	 * @param name			Name of the attribute
+	 * @param value 		Value of the attribute
+	 * @param isEditable 	Is this attribute editable?
+	 * @param isCopiable 	Is this attribute copiable?
+	 */
+	public Attribute (String name, V value, boolean isEditable, boolean isCopiable){
+		this.name = name;
 		setValue(value);
 		isNumeric = (value instanceof mgui.numbers.MguiNumber ||
-					 value instanceof Number);
-	}
-	
-	public Attribute (String thisName, V value, boolean isNum){
-		name = thisName;
-		setValue(value);
-		isNumeric = isNum;
-	}
-	
-	public Attribute (String thisName, V value, boolean isNum, boolean isEditable){
-		name = thisName;
-		setValue(value);
-		isNumeric = isNum;
+				 	 value instanceof Number);
 		this.isEditable = isEditable;
+		this.isCopiable = isCopiable;
 	}
 	
+	/***********************
+	 * Is this attribute copiable?
+	 * 
+	 * @return
+	 */
+	public boolean isCopiable() {
+		return this.isCopiable;
+	}
 	
 	@Override
 	public int compareTo(Attribute<V> attribute) {
@@ -169,6 +203,7 @@ public class Attribute<V> extends AbstractInterfaceObject implements Cloneable,
 	 */
 	public boolean setValue(Object value, boolean fire) {
 		try{
+			if (this.value == value) return true;
 			this.value = (V)value;
 			if (object_class == null && value != null)
 				object_class = (Class<V>)value.getClass();
@@ -312,7 +347,19 @@ public class Attribute<V> extends AbstractInterfaceObject implements Cloneable,
 		String _tab = XMLFunctions.getTab(tab);
 		
 		String xml = _tab + "<Attribute name = '" + getName() + "' ";
-		//xml = xml + "object_class = '" + objClass.getCanonicalName() + "'>\n";
+		Class<V> c = this.getObjectClass();
+		if (c != null){
+			String class_name = c.getCanonicalName();
+			xml = xml + "object_class = '" + class_name + "' ";
+		}else{
+			xml = xml + "object_class = 'null' ";
+			}
+		
+		xml = xml + "isEditable = '" + Boolean.toString(isEditable) + "' ";
+		xml = xml + "isCopiable = '" + Boolean.toString(isCopiable) + "' ";
+		xml = xml + "isNumeric = '" + Boolean.toString(isNumeric) + "' ";
+		xml = xml + "isSecret = '" + Boolean.toString(isSecret) + "'>";
+				
 		
 		xml = xml + XMLFunctions.getXMLForObject(value, tab + 1);
 		
@@ -342,6 +389,16 @@ public class Attribute<V> extends AbstractInterfaceObject implements Cloneable,
 			if (class_name.equals("null"))
 				class_name = "java.lang.Object";
 			setValue((V)XMLFunctions.getObjectForXML(localName, attributes, class_name));
+			
+			String str = attributes.getValue("isCopiable");
+			if (str != null) this.isCopiable = Boolean.valueOf(str);
+			str = attributes.getValue("isEditable");
+			if (str != null) this.isEditable = Boolean.valueOf(str);
+			str = attributes.getValue("isSecret");
+			if (str != null) this.isSecret = Boolean.valueOf(str);
+			str = attributes.getValue("isNumeric");
+			if (str != null) this.isNumeric = Boolean.valueOf(str);
+			
 			return;
 			}
 		
@@ -424,10 +481,15 @@ public class Attribute<V> extends AbstractInterfaceObject implements Cloneable,
 		Class<V> c = this.getObjectClass();
 		if (c != null){
 			String class_name = c.getCanonicalName();
-			xml = xml + "object_class = '" + class_name + "'> ";
+			xml = xml + "object_class = '" + class_name + "' ";
 		}else{
-			xml = xml + "object_class = 'null'> ";
+			xml = xml + "object_class = 'null' ";
 			}
+		
+		xml = xml + "isEditable = '" + Boolean.toString(isEditable) + "' ";
+		xml = xml + "isCopiable = '" + Boolean.toString(isCopiable) + "' ";
+		xml = xml + "isNumeric = '" + Boolean.toString(isNumeric) + "' ";
+		xml = xml + "isSecret = '" + Boolean.toString(isSecret) + "'>";
 				
 		xml = xml + XMLFunctions.getXMLForAttributeObject(value, 0);
 		xml = xml + " </Attribute>\n";

@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.DataBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
@@ -1028,11 +1029,13 @@ public class InterfaceShapesPanel extends InterfacePanel implements ActionListen
 			// Shape sets
 		if (operation == null || operation.equals("Convex Hull")){
 			ShapeSet3DInt model_set = current_shape.getModel().getModelSet();
-			ShapeSet3DInt sets = model_set.getShapeType(model_set, true);
+			List<Shape3DInt> sets  = model_set.getShapeType(model_set, true);
+			
 			ArrayList<String> set_names = new ArrayList<String>();
 			set_names.add(model_set.getFullName());
-			for (int i = 0; i < sets.getSize(); i++)
-				set_names.add(sets.getMember(i).getFullName());
+			for (Shape3DInt set : sets) {
+				set_names.add(set.getFullName());
+				}
 			String method = (String)cmbConvexHullMethod.getSelectedItem();
 			AttributeList list = shape_engine.getAttributes("Convex Hull", method);
 			AttributeSelection<String> attr_sel = (AttributeSelection<String>)list.getAttribute("target_shape_set");
@@ -1316,10 +1319,11 @@ public class InterfaceShapesPanel extends InterfacePanel implements ActionListen
 	protected void updateVolumes(){
 		
 		cmbVolumeSource.removeAllItems();
-		ShapeSet3DInt volumes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Volume3DInt());
+		List<Shape3DInt> volumes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Volume3DInt());
 		
-		for (int i = 0; i < volumes.members.size(); i++)
-			cmbVolumeSource.addItem(volumes.members.get(i));
+		for (Shape3DInt volume : volumes) {
+			cmbVolumeSource.addItem(volume);
+			}
 		
 	}
 	

@@ -68,6 +68,7 @@ import mgui.geometry.Shape;
 import mgui.geometry.Shape3D;
 import mgui.geometry.Sphere3D;
 import mgui.geometry.util.GeometryFunctions;
+import mgui.interfaces.Clipboard;
 import mgui.interfaces.InterfaceEnvironment;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.attributes.Attribute;
@@ -177,15 +178,16 @@ public abstract class Shape3DInt extends InterfaceShape
 			return attributes.getAttribute(attrName);
 			}
 		ShapeSet3DInt parent = (ShapeSet3DInt)parent_set;
-		if (!parent.isOverriding()) return attributes.getAttribute(attrName);
+		if (!parent.isOverriding() || !parent.hasAttribute(attrName)) 
+			return attributes.getAttribute(attrName);
+		
 		return (parent.getAttribute(attrName));
 	}
 	
 	@Override
 	public boolean isHeritableAttribute(String name){
-		if (!name.startsWith("3D.")) return false;
+		if (name.startsWith("2D.")) return false;
 		if (name.equals("3D.Show")) return false;
-		name = name.replaceFirst("3D.", "2D.");
 		return attributes.hasAttribute(name);
 	}
 	
@@ -1316,6 +1318,9 @@ public abstract class Shape3DInt extends InterfaceShape
 			if (this.scene3DObject.isLive())
 				return;
 			if (this.sceneNode != null) {
+				if (scene3DObject.getParent() != null) {
+					scene3DObject.detach();
+					}
 				sceneNode.addChild(scene3DObject);
 				}
 		} else {
@@ -1354,6 +1359,7 @@ public abstract class Shape3DInt extends InterfaceShape
 		
 	}
 	
+	ArrayList<Shape3DInt> paste_targets = new ArrayList<Shape3DInt>();
 
 	/****************************
 	 * Subclasses should override this if necessary and call super.getPopupMenu() to get
@@ -1371,9 +1377,16 @@ public abstract class Shape3DInt extends InterfaceShape
 		menu.addMenuItem(new JMenuItem("Edit attributes.."));
 		menu.addMenuItem(new JMenuItem("Copy attributes"));
 		
-		Object clipped = InterfaceSession.getClipboard().getContent();
-		if (clipped != null && clipped instanceof AttributeList) {
-			menu.addMenuItem(new JMenuItem("Paste attributes"));
+		Clipboard.Item clipped = InterfaceSession.getClipboard().getContent();
+		if (clipped != null && clipped.getType().equals("attributes")
+				&& selected != null && selected.size() > 0) {
+			menu.addMenuItem(new JMenuItem("Paste attributes to " + selected.size() + " shapes"));
+			paste_targets.clear();
+			for (Object obj : selected) {
+				if (obj instanceof Shape3DInt) {
+					paste_targets.add((Shape3DInt)obj);
+					}
+				}
 			}
 		
 		menu.add(new JSeparator(), 4);
@@ -1451,11 +1464,43 @@ public abstract class Shape3DInt extends InterfaceShape
 			}
 		
 		if (item.getText().equals("Copy attributes")){
-			
+			InterfaceSession.getClipboard().setContent(new Clipboard.Item(this, "attributes"));
+			InterfaceSession.log("Copied attributes for '" + this.getName() + "'.");
+			paste_targets.clear();
 			return;
 			}
 		
-		if (item.getText().equals("Paste attributes")){
+		if (item.getText().startsWith("Paste attributes")){
+			if (paste_targets.isEmpty()) {
+				JOptionPane.showMessageDialog(getModel().getDisplayPanel(), "No target shapes selected!", 
+																		  	"Paste Attributes", 
+																		    JOptionPane.ERROR_MESSAGE);
+				return;
+				}
+			
+			int copy_count = 0;
+			for (Shape3DInt shape : paste_targets) {
+				Clipboard.Item content = InterfaceSession.getClipboard().getContent();
+				if (content == null || !(content.getType().equals("attributes"))) {
+					JOptionPane.showMessageDialog(getModel().getDisplayPanel(), "No attributes to paste!", 
+						  														"Paste Attributes", 
+						  														JOptionPane.ERROR_MESSAGE);
+					return;
+					}
+				if (shape.copyAttributes((InterfaceShape)content.getValue())) {
+					copy_count++;
+					} 
+				}
+			
+			if (copy_count == 0) {
+				JOptionPane.showMessageDialog(getModel().getDisplayPanel(), "No attributes pasted!", 
+							"Paste Attributes", 
+							JOptionPane.ERROR_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(getModel().getDisplayPanel(), "Pasted attributes to " + copy_count + " shapes.", 
+							"Paste Attributes", 
+							JOptionPane.INFORMATION_MESSAGE);
+				}
 			
 			return;
 			}
@@ -1489,7 +1534,40 @@ public abstract class Shape3DInt extends InterfaceShape
 		
 	}
 	
-	
+	@Override
+	public boolean copyAttributes(InterfaceShape source_shape) {
+		
+		ArrayList<Attribute<?>> to_copy = new ArrayList<Attribute<?>>();
+		
+		AttributeList source_attributes = source_shape.getAttributes();
+		
+		for (Attribute<?> attribute : source_attributes.getAsList()) {
+			if (attribute.isCopiable()) {
+				to_copy.add(attribute);
+				}
+			}
+		
+		boolean success = false;
+		
+		if (to_copy.size() > 0) {
+			this.setLive(false);
+			this.attributes.setIntersection(to_copy, true);
+			
+			// Copy all vertex column attributes
+			// Don't fail if columns don't copy perfectly
+			for (VertexDataColumn source_column : source_shape.getVertexDataColumns()) {
+				VertexDataColumn target_column = this.getVertexDataColumn(source_column.getName());
+				target_column.copyAttributes(source_column);
+				}
+			
+			this.setLive(true);
+			this.fireShapeModified();
+			
+			success = true;
+			}
+		
+		return success;
+	}
 	
 	/**************************************
 	 * Returns the appearance of vertex i.

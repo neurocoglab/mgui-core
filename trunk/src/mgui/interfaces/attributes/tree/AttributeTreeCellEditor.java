@@ -686,9 +686,10 @@ public class AttributeTreeCellEditor extends AbstractCellEditor implements TreeC
 		if (CMD_CHANGE_TEXT.equals(e.getActionCommand())){
 			if (currentValue.isNumeric()){
 				MguiNumber n = (MguiNumber)currentValue.getValue();
-				if (!n.setValue(((JTextField)e.getSource()).getText()))
+				MguiNumber new_val = (MguiNumber)n.clone();
+				if (!new_val.setValue(((JTextField)e.getSource()).getText()))
 					InterfaceSession.log("Invalid number: " + ((JTextField)e.getSource()).getText());
-				currentValue.setValue(n);
+				currentValue.setValue(new_val);
 				((JTextField)e.getSource()).setText(currentValue.getValueStr());
 				//((arNumber)currentValue.value).setValue(((JTextField)e.getSource()).getText());
 			}else

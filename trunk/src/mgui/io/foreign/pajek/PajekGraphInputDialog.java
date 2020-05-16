@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JFrame;
@@ -41,6 +42,8 @@ import mgui.interfaces.io.InterfaceIODialogBox;
 import mgui.interfaces.layouts.LineLayout;
 import mgui.interfaces.layouts.LineLayoutConstraints;
 import mgui.interfaces.shapes.InterfaceShape;
+import mgui.interfaces.shapes.SectionSet3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.io.InterfaceIOOptions;
@@ -232,10 +235,17 @@ public class PajekGraphInputDialog extends InterfaceIODialogBox {
 			ArrayList<ShapeModel3D> models = InterfaceSession.getWorkspace().getShapeModels();
 			workspace_sets = new ArrayList<ShapeSet3DInt>();
 			for (int i = 0; i < models.size(); i++){
-				ArrayList<InterfaceShape> sets = models.get(i).getModelSet().getShapeType(new ShapeSet3DInt(),true).getMembers();
+				List<Shape3DInt> sets = models.get(i).getModelSet().getShapeType(new ShapeSet3DInt(), true);
+				
+				//ArrayList<InterfaceShape> sets = models.get(i).getModelSet().getShapeType(new ShapeSet3DInt(),true).getMembers();
+				
 				workspace_sets.add(models.get(i).getModelSet());
-				for (int j = 0; j < sets.size(); j++)
-					workspace_sets.add((ShapeSet3DInt)sets.get(j));
+				for (Shape3DInt set : sets) {
+					workspace_sets.add((ShapeSet3DInt)set);
+					}
+				
+//				for (int j = 0; j < sets.size(); j++)
+//					workspace_sets.add((ShapeSet3DInt)sets.get(j));
 				}
 			
 		}

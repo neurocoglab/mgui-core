@@ -275,7 +275,7 @@ public abstract class Shape3D implements Shape, Cloneable {
 		
 		writer.write(_tab + "<" + getLocalName() + " encoding='" + XMLFunctions.getEncodingStr(options.encoding) + "' >\n");
 		writeCoords(tab + 1, writer, options, progress_bar);
-		writer.write(_tab + "</" + getLocalName() + ">");
+		writer.write(_tab + "</" + getLocalName() + ">\n");
 		
 	}
 	
@@ -377,7 +377,7 @@ public abstract class Shape3D implements Shape, Cloneable {
 				writeAsciiCoords(writer, _tab2, options.sig_digits);
 				break;
 			}
-		writer.write("\n" + _tab + "</Vertices>");
+		writer.write("\n" + _tab + "</Vertices>\n");
 	}
 	
 	/**************************************

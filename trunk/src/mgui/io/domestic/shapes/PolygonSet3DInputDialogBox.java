@@ -21,6 +21,7 @@ package mgui.io.domestic.shapes;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -37,6 +38,7 @@ import mgui.interfaces.gui.InterfaceComboBox;
 import mgui.interfaces.io.InterfaceIODialogBox;
 import mgui.interfaces.layouts.LineLayout;
 import mgui.interfaces.layouts.LineLayoutConstraints;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.io.InterfaceIOOptions;
 import mgui.io.InterfaceIOPanel;
@@ -113,9 +115,9 @@ public class PolygonSet3DInputDialogBox extends InterfaceIODialogBox {
 		cmbParentShapeSet.removeAllItems();
 		ShapeSet3DInt current_set = InterfaceSession.getDisplayPanel().getCurrentShapeSet();
 		cmbParentShapeSet.addItem(current_set);
-		ShapeSet3DInt all_sets = current_set.getShapeType(current_set, true);
-		for (int i = 0; i < all_sets.members.size(); i++){
-			cmbParentShapeSet.addItem(all_sets.members.get(i));
+		List<Shape3DInt> all_sets = current_set.getShapeType(current_set);
+		for (Shape3DInt set : all_sets) {
+			cmbParentShapeSet.addItem(set);
 			}
 		cmbParentShapeSet.setSelectedItem(opts.shape_set);
 		

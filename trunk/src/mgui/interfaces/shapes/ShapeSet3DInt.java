@@ -147,13 +147,12 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		updateShape();
 		
 		//todo section parameters probably don't belong here
-		attributes.add(new Attribute<MguiBoolean>("IsOverriding", new MguiBoolean(false)));
-		attributes.add(new Attribute<MguiBoolean>("3D.ShowSections", new MguiBoolean(true)));
+		attributes.add(new Attribute<MguiBoolean>("IsOverriding", new MguiBoolean(false), true, false));
+		attributes.add(new Attribute<MguiBoolean>("3D.ShowSections", new MguiBoolean(true), true, false));
 		attributes.add(new Attribute<MguiBoolean>("3D.FillSections", new MguiBoolean(true)));
 		attributes.add(new Attribute<MguiFloat>("3D.SectionAlpha", new MguiFloat(0.9f)));
-		attributes.add(new Attribute<String>("RootURL", ""));
-		attributes.add(new AttributeSelection<SpatialUnit>("Unit", InterfaceEnvironment.getSpatialUnits(), SpatialUnit.class));
-		setUnit(InterfaceEnvironment.getSpatialUnit("meter"));
+		attributes.add(new Attribute<String>("RootURL", "", true, false));
+		
 		
 	}
 	
@@ -242,19 +241,6 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		return -1;
 	}
 	
-	/***********************************************
-	 * Returns the spatial unit for this shape set.
-	 * 
-	 * @return the spatial unit for this shape set
-	 */
-	@Override
-	public SpatialUnit getUnit(){
-		return (SpatialUnit)attributes.getValue("Unit");
-	}
-	
-	public void setUnit(SpatialUnit unit){
-		setAttribute("Unit", unit);
-	}
 	
 	/**************************
 	 * If attr is non-null, sets override attributes for all members of this set, 
@@ -793,11 +779,15 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		else
 			members.add(index, shape);
 		
+//		if (this.getModel() == null) {
+//			return true;
+//			}
+		
 		shape.register();
 		
 		//if (updateShape){
 		ShapeSceneNode node = updateNewShape(shape);
-		if (node != null) {
+		if (node != null && scene3DObject != null) {
 					
 			try{
 				if (node.getParent() != null)
@@ -890,7 +880,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	protected ShapeSceneNode updateNewShape(Shape3DInt shape) {
 		
 		//shape bounds update
-		//shape.updateShape();
+		shape.updateShape();
 		
 		//set this as parent (will remove it from an existing parent, and add this as a shape listener)
 		shape.setParentSet(this);
@@ -1267,7 +1257,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			Shape3DInt shape = thisSet.members.get(i);
 			members.add(shape);
 			
-			if (updateShapes){
+			if (this.isLive()){
 				shape.updateShape();
 				//shape.setModel(model);
 				shape.parent_set = this;
@@ -1279,10 +1269,10 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 				shape.addShapeListener(this);
 				}
 			
-		if (updateListeners){
+		//if (updateListeners){
 			ShapeEvent e = new ShapeEvent(shape, ShapeEvent.EventType.ShapeAdded);
 			fireShapeListeners(e);
-			}
+		//	}
 		}
 		
 		updateShape();
@@ -1724,10 +1714,10 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 				
 				ShapeSceneNode n = members.get(i).getShapeSceneNode();
 				//if (n == null || ((MguiBoolean)getAttribute("IsOverriding").getValue()).getTrue()){
-					if (filter != null && thisShape instanceof SectionSet3DInt)
-						((SectionSet3DInt)thisShape).setScene3DObject(filter, false);
-					else
-						thisShape.setScene3DObject();
+				if (filter != null && thisShape instanceof SectionSet3DInt)
+					((SectionSet3DInt)thisShape).setScene3DObject(filter, false);
+				else
+					thisShape.setScene3DObject();
 				if (n == null) {
 					InterfaceSession.log("Shape scene node can't be created for " + members.get(i).getName());
 				}else if (n.getParent() != scene3DObject || !n.isLive()){
@@ -1764,35 +1754,38 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		return shapes;
 	}
 	
-	public ShapeSet3DInt getShapeType(Shape3DInt thisShape){
-		return getShapeType(thisShape, false);
+	public List<Shape3DInt> getShapeType(Shape3DInt thisShape){
+		return getShapeType(thisShape, true);
 	}
 	
-	public ShapeSet3DInt getShapeType(Shape3DInt thisShape, boolean recurse){
-		ShapeSet3DInt thisSet = new ShapeSet3DInt();
-		return getShapeType(thisShape, thisSet, recurse);
+	public List<Shape3DInt> getShapeType(Shape3DInt thisShape, boolean recurse){
 		
-	}
-	
-	public ShapeSet3DInt getShapeType(Shape3DInt thisShape, ShapeSet3DInt thisSet, boolean recurse){
-		//if thisShape is a shapeset, special case
+		ArrayList<Shape3DInt> shapes = new ArrayList<Shape3DInt>();
+		
+		// If shape set
 		if (ShapeSet3DInt.class.isInstance(thisShape)){
 			for (int i = 0; i < members.size(); i++)
 				if (recurse && 
 					ShapeSet3DInt.class.isInstance(members.get(i))){
-					thisSet.addShape(members.get(i), false, false);
-					((ShapeSet3DInt)members.get(i)).getShapeType(thisShape, thisSet, true);
+					//thisSet.addShape(members.get(i), false, false);
+					shapes.add(members.get(i));
+					((ShapeSet3DInt)members.get(i)).getShapeType(thisShape, true);
 					}
-			return thisSet;
+			return shapes;
 			}
 		
+		// If shape
 		for (int i = 0; i < members.size(); i++){
-			if (recurse && ShapeSet3DInt.class.isInstance(members.get(i)))
-				thisSet.addUnionSet(((ShapeSet3DInt)members.get(i)).getShapeType(thisShape), false, false);
-			else if (thisShape.getClass().isInstance(members.get(i)))
-				thisSet.addShape(members.get(i), false, false);
+			if (recurse && ShapeSet3DInt.class.isInstance(members.get(i))) {
+				shapes.addAll(((ShapeSet3DInt)members.get(i)).getShapeType(thisShape));
+				//thisSet.addUnionSet(((ShapeSet3DInt)members.get(i)).getShapeType(thisShape), false, false);
+			} else if (thisShape.getClass().isInstance(members.get(i))) {
+				shapes.add(members.get(i));
+				//thisSet.addShape(members.get(i), false, false);
+				}
 		}
-		return thisSet;
+		
+		return shapes;
 	}
 	
 	/*******************

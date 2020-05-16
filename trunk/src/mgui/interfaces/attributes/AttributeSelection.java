@@ -62,8 +62,22 @@ public class AttributeSelection<V> extends Attribute<V> implements ItemListener 
 	 * @param clazz 	Class for this object; necessary for generics
 	 */
 	public AttributeSelection(String name, ArrayList<V> list, Class<V> clazz){
+		this(name, list, clazz, true, true);
+	}
+	
+	/*************************************
+	 * Constructs a new attribute selection with default initial selection.
+	 * 
+	 * @param name
+	 * @param list
+	 * @param clazz 	Class for this object; necessary for generics
+	 */
+	public AttributeSelection(String name, ArrayList<V> list, Class<V> clazz,
+							  boolean isEditable, boolean isCopiable){
 		super(name, clazz);
 		setList(list);
+		this.isEditable = true;
+		this.isCopiable = true;
 		
 	}
 	
@@ -88,9 +102,16 @@ public class AttributeSelection<V> extends Attribute<V> implements ItemListener 
 	 * @param selection
 	 */
 	public AttributeSelection(String name, ArrayList<V> list, Class<V> clazz, V selection, int width){
+		this(name, list, clazz, selection, width, true, true);
+	}
+	
+	public AttributeSelection(String name, ArrayList<V> list, Class<V> clazz, V selection, int width, 
+							  boolean isEditable, boolean isCopiable){
 		super(name, clazz);
 		setList(list);
 		select(selection);
+		this.isEditable = isEditable;
+		this.isCopiable = isCopiable;
 	}
 	
 	/************************************

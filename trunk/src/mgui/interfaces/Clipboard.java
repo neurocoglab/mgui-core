@@ -9,7 +9,7 @@ package mgui.interfaces;
  */
 public class Clipboard {
 	
-	protected Object current = null;
+	protected Item current = null;
 	
 	public Clipboard() {
 		
@@ -21,8 +21,8 @@ public class Clipboard {
 	 * 
 	 * @param obj
 	 */
-	public void setContent(Object obj) {
-		current = obj;
+	public void setContent(Item content) {
+		current = content;
 	}
 	
 	/*************************
@@ -31,7 +31,7 @@ public class Clipboard {
 	 * 
 	 * @return
 	 */
-	public Object getContent() {
+	public Item getContent() {
 		return current;
 	}
 	
@@ -44,6 +44,26 @@ public class Clipboard {
 		current = null;
 	}
 	
+	public static class Item {
+		
+		Object value;
+		String type;
+		
+		public Item(Object value, String type) {
+			this.value = value;
+			this.type = type;
+		}
+		
+		public Object getValue() {
+			return value;
+		}
+		
+		public String getType() {
+			return type;
+		}
+		
+		
+	}
 	
 
 }

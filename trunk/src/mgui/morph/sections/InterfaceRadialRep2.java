@@ -23,12 +23,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+
 import org.jogamp.vecmath.Point2f;
 
 import mgui.geometry.util.GeometryFunctions;
@@ -42,6 +44,7 @@ import mgui.interfaces.layouts.CategoryTitle;
 import mgui.interfaces.shapes.IntPolygon2DInt;
 import mgui.interfaces.shapes.Polygon2DInt;
 import mgui.interfaces.shapes.SectionSet3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.interfaces.shapes.ShapeSet2DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
@@ -280,9 +283,10 @@ public class InterfaceRadialRep2 extends InterfacePanel implements ActionListene
 	
 	private void updateSectionSetList(){
 		cmbSectionSet.removeAllItems();
-		ShapeSet3DInt sectionSets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new SectionSet3DInt());
-		for (int i = 0; i < sectionSets.members.size(); i++)
-			cmbSectionSet.addItem(sectionSets.members.get(i));
+		List<Shape3DInt> section_sets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new SectionSet3DInt());
+		for (Shape3DInt set : section_sets) {
+			cmbSectionSet.addItem(set);
+			}
 		if (currentSet != (SectionSet3DInt)cmbSectionSet.getSelectedItem())
 			currentSet = (SectionSet3DInt)cmbSectionSet.getSelectedItem();
 	}

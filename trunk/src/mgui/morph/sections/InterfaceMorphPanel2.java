@@ -22,6 +22,7 @@ package mgui.morph.sections;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -42,6 +43,7 @@ import mgui.interfaces.layouts.CategoryTitle;
 import mgui.interfaces.shapes.Mesh3DInt;
 import mgui.interfaces.shapes.Polygon2DInt;
 import mgui.interfaces.shapes.SectionSet3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.interfaces.shapes.ShapeSet2DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
@@ -295,13 +297,14 @@ public class InterfaceMorphPanel2 extends InterfacePanel implements	ActionListen
 	private void updateSectionSetList(){
 		cmbCurrentSet.removeAllItems();
 		if (shapeSet == null) return;
-		SectionSet3DInt testSet = new SectionSet3DInt();
-		ShapeSet3DInt sectionSet = shapeSet.getShapeType(testSet);
+		
+		List<Shape3DInt> section_sets = shapeSet.getShapeType(new SectionSet3DInt());
+		
 		boolean blnFound = false;
-		for (int i = 0; i < sectionSet.members.size(); i++){
-			cmbCurrentSet.addItem(sectionSet.members.get(i));
+		for (Shape3DInt set : section_sets) {
+			cmbCurrentSet.addItem(set);
 			if (currentSet != null)
-				if (sectionSet.members.get(i).equals(currentSet)) 
+				if (set.equals(currentSet)) 
 					blnFound = true;
 			}
 		if (blnFound)

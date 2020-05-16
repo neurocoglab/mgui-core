@@ -777,16 +777,20 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 	 * @param p InterfaceDisplayPanel containing displayable data objects
 	 * @return DefaultMutableTreeNode with a tree list of ShapeSet3DInt objects
 	 */
-	public DefaultMutableTreeNode getDisplayObjectsNodebak(InterfaceDisplayPanel p){
-		ShapeSet3DInt testSet = new ShapeSet3DInt();
-		//ShapeModel3D testSet = new ShapeModel3d();
-		ShapeSet3DInt shapeSets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(testSet);
-		DefaultMutableTreeNode retNode = new DefaultMutableTreeNode(InterfaceSession.getDisplayPanel().getCurrentShapeSet());
-		if (shapeSets.members.size() > 0)
-			retNode.add(shapeSets.issueTreeNode());
-		return retNode;
-		//return shapeSets.getTreeNode();
-	}
+//	public DefaultMutableTreeNode getDisplayObjectsNodebak(InterfaceDisplayPanel p){
+//		//ShapeSet3DInt testSet = new ShapeSet3DInt();
+//		//ShapeModel3D testSet = new ShapeModel3d();
+////		ShapeSet3DInt shapeSets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(testSet);
+////		List<Shape3DInt> = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType()
+////		
+////		
+////		DefaultMutableTreeNode retNode = new DefaultMutableTreeNode(InterfaceSession.getDisplayPanel().getCurrentShapeSet());
+////		if (shapeSets.members.size() > 0)
+////			retNode.add(shapeSets.issueTreeNode());
+////		return retNode;
+//		//return shapeSets.getTreeNode();
+//		return null;
+//	}
 	
 	public DefaultMutableTreeNode getDisplayObjectsNode(){
 		//return all models in p

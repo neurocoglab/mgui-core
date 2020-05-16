@@ -20,6 +20,7 @@
 package mgui.io.domestic.shapes;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -30,6 +31,7 @@ import mgui.interfaces.io.InterfaceIODialogBox;
 import mgui.interfaces.layouts.LineLayout;
 import mgui.interfaces.layouts.LineLayoutConstraints;
 import mgui.interfaces.shapes.Mesh3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.io.InterfaceIOOptions;
 import mgui.io.InterfaceIOPanel;
@@ -77,9 +79,10 @@ public class MeshOptionsDialogBox extends InterfaceIODialogBox {
 		doUpdate = false;
 		cmbMesh.removeAllItems();
 		
-		ShapeSet3DInt meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
-		for (int i = 0; i < meshes.members.size(); i++)
-			cmbMesh.addItem(meshes.members.get(i));
+		List<Shape3DInt> meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+		for (Shape3DInt mesh : meshes) {
+			cmbMesh.addItem(mesh);
+			}
 		
 		if (currentMesh != null)
 			currentMesh = (Mesh3DInt)cmbMesh.getSelectedItem();

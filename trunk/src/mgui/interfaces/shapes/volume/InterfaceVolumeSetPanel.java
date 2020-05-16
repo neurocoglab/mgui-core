@@ -35,6 +35,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.util.List;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
@@ -64,6 +65,7 @@ import mgui.interfaces.gui.InterfaceComboBox;
 import mgui.interfaces.layouts.CategoryLayout;
 import mgui.interfaces.layouts.CategoryLayoutConstraints;
 import mgui.interfaces.layouts.CategoryTitle;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.shapes.Volume3DInt;
 import mgui.interfaces.shapes.VolumeSet3DInt;
@@ -450,10 +452,11 @@ public class InterfaceVolumeSetPanel extends InterfacePanel
 		cmbOverlaySet.removeAllItems();
 		cmbOverlaySet.addItem(NEW_OVERLAY_SET);
 		
-		ShapeSet3DInt gridSet = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new VolumeSet3DInt(), true);
-		for (int i = 0; i < gridSet.members.size(); i++){
-			cmbOverlaySet.addItem(gridSet.members.get(i));
-			if (current_volume_set != null && gridSet.members.get(i).equals(current_volume_set))
+		List<Shape3DInt> volumes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new VolumeSet3DInt());
+		
+		for (Shape3DInt volume : volumes) {
+			cmbOverlaySet.addItem(volume);
+			if (current_volume_set != null && volume.equals(current_volume_set))
 				current_found = true;
 			}
 		
@@ -469,10 +472,12 @@ public class InterfaceVolumeSetPanel extends InterfacePanel
 		cmbParentSet.removeAllItems();
 		ShapeSet3DInt current_set = InterfaceSession.getDisplayPanel().getCurrentShapeSet();
 		cmbParentSet.addItem(current_set);
-		ShapeSet3DInt all_sets = current_set.getShapeType(current_set, true);
+		//ShapeSet3DInt all_sets = current_set.getShapeType(current_set, true);
+		List<Shape3DInt> all_sets = current_set.getShapeType(current_set);
 		
-		for (int i = 0; i < all_sets.members.size(); i++)
-			cmbParentSet.addItem(all_sets.members.get(i));
+		for (Shape3DInt set : all_sets) {
+			cmbParentSet.addItem(set);
+			}
 		
 		updateDisplay();
 		updateGridCombo = true;

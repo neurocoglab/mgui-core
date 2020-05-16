@@ -22,6 +22,7 @@ package mgui.io.domestic.shapes;
 import java.awt.event.ActionEvent;
 import java.awt.image.DataBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -37,6 +38,7 @@ import mgui.interfaces.gui.InterfaceComboBox.RenderMode;
 import mgui.interfaces.io.InterfaceIODialogBox;
 import mgui.interfaces.layouts.LineLayout;
 import mgui.interfaces.layouts.LineLayoutConstraints;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.shapes.Volume3DInt;
 import mgui.interfaces.shapes.volume.GridVertexDataColumn;
@@ -144,12 +146,13 @@ public class VolumeOutputDialogBox extends InterfaceIODialogBox {
 		//volumes
 		cmbVolume.removeAllItems();
 		
-		Volume3DInt volume = new Volume3DInt();
 		ShapeSet3DInt set = InterfaceSession.getDisplayPanel().getCurrentShapeSet();
-		ShapeSet3DInt shapes = set.getShapeType(volume, true);
+		List<Shape3DInt> volumes = set.getShapeType(new Volume3DInt());
 		
-		for (int i = 0; i < shapes.members.size(); i++)
-			cmbVolume.addItem(shapes.members.get(i));
+		
+		for (Shape3DInt volume : volumes) {
+			cmbVolume.addItem(volume);
+			}
 		
 		//data types
 		cmbDataType.removeAllItems();

@@ -22,6 +22,7 @@ package mgui.io.domestic.shapes;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -36,6 +37,7 @@ import mgui.interfaces.io.InterfaceIODialogBox;
 import mgui.interfaces.layouts.LineLayout;
 import mgui.interfaces.layouts.LineLayoutConstraints;
 import mgui.interfaces.shapes.Mesh3DInt;
+import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.io.InterfaceIOOptions;
@@ -105,10 +107,10 @@ public class SurfaceDataInputDialogBox extends InterfaceIODialogBox {
 		ArrayList<ShapeModel3D> models = InterfaceSession.getWorkspace().getShapeModels();
 		
 		for (int j = 0; j < models.size(); j++){
-			ShapeSet3DInt meshes = models.get(j).getModelSet().getShapeType(new Mesh3DInt());
-			
-			for (int i = 0; i < meshes.members.size(); i++)
-				cmbMesh.addItem(meshes.members.get(i));
+			List<Shape3DInt> meshes = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(new Mesh3DInt());
+			for (Shape3DInt mesh : meshes) {
+				cmbMesh.addItem(mesh);
+				}
 			}
 		
 		if (cmbMesh.getItemCount() == 0) return;
