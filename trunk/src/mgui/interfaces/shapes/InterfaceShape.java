@@ -287,7 +287,7 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		attributes.add(pos);
 		attributes.add(new Attribute<MguiFloat>("3D.Shininess", new MguiFloat(1f)));
 		attributes.add(new AttributeSelection<String>("LabelData", data_columns, String.class));	
-		attributes.add(new Attribute<MguiBoolean>("InheritFromParent", new MguiBoolean(false)));
+		attributes.add(new Attribute<MguiBoolean>("InheritFromParent", new MguiBoolean(true)));
 		
 		attributes.add(new AttributeSelection<SpatialUnit>("Unit", InterfaceEnvironment.getSpatialUnits(), SpatialUnit.class, true, false));
 		setUnit(InterfaceEnvironment.getSpatialUnit("meter"));
@@ -491,6 +491,28 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	
 	@Override
 	public Attribute<?> getAttribute(String attrName) {	
+		return attributes.getAttribute(attrName);
+	}
+	
+	/*************************
+	 * 
+	 * Returns the (possibly inherited) value of the named attribute.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Object getInheritedAttributeValue(String name) {
+		Attribute<?> attribute = getInheritedAttribute(name);
+		if (attribute == null) return null;
+		return attribute.getValue();
+	}
+	
+	/*************************
+	 * 
+	 * Returns the (possibly inherited) named attribute.
+	 * 
+	 */
+	public Attribute<?> getInheritedAttribute(String attrName) {	
 		if (hasParentShape() && inheritAttributesFromParent()) {
 			return this.getParentAttribute(attrName);
 			}
@@ -498,17 +520,6 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	}
 	
 	protected abstract Attribute<?> getParentAttribute(String attrName);
-
-	/***************************
-	 * 
-	 * Returns this shape's local attribute list, rather than its current attributes based
-	 * on whether it is overridden.
-	 * 
-	 * @return
-	 */
-	public AttributeList getLocalAttributes() {
-		return attributes;
-	}
 	
 	/****************************
 	 * Determines whether this object has an attribute named {@code name}.
@@ -523,10 +534,23 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 	
 	@Override
 	public AttributeList getAttributes() {
+		
+		return attributes;
+	}
+	
+	/******************************
+	 * 
+	 * Returns an {@linkplain AttributeList} object reflecting the current attributes for
+	 * this shape, whether local or inherited (i.e., overridden by this shape's parent).
+	 * 
+	 * @return
+	 */
+	public AttributeList getInheritedAttributes() {
+		
 		if (hasParentShape() && inheritAttributesFromParent()) {
 			if (getParentSet() instanceof InterfaceShape ) {
 				// Return intersection of parent attributes
-				AttributeList parent_attributes = ((InterfaceShape)getParentSet()).getAttributes();
+				AttributeList parent_attributes = ((InterfaceShape)getParentSet()).getInheritedAttributes();
 				if (parent_attributes.hasAttribute("IsOverriding")) {
 					if (!((MguiBoolean)parent_attributes.getValue("IsOverriding")).getTrue()) {
 						return attributes;
@@ -537,7 +561,8 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 				return overridden_attributes;
 				}
 			}
-		return attributes;
+		
+		return getAttributes();
 	}
 
 	@Override

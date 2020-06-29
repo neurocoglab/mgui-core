@@ -26,6 +26,7 @@ import java.awt.Color;
 
 import mgui.interfaces.InterfaceEnvironment;
 import mgui.interfaces.attributes.AttributeEvent;
+import mgui.interfaces.attributes.AttributeList;
 import mgui.interfaces.attributes.AttributeListener;
 import mgui.interfaces.attributes.AttributeSelection;
 import mgui.interfaces.plots.InterfacePlotObject;
@@ -92,6 +93,7 @@ public abstract class SgtPlotObject<T extends SGTData> extends InterfacePlotObje
 			}
 		
 	}
+
 	
 	/*************************************
 	 * Returns an SGT attribute object for this object

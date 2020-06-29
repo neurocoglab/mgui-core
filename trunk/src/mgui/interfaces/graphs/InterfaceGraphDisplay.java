@@ -237,8 +237,6 @@ public class InterfaceGraphDisplay extends InterfaceGraphic<ToolGraph>
 			new AttributeSelection<String>("NodeLabelPos", GraphFunctions.getLabelPositions(), String.class, "SE");
 		
 		attributes.add(pos);
-		
-		
 		attributes.add(new Attribute<MguiDouble>("NodeScale", new MguiDouble(1.0)));
 		attributes.add(new Attribute<MguiDouble>("NodeValueScale", new MguiDouble(0)));
 		attributes.add(new Attribute<MguiBoolean>("NodeValueColour", new MguiBoolean(false)));
@@ -525,17 +523,10 @@ public class InterfaceGraphDisplay extends InterfaceGraphic<ToolGraph>
 	
 	@Override
 	public void attributeUpdated(AttributeEvent e) {
-		if (e.getAttribute().getName().equals("Background")){
-			viewer.setBackground((Color)attributes.getValue("Background"));
-			viewer.repaint();
-			return;
-			}
-		if (e.getAttribute().getName().equals("NodeLabelPos")){
-			Position position = getLabelPosition();
-			this.node_label_renderer.setPosition(position);
-			updateViewer();
-			return;
-			}
+		
+		Attribute<?> attribute = e.getAttribute();
+		String name = attribute.getName();
+		
 		if (e.getAttribute().getName().equals("Layout")){
 			try{
 				setViewer();
@@ -545,54 +536,59 @@ public class InterfaceGraphDisplay extends InterfaceGraphic<ToolGraph>
 				}
 			return;
 			}
-		if (e.getAttribute().getName().contains("Colour")){
-			updateViewer();
-			return;
+		
+		if (name.equals("Background")){
+			viewer.setBackground((Color)attributes.getValue("Background"));
 			}
+		if (e.getAttribute().getName().equals("NodeLabelPos")){
+			Position position = getLabelPosition();
+			this.node_label_renderer.setPosition(position);
+			}
+		
+		
 		if (e.getAttribute().getName().equals("LabelNodes")){
-			this.node_label_renderer.show(((MguiBoolean)attributes.getValue("LabelNodes")).getTrue());
-			updateViewer();
-			return;
+			node_label_renderer.show(((MguiBoolean)attributes.getValue("LabelNodes")).getTrue());
 			}
 		if (e.getAttribute().getName().equals("LabelEdges")){
-			this.edge_label_renderer.show(((MguiBoolean)attributes.getValue("LabelEdges")).getTrue());
-			updateViewer();
-			return;
+			edge_label_renderer.show(((MguiBoolean)attributes.getValue("LabelEdges")).getTrue());
 			}
-		if (e.getAttribute().getName().contains("Label")){
-			updateViewer();
-			return;
-			}
-		if (e.getAttribute().getName().contains("Scale")){
-			updateViewer();
-			return;
-			}
-		if (e.getAttribute().getName().contains("Shape")){
-			updateViewer();
-			return;
-			}
+		
 		if (e.getAttribute().getName().equals("ShowEdges")){
-			this.show_edges.show(((MguiBoolean)attributes.getValue("ShowEdges")).getTrue());
-			updateViewer();
-			return;
+			show_edges.show(((MguiBoolean)attributes.getValue("ShowEdges")).getTrue());
 			}
 		if (e.getAttribute().getName().equals("ShowNodes")){
-			this.show_nodes.show(((MguiBoolean)attributes.getValue("ShowNodes")).getTrue());
-			updateViewer();
-			return;
+			show_nodes.show(((MguiBoolean)attributes.getValue("ShowNodes")).getTrue());
 			}
 		if (e.getAttribute().getName().equals("ShowArrows")){
-			this.show_arrows.show(((MguiBoolean)attributes.getValue("ShowArrows")).getTrue());
-			updateViewer();
-			return;
+			show_arrows.show(((MguiBoolean)attributes.getValue("ShowArrows")).getTrue());
 			}
 		if (e.getAttribute().getName().equals("EdgeOffset")){
 			AbstractEdgeShapeTransformer<AbstractGraphNode,AbstractGraphEdge> aesf = 
 	            (AbstractEdgeShapeTransformer<AbstractGraphNode,AbstractGraphEdge>)viewer.getRenderContext().getEdgeShapeTransformer();
 			aesf.setControlOffsetIncrement(((MguiFloat)attributes.getValue("EdgeOffset")).getFloat());
+			}
+		
+		if (requiresRedraw(name)) {
 			updateViewer();
 			return;
 			}
+		
+	}
+	
+	/*******************************
+	 * Returns true is an update to the attribute {@code attribute} requires the display
+	 * window to redraw itself.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	protected boolean requiresRedraw(String attribute) {
+		
+		if (attribute.equals("Name")) {
+			return false;
+			}
+		
+		return true;
 		
 	}
 	

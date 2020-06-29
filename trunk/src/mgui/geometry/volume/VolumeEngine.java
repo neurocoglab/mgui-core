@@ -374,9 +374,8 @@ public class VolumeEngine implements Engine {
 			}
 		
 		Mesh3DInt mesh3d = new Mesh3DInt(mesh, surface_name);
-		shape_set.addShape(mesh3d);
+		return shape_set.addShape(mesh3d);
 		
-		return true;
 	}
 	
 	

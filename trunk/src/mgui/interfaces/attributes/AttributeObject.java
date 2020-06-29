@@ -71,5 +71,4 @@ public interface AttributeObject extends NamedObject {
 	public Object getAttributeValue(String name);
 	
 	
-	
 }

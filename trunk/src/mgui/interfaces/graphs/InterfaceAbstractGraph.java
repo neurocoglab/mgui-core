@@ -89,7 +89,7 @@ public class InterfaceAbstractGraph extends SparseGraph<AbstractGraphNode,
 	
 	protected void init(){
 		attributes.addAttributeListener(this);
-		attributes.add(new Attribute<String>("Name", "no-name"));
+		attributes.add(new Attribute<String>("Name", "no-name", true, false));
 		attributes.add(new Attribute<MguiBoolean>("LabelEdges", new MguiBoolean(true)));
 		attributes.add(new Attribute<MguiBoolean>("LabelNodes", new MguiBoolean(true)));
 	}
@@ -183,7 +183,7 @@ public class InterfaceAbstractGraph extends SparseGraph<AbstractGraphNode,
 	public AttributeList getAttributes() {
 		return attributes;
 	}
-
+	
 	public void setAttribute(String attrName, Object newValue) {
 		attributes.setValue(attrName, newValue);
 	}

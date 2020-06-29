@@ -99,10 +99,10 @@ public class MorphDrawEngine extends DrawingEngine {
 		if (((MguiBoolean)drawing_attributes.getValue("LabelNodes")).getTrue()){
 			Text2DInt thisText = (Text2DInt)drawing_attributes.getValue("LabelObj");
 			int textSize = getScreenDist(((Text2D)thisText.thisShape).getBounds().getHeight());
-			g.setFont(new Font((String)(thisText.getAttributes().getValue("FontName")),
-					           ((MguiInteger)thisText.getAttributes().getValue("FontStyle")).getInt(),
+			g.setFont(new Font((String)(thisText.getInheritedAttributeValue("FontName")),
+					           ((MguiInteger)thisText.getInheritedAttributeValue("FontStyle")).getInt(),
 					           textSize));
-			g.setPaint((Color)thisText.getAttributes().getValue("LineColour"));
+			g.setPaint((Color)thisText.getInheritedAttributeValue("LineColour"));
 			DrawRadialNodeLabels(g, thisRadialRep, true, thisText.getText());
 		}
 		

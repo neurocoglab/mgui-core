@@ -795,13 +795,13 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 				scene3DObject.addChild(node);
 			}catch (Exception e){
 				InterfaceSession.handleException(e);
+				members.remove(shape);
+				shape.destroy();
+				return false;
 				}
 			}
 			
-//		} else {
-//			shape.setParentSet(this);
-//			new_shapes.push(shape);
-//			}
+		updateShape();
 
 		//alert listeners; this includes any tree nodes
 		//if (updateListeners){
@@ -819,7 +819,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 				}
 			//}
 			
-		updateShape();
+		
 		
 		return true;
 		
@@ -1161,7 +1161,12 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	
 		if (e.alreadyResponded(this)) return;
 		e.responded(this);
-		Shape3DInt shape = (Shape3DInt)e.getShape();
+		
+		if (!(e.getShape() instanceof Shape3DInt)) {
+			return;
+			}
+		
+		//Shape3DInt shape = (Shape3DInt)e.getShape();
 		
 		switch (e.eventType){
 			case ShapeAdded:

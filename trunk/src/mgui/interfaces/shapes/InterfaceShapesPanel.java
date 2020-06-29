@@ -930,6 +930,9 @@ public class InterfaceShapesPanel extends InterfacePanel implements ActionListen
 			String column = current_shape.getCurrentColumn();
 			doUpdate = false;
 			cmbDataDisplayColumn.setSelectedItem(column);
+			if (this.chkHistUseCurrent.isSelected()) {
+				cmbHistColumn.setSelectedItem(column);
+				}
 			doUpdate = true;
 			}
 		

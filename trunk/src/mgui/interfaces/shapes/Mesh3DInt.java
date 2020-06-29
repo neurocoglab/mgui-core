@@ -185,7 +185,7 @@ public class Mesh3DInt extends PointSet3DInt {
 			return;
 		}
 		
-		AttributeList attributes = getAttributes();
+		AttributeList attributes = getInheritedAttributes();
 		
 		Mesh3D mesh = (Mesh3D)shape3d;
 		if (mesh.n == 0 || mesh.f == 0){
@@ -470,7 +470,7 @@ public class Mesh3DInt extends PointSet3DInt {
 			fill_appearance.setCapability(Appearance.ALLOW_RENDERING_ATTRIBUTES_WRITE);
 			}
 		
-		AttributeList attributes = getAttributes();
+		AttributeList attributes = getInheritedAttributes();
 		
 		Color colour = (Color)attributes.getValue("3D.FillColour");
 		
@@ -534,6 +534,8 @@ public class Mesh3DInt extends PointSet3DInt {
 			edge_appearance.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
 			edge_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
 			}
+		
+		AttributeList attributes = getInheritedAttributes();
 		
 		Color3f edgeColour = Colours.getColor3f((Color)attributes.getValue("3D.LineColour"));
 		Material m = new Material();

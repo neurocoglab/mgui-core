@@ -112,10 +112,9 @@ public abstract class InterfaceTableModel extends AbstractTableModel implements 
 
 	@Override
 	public AttributeList getAttributes() {
-		// TODO Auto-generated method stub
-		return null;
+		return attributes;
 	}
-
+	
 	@Override
 	public void setAttribute(String attrName, Object newValue) {
 		// TODO Auto-generated method stub

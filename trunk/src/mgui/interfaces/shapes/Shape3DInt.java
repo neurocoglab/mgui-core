@@ -188,7 +188,8 @@ public abstract class Shape3DInt extends InterfaceShape
 	public boolean isHeritableAttribute(String name){
 		if (name.startsWith("2D.")) return false;
 		if (name.equals("3D.Show")) return false;
-		return attributes.hasAttribute(name);
+		String name2 = name.replace("3D.", "2D.");
+		return attributes.hasAttribute(name2);
 	}
 	
 	@Override
@@ -909,7 +910,7 @@ public abstract class Shape3DInt extends InterfaceShape
 		else
 			centerPt = center;
 		
-		float radius = (float)Math.sqrt((deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+		float radius = (float)Math.max(deltaX, Math.max(deltaY, deltaZ)); // (float)Math.sqrt((deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
 		radius /= 2.0f;
 		boundSphere = new Sphere3D(center, radius);
 		
@@ -1247,7 +1248,8 @@ public abstract class Shape3DInt extends InterfaceShape
 	 * @return The inheriting attribute, or {@code null} if attribute is not heritable
 	 */
 	public Attribute<?> getInheritingAttribute(Attribute<?> attribute){
-		if (!isHeritableAttribute(attribute.getName())) return null;
+		if (!isHeritableAttribute(attribute.getName())) 
+			return null;
 		String name = attribute.getName();
 		String name2 = name.replace("3D.", "2D.");
 		return attributes.getAttribute(name2);

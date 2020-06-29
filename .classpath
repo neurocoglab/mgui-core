@@ -4,7 +4,11 @@
 	<classpathentry kind="src" path="trunk/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jogl"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mgui-lib-minimal"/>
-	<classpathentry kind="lib" path="/Users/lpzatr/Documents/java/java3d/vecmath.jar"/>
+	<classpathentry kind="lib" path="/Users/lpzatr/Documents/java/java3d/vecmath.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://jogamp.org/deployment/java3d/1.7.0-pre1/vecmath/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/java3d-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/java3d-utils"/>
 	<classpathentry kind="output" path="bin"/>

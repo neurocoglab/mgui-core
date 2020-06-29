@@ -51,8 +51,8 @@ public class Shape3DTreeNode extends ShapeTreeNode implements ShapeListener{
 		
 		Shape3DInt shape = (Shape3DInt)obj;
 		
-		if (shape.getLocalAttributes() != null)
-			add(shape.getLocalAttributes().issueTreeNode());
+		if (shape.getAttributes() != null)
+			add(shape.getAttributes().issueTreeNode());
 
 	}
 	

@@ -1569,6 +1569,7 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 					updateIntensitySlice();
 				}else{
 					imgIntensity.model.setAlpha(val);
+					imgIntensity.revalidate();
 					imgIntensity.repaint();
 					}
 				updateHistogram();
@@ -3846,13 +3847,20 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 	     *
 	     * @param g Graphics to paint into.
 	     */
-	    public void paint(Graphics g){
+//	    public void paint(Graphics g){
+//	    	
+//	    }
+	    
+	    @Override
+	    public void paintComponent(Graphics g) {
+	    	super.paintComponent(g);
 	    	Graphics2D g2d = (Graphics2D)g;
 	    	g2d.setColor(Color.WHITE);
 	    	g2d.fillRect(0, 0, this.getWidth() - 1, this.getHeight() - 1);
 	    	g2d.setColor(Color.BLUE);
 	    	g2d.drawRect(0, 0, this.getWidth() - 1, this.getHeight() - 1);
 	    	if (_bufferedImage == null) return;
+	    	_bufferedImage.flush();
 	    	g2d.drawImage(_bufferedImage, 1, 1, 
 	    				  this.getWidth() - 2, this.getHeight() - 2, 
 	    				  null);

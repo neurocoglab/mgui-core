@@ -707,6 +707,7 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 			return attributes.getAttribute(attrName);
 		}
 
+		@Override
 		public AttributeList getAttributes() {
 			return attributes;
 		}

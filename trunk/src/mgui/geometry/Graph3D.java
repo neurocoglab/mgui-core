@@ -190,7 +190,7 @@ public class Graph3D extends Shape3D {
 		
 		writer.write(_tab + "<" + getLocalName() + " encoding='" + XMLFunctions.getEncodingStr(options.encoding) + "' >\n");
 		graph.writeXML(tab + 1, writer, options, progress_bar);
-		writer.write("\n" + _tab + "</" + getLocalName() + ">");
+		writer.write("\n" + _tab + "</" + getLocalName() + ">\n");
 		
 	}
 	

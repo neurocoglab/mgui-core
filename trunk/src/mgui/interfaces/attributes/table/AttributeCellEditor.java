@@ -123,7 +123,8 @@ public class AttributeCellEditor extends AbstractCellEditor implements
 			return new JTextField(thisObj.toString());
 		
 		Attribute<?> attr = (Attribute<?>)thisObj;
-		currentValue = (Attribute<?>)attr.clone();
+//		currentValue = (Attribute<?>)attr.clone();
+		currentValue = attr;
 		
 		if (attr.getObjectClass() != null && 
 			VariableObject.class.isAssignableFrom(attr.getObjectClass())){
@@ -244,7 +245,8 @@ public class AttributeCellEditor extends AbstractCellEditor implements
 			}
 		
 		if (CMD_CHANGE_BOOL.equals(e.getActionCommand())){
-			currentBool.setTrue(((JCheckBox)e.getSource()).isSelected());
+//			currentBool.setTrue(((JCheckBox)e.getSource()).isSelected());
+			currentBool = new MguiBoolean(((JCheckBox)e.getSource()).isSelected());
 			currentValue.setValue(currentBool);
 			fireEditingStopped();
 			return;
@@ -263,10 +265,14 @@ public class AttributeCellEditor extends AbstractCellEditor implements
 			}
 		
 		if (CMD_CHANGE_TEXT.equals(e.getActionCommand())){
-			if (currentValue.isNumeric())
-				((MguiNumber)currentValue.getValue()).setValue(((JTextField)e.getSource()).getText());
-			else
+			if (currentValue.isNumeric()) {
+				double val = Double.valueOf(((JTextField)e.getSource()).getText());
+				MguiNumber num = (MguiNumber)((MguiNumber)currentValue.getValue()).clone();
+				num.setValue(((JTextField)e.getSource()).getText());
+				currentValue.setValue(num);
+			}else {
 				currentValue.setValue(((JTextField)e.getSource()).getText(), false);
+				}
 			fireEditingStopped();
 			return;
 		}

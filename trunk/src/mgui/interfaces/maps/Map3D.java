@@ -86,6 +86,7 @@ public class Map3D extends Map {
 	protected Sphere3D thisBounds = new Sphere3D(new Point3f(0, 0, 0), 50);
 	protected Point3f centerPt = new Point3f(0, 0, 0);
 	protected double zoomClip = 20;
+	protected boolean update_clip_bounds = true;
 
 	public Map3D(){
 	}
@@ -102,6 +103,15 @@ public class Map3D extends Map {
 	public void setViewPlatformTransform(Transform3D thisTransform){
 		//thisTransform.set(thisCamera.getCameraTransform());
 		updateViewPlatformTransform(thisTransform);
+	}
+	
+	/***********************
+	 * Indicates whether this map should update the view clip bounds if its bounds are updated
+	 * 
+	 * @param b
+	 */
+	public void setUpdateClipBounds(boolean b) {
+		this.update_clip_bounds = b;
 	}
 	
 	public Camera3D getCamera(){

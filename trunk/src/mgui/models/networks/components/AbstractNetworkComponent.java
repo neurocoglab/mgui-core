@@ -22,6 +22,7 @@ package mgui.models.networks.components;
 import mgui.interfaces.AbstractInterfaceObject;
 import mgui.interfaces.InterfaceObject;
 import mgui.interfaces.attributes.Attribute;
+import mgui.interfaces.attributes.AttributeList;
 import mgui.interfaces.attributes.AttributeListener;
 import mgui.interfaces.attributes.AttributeObject;
 import mgui.interfaces.trees.TreeObject;

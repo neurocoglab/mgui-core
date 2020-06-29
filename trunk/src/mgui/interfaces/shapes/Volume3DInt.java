@@ -29,12 +29,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import javax.swing.ImageIcon;
+
 import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.ImageComponent3D;
 import org.jogamp.java3d.ImageComponent3D.Updater;
-import javax.swing.ImageIcon;
 import org.jogamp.vecmath.Matrix4d;
 import org.jogamp.vecmath.Point3f;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 import mgui.geometry.Box3D;
 import mgui.geometry.Grid3D;
@@ -46,6 +49,7 @@ import mgui.image.util.WindowedColourModel;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.ProgressUpdater;
 import mgui.interfaces.attributes.AttributeEvent;
+import mgui.interfaces.attributes.AttributeList;
 import mgui.interfaces.attributes.AttributeSelection;
 import mgui.interfaces.logs.LoggingType;
 import mgui.interfaces.maps.Camera3D;
@@ -70,9 +74,6 @@ import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiInteger;
 import mgui.numbers.MguiNumber;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 
 /****************************
@@ -838,8 +839,8 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 	}
 	
 	/*************************
-	 * Updates this volume's grid data with the current Volume3DUpdater object. Does
-	 * nothing if this Volume3DInt is not set by reference (isByRef() = true), or if no
+	 * Updates this volume's grid data with the current {@linkplain Volume3DUpdater} object. 
+	 * Does nothing if this Volume3DInt is not set by reference (isByRef() = true), or if no
 	 * updater is currently set. Updaters can be set using the setUpdater method.
 	 * 
 	 * @param type The type of update to perform: Values only, Colour map only, or both
@@ -1465,7 +1466,9 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 		//deactivateClips();
 		
 		if (this.isByRef() && !composite_changed){
+			this.setLive(false);
 			update(UpdateTextureType.All);
+			this.setLive(true);
 			//reactivateClips();
 			fireChildren2DModified();
 			return;
@@ -1474,9 +1477,10 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 		// If the composite status has changed, we need to regenerate the ImageComponent entirely
 		if (composite_changed && renderer.getTexture() != null){
 			textureSet = false;
+			this.setLive(false);
 			setScene3DObject(true);
 			this.update(UpdateTextureType.All);
-			//reactivateClips();
+			this.setLive(true);
 			fireChildren2DModified();
 			composite_changed = false;
 			return;
@@ -1640,11 +1644,11 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 		if (getCurrentColumn() == null) return;
 		
 		// Re-establish texture...
-		if (!isByRef()){
-			setTexture(false);
-		}else{
-			update(UpdateTextureType.All);
-			}
+//		if (!isByRef()){
+//			setTexture(false);
+//		}else{
+//			update(UpdateTextureType.All);
+//			}
 		
 	}
 	
@@ -1698,6 +1702,8 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 			if (make_live) setShapeSceneNode();
 			return;
 			}
+		
+		AttributeList attributes = getInheritedAttributes();
 		
 		//deactivateClips();
 		if (render_node != null) render_node.detach();

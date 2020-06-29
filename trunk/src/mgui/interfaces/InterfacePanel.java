@@ -178,6 +178,10 @@ public abstract class InterfacePanel extends JPanel implements InterfaceObject,
 	public AttributeList getAttributes() {
 		return attributes;
 	}
+	
+	public AttributeList getLocalAttributes() {
+		return attributes;
+	}
 
 	public void setAttribute(String attrName, Object newValue) {
 		attributes.setValue(attrName, newValue);

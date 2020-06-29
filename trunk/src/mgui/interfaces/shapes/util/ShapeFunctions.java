@@ -24,9 +24,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.jogamp.java3d.Appearance;
 import org.jogamp.java3d.BoundingSphere;
@@ -40,7 +40,11 @@ import org.jogamp.java3d.PickInfo.IntersectionInfo;
 import org.jogamp.java3d.Shape3D;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
-import org.jogamp.vecmath.Color3f;
+import org.jogamp.java3d.utils.geometry.Cylinder;
+import org.jogamp.java3d.utils.geometry.Primitive;
+import org.jogamp.java3d.utils.geometry.Sphere;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.pickfast.PickIntersection;
 import org.jogamp.vecmath.Matrix4d;
 import org.jogamp.vecmath.Matrix4f;
 import org.jogamp.vecmath.Point2d;
@@ -52,6 +56,8 @@ import org.jogamp.vecmath.Vector3d;
 import org.jogamp.vecmath.Vector3f;
 import org.jogamp.vecmath.Vector4d;
 
+import foxtrot.Job;
+import foxtrot.Worker;
 import mgui.geometry.Box3D;
 import mgui.geometry.Graph2D;
 import mgui.geometry.Grid3D;
@@ -107,15 +113,6 @@ import mgui.numbers.MguiInteger;
 import mgui.numbers.MguiNumber;
 import mgui.util.Colour;
 import mgui.util.Colours;
-
-import org.jogamp.java3d.utils.geometry.Cylinder;
-import org.jogamp.java3d.utils.geometry.Primitive;
-import org.jogamp.java3d.utils.geometry.Sphere;
-import org.jogamp.java3d.utils.pickfast.PickCanvas;
-import org.jogamp.java3d.utils.pickfast.PickIntersection;
-
-import foxtrot.Job;
-import foxtrot.Worker;
 
 /***********************************************************
  * Utility class which provides functions related to {@code InterfaceShape} objects generally.
@@ -2068,6 +2065,39 @@ public class ShapeFunctions extends Utility {
 	}
 	
 	/**************************************
+	 * Returns a list of angles corresponding to the nodes of {@code polygon}. 
+	 * End points will have the angle between the first and last segment.
+	 * 
+	 * @param polygon
+	 * @return
+	 */
+	public static List<Float> getPolygonAngles(Polygon3D polygon){
+		
+		List<Float> angles = new ArrayList<Float>();
+		ArrayList<Point3f> vertices = polygon.getVertices();
+		
+		Vector3f this_seg = new Vector3f();
+		Vector3f last_seg = new Vector3f();
+		int ip, in;
+		
+		for (int i = 0; i < vertices.size(); i++) {
+			ip = i - 1;
+			if (ip < 0) ip = vertices.size() - 1;
+			in = i + 1;
+			if (in == vertices.size()) in = 0;
+			last_seg.set(vertices.get(i));
+			last_seg.sub(vertices.get(ip));
+			this_seg.set(vertices.get(in));
+			this_seg.sub(vertices.get(i));
+			
+			angles.add(this_seg.angle(last_seg));
+			
+			}	
+		
+		return angles;
+	}
+	
+	/**************************************
 	 * Returns a set of cylindrical segments which follow the path of the
 	 * given polygon. Parameters specify its appearance.
 	 * TODO: fix junction artifacts 
@@ -2079,19 +2109,66 @@ public class ShapeFunctions extends Utility {
 	 * @param app
 	 * @return
 	 */
-	public static BranchGroup getCylinderPolygon(Polygon3D poly, 
+	public static BranchGroup getCylinderPolygon(Polygon3D polygon, 
 												 float radius, 
 												 int res,
 												 Appearance app){
 		
+		return getCylinderPolygon(polygon, radius, res, app, null);
+	}
+	
+	/**************************************
+	 * Returns a set of cylindrical segments which follow the path of the
+	 * given polygon. Parameters specify its appearance.
+	 * TODO: fix junction artifacts 
+	 * 
+	 * @param poly
+	 * @param radius
+	 * @param res
+	 * @param closed
+	 * @param app
+	 * @param vertex_colours Colors for each vertex
+	 * @return
+	 */
+	public static BranchGroup getCylinderPolygon(Polygon3D polygon, 
+												 float radius, 
+												 int res,
+												 Appearance app,
+												 List<Color> vertex_colours){
+		
 		//get cylinder for each segment
 		BranchGroup group = new BranchGroup();
 		group.setCapability(BranchGroup.ALLOW_DETACH);
-		ArrayList<Point3f> nodes = poly.getVertices();
+		ArrayList<Point3f> vertices = polygon.getVertices();
+		ArrayList<Point3f[]> extended_vertices = new ArrayList<Point3f[]>();
 		
-		for (int i = 0; i < nodes.size() - 1; i++)
-			group.addChild(getCylinderSegment(nodes.get(i), nodes.get(i+1),
+		List<Float> angles = getPolygonAngles(polygon);
+		Vector3f v = new Vector3f();
+		
+		// Get angles and extend to match these
+		for (int i = 0; i < vertices.size() - 1; i++) {
+			double alpha = Math.PI - angles.get(i);
+			float extend = (float)(radius * Math.cos(alpha/2.0));
+			v.set(vertices.get(i+1));
+			v.sub(vertices.get(i));
+			v.normalize();
+			v.scale(extend);
+			Point3f[] pts = new Point3f[2];
+			pts[0] = new Point3f(vertices.get(i));
+			pts[0].sub(v);
+			extended_vertices.add(pts);
+			if (i > 0) {
+				Point3f[] prev = extended_vertices.get(i-1);
+				prev[1] = new Point3f(vertices.get(i));
+				prev[1].add(v);
+				}
+			}
+		
+		for (int i = 0; i < extended_vertices.size() - 1; i++) {
+			Point3f[] pts = extended_vertices.get(i);
+			group.addChild(getCylinderSegment(pts[0], pts[1],
 											  radius, res, app));
+			}
 		
 		/*
 		if (closed)
@@ -2103,8 +2180,8 @@ public class ShapeFunctions extends Utility {
 	}
 	
 	public static BranchGroup getCylinderSegment(Point3f p1, Point3f p2, 
-										  float radius, int res,
-										  Appearance app){
+										  		 float radius, int res,
+										  		 Appearance app){
 		
 		CylinderCreator creator = new CylinderCreator();
 		creator.setResolution(res);
@@ -2134,6 +2211,7 @@ public class ShapeFunctions extends Utility {
 
 		  /**
 		   * Creates a cylinder.
+		   * 
 		   * @return A BranchGroup containing the cylinder in the desired orientation.
 		   * @param b coordinates of the base of the cylinder.
 		   * @param a coordinates of the top of the cylinder.
@@ -2141,8 +2219,7 @@ public class ShapeFunctions extends Utility {
 		   * @param cylApp cylinder Appearance.
 		   * @author Scott Teresi, March 1999, www.teresi.us
 		   */
-		  public BranchGroup create (Point3f b, Point3f a, float radius,
-					     				Appearance cylApp) {
+		  public BranchGroup create (Point3f b, Point3f a, float radius, Appearance cylApp) {
 
 		    Vector3f base = new Vector3f();
 		    base.x = b.x;

@@ -176,18 +176,22 @@ public class DataConnection extends AbstractInterfaceObject
 		treeNode.add(attributes.issueTreeNode());
 	}
 	
+	@Override
 	public Attribute<?> getAttribute(String attrName) {	
 		return attributes.getAttribute(attrName);
 	}
 
+	@Override
 	public AttributeList getAttributes() {
 		return attributes;
 	}
 
+	@Override
 	public void setAttribute(String attrName, Object newValue) {
 		attributes.setValue(attrName, newValue);
 	}
 
+	@Override
 	public void setAttributes(AttributeList thisList) {
 		attributes = thisList;
 	}

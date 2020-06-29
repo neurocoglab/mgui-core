@@ -230,6 +230,10 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 		attributes.add(new Attribute<MguiBoolean>("ShowAxes", new MguiBoolean(true)));
 		attributes.add(new Attribute<MguiFloat>("SnapshotScale", new MguiFloat(1f)));
 		
+		attributes.add(new Attribute<MguiDouble>("ClipDistanceFront", new MguiDouble(0.1)));
+		attributes.add(new Attribute<MguiDouble>("ClipDistanceBack", new MguiDouble(1000)));
+		attributes.add(new Attribute<MguiBoolean>("AutoBackClip", new MguiBoolean(true)));
+		
 		type = "Graphic3D";
 	
 		//set up stuff here
@@ -254,7 +258,8 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 		viewer = new Viewer(canvas3D.getCanvas());
 		viewingPlatform = new ViewingPlatform(1);
 		viewer.setViewingPlatform(viewingPlatform);
-		viewer.getView().setTransparencySortingPolicy(View.TRANSPARENCY_SORT_GEOMETRY);
+		
+		//viewer.getView().setTransparencySortingPolicy(View.TRANSPARENCY_SORT_GEOMETRY);
 		
 		TransformGroup thisTarget = viewingPlatform.getViewPlatformTransform();
 		
@@ -267,7 +272,7 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 		map3D.updateTargetTransform();
 		map3D.setView(viewer.getView());
 		
-		//viewer.getView().setDepthBufferFreezeTransparent (false);
+		viewer.getView().setDepthBufferFreezeTransparent (false);
 		
 		toolInput3DAdapter = new ToolBehavior3DAdapter(canvas3D.getCanvas(), map3D);
 		viewingPlatform.setViewPlatformBehavior(toolInput3DAdapter);
@@ -305,12 +310,23 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 		viewingPlatform.addChild(lightNode);
 		viewingPlatform.addChild(background);
 		updateScene();
-		this.getView().setFrontClipDistance(0.1);
+		double[] clip_dists = getClipDistances();
+		this.getView().setFrontClipDistance(clip_dists[0]);
+		//this.getView().setBackClipDistance(clip_dists[1]);
 		updateAxes();
 		
 		setDefaultTool(new ToolMouseOrbit3D(this));
 		
 	}
+	
+	public double[] getClipDistances() {
+		
+		return new double[] {((MguiDouble)attributes.getValue("ClipDistanceFront")).getValue(),
+							 ((MguiDouble)attributes.getValue("ClipDistanceBack")).getValue()};
+		
+	}
+	
+	
 	
 	public void actionPerformed(ActionEvent e){
 		
@@ -343,6 +359,9 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 			}
 		theMap = map;
 		((Map3D)theMap).getCamera().addListener(this);
+		
+		
+		
 	}
 	
 	public View getView(){
@@ -563,6 +582,32 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 			axes.setVisible(((MguiBoolean)attribute.getValue()).getTrue());
 			return;
 			}
+		if (attribute.getName().startsWith("ClipDistance")) {
+			updateClipDistances();
+			return;
+			}
+		if (attribute.getName().equals("AutoBackClip")) {
+			this.getMap3D().setUpdateClipBounds(isAutoBackClip());
+			updateClipDistances();
+			return;
+			}
+			
+	}
+	
+	protected void updateClipDistances() {
+		
+		this.getView().setFrontClipDistance(((MguiDouble)attributes.getValue("ClipDistanceFront")).getValue());
+		if (isAutoBackClip()) {
+			this.getMap3D().updateClipBounds();
+			return;
+			}
+		
+		this.getView().setBackClipDistance(((MguiDouble)attributes.getValue("ClipDistanceBack")).getValue());
+		
+	}
+	
+	public boolean isAutoBackClip() {
+		return ((MguiBoolean)attributes.getValue("AutoBackClip")).getTrue();
 	}
 	
 	public void updateDisplay(){
@@ -770,28 +815,7 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 		return this.getModel();
 	}
 	
-	/*****************
-	 * Returns a tree node containing a list of objects displayable by this class of
-	 * InterfaceGraphic. Thus, a hierarchical list of ShapeSet3DInt objects from the
-	 * data model (including the base shape set).
-	 * @param p InterfaceDisplayPanel containing displayable data objects
-	 * @return DefaultMutableTreeNode with a tree list of ShapeSet3DInt objects
-	 */
-//	public DefaultMutableTreeNode getDisplayObjectsNodebak(InterfaceDisplayPanel p){
-//		//ShapeSet3DInt testSet = new ShapeSet3DInt();
-//		//ShapeModel3D testSet = new ShapeModel3d();
-////		ShapeSet3DInt shapeSets = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType(testSet);
-////		List<Shape3DInt> = InterfaceSession.getDisplayPanel().getCurrentShapeSet().getShapeType()
-////		
-////		
-////		DefaultMutableTreeNode retNode = new DefaultMutableTreeNode(InterfaceSession.getDisplayPanel().getCurrentShapeSet());
-////		if (shapeSets.members.size() > 0)
-////			retNode.add(shapeSets.issueTreeNode());
-////		return retNode;
-//		//return shapeSets.getTreeNode();
-//		return null;
-//	}
-	
+
 	public DefaultMutableTreeNode getDisplayObjectsNode(){
 		//return all models in p
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Models");

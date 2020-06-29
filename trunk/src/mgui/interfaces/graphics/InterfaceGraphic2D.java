@@ -378,7 +378,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 	void updateBorder(){
 		if (((MguiBoolean)attributes.getValue("ShowBorder")).getTrue() && getCurrentSectionSet() != null){
 			this.setBorder(BorderFactory.createLineBorder(
-					(Color)getCurrentSectionSet().getAttributes().getValue("3D.LineColour"),
+					(Color)getCurrentSectionSet().getInheritedAttributeValue("3D.LineColour"),
 					((MguiInteger)attributes.getValue("BorderWidth")).getInt()));
 		}else{
 			this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -1350,7 +1350,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 			ShapeModel3D model = models.get(i);
 			//ShapeSet3DInt shapes = model.getModelSet().getShapeType(new SectionSet3DInt(), true);
 			
-			List<Shape3DInt> shapes = model.getModelSet().getShapeType(new ShapeSet3DInt());
+			List<Shape3DInt> shapes = model.getModelSet().getShapeType(new SectionSet3DInt());
 			for (Shape3DInt shape : shapes) {
 				has_source = true;
 				String comp_name = models.get(i).getName() + "." + shape.getName();

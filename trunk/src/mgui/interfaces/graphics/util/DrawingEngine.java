@@ -418,8 +418,8 @@ public class DrawingEngine implements Engine {
 		
 		if (((MguiBoolean)drawing_attributes.getValue("2D.ShowVertexLabels")).getTrue()){
 			Text2DInt thisText = (Text2DInt)drawing_attributes.getValue("LabelObj");
-			g.setFont((Font)thisText.getAttributes().getValue("2D.LabelFont"));
-			g.setPaint((Color)thisText.getAttributes().getValue("2D.LabelColour"));
+			g.setFont((Font)thisText.getInheritedAttributeValue("2D.LabelFont"));
+			g.setPaint((Color)thisText.getInheritedAttributeValue("2D.LabelColour"));
 			String preStr = thisText.getText();
 			drawPolygon2DLabels(g, thisPoly, preStr);
 			}
@@ -438,7 +438,7 @@ public class DrawingEngine implements Engine {
 		for (int i = 1; i < thisPoly.vertices.size(); i++){
 			// Only draw visible segments
 			thisPt = getScreenPoint(thisPoly.vertices.get(i));
-			if (thisPoly.segments.get(i-1)){
+			if (thisPoly.segments.size() == 0 || thisPoly.segments.get(i-1)){
 				drawPoly.lineTo(thisPt.x, thisPt.y);
 			}else{
 				drawPoly.moveTo(thisPt.x, thisPt.y);
@@ -538,7 +538,7 @@ public class DrawingEngine implements Engine {
 		
 		Point thisPt;
 		for (int i = 0; i < thisPoly.vertices.size(); i++){
-			if (thisPoly.render_vertex.get(i)){
+			if (thisPoly.render_vertex.size() == 0 || thisPoly.render_vertex.get(i)){
 				thisPt = getScreenPoint(thisPoly.vertices.get(i));
 				g.fill(new Rectangle2D.Float((thisPt.x - (nodeSize / 2)), (thisPt.y - (nodeSize / 2)),
 											 nodeSize, nodeSize));

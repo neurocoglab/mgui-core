@@ -563,7 +563,7 @@ public class InterfaceProject extends AbstractInterfaceObject implements Attribu
 	public AttributeList getAttributes() {
 		return attributes;
 	}
-
+	
 	@Override
 	public void setAttribute(String attrName, Object newValue) {
 		attributes.setValue(attrName, newValue);

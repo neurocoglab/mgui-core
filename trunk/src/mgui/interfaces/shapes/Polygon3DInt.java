@@ -35,6 +35,7 @@ import org.jogamp.java3d.Material;
 import org.jogamp.java3d.Node;
 import org.jogamp.java3d.PointArray;
 import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.RenderingAttributes;
 import org.jogamp.java3d.Shape3D;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
@@ -51,6 +52,7 @@ import mgui.geometry.util.GeometryFunctions;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.attributes.Attribute;
 import mgui.interfaces.attributes.AttributeEvent;
+import mgui.interfaces.attributes.AttributeList;
 import mgui.interfaces.shapes.util.ShapeFunctions;
 import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiFloat;
@@ -70,6 +72,7 @@ import mgui.util.Colours;
 public class Polygon3DInt extends Shape3DInt {
 
 	protected Appearance edge_appearance;
+	protected Appearance cylinder_appearance;
 	
 	public Polygon3DInt(){
 		this(new Polygon3D(), "no-name");
@@ -205,12 +208,14 @@ public class Polygon3DInt extends Shape3DInt {
 		cAtt.setColor(Colours.getColor3f(thisColour));
 		
 		if (((MguiBoolean)getAttributeValue("3D.AsCylinder")).getTrue()){
-			//render as cylinder
+			// Render as set of cylinders
+			// TODO: implement colour mapping of cylinders
+			setCylinderAppearance();
 			sceneGroup = ShapeFunctions.getCylinderPolygon(
 							getPolygon(), 
 							((MguiFloat)getAttributeValue("3D.CylRadius")).getFloat(), 
 							((MguiInteger)getAttributeValue("3D.CylEdges")).getInt(), 
-							edge_appearance);
+							cylinder_appearance);
 			
 			sceneGroup.setCapability(BranchGroup.ALLOW_DETACH);
 		}else{
@@ -335,43 +340,7 @@ public class Polygon3DInt extends Shape3DInt {
 		if (make_live) setShapeSceneNode();
 	}
 	
-	/**
-	public void setScene3DObject(){
-		/**@TODO update to include colour (line style, transparency?)***/
-		/**@TODO draw nodes? ***
-		int[] lineStrip = new int[1];
-		lineStrip[0] = getPolygon().nodes.size() + 1;
-		
-		LineStripArray polyArray = new LineStripArray(getPolygon().nodes.size() + 1,
-													  LineStripArray.COORDINATES,
-													  lineStrip);
-		//polyArray.setCoordinates(0, getPolygon().toArray());
-		Point3f[] nodeArray = new Point3f[getPolygon().nodes.size() + 1];
-		for (int i = 0; i < getPolygon().nodes.size(); i++)
-			nodeArray[i] = getPolygon().nodes.get(i);
-		//add first node to close polygon
-		nodeArray[getPolygon().nodes.size()] = getPolygon().nodes.get(0);
-		polyArray.setCoordinates(0, nodeArray);
-		
-		Shape3D thisShapeNode = new Shape3D(polyArray);
-		Appearance thisAppNode = new Appearance();
-		Color thisColour = (Color)attributes.getValue("LineColour");
-		ColoringAttributes cAtt = new ColoringAttributes();
-		cAtt.setColor(Colours.getColor3f(thisColour));
-		thisAppNode.setColoringAttributes(cAtt);
-		thisAppNode.setMaterial(new Material());
-		thisShapeNode.setAppearance(thisAppNode);
-		
-		//Set colour
-		//Color thisColour = (Color)attributes.getValue("LineColour");
-		//for (int i = 0; i < getPolygon().nodes.size(); i++)
-		//	polyArray.setColor(i, Colours.getColor3f(thisColour));
-		BranchGroup thisNode = new BranchGroup();
-		thisNode.addChild(thisShapeNode);
-		
-		scene3DObject = thisNode;
-		//return thisNode;
-	} **/
+
 	
 	@Override
 	public String toString(){
@@ -421,6 +390,65 @@ public class Polygon3DInt extends Shape3DInt {
 		}else{
 			edge_appearance.setTransparencyAttributes(null);
 			}
+		
+	}
+	
+	protected void setCylinderAppearance(){
+		
+		if (cylinder_appearance == null){
+			cylinder_appearance = new Appearance();
+			cylinder_appearance.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
+			cylinder_appearance.setCapability(Appearance.ALLOW_LINE_ATTRIBUTES_WRITE);
+			cylinder_appearance.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
+			cylinder_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
+			cylinder_appearance.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
+			cylinder_appearance.setCapability(Appearance.ALLOW_RENDERING_ATTRIBUTES_WRITE);
+			}
+		
+		AttributeList attributes = getAttributes();
+		
+		Color colour = (Color)attributes.getValue("3D.LineColour");
+		
+		//turn off back culling
+		PolygonAttributes poly_attr = new PolygonAttributes(PolygonAttributes.POLYGON_FILL,
+													   PolygonAttributes.CULL_BACK,
+													   0);
+		cylinder_appearance.setPolygonAttributes(poly_attr);
+		Material m = new Material();
+		
+		float shininess = ((MguiFloat)attributes.getValue("3D.Shininess")).getFloat();
+		
+		m.setShininess(shininess * 127f + 1);
+		m.setSpecularColor(Colours.getColor3f(colour));
+		m.setDiffuseColor(Colours.getColor3f(colour));
+		
+		cylinder_appearance.setMaterial(m);
+		
+		if (((MguiBoolean)attributes.getValue("3D.HasAlpha")).getTrue()){
+			String trans_type = (String)attributes.getValue("3D.AlphaMode");
+			TransparencyAttributes ta = new TransparencyAttributes();
+			ta.setTransparency(((MguiFloat)attributes.getValue("3D.Alpha")).getFloat());
+			if (trans_type.equals("Screen Door")){
+				ta.setTransparencyMode(TransparencyAttributes.SCREEN_DOOR);
+			}else if (trans_type.equals("Fastest")){
+				ta.setTransparencyMode(TransparencyAttributes.FASTEST);
+			}else{
+				ta.setTransparencyMode(TransparencyAttributes.NICEST);
+				}
+			//ta.setTransparencyMode(TransparencyAttributes.BLENDED);
+			ta.setSrcBlendFunction(TransparencyAttributes.BLEND_SRC_ALPHA);
+			cylinder_appearance.setTransparencyAttributes(ta);
+		}else{
+			cylinder_appearance.setTransparencyAttributes(null);
+			}
+		
+		
+		RenderingAttributes ra = new RenderingAttributes();
+		ra.setDepthBufferEnable(true);
+		ra.setDepthTestFunction(RenderingAttributes.LESS_OR_EQUAL);
+		
+		cylinder_appearance.setRenderingAttributes(ra);
+		
 		
 	}
 	

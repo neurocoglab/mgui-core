@@ -61,6 +61,7 @@ public abstract class Function extends AbstractInterfaceObject
 		return attributes.getAttribute(attrName);
 	}
 
+	@Override
 	public AttributeList getAttributes() {
 		return attributes;
 	}

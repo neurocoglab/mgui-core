@@ -112,7 +112,7 @@ public class Image2DInt extends Shape2DInt {
 		Image3DInt image3D = new Image3DInt(new Rect3D(newNodes), image, hasAlpha());
 		
 		//set attributes from 2D image
-		image3D.getAttributes().setIntersection(attributes, false);
+		image3D.getAttributes().setIntersection(getInheritedAttributes(), false);
 		return image3D;
 	}
 	
