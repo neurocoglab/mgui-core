@@ -283,6 +283,14 @@ public class ColourBarOutDialog extends JDialog implements ActionListener,
 				return;
 				}
 			
+			if (item.getText().equals("Set no. divisions..")){
+				String divs = JOptionPane.showInputDialog("Number of divisions:", "" + this.noDivisions);
+				if (divs == null) return;
+				this.noDivisions = Integer.valueOf(divs);
+				repaint();
+				return;
+				}
+			
 			if (item.getText().equals("Hide divisions")){
 				this.showDivisions = false;
 				repaint();
@@ -334,6 +342,7 @@ public class ColourBarOutDialog extends JDialog implements ActionListener,
 			menu.addMenuItem(new JMenuItem("Text colour.."));
 			menu.addMenuItem(new JMenuItem("Decimals.."));
 			menu.addMenuItem(new JMenuItem("Padding.."));
+			menu.addMenuItem(new JMenuItem("Set no. divisions.."));
 			if (!this.showDivisions){
 				menu.addMenuItem(new JMenuItem("Show divisions"));
 			}else{

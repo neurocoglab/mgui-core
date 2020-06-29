@@ -319,7 +319,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public Color getVertexColour(){
-		return (Color)getAttributeValue("3D.VertexColour");
+		return (Color)getInheritedAttributeValue("3D.VertexColour");
 	}
 	
 	/************************************
@@ -331,7 +331,7 @@ public abstract class Shape3DInt extends InterfaceShape
 	 */
 	public Color getVertexColour(int i){
 		
-		if (((MguiBoolean)getAttributeValue("ShowData")).getTrue()) {
+		if (((MguiBoolean)getInheritedAttributeValue("ShowData")).getTrue()) {
 			
 			// Get the colour-mapped colour for this vertex
 			VertexDataColumn column = getCurrentDataColumn();
@@ -356,12 +356,12 @@ public abstract class Shape3DInt extends InterfaceShape
 	
 	@Override
 	public Color getLineColour(){
-		return (Color)getAttributeValue("3D.LineColour");
+		return (Color)getInheritedAttributeValue("3D.LineColour");
 	}
 	
 	@Override
 	public Stroke getLineStyle(){
-		return (Stroke)getAttributeValue("3D.LineStyle");
+		return (Stroke)getInheritedAttributeValue("3D.LineStyle");
 	}
 	
 	@Override

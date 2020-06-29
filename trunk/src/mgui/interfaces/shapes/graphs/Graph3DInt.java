@@ -380,14 +380,14 @@ public class Graph3DInt extends PointSet3DInt {
 	}
 	
 	public float getVertexScale(AbstractGraphNode node){
-		boolean scale_vertices = ((MguiBoolean)attributes.getValue("ScaleVertices")).getTrue();
-		float general_scale = ((MguiFloat)attributes.getValue("3D.VertexScale")).getFloat();
-		float exp_scale = ((MguiFloat)attributes.getValue("3D.VertexScaleExp")).getFloat();
+		boolean scale_vertices = ((MguiBoolean)getInheritedAttributeValue("ScaleVertices")).getTrue();
+		float general_scale = ((MguiFloat)getInheritedAttributeValue("3D.VertexScale")).getFloat();
+		float exp_scale = ((MguiFloat)getInheritedAttributeValue("3D.VertexScaleExp")).getFloat();
 		
 		if (!scale_vertices)
 			return general_scale;
 		
-		String column = (String)attributes.getValue("ScaleData");
+		String column = (String)getInheritedAttributeValue("ScaleData");
 		if (column == null) return general_scale;
 		
 		float value = (float)getDatumAtVertex(column, node_map.get(node)).getValue();
@@ -419,9 +419,9 @@ public class Graph3DInt extends PointSet3DInt {
 		Color3f c3f = Colours.getColor3f(colour);
 		m.setDiffuseColor(c3f);
 		if (hasAlpha()){
-			String trans_type = (String)attributes.getValue("3D.AlphaMode");
+			String trans_type = (String)getInheritedAttributeValue("3D.AlphaMode");
 			TransparencyAttributes ta = new TransparencyAttributes();
-			float alpha = 1.0f - ((MguiFloat)attributes.getValue("3D.Alpha")).getFloat();
+			float alpha = 1.0f - ((MguiFloat)getInheritedAttributeValue("3D.Alpha")).getFloat();
 			float alpha2 = colour.getW();
 			alpha = 1f - (alpha * alpha2);
 			ta.setTransparency(alpha);
@@ -454,7 +454,7 @@ public class Graph3DInt extends PointSet3DInt {
 	
 	protected Appearance getLabelAppearance(AbstractGraphNode node){
 		Appearance appearance = new Appearance();
-		Color3f colour = Colours.getColor3f((Color)attributes.getValue("3D.LabelColour"));
+		Color3f colour = Colours.getColor3f((Color)getInheritedAttributeValue("3D.LabelColour"));
 		Material m = new Material();
 		m.setDiffuseColor(colour);
 		m.setAmbientColor(colour);
@@ -469,7 +469,7 @@ public class Graph3DInt extends PointSet3DInt {
 	}
 	
 	protected Class<?> getLayoutClass(){
-		return (Class<?>)attributes.getValue("Layout");
+		return (Class<?>)getInheritedAttributeValue("Layout");
 	}
 	
 	public InterfaceAbstractGraph getGraph(){

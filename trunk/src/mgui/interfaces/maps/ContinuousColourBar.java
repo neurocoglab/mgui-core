@@ -229,7 +229,7 @@ public class ContinuousColourBar extends InterfacePanel implements MouseListener
 			}
 		
 		//draw divisions
-		if (showDivisions && div_size > 1){
+		if (showDivisions){
 			//lines
 			
 			g2.setPaint(getForeground());
@@ -237,15 +237,7 @@ public class ContinuousColourBar extends InterfacePanel implements MouseListener
 			g2.setStroke(new BasicStroke((float)lineWeightScale));
 			//get point size to fit this bar with n divisions, such that 20% of the space
 			//is text, the remaining 80% is white space
-			int textSize = getTextPointSize(g2, 10, div_size + 5);
-			if (width < height) textSize /= 2;
 			
-			if (textSize < 0){
-				InterfaceSession.log("Error computing font for continuous colour bar...");
-				textSize = 10;
-				}
-			
-			textSize = (int)(textSize * fontScale);
 			
 			double[] number = new double[noDivisions + 1];
 			double max_no = 0;
@@ -275,11 +267,25 @@ public class ContinuousColourBar extends InterfacePanel implements MouseListener
 					formatStr = "0";
 				}
 			
-			Font font = new Font(label_font.getFontName(), label_font.getStyle(), textSize);
+			FontMetrics metrics = null;
+			int str_height = 0;
 			
-			FontMetrics metrics = g2.getFontMetrics(font);
-			g2.setFont(font);
-			int str_height = metrics.getAscent();
+			if (div_size > 0) {
+				int textSize = getTextPointSize(g2, 10, div_size + 5);
+				if (width < height) textSize /= 2;
+				
+				if (textSize < 0){
+					InterfaceSession.log("Error computing font for continuous colour bar...");
+					textSize = 10;
+					}
+				
+				textSize = (int)(textSize * fontScale);
+				Font font = new Font(label_font.getFontName(), label_font.getStyle(), textSize);
+				
+				metrics = g2.getFontMetrics(font);
+				g2.setFont(font);
+				str_height = metrics.getAscent();
+				}
 			
 			for (int i = 0; i < noDivisions + 1; i++){
 				if (width > height){
@@ -291,12 +297,14 @@ public class ContinuousColourBar extends InterfacePanel implements MouseListener
 					g2.drawLine(pos, inset_bottom, pos, getHeight() - inset_top - div_size + 1);
 					
 					//number
-					String str = MguiDouble.getString(number[i], formatStr);
-					int str_width = metrics.stringWidth(str);
-					pos = Math.max(inset_left, pos - (str_width / 2));
-					pos = Math.min(getWidth() - inset_right - str_width, pos);
-					
-					g2.drawString(str, pos, getHeight() - inset_top );
+					if (div_size > 0) {
+						String str = MguiDouble.getString(number[i], formatStr);
+						int str_width = metrics.stringWidth(str);
+						pos = Math.max(inset_left, pos - (str_width / 2));
+						pos = Math.min(getWidth() - inset_right - str_width, pos);
+						
+						g2.drawString(str, pos, getHeight() - inset_top );
+						}
 				}else{
 					//draw vertical
 					//number
@@ -307,12 +315,14 @@ public class ContinuousColourBar extends InterfacePanel implements MouseListener
 					
 					//divider
 					g2.drawLine(inset_left, pos, getWidth() - inset_right - div_size + 1, pos);
-										
-					pos += str_height / 2f;
-					pos = Math.min(inset_top + height, pos);
-					pos = Math.max(str_height + inset_top, pos);
-					
-					g2.drawString(str, getWidth() - inset_right - div_size + 2, pos);
+						
+					if (div_size > 0) {
+						pos += str_height / 2f;
+						pos = Math.min(inset_top + height, pos);
+						pos = Math.max(str_height + inset_top, pos);
+						
+						g2.drawString(str, getWidth() - inset_right - div_size + 2, pos);
+						}
 					
 					}
 				}
