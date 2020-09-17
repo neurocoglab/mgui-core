@@ -313,9 +313,7 @@ public class ShapeFunctions extends Utility {
 		if (pickGeom == null || pickNode == null || click_point == null) return null;
 		
 		pickNode.setShapeLocation(click_point.x, click_point.y);
-		//pickGeom.setShapeLocation(click_point.x, click_point.y);
 		PickInfo infoNode = pickNode.pickClosest();
-		//PickInfo infoNode = pickGeom.pickClosest();
 		if (infoNode == null) return null;
 		Node n = infoNode.getNode();			
 		if (n == null) return null;

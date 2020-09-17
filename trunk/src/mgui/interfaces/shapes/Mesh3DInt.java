@@ -258,15 +258,20 @@ public class Mesh3DInt extends PointSet3DInt {
         	group_node.addChild(bg);
         	}
         
+        setFillAppearance();
+        
+        boolean has_fill = ((MguiBoolean)attributes.getValue("3D.HasFill")).getTrue();
+        boolean show_edges = ((MguiBoolean)attributes.getValue("3D.ShowEdges")).getTrue();
+        
         //show fill if selected
-        if (((MguiBoolean)attributes.getValue("3D.HasFill")).getTrue()){
+        if (has_fill){
         	//renders properly
             IndexedTriangleArray triArray = (IndexedTriangleArray)gi.getIndexedGeometryArray(false, true, false, false, false);
             
 	        //add geometry to shape node
 	        org.jogamp.java3d.Shape3D fillShapeNode = new org.jogamp.java3d.Shape3D(triArray);
 	        
-	        setFillAppearance();
+	        
 		
 			//apply appearance settings
 			fillShapeNode.setAppearance(fill_appearance);
@@ -278,7 +283,7 @@ public class Mesh3DInt extends PointSet3DInt {
         }
         
 		//show edges if selected
-		if (((MguiBoolean)attributes.getValue("3D.ShowEdges")).getTrue()){
+		if (show_edges){
 			IndexedTriangleArray edgeArray = new IndexedTriangleArray(nodes.length,
 																	 GeometryArray.COORDINATES |
 																	 GeometryArray.NORMALS,
@@ -291,9 +296,11 @@ public class Mesh3DInt extends PointSet3DInt {
 			
 			setEdgeAppearance();
 			
+			
+			
 			edgeShapeNode.setAppearance(edge_appearance);
 			edgeShapeNode.setUserData(this);
-			edgeShapeNode.setPickable(false);
+			edgeShapeNode.setPickable(!has_fill);
 			BranchGroup bg = new BranchGroup();
 			bg.setCapability(BranchGroup.ALLOW_DETACH);
 			bg.addChild(edgeShapeNode);
@@ -541,6 +548,7 @@ public class Mesh3DInt extends PointSet3DInt {
 			edge_appearance.setCapability(Appearance.ALLOW_LINE_ATTRIBUTES_WRITE);
 			edge_appearance.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
 			edge_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
+			edge_appearance.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
 			}
 		
 		AttributeList attributes = getInheritedAttributes();
@@ -581,8 +589,8 @@ public class Mesh3DInt extends PointSet3DInt {
 		if (a.getName().equals("3D.FillColour") ||
 			a.getName().equals("3D.Shininess") ||
 			a.getName().equals("3D.HasAlpha") ||
-			a.getName().equals("3D.Alpha") ||
-			a.getName().equals("3D.EdgeWidth") ||
+//			a.getName().equals("3D.Alpha") ||
+//			a.getName().equals("3D.EdgeWidth") ||
 			a.getName().equals("3D.LineColour") ||
 			a.getName().equals("3D.LineStyle"))
 			if (fill_appearance == null)
