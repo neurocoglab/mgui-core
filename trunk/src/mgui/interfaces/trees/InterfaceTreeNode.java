@@ -267,8 +267,7 @@ public class InterfaceTreeNode extends DefaultMutableTreeNode implements Cloneab
 			return ((PopupMenuObject)getUserObject()).getPopupMenu(selection);
 		
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
-		menu.addMenuItem(new JMenuItem("Tree Node Menu Item 1"));
-		menu.addMenuItem(new JMenuItem("Tree Node Menu Item 2"));
+		menu.addMenuItem(new JMenuItem("No options for this object"));
 		
 		return menu;
 	}

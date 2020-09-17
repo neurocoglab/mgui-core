@@ -43,7 +43,7 @@ public class XMLOutputOptions extends InterfaceIOOptions {
 	public File file;
 	public XMLType type = XMLType.Full; 
 	public XMLObject object;
-	public XMLEncoding encoding = XMLEncoding.Base64BinaryZipped;
+	public XMLEncoding encoding = XMLEncoding.Base64BinaryGZipped;
 	public int sig_digits = 6;
 	public int max_line_size = 100;
 	public String delimiter = " ";

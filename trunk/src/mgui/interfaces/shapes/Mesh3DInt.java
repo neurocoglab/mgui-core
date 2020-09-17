@@ -252,6 +252,7 @@ public class Mesh3DInt extends PointSet3DInt {
         		v_set.addVector(new Vector3D(mesh.getVertex(i), normals[i]), false, false);
         		}
         	
+        	v_set.isAuxiliaryShape(true);
         	BranchGroup bg = v_set.getScene3DObject();
         	bg.detach();
         	group_node.addChild(bg);
@@ -491,23 +492,7 @@ public class Mesh3DInt extends PointSet3DInt {
 		
 		fill_appearance.setMaterial(m);
 		
-		if (((MguiBoolean)attributes.getValue("3D.HasAlpha")).getTrue()){
-			String trans_type = (String)attributes.getValue("3D.AlphaMode");
-			TransparencyAttributes ta = new TransparencyAttributes();
-			ta.setTransparency(((MguiFloat)attributes.getValue("3D.Alpha")).getFloat());
-			if (trans_type.equals("Screen Door")){
-				ta.setTransparencyMode(TransparencyAttributes.SCREEN_DOOR);
-			}else if (trans_type.equals("Fastest")){
-				ta.setTransparencyMode(TransparencyAttributes.FASTEST);
-			}else{
-				ta.setTransparencyMode(TransparencyAttributes.NICEST);
-				}
-			//ta.setTransparencyMode(TransparencyAttributes.BLENDED);
-			ta.setSrcBlendFunction(TransparencyAttributes.BLEND_SRC_ALPHA);
-			fill_appearance.setTransparencyAttributes(ta);
-		}else{
-			fill_appearance.setTransparencyAttributes(null);
-			}
+		fill_appearance.setTransparencyAttributes(getTransparencyAttributes());
 		
 		
 		RenderingAttributes ra = new RenderingAttributes();
@@ -515,6 +500,29 @@ public class Mesh3DInt extends PointSet3DInt {
 		ra.setDepthTestFunction(RenderingAttributes.LESS_OR_EQUAL);
 		
 		fill_appearance.setRenderingAttributes(ra);
+		
+	}
+	
+	protected TransparencyAttributes getTransparencyAttributes() {
+		
+		if (!((MguiBoolean)attributes.getValue("3D.HasAlpha")).getTrue()){
+			return null;
+			}
+		
+		String trans_type = (String)attributes.getValue("3D.AlphaMode");
+		TransparencyAttributes ta = new TransparencyAttributes();
+		ta.setTransparency(((MguiFloat)attributes.getValue("3D.Alpha")).getFloat());
+		if (trans_type.equals("Screen Door")){
+			ta.setTransparencyMode(TransparencyAttributes.SCREEN_DOOR);
+		}else if (trans_type.equals("Fastest")){
+			ta.setTransparencyMode(TransparencyAttributes.FASTEST);
+		}else{
+			ta.setTransparencyMode(TransparencyAttributes.NICEST);
+			}
+		
+		ta.setSrcBlendFunction(TransparencyAttributes.BLEND_SRC_ALPHA);
+		
+		return ta;
 		
 	}
 	
@@ -560,6 +568,8 @@ public class Mesh3DInt extends PointSet3DInt {
 		edge_appearance.setColoringAttributes(cAtt);
 		edge_appearance.setPolygonAttributes(pAtt);
 		edge_appearance.setMaterial(m);
+		
+		edge_appearance.setTransparencyAttributes(getTransparencyAttributes());
 		
 	}
 	

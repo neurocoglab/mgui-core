@@ -78,7 +78,7 @@ import mgui.io.standard.xml.XMLOutputOptions;
 public class Map3D extends Map {
 
 	//public fields
-	protected Camera3D camera = new Camera3D();
+	protected Camera3D camera = new Camera3D("Camera");
 	
 	//could also make this a list
 	protected TransformGroup targetTransform;

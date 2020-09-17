@@ -158,7 +158,7 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 	public Background background;
 	
 	protected ToolBehavior3DAdapter toolInput3DAdapter;
-	protected  BranchGroup lightNode;
+	protected BranchGroup lightNode;
 	protected ShapeModel3D model;
 	protected TransformGroup axes_transform;
 	protected float min_screen_dim = 1000;

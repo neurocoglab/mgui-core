@@ -44,14 +44,14 @@ import mgui.interfaces.attributes.tree.AttributeTreeCellRenderer;
 public class InterfaceTreeCellRenderer extends DefaultTreeCellRenderer {
 
 	public HashMap<Class, TreeCellRenderer> renderers = new HashMap<Class, TreeCellRenderer>();
-	TreeCellRenderer defRenderer;
+	TreeCellRenderer default_renderer;
 	
 	public InterfaceTreeCellRenderer(){
 		setDefaultRenderer(new AttributeTreeCellRenderer());
 	}
 	
 	public void setDefaultRenderer(TreeCellRenderer r){
-		defRenderer = r;
+		default_renderer = r;
 		//defRenderer.setInputMap(WHEN_FOCUSED, getInputMap());
 	}
 	
@@ -83,7 +83,6 @@ public class InterfaceTreeCellRenderer extends DefaultTreeCellRenderer {
 		Class<?> c;
 		
 		if (value instanceof InterfaceTreeNode){
-			//sel &= ((InterfaceTreeNode)value).isSelectable();
 			value = ((InterfaceTreeNode)value).getUserObject();
 			}
 		
@@ -103,7 +102,7 @@ public class InterfaceTreeCellRenderer extends DefaultTreeCellRenderer {
 																		   expanded, leaf, 
 																		   row, hasFocus);
 		
-		if (defRenderer != null) return defRenderer.getTreeCellRendererComponent(tree, value, sel, 
+		if (default_renderer != null) return default_renderer.getTreeCellRendererComponent(tree, value, sel, 
 																		   expanded, leaf, 
 																		   row, hasFocus);
 		

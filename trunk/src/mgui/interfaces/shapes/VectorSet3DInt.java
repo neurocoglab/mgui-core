@@ -340,7 +340,7 @@ public class VectorSet3DInt extends Shape3DInt {
 			fill_appearance.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
 			}
 		
-		Color colour = (Color)attributes.getValue("LineColour");
+		Color colour = (Color)attributes.getValue("3D.LineColour");
 		
 		//turn off back culling
 		PolygonAttributes pAtt = new PolygonAttributes();
@@ -355,9 +355,9 @@ public class VectorSet3DInt extends Shape3DInt {
 		
 		fill_appearance.setMaterial(m);
 		
-		if (((MguiBoolean)attributes.getValue("HasTransparency")).getTrue()){
+		if (((MguiBoolean)attributes.getValue("3D.HasAlpha")).getTrue()){
 			TransparencyAttributes ta = new TransparencyAttributes();
-			ta.setTransparency(((MguiFloat)attributes.getValue("Alpha")).getFloat());
+			ta.setTransparency(((MguiFloat)attributes.getValue("3D.Alpha")).getFloat());
 			ta.setTransparencyMode(TransparencyAttributes.BLENDED);
 			ta.setSrcBlendFunction(TransparencyAttributes.BLEND_SRC_ALPHA);
 			fill_appearance.setTransparencyAttributes(ta);
@@ -376,7 +376,7 @@ public class VectorSet3DInt extends Shape3DInt {
 			edge_appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
 			}
 		
-		Color3f edgeColour = Colours.getColor3f((Color)attributes.getValue("LineColour"));
+		Color3f edgeColour = Colours.getColor3f((Color)attributes.getValue("3D.LineColour"));
 		Material m = new Material();
 		m.setDiffuseColor(edgeColour);
 		m.setAmbientColor(edgeColour);
@@ -386,7 +386,7 @@ public class VectorSet3DInt extends Shape3DInt {
 		cAtt.setColor(edgeColour);
 		
 		//TODO: set dash
-		float width = ((BasicStroke)attributes.getValue("LineStyle")).getLineWidth();
+		float width = ((BasicStroke)attributes.getValue("3D.LineStyle")).getLineWidth();
 		LineAttributes lAtt = new LineAttributes(width,
 												 LineAttributes.PATTERN_SOLID,
 												 true);

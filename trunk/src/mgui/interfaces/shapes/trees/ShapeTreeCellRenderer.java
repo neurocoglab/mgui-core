@@ -88,9 +88,7 @@ public class ShapeTreeCellRenderer extends JPanel implements TreeCellRenderer {
 		
 		label.setFont(tree.getFont());
 		Icon icon = ((InterfaceShape)value).getObjectIcon();
-		//if (icon != null){
 		label.setIcon(icon);
-			//}
 		
 		return this;
 	}

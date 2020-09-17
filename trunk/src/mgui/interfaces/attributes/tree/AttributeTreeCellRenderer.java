@@ -203,13 +203,12 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				thisBox.setBackground(tree.getBackground());
 				JPanel cell = new JPanel();
 				JLabel thisLabel = new JLabel(thisAttr.getName());
-				if (sel)
+				if (sel) {
 					thisLabel.setBackground(selectedBG);
-				else
-					//thisLabel.setBackground(tree.getBackground());
+				} else {
 					thisLabel.setOpaque(false);
+					}
 				thisLabel.setFont(tree.getFont());
-				//thisLabel.setMaximumSize(new Dimension(CELL_WIDTH - VALUE_WIDTH, height));
 				if (sel)
 					cell.setBackground(selectedBG);
 				else
@@ -217,8 +216,7 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				cell.setLayout(new BorderLayout());
 				cell.add(thisLabel, BorderLayout.EAST);
 				cell.add(thisBox, BorderLayout.WEST);
-				
-				//return cell;
+
 				component = new TestComponent(cell);
 			}
 			
@@ -239,9 +237,7 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
-//				cell.setPreferredSize(new Dimension(CELL_WIDTH, height));
 				name.setFont(tree.getFont());
-//				name.setMaximumSize(new Dimension(CELL_WIDTH - VALUE_WIDTH, height));
 				box.setFont(tree.getFont());
 				
 				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
@@ -253,7 +249,6 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				cell.setMaximumSize(new Dimension(CELL_WIDTH, height));
 				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
-				//return cell;
 				component = new TestComponent(cell);
 			}
 			
@@ -267,9 +262,7 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				JComboBox box = ((AttributeSelectionMap<?>)thisAttr).getComboBox();
 				box.setEditable(thisAttr.isEditable());
 				box.setPreferredSize(new Dimension(VALUE_WIDTH, height));
-//				cell.setLayout(new BorderLayout());
-//				cell.add(name, BorderLayout.WEST);
-//				cell.add(box, BorderLayout.EAST);
+
 				if (sel)
 					cell.setBackground(selectedBG);
 				else
@@ -288,7 +281,6 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				cell.setMaximumSize(new Dimension(CELL_WIDTH, height));
 				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
-				//return cell;
 				component = new TestComponent(cell);
 			}
 			
@@ -310,10 +302,6 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
-//				cell.setLayout(new BorderLayout());
-//				cell.add(thisLabel, BorderLayout.WEST);
-//				cell.add(thisButton, BorderLayout.EAST);
-//				cell.setPreferredSize(new Dimension(CELL_WIDTH, height));
 				
 				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 				cell.add(thisLabel);
@@ -324,13 +312,10 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				cell.setMaximumSize(new Dimension(CELL_WIDTH, height));
 				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
-				//return cell;
 				component = new TestComponent(cell);
 			}
 			
 			if (thisAttr.getValue() instanceof TypeMap){
-				//JCheckBox thisBox = new JCheckBox("", ((arBoolean)thisAttr.getValue()).value);
-				//thisBox.setBackground(tree.getBackground());
 				JComboBox thisBox = new JComboBox();
 				thisBox.setEditable(thisAttr.isEditable());
 				thisBox.setFont(tree.getFont());
@@ -338,10 +323,9 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				thisBox.setBackground(tree.getBackground());
 				//fill
 				ArrayList<String> types = ((TypeMap)thisAttr.getValue()).getTypes();
-				for (int i = 0; i < types.size(); i++)
+				for (int i = 0; i < types.size(); i++) {
 					thisBox.addItem(types.get(i));
-				//for (int i = 0; i < ((TypeMap)thisAttr.getValue()).types.items.size(); i++)
-				//	thisBox.addItem(((TypeMap)thisAttr.getValue()).types.items.get(i).objValue);
+					}
 				thisBox.setSelectedItem(((TypeMap)thisAttr.getValue()).getTypeStr());
 				JPanel cell = new JPanel();
 				JLabel thisLabel = new JLabel(thisAttr.getName());
@@ -351,15 +335,12 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 					thisLabel.setBackground(tree.getBackground());
 				thisLabel.setFont(tree.getFont());
 				thisLabel.setMaximumSize(new Dimension(CELL_WIDTH - VALUE_WIDTH, height));
-				if (sel)
+				if (sel) {
 					cell.setBackground(selectedBG);
-				else
+				} else {
 					cell.setBackground(tree.getBackground());
-//				cell.setLayout(new BorderLayout());
-//				cell.add(thisLabel, BorderLayout.WEST);
-//				cell.add(thisBox, BorderLayout.EAST);
-//				cell.setPreferredSize(new Dimension(CELL_WIDTH, height));
-				
+					}
+
 				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 				cell.add(thisLabel);
 				cell.add(thisBox);
@@ -369,7 +350,6 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				cell.setMaximumSize(new Dimension(CELL_WIDTH, height));
 				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
-				//return cell;
 				component = new TestComponent(cell);
 			}
 			
@@ -397,10 +377,6 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
-//				cell.setLayout(new BorderLayout());
-//				cell.add(thisLabel, BorderLayout.WEST);
-//				cell.add(thisBox, BorderLayout.EAST);
-//				cell.setPreferredSize(new Dimension(CELL_WIDTH, height));
 				
 				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 				cell.add(thisLabel);
@@ -411,7 +387,6 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				cell.setMaximumSize(new Dimension(CELL_WIDTH, height));
 				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
-				//return cell;
 				component = new TestComponent(cell);
 			}
 			
@@ -433,10 +408,6 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 					cell.setBackground(selectedBG);
 				else
 					cell.setBackground(tree.getBackground());
-//				cell.setLayout(new BorderLayout());
-//				cell.add(thisLabel, BorderLayout.WEST);
-//				cell.add(thisField, BorderLayout.EAST);
-//				cell.setPreferredSize(new Dimension(CELL_WIDTH,height));
 				
 				cell.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 				cell.add(thisLabel);
@@ -447,7 +418,6 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				cell.setMaximumSize(new Dimension(CELL_WIDTH, height));
 				cell.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 				
-				//return cell;
 				component = new TestComponent(cell);
 				}
 			
@@ -469,11 +439,9 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 				else
 					cell.setBackground(tree.getBackground());
 				cell.setPreferredSize(new Dimension(CELL_WIDTH,height));
-				//cell.setPreferredSize(new Dimension(200, height));
 				name.setFont(tree.getFont());
 				val.setFont(tree.getFont());
 				
-				//return cell;
 				component = new TestComponent(cell);
 				}
 			
@@ -490,10 +458,11 @@ public class AttributeTreeCellRenderer extends DefaultTreeCellRenderer {
 			if (icon != null)
 				label.setIcon(icon);
 			}
-		if (sel) //value instanceof InterfaceObject && sel)
+		if (sel) { 
 			label.setBackground(getSelectedBackground());
-		else
+		} else {
 			label.setBackground(tree.getBackground());
+			}
 		
 		label.setFont(tree.getFont());
 		return label;

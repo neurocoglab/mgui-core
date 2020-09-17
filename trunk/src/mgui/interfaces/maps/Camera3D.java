@@ -129,7 +129,7 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 	
 	protected void init(){
 		attributes = new AttributeList();
-		attributes.add(new Attribute("Name", "Camera3D"));
+		attributes.add(new Attribute<String>("Name", "Camera3D"));
 		
 		setIcon();
 	}
@@ -321,7 +321,7 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 	public void addLightSource(DirectionalLight light, Vector2d offset){
 		CameraLightSource s = new CameraLightSource(light, offset);
 		lights.add(s);
-		s.setName("" + lights.size());
+		s.setName("Light source " + lights.size());
 	}
 	
 	public void removeLightSource(DirectionalLight light){
@@ -625,9 +625,10 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 	}
 	
 	public class CameraLightSource extends AbstractInterfaceObject implements AttributeObject,
-																			  AttributeListener{
+																			  AttributeListener,
+																			  IconObject {
 
-		
+		protected Icon light_icon;
 		public DirectionalLight source;
 		public AttributeList attributes;
 		
@@ -648,6 +649,17 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 			attributes.add(new Attribute("Colour", Colours.getAwtColor(c)));
 			attributes.add(new Attribute("IsEnabled", new MguiBoolean(source.getEnable())));
 			attributes.addAttributeListener(this);
+			
+			setIcon();
+		}
+		
+		//override to set a specific icon
+		protected void setIcon(){
+			java.net.URL imgURL = ShapeSet3DInt.class.getResource("/mgui/resources/icons/lightsource_3d_20.png");
+			if (imgURL != null)
+				light_icon = new ImageIcon(imgURL);
+			else
+				InterfaceSession.log("Cannot find resource: mgui/resources/icons/lightsource_3d_20.png");
 		}
 		
 		public void setDirection(Vector3f d){
@@ -748,6 +760,11 @@ public class Camera3D extends AbstractInterfaceObject implements AttributeObject
 		@Override
 		public String toString(){
 			return "Light Source: " + getName();
+		}
+
+		@Override
+		public Icon getObjectIcon() {
+			return light_icon;
 		}
 		
 	}

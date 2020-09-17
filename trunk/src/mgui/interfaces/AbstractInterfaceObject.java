@@ -86,11 +86,6 @@ public abstract class AbstractInterfaceObject implements InterfaceObject{
 				}
 			}
 		
-//		for (int i = 0; i < nodes.size(); i++){
-//			if (nodes.get(i).isDestroyed() || node.)
-//				tree_nodes.remove(nodes.get(i));
-//			}
-		
 	}
 
 	public void destroy(){
