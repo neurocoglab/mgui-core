@@ -197,24 +197,26 @@ public class Polygon3DInt extends Shape3DInt {
 			return;
 			}
 		
+		AttributeList attributes = getInheritedAttributes();
+		
 		BranchGroup sceneGroup = new BranchGroup();
 		sceneGroup.setCapability(BranchGroup.ALLOW_DETACH);
 		
 		Polygon3D polygon = getPolygon();
 		
 		setEdgeAppearance();
-		Color thisColour = (Color)getAttributeValue("3D.LineColour");
+		Color thisColour = (Color)attributes.getValue("3D.LineColour");
 		ColoringAttributes cAtt = new ColoringAttributes();
 		cAtt.setColor(Colours.getColor3f(thisColour));
 		
-		if (((MguiBoolean)getAttributeValue("3D.AsCylinder")).getTrue()){
+		if (((MguiBoolean)attributes.getValue("3D.AsCylinder")).getTrue()){
 			// Render as set of cylinders
 			// TODO: implement colour mapping of cylinders
 			setCylinderAppearance();
 			sceneGroup = ShapeFunctions.getCylinderPolygon(
 							getPolygon(), 
-							((MguiFloat)getAttributeValue("3D.CylRadius")).getFloat(), 
-							((MguiInteger)getAttributeValue("3D.CylEdges")).getInt(), 
+							((MguiFloat)attributes.getValue("3D.CylRadius")).getFloat(), 
+							((MguiInteger)attributes.getValue("3D.CylEdges")).getInt(), 
 							cylinder_appearance);
 			
 			sceneGroup.setCapability(BranchGroup.ALLOW_DETACH);
@@ -265,15 +267,15 @@ public class Polygon3DInt extends Shape3DInt {
 					
 					thisShapeNode = new Shape3D(tris);
 					Appearance fillApp = new Appearance();
-					Color c = (Color)getAttributeValue("3D.FillColour");
+					Color c = (Color)attributes.getValue("3D.FillColour");
 					ColoringAttributes cAtt2 = new ColoringAttributes();
 					cAtt2.setColor(Colours.getColor3f(c));
 					fillApp.setColoringAttributes(cAtt2);
 					fillApp.setMaterial(new Material());
-					if (((MguiFloat)getAttributeValue("3D.FillAlpha")).getFloat() > 0){
-						String trans_type = (String)getAttributeValue("3D.AlphaMode");
+					if (((MguiFloat)attributes.getValue("3D.FillAlpha")).getFloat() > 0){
+						String trans_type = (String)attributes.getValue("3D.AlphaMode");
 						TransparencyAttributes ta = new TransparencyAttributes();
-						ta.setTransparency(((MguiFloat)getAttributeValue("3D.FillAlpha")).getFloat());
+						ta.setTransparency(((MguiFloat)attributes.getValue("3D.FillAlpha")).getFloat());
 						if (trans_type.equals("Screen Door")){
 							ta.setTransparencyMode(TransparencyAttributes.SCREEN_DOOR);
 						}else if (trans_type.equals("Fastest")){
@@ -313,7 +315,7 @@ public class Polygon3DInt extends Shape3DInt {
 				
 				if (node != null) {
 					float scale = getVertexScale(i);
-					if (((MguiBoolean)getAttributeValue("ScaleVerticesAbs")).getTrue())
+					if (((MguiBoolean)attributes.getValue("ScaleVerticesAbs")).getTrue())
 						scale = Math.abs(scale);
 					if (scale > ShapeFunctions.tolerance) {
 						Vector3f pv = new Vector3f(polygon.getVertex(i));
@@ -357,7 +359,7 @@ public class Polygon3DInt extends Shape3DInt {
 			edge_appearance.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
 			}
 		
-		Color3f edgeColour = Colours.getColor3f((Color)getAttribute("3D.LineColour").getValue());
+		Color3f edgeColour = Colours.getColor3f((Color)getInheritedAttribute("3D.LineColour").getValue());
 		Material m = new Material();
 		m.setDiffuseColor(edgeColour);
 		m.setAmbientColor(edgeColour);
@@ -367,7 +369,7 @@ public class Polygon3DInt extends Shape3DInt {
 		cAtt.setColor(edgeColour);
 		
 		//TODO: set dash
-		float width = ((BasicStroke)attributes.getValue("3D.LineStyle")).getLineWidth();
+		float width = ((BasicStroke)getInheritedAttribute("3D.LineStyle").getValue()).getLineWidth();
 		LineAttributes lAtt = new LineAttributes(width,
 												 LineAttributes.PATTERN_SOLID,
 												 true);
@@ -381,9 +383,9 @@ public class Polygon3DInt extends Shape3DInt {
 		edge_appearance.setPolygonAttributes(pAtt);
 		edge_appearance.setMaterial(m);
 		
-		if (((MguiBoolean)getAttribute("3D.HasAlpha").getValue()).getTrue()){
+		if (((MguiBoolean)getInheritedAttribute("3D.HasAlpha").getValue()).getTrue()){
 			TransparencyAttributes ta = new TransparencyAttributes();
-			ta.setTransparency(((MguiFloat)getAttribute("3D.Alpha").getValue()).getFloat());
+			ta.setTransparency(((MguiFloat)getInheritedAttribute("3D.Alpha").getValue()).getFloat());
 			ta.setTransparencyMode(TransparencyAttributes.NICEST);
 			ta.setSrcBlendFunction(TransparencyAttributes.BLEND_SRC_ALPHA);
 			edge_appearance.setTransparencyAttributes(ta);
@@ -405,7 +407,7 @@ public class Polygon3DInt extends Shape3DInt {
 			cylinder_appearance.setCapability(Appearance.ALLOW_RENDERING_ATTRIBUTES_WRITE);
 			}
 		
-		AttributeList attributes = getAttributes();
+		AttributeList attributes = getInheritedAttributes();
 		
 		Color colour = (Color)attributes.getValue("3D.LineColour");
 		
@@ -416,7 +418,7 @@ public class Polygon3DInt extends Shape3DInt {
 		cylinder_appearance.setPolygonAttributes(poly_attr);
 		Material m = new Material();
 		
-		float shininess = ((MguiFloat)attributes.getValue("3D.Shininess")).getFloat();
+		float shininess = ((MguiFloat)getInheritedAttribute("3D.Shininess").getValue()).getFloat();
 		
 		m.setShininess(shininess * 127f + 1);
 		m.setSpecularColor(Colours.getColor3f(colour));
@@ -424,10 +426,10 @@ public class Polygon3DInt extends Shape3DInt {
 		
 		cylinder_appearance.setMaterial(m);
 		
-		if (((MguiBoolean)attributes.getValue("3D.HasAlpha")).getTrue()){
-			String trans_type = (String)attributes.getValue("3D.AlphaMode");
+		if (((MguiBoolean)getInheritedAttribute("3D.HasAlpha").getValue()).getTrue()){
+			String trans_type = (String)getInheritedAttribute("3D.AlphaMode").getValue();
 			TransparencyAttributes ta = new TransparencyAttributes();
-			ta.setTransparency(((MguiFloat)attributes.getValue("3D.Alpha")).getFloat());
+			ta.setTransparency(((MguiFloat)getInheritedAttribute("3D.Alpha").getValue()).getFloat());
 			if (trans_type.equals("Screen Door")){
 				ta.setTransparencyMode(TransparencyAttributes.SCREEN_DOOR);
 			}else if (trans_type.equals("Fastest")){
