@@ -478,17 +478,17 @@ public class Volume3DRenderer implements Camera3DListener,
 		
 		// No transparency due to z-order issue
 		
-//		if (colour_model != null && colour_model.hasAlpha()){
-//			appNode.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
-//			appNode.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
-//			TransparencyAttributes tAtt = new TransparencyAttributes();
-//			tAtt.setTransparencyMode(TransparencyAttributes.BLENDED);
-//			tAtt.setDstBlendFunction(TransparencyAttributes.BLEND_ONE_MINUS_SRC_ALPHA);
-//			tAtt.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
-//			tAtt.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
-//			if (setAlpha) tAtt.setTransparency(alpha);
-//			appNode.setTransparencyAttributes(tAtt);
-//			}
+		if (colour_model != null && colour_model.hasAlpha()){
+			appNode.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
+			appNode.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
+			TransparencyAttributes tAtt = new TransparencyAttributes();
+			tAtt.setTransparencyMode(TransparencyAttributes.BLENDED);
+			tAtt.setDstBlendFunction(TransparencyAttributes.BLEND_ONE_MINUS_SRC_ALPHA);
+			tAtt.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
+			tAtt.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
+			if (setAlpha) tAtt.setTransparency(alpha);
+			appNode.setTransparencyAttributes(tAtt);
+			}
 		
 		//set texture here
 		appNode.setTexture(texture3D.texture);
