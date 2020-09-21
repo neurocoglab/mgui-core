@@ -377,7 +377,8 @@ public class Mesh3DInt extends PointSet3DInt {
 			shape2D = ShapeFunctions.getIntersectionMesh(mesh, plane);
 		if (shape2D == null) return null;
 		
-		ShapeFunctions.setAttributesFrom3DParent(shape2D, this, inheritAttributesFromParent());
+//		ShapeFunctions.setAttributesFrom3DParent(shape2D, this, inheritAttributesFromParent());
+		//ShapeFunctions.setAttributesFrom3DParent(shape2D, this, false); // ((MguiBoolean)attributes.getValue("IsOverriding")).getTrue());
 		
 		shape2D.updateShape();
 		

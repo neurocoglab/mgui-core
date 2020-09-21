@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.font.LineMetrics;
 import java.util.ArrayList;
 
@@ -205,6 +206,8 @@ public class Axes3D extends AbstractInterfaceObject implements AttributeListener
 		int height = canvas.getHeight();
 		
 		J3DGraphics2D g2d = canvas.getGraphics2D();
+		
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		
 		//set margin based on size and screen dims
 		float margin = (width) * 0.05f;

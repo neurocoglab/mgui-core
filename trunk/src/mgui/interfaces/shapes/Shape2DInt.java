@@ -308,7 +308,7 @@ public abstract class Shape2DInt extends InterfaceShape
 			parentShape.removeShape2DChild(this);
 		parentShape = shape;
 		parentShape.addShape2DChild(this);
-		ShapeFunctions.setAttributesFrom3DParent(this, shape, inheritAttributesFromParent());
+		ShapeFunctions.setAttributesFrom3DParent(this, shape, false); // inheritAttributesFromParent());
 		
 	}
 	
