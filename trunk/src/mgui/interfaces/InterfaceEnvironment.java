@@ -361,7 +361,13 @@ public class InterfaceEnvironment implements Environment {
 				try{
 					//File dir = new File(log_url.toURI());
 					File dir = getApplicationDataDir();
-					log_file = new File(dir.getAbsolutePath() + File.separator + "logs" + File.separator + s);
+					File log_dir = new File(dir.getAbsolutePath() + File.separator + "logs");
+					if (!log_dir.exists() && !log_dir.mkdirs()) {
+						InterfaceSession.log("InterfaceEnvironment: Cannot create log directory '" + 
+								log_dir.getAbsolutePath());
+						return false;
+						}
+					log_file = new File(log_dir.getAbsolutePath() + File.separator + s);
 				}catch (Exception e){
 					//shouldn't get here..
 					InterfaceSession.log("InterfaceEnvironment: Cannot create log file '" + 
