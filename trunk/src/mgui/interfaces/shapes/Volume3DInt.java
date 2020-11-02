@@ -1494,7 +1494,8 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 		renderer.getTexture().updateFromVolume(this);
 		//reactivateClips();
 		
-		fireChildren2DModified();
+//		fireChildren2DModified();
+		fireShapeModified();
 	}
 	
 	/************************************************
@@ -1815,7 +1816,7 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 			return null;
 			}
 		
-		ShapeFunctions.setAttributesFrom3DParent(shape2D, this, inheritAttributesFromParent());
+//		ShapeFunctions.setAttributesFrom3DParent(shape2D, this, inheritAttributesFromParent());
 		
 		//show intersection polygon in 3D
 		if (intRect3D != null)

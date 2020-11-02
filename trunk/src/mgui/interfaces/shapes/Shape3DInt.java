@@ -1219,6 +1219,14 @@ public abstract class Shape3DInt extends InterfaceShape
 	 * @param a
 	 */
 	protected void updateChildren2D(Attribute<?> a){
+		
+		// If this shape is being made visible, we may need a new
+		// 2D child
+//		if (a.getName().equals("IsVisible") &&
+//				((MguiBoolean)a.getValue()).getTrue()) {
+//			
+//			return;
+//			}
 
 		
 		if (inheritAttributesFromParent()){

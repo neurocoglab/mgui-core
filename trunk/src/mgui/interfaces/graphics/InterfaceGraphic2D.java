@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -44,9 +45,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.jogamp.vecmath.Point2f;
 import org.jogamp.vecmath.Point3f;
 import org.jogamp.vecmath.Vector2f;
+import org.xml.sax.Attributes;
 
 import mgui.geometry.Plane3D;
 import mgui.geometry.Rect2D;
@@ -65,12 +68,10 @@ import mgui.interfaces.maps.Map2D;
 import mgui.interfaces.maps.MapEvent;
 import mgui.interfaces.menus.InterfacePopupMenu;
 import mgui.interfaces.shapes.InterfaceShape;
-import mgui.interfaces.shapes.Mesh3DInt;
 import mgui.interfaces.shapes.SectionSet3DInt;
 import mgui.interfaces.shapes.Shape2DInt;
 import mgui.interfaces.shapes.Shape3DInt;
 import mgui.interfaces.shapes.ShapeModel3D;
-import mgui.interfaces.shapes.ShapePanel2D;
 import mgui.interfaces.shapes.ShapeSet2DInt;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.shapes.selection.ShapeSelectionSet;
@@ -91,8 +92,6 @@ import mgui.numbers.MguiBoolean;
 import mgui.numbers.MguiDouble;
 import mgui.numbers.MguiFloat;
 import mgui.numbers.MguiInteger;
-
-import org.xml.sax.Attributes;
 
 
 /**************************
@@ -400,6 +399,12 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 		
 		((Map2D)getMap()).setScreenBounds(getSize());
 		Graphics2D g2 = (Graphics2D)g;
+		
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+		        			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+    						RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		if (drawMouseOnly){
 			for (int i = 0; i < this.status_listeners.size(); i++){

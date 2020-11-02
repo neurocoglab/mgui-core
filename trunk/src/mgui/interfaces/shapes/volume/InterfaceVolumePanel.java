@@ -2798,7 +2798,7 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 			// Update texture
 			currentVolume.setCurrentColumn(current_column, false);
 			currentVolume.updateTexture();
-			currentVolume.fireShapeModified();
+//			currentVolume.fireShapeModified();
 			InterfaceSession.getDisplayPanel().updateDisplays();
 			int slice = sldIntSlice.getValue();
 			updateIntensity();

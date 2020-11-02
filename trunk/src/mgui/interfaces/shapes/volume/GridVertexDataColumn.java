@@ -380,11 +380,43 @@ public class GridVertexDataColumn extends VertexDataColumn {
 			colour_model.setLimits(min, max);
 		}else{
 			colour_model.setColourMap(map);
-			double min = this.getColourMin();
-			double max = this.getColourMax();
-			colour_model.setLimits(min, max);
+			
+//			double intercept = colour_model.getIntercept();
+//			double scale = colour_model.getScale();
+//			
+//			double min = this.getColourMin();
+//			double max = this.getColourMax();
+//			
+//			double width = max - min;
+//			double mid = min + width/2.0;
+//			
+//			width = (width - intercept) * scale;
+//			mid = (mid - intercept) * scale;
+//		
+//			min = mid - width / 2.0;
+//			max = min + width;
+//			
+//			colour_model.setLimits(min, max);
 			colour_model.setHasAlpha(volume.hasAlpha());
 			}
+		
+		
+		super.setColourMap(colour_model.getColourMap(), false);
+		
+		double mid = colour_model.getWindowMid();
+		double width = colour_model.getWindowWidth();
+		double intercept = colour_model.getIntercept();
+		double scale = colour_model.getScale();
+		mid = mid / scale + intercept;
+		width = width / scale + intercept;
+	
+		double min = mid - width / 2.0;
+		double max = min + width;
+		
+		this.setColourLimits(min, max, false);
+		
+		
+		
 		
 		colour_model.is_solid = this.isSolidColour();
 		colour_model.setSolidColour(this.getSolidColour());

@@ -230,7 +230,7 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 		attributes.add(new Attribute<MguiBoolean>("ShowAxes", new MguiBoolean(true)));
 		attributes.add(new Attribute<MguiFloat>("SnapshotScale", new MguiFloat(1f)));
 		
-		attributes.add(new Attribute<MguiDouble>("ClipDistanceFront", new MguiDouble(0.1)));
+		attributes.add(new Attribute<MguiDouble>("ClipDistanceFront", new MguiDouble(10)));
 		attributes.add(new Attribute<MguiDouble>("ClipDistanceBack", new MguiDouble(1000)));
 		attributes.add(new Attribute<MguiBoolean>("AutoBackClip", new MguiBoolean(true)));
 		
