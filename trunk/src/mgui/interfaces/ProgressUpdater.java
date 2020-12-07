@@ -78,7 +78,21 @@ public interface ProgressUpdater {
 	 * 
 	 */
 	public void deregister();
+	
+	
+	/*******************************
+	 * Sets the message for this progress updater
+	 * 
+	 * @param message
+	 */
 	public void setMessage(String message);
+	
+	/********************************
+	 * Sets whether this progress updater should be considered indeterminate; i.e.,
+	 * progress cannot be estimated.
+	 * 
+	 * @param b
+	 */
 	public void setIndeterminate(boolean b);
 	
 	/****************************************************

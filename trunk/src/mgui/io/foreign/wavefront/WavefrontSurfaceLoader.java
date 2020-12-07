@@ -30,6 +30,7 @@ import mgui.io.domestic.shapes.SurfaceFileLoader;
  * <p><a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">https://en.wikipedia.org/wiki/Wavefront_.obj_file</a>
  * 
  * @author Andrew Reid
+ * @since 1.0.30
  *
  */
 public class WavefrontSurfaceLoader extends SurfaceFileLoader {
@@ -82,8 +83,8 @@ public class WavefrontSurfaceLoader extends SurfaceFileLoader {
         mesh.finalize();
 		
 		InterfaceSession.log("Wavefront OBJ file '" + dataFile.getAbsolutePath() + "' loaded.", LoggingType.Verbose);
-		InterfaceSession.log("Faces: " + mesh.f + " (" + mesh.faces.length / 3f + ")", LoggingType.Debug);
-		InterfaceSession.log("Nodes: " + mesh.n + " (" + mesh.nodes.length / 3f + ")", LoggingType.Debug);
+		InterfaceSession.log("Faces: " + mesh.f, LoggingType.Debug);
+		InterfaceSession.log("Nodes: " + mesh.n, LoggingType.Debug);
 		
 		Mesh3DInt mesh_int = new Mesh3DInt(mesh);
 		mesh_int.setFileLoader(getIOType());

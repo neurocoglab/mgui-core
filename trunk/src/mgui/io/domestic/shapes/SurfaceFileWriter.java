@@ -31,7 +31,16 @@ import mgui.interfaces.shapes.Mesh3DInt;
 import mgui.io.FileWriter;
 import mgui.io.InterfaceIOOptions;
 
-
+/**************************************
+ * 
+ * Represents an abstract surface file writer object. All {@code FileWriter} objects that write surface
+ * meshes should extend this class.
+ * 
+ * 
+ * @author Andrew Reid
+ * @since 1.0.0
+ *
+ */
 public abstract class SurfaceFileWriter extends FileWriter {
 	
 	public String number_format = "#0.00000";

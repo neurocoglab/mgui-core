@@ -72,7 +72,6 @@ public class Mesh3DWriter extends SurfaceFileWriter {
 		
 		return writeSurfaceBlocking(mesh, null);
 		
-		
 	}
 	
 	public boolean writeSurfaceBlocking(final Mesh3DInt mesh, final ProgressUpdater progress_bar) {
