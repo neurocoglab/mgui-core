@@ -137,9 +137,9 @@ public class Mesh3DLoader extends SurfaceFileLoader {
 			
 			mesh.finalize();
 			
-			InterfaceSession.log("Tri file '" + dataFile.getAbsolutePath() + "' loaded.");
-			InterfaceSession.log("Faces: " + mesh.f + " (" + mesh.faces.length / 3f + ")");
-			InterfaceSession.log("Nodes: " + mesh.n + " (" + mesh.nodes.length / 3f + ")");
+			InterfaceSession.log("Tri file '" + dataFile.getAbsolutePath() + "' loaded.", LoggingType.Verbose);
+			InterfaceSession.log("Faces: " + mesh.f + " (" + mesh.faces.length / 3f + ")", LoggingType.Debug);
+			InterfaceSession.log("Nodes: " + mesh.n + " (" + mesh.nodes.length / 3f + ")", LoggingType.Debug);
 			
 			Mesh3DInt mesh_int = new Mesh3DInt(mesh);
 			mesh_int.setFileLoader(getIOType());

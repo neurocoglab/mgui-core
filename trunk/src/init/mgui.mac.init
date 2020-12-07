@@ -181,6 +181,7 @@ loadIOType Minc_volume_in input mgui.io.foreign.minc.MincVolumeLoader mgui.io.do
 loadIOType STL_out output mgui.io.domestic.printing.StlWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox mgui.io.domestic.printing.StlOutputOptions "3D print file (*.stl)" stl
 #loadIOType BrainBrowser_out output mgui.io.foreign.brainbrowser.BrainBrowserShapeWriter mgui.io.foreign.brainbrowser.BrainBrowserOutputDialog mgui.io.foreign.brainbrowser.BrainBrowserOutputOptions "BrainBrowser shapes (*.json)" json
 loadIOType Data_table_out_excel output mgui.io.domestic.datasources.ExportDataTableExcelWriter mgui.io.domestic.datasources.ExportDataTableDialogBox mgui.io.domestic.datasources.ExportDataTableExcelOptions "Excel files (*.xls, *.xlsx)" xls xlsx
+loadIOType Wavefront_surface_in input mgui.io.foreign.wavefront.WavefrontSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Wavefront surfaces (*.obj)" obj
 
 
 # Pipeline Process Libraries
