@@ -1,5 +1,5 @@
 # set version
-setVersion 1.0.29 [alpha]
+setVersion 1.0.31 [dev]
 
 # set application data directory (if used, this should always be one of the first calls)
 # setApplicationDataDir

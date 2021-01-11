@@ -46,6 +46,7 @@ import mgui.geometry.Shape;
 import mgui.geometry.util.GeometryFunctions;
 import mgui.geometry.volume.VolumeFunctions;
 import mgui.image.util.WindowedColourModel;
+import mgui.interfaces.InterfaceDisplayPanel;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.ProgressUpdater;
 import mgui.interfaces.attributes.AttributeEvent;
@@ -1344,9 +1345,13 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 	}
 	
 	//renderer updates based upon camera angle
-	public void registerCameraListener(Camera3D c){
-		if (renderer != null)
-			c.addListener(renderer);
+	public void registerCameraListener(Camera3D camera){
+		if (renderer != null) {
+			camera.addListener(renderer);
+			// This is the reference camera, used by the renderer to
+			// updaet its axis when regenerated
+			renderer.setReferenceCamera(camera);
+			}
 	}
 	
 	public void deregisterCameraListener(Camera3D c){
@@ -1457,8 +1462,11 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 	 */
 	public void updateTexture(){
 		
-		if (!is_auxiliary && (getModel() == null || !getModel().isLive3D()))
+		if (!is_auxiliary && (getModel() == null || !getModel().isLive3D())) {
+			// Update other listeners if necessary
+			fireShapeModified();
 			return;
+			}
 		
 		if (getCurrentColumn() == null) return;
 		
@@ -1743,7 +1751,10 @@ public class Volume3DInt extends Shape3DInt implements ColourMapListener,
 			group_node.addChild(box_node);
 			}
 		
-		if (make_live) setShapeSceneNode();
+		if (make_live) {
+			setShapeSceneNode();
+			renderer.updateAxis();
+			}
 		
 	}
 	

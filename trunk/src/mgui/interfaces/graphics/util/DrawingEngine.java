@@ -929,6 +929,10 @@ public class DrawingEngine implements Engine {
 		//Rectangle prevClip = g.getClipBounds();
 		//set font size to fill bound box (this may depend on theMap)
 		
+		if (text == null || text.getText().length() == 0) {
+			return;
+			}
+		
 		Color color = (Color)drawing_attributes.getValue("2D.LabelColour");
 		g.setPaint(color);
 		Font font = (Font)drawing_attributes.getValue("2D.LabelFont");

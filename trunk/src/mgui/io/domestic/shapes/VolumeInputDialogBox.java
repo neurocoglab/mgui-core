@@ -619,10 +619,11 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 		
 		if (e.getActionCommand().equals("Browse")){
 			JFileChooser fc;
-			if (volFile != null)
-				fc = new JFileChooser(volFile);
-			else
+			if (volFile != null) {
+				fc = new JFileChooser(volFile.getParentFile());
+			} else {
 				fc = new JFileChooser();
+				}
 			fc.setFileFilter(getFilter());
 					
 			fc.setDialogTitle("Select Volume File");

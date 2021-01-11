@@ -38,6 +38,9 @@ import org.jogamp.java3d.TexCoordGeneration;
 import org.jogamp.java3d.TextureAttributes;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransparencyAttributes;
+import org.jogamp.java3d.utils.geometry.GeometryInfo;
+import org.jogamp.java3d.utils.geometry.NormalGenerator;
+import org.jogamp.java3d.utils.geometry.Stripifier;
 import org.jogamp.vecmath.Matrix4f;
 import org.jogamp.vecmath.Point3f;
 import org.jogamp.vecmath.SingularMatrixException;
@@ -60,6 +63,7 @@ import mgui.interfaces.graphics.InterfaceGraphic;
 import mgui.interfaces.graphics.InterfaceGraphic2D;
 import mgui.interfaces.graphics.InterfaceGraphicListener;
 import mgui.interfaces.logs.LoggingType;
+import mgui.interfaces.maps.Camera3D;
 import mgui.interfaces.maps.Camera3DListener;
 import mgui.interfaces.maps.ColourMap;
 import mgui.interfaces.shapes.SectionSet3DInt;
@@ -67,10 +71,6 @@ import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.shapes.Volume3DInt;
 import mgui.interfaces.shapes.util.ShapeFunctions;
 import mgui.numbers.MguiFloat;
-
-import org.jogamp.java3d.utils.geometry.GeometryInfo;
-import org.jogamp.java3d.utils.geometry.NormalGenerator;
-import org.jogamp.java3d.utils.geometry.Stripifier;
 
 
 /*******************************
@@ -96,6 +96,7 @@ public class Volume3DRenderer implements Camera3DListener,
 	public boolean setAlpha = false;
 	public float alpha;
 	protected HashMap<InterfaceGraphic2D, Shape3D> window_nodes = new HashMap<InterfaceGraphic2D, Shape3D>();
+	protected Camera3D ref_camera = null;
 	
 	BranchGroup sections_group;
 	HashMap<InterfaceGraphic2D, BranchGroup> section_nodes = new HashMap<InterfaceGraphic2D, BranchGroup>();
@@ -148,6 +149,16 @@ public class Volume3DRenderer implements Camera3DListener,
 		modes.add("As sections");
 		
 		return modes;
+	}
+	
+	/********************************
+	 * Sets the reference camera for this renderer. This is used to determine the correct
+	 * axis for 3D volume rendering.
+	 * 
+	 * @param camera
+	 */
+	public void setReferenceCamera(Camera3D camera) {
+		this.ref_camera = camera;
 	}
 	
 	public void setRenderMode(String mode){
@@ -784,15 +795,43 @@ public class Volume3DRenderer implements Camera3DListener,
 	    	}
     }
     
-    //if camera changes, re-evaluate rendering planes
+    @Override
     public void cameraAngleChanged(CameraEvent e){
     	switch (render_mode){
 			case AsVolume:
-		    	int axis = getNearestAxis(e.getCamera().getLineOfSight());
+		    	updateAxis(e.getCamera());
+		    	
+		    default:
+	    	}
+    }
+    
+    /***********************
+     * Update the rendering planes of this renderer, based on the reference camera angle,
+     * if one is set.
+     * 
+     */
+    public void updateAxis() {
+    	if (this.ref_camera == null) return;
+    	updateAxis(ref_camera);
+    }
+    
+    /***********************
+     * Update the rendering planes of this renderer, based on the current camera angle
+     * 
+     */
+    public void updateAxis(Camera3D camera) {
+    	
+    	switch (render_mode){
+			case AsVolume:
+				
+		    	int axis = getNearestAxis(camera.getLineOfSight());
 		    	if (axis == currentAxis) return;
 		    	currentAxis = axis;
 		    	setAxis();
+		    
+			default:
 	    	}
+    	
     }
     
     protected Vector3d getAxisVector(int axis){
