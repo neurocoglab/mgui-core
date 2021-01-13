@@ -39,6 +39,8 @@ import mgui.io.InterfaceIOOptions;
  */
 public abstract class InterfaceShapeLoader extends FileLoader {
 
+	
+	
 	@Override
 	public Object loadObject(ProgressUpdater progress_bar, InterfaceIOOptions options) throws IOException {
 		return loadShape((ShapeInputOptions)options, progress_bar);

@@ -111,7 +111,7 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 	LineLayout lineLayout;
 	ArrayList<WildcardFileFilter> filters = new ArrayList<WildcardFileFilter>();
 	
-	File volFile;
+	File volume_file;
 	boolean hasValidHeader = false;
 	boolean formatIsAlpha = true;
 	float xOrigin;
@@ -369,9 +369,9 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 		cmbFileFormat.setSelectedItem(options.input_type.getFilter().getDescription());
 		
 		txtFileName.setText(options.files[0].getAbsolutePath());
-		volFile = options.files[0];
+		volume_file = options.files[0];
 		
-		if (volFile != null){
+		if (volume_file != null){
 			updateFileHeader();
 			}
 		
@@ -416,12 +416,12 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 		
 		VolumeInputOptions options = (VolumeInputOptions)this.options;
 		
-		if (volFile == null){
+		if (volume_file == null){
 			options.setFiles(null);
 			return;
 			}
 		
-		options.setFiles(new File[]{volFile});
+		options.setFiles(new File[]{volume_file});
 		
 		options.has_alpha = chkSetAlpha.isSelected();
 		options.flip_x = chkFlipX.isSelected();
@@ -545,11 +545,11 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 		options.allow_geom_change = ((VolumeInputOptions)this.options).allow_geom_change;
 		this.options = options;
 		
-		if (volFile == null || !volFile.exists()){
+		if (volume_file == null || !volume_file.exists()){
 			return;
 			}
 		
-		loader.setFile(volFile);
+		loader.setFile(volume_file);
 		VolumeMetadata metadata = null;
 		
 		try{
@@ -619,8 +619,8 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 		
 		if (e.getActionCommand().equals("Browse")){
 			JFileChooser fc;
-			if (volFile != null) {
-				fc = new JFileChooser(volFile.getParentFile());
+			if (volume_file != null) {
+				fc = new JFileChooser(volume_file);
 			} else {
 				fc = new JFileChooser();
 				}
@@ -629,8 +629,8 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 			fc.setDialogTitle("Select Volume File");
 			fc.setMultiSelectionEnabled(false);
 			if (fc.showDialog(InterfaceSession.getSessionFrame(), "Accept") == JFileChooser.APPROVE_OPTION){
-				volFile = fc.getSelectedFile();
-				txtFileName.setText(volFile.getPath());
+				volume_file = fc.getSelectedFile();
+				txtFileName.setText(volume_file.getPath());
 				updateFileHeader();
 				}
 			return;

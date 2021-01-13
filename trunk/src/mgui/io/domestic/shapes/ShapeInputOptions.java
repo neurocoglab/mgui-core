@@ -44,6 +44,10 @@ public class ShapeInputOptions extends InterfaceIOOptions{
 	public String[] names;
 	public InterfaceShape shape;
 	
+	public void setShapeSet(ShapeSet shape_set) {
+		this.shape_set = shape_set;
+	}
+	
 	public File[] getFiles() {
 		return files;
 	}

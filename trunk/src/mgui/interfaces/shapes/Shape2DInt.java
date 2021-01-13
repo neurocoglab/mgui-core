@@ -667,7 +667,36 @@ public abstract class Shape2DInt extends InterfaceShape
 		return menu;
 	}
 
+	/****************************
+	 * Subclasses should override this if necessary and call super.getGraphic3DPopupMenu() to get
+	 * this top-level menu and add items to it. 
+	 * 
+	 */
+	public void setGraphic2DPopupMenu(InterfacePopupMenu menu){
+		
+		JMenuItem item = new JMenuItem("Edit attributes..");
+		
+		menu.addMenuItem(item);
+		item.setActionCommand("Edit Shape Attributes");
+		menu.addMenuItem(new JMenuItem("Hide"));
+		menu.addMenuItem(new JMenuItem("Clear selection"));
+		
+	}
+	
 	public void handlePopupEvent(ActionEvent e) {
+		
+		if (this.hasParentShape()) {
+			this.parentShape.handlePopupEvent(e);
+			return;
+			}
+		
+		if (!(e.getSource() instanceof JMenuItem)) return;
+		JMenuItem item = (JMenuItem)e.getSource();
+		
+		if (item.getText().equals("Edit attributes..")){
+			InterfaceSession.getWorkspace().showAttributeDialog(this);
+			return;
+			}
 		
 	}
 

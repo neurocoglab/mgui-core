@@ -47,8 +47,9 @@ public class ShapeModel3DInputOptions extends InterfaceIOOptions {
 	public String existing_shapes = "Rename";
 	
 	public ShapeModel3DInputOptions(){
-		if (InterfaceSession.isInit())
-			merge_with_model = InterfaceSession.getDisplayPanel().getCurrentShapeModel();
+		if (InterfaceSession.isInit()) {
+			merge_with_model = InterfaceSession.getWorkspace().getShapeModel("Default Model");
+			}
 	}
 
 	public JFileChooser getFileChooser(){

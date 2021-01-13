@@ -240,6 +240,7 @@ public class InterfaceSession {
 		// Instantiate workspace
 		workspace = InterfaceEnvironment.getWorkspaceInstance();
 		
+		
         //Display the window maximized.
 		if (show_gui){
 			session_frame.init();
@@ -247,6 +248,8 @@ public class InterfaceSession {
 			session_frame.setExtendedState(session_frame.getExtendedState() | Frame.MAXIMIZED_BOTH);
 			session_frame.setVisible(true);
 			}
+		
+		InterfaceEnvironment.ready();
 		
 	}
 	

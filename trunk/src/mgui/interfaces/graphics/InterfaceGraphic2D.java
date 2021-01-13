@@ -134,15 +134,25 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 	//MouseListeners
 	public ArrayList<Shape2DInt> shapeList;
 	
-	
-	public InterfaceGraphic2D(String theName){
+	/******************************************
+	 * 
+	 * Instantiate and initialize a new 2D graphics window called {@code name}.
+	 * 
+	 * @param name
+	 */
+	public InterfaceGraphic2D(String name){
 		super();
 		if (InterfaceSession.isInit()){
 			init();
-			setName(theName);
+			setName(name);
 			}
 	}
 	
+	/******************************************
+	 * 
+	 * Instantiate and initialize a new 2D graphics window.
+	 * 
+	 */
 	public InterfaceGraphic2D(){	
 		if (InterfaceSession.isInit())
 			init();
@@ -199,14 +209,26 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 		
 	}
 	
+	/***********************************
+	 * 
+	 * Return a list of {@linkplain PickInfoShape2D} objects containing information about
+	 * the shapes intersecting {@code point}. Shapes will be sorted according to render order.
+	 * 
+	 * @param point
+	 * @return
+	 */
 	public ArrayList<PickInfoShape2D> getPickShapes(Point point){
+		
+		if (getCurrentSectionSet() == null) return null;
 		
 		ArrayList<PickInfoShape2D> info = new ArrayList<PickInfoShape2D>();
 		float tolerance = ((Map2D)this.getMap()).getMapDist(((MguiFloat)attributes.getValue("PickTolerance")).getValue());
 		Point2f p2f = ((Map2D)this.getMap()).getMapPoint(point);
 		
 		ArrayList<Shape2DInt> shapes = new ArrayList<Shape2DInt>(shapeList);
-		shapes.addAll(this.shape3DObjects.get2DShapes(true));
+		if (shape3DObjects != null) {
+			shapes.addAll(this.shape3DObjects.get2DShapes(true));
+			}
 		
 		//search list
 		for (int i = 0; i < shapes.size(); i++){
@@ -252,7 +274,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 				}
 			}
 		
-		Collections.sort(info);
+		//Collections.sort(info);
 		return info;
 		
 	}
@@ -1387,7 +1409,29 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 			menu.addMenuItem(new JMenuItem("Show grids"));
 		
 		
-		//TODO query for shape and add its menu to this menu
+		//Query for shape and add its menu to this menu
+		ArrayList<PickInfoShape2D> infos = getPickShapes(last_click_point);
+		
+		if (infos != null && infos.size() > 0) {
+			// Use top shape
+			
+			PickInfoShape2D info = infos.get(0);
+			Shape2DInt shape = info.shape;
+			
+			
+			
+			menu.add(new JSeparator(), menu.getSize()); // start + 17 + add);
+			menu.add(new JSeparator(), menu.getSize()); //, start + 17 + add);
+			menu.addMenuItem(new JMenuItem(shape.getName(), shape.getObjectIcon()));
+			menu.add(new JSeparator(), menu.getSize()); //, start + 19 + add);
+			menu.add(new JSeparator(), menu.getSize()); //, start + 19 + add);
+			
+			shape.setGraphic2DPopupMenu(menu);
+			
+			menu.addMenuItem(new JMenuItem("Center on shape"));
+			menu.addMenuItem(new JMenuItem("Zoom to shape extents"));
+			
+			}
 		
 		return menu;
 	}
@@ -1549,6 +1593,17 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 				//windows.get(i).centerSectionAt(p3d);
 				}
 			return;
+			}
+		
+		ArrayList<PickInfoShape2D> infos = getPickShapes(last_click_point);
+		
+		if (infos != null && infos.size() > 0) {
+			// Use top shape
+			
+			PickInfoShape2D info = infos.get(0);
+			Shape2DInt shape = info.shape;
+			shape.handlePopupEvent(e);
+			
 			}
 		
 		super.handlePopupEvent(e);

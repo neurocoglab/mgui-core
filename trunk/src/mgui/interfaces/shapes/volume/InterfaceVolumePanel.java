@@ -40,6 +40,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -246,7 +247,7 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 	JCheckBox chkSetNone = new JCheckBox();
 	JButton cmdZeroes = new JButton("Zeroes");
 	JCheckBox chkSetVolFile = new JCheckBox();
-	JButton cmdVolumeFile = new JButton("Volume File");
+	JButton cmdVolumeFile = new JButton("Data Volume File");
 	JCheckBox chkSetImgStack = new JCheckBox();
 	JButton cmdImgStack = new JButton("Image Stack");
 	
@@ -525,7 +526,6 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 		
 		cmdApply.setActionCommand("Create");
 		cmdDelete.setActionCommand("Preview");
-		cmdVolumeFile.setActionCommand("Data Volume File");
 		cmdZeroes.setActionCommand("Data Zeroes");
 		cmdImgStack.setActionCommand("ImgStack");
 		cmdDefX.setActionCommand("DefX");
@@ -3477,9 +3477,12 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 			volOptions.setInputType(currentVolume.getFileLoader());
 			URL url = currentVolume.getUrlReference();
 			if (url != null){
-				String file = url.getFile();
-				if (file != null){
-					volOptions.setFiles(new File[]{new File(file)});
+				try {
+					String file = URLDecoder.decode(url.getFile(), "utf-8");
+					if (file != null){
+						volOptions.setFiles(new File[]{new File(file)});
+						}
+				}catch(Exception ex) {
 					}
 				}
 			if (currentVolume.getColourMap() != null){

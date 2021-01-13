@@ -100,8 +100,8 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 	
 	protected ArrayList<InterfaceAbstractGraph> graphs = new ArrayList<InterfaceAbstractGraph>();
 	protected ArrayList<InterfaceAbstractModel> models = new ArrayList<InterfaceAbstractModel>();
-	protected ArrayList<DataInputStream<?>> inputStreams = new ArrayList<DataInputStream<?>>();
-	protected ArrayList<DataOutputStream<?>> outputStreams = new ArrayList<DataOutputStream<?>>();
+	protected ArrayList<DataInputStream<?>> input_streams = new ArrayList<DataInputStream<?>>();
+	protected ArrayList<DataOutputStream<?>> output_streams = new ArrayList<DataOutputStream<?>>();
 	protected ArrayList<InterfacePlot<?>> plots = new ArrayList<InterfacePlot<?>>();
 	protected ArrayList<VariableInt<?>> variables = new ArrayList<VariableInt<?>>();
 	protected ArrayList<InterfaceQuery> queries = new ArrayList<InterfaceQuery>();
@@ -109,7 +109,7 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 	protected TreeSet<Video> videos = new TreeSet<Video>();
 	protected ArrayList<DataSource> dataSources = new ArrayList<DataSource>();	//data sources
 	protected ArrayList<ShapeSelectionSet> selectionSets = new ArrayList<ShapeSelectionSet>();
-	protected ArrayList<ShapeModel3D> shapeModels = new ArrayList<ShapeModel3D>();
+	protected ArrayList<ShapeModel3D> shape_models = new ArrayList<ShapeModel3D>();
 	protected HashMap<String, InterfaceProject> projects = new HashMap<String, InterfaceProject>();
 	protected HashMap<String, InterfacePipeline> pipelines = new HashMap<String, InterfacePipeline>();
 	
@@ -120,6 +120,8 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 	
 	protected AttributeDialogBox current_attribute_dialog = new AttributeDialogBox();
 	protected AttributeDialogBox current_shape_attribute_dialog = new AttributeDialogBox(Shape3DInt.class);
+	
+	protected ShapeModel3D current_shape_model;
 	
 	public InterfaceWorkspace(){
 		init();
@@ -230,6 +232,11 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 		this.display_panel = display_panel;
 		if (display_panel instanceof InterfaceTabbedDisplayPanel)
 			((InterfaceTabbedDisplayPanel)display_panel).addTabbedDisplayListener(this);
+		
+		if (this.current_shape_model != null) {
+			display_panel.setCurrentShapeModel(current_shape_model);
+			}
+		
 	}
 	
 	
@@ -378,28 +385,111 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 	
 	//**************Shape Models****************************
 	
-	public void addShapeModel(ShapeModel3D model, boolean set_current){
-		shapeModels.add(model);
+	/***********************
+	 * Adds {@code model} to this 
+	 * 
+	 * @param model			The model to add
+	 * @param set_current	Whether to set this as the current model
+	 * 
+	 */
+	public boolean addShapeModel(ShapeModel3D model, boolean set_current){
+		return addShapeModel(model, set_current, false);
+	}
+	
+	/***********************
+	 * Adds {@code model} to this 
+	 * 
+	 * @param model
+	 * @param set_current
+	 * @param rename		Whether to rename this model if one already exists with this name
+	 * 						(if {@code false}, this method will return {@code false}
+	 */
+	public boolean addShapeModel(ShapeModel3D model, boolean set_current, boolean rename){
+		
+		// Does one by this name exist?
+		boolean is_found = false;
+		int to_add = 0;
+		
+		do {
+			is_found = false;
+			String suffix = "";
+			if (to_add > 0) suffix = "." + to_add;
+			for (ShapeModel3D m : shape_models) {
+				if (m.getName().equals(model.getName() + suffix)) {
+					if (!rename) {
+						InterfaceSession.log("Shape Model '" + model.getName() + "' already exists!");
+						return false;
+						}
+					to_add++;
+					is_found = true;
+					}
+				}
+		
+		} while(is_found);
+		
+		if (to_add > 0) {
+			InterfaceSession.log("Shape Model already exists, changed name to " + model.getName());
+			model.setName(model.getName() + "." + to_add);
+			}
+		
+		shape_models.add(model);
 		model.addModelListener(this);
-		if (set_current && display_panel != null)
-			display_panel.setCurrentShapeModel(model);
+		if (set_current) { 
+			if (display_panel != null)
+				display_panel.setCurrentShapeModel(model);
+			current_shape_model = model;
+			}
 		updateTreeNodes();
+		
+		return true;
+	}
+	
+	/************************
+	 * Returns the current shape model for this Workspace, or {@code null}
+	 * if there is no current model.
+	 * 
+	 * @return
+	 */
+	public ShapeModel3D getCurrentShapeModel() {
+		return current_shape_model;
+	}
+	
+	/************************
+	 * Sets the current shape model for this Workspace. If a DisplayPanel is set,
+	 * sets its current model as well.
+	 * 
+	 * @param name
+	 * 
+	 * @return {@code true} if successful
+	 */
+	public boolean setCurrentShapeModel(String name) {
+		
+		for (ShapeModel3D model : this.shape_models) {
+			if (model.getName().equals(name)) {
+				current_shape_model = model;
+				if (display_panel != null)
+					display_panel.setCurrentShapeModel(model);
+				return true;
+				}
+			}
+		
+		return false;
 	}
 	
 	public void removeShapeModel(ShapeModel3D model){
-		shapeModels.remove(model);
+		shape_models.remove(model);
 		model.removeModelListener(this);
 		updateTreeNodes();
 	}
 	
 	public boolean modelExists(ShapeModel3D model){
-		for (int i = 0; i < shapeModels.size(); i++)
-			if (shapeModels.get(i).equals(model)) return true;
+		for (int i = 0; i < shape_models.size(); i++)
+			if (shape_models.get(i).equals(model)) return true;
 		return false;
 	}
 	
 	public ArrayList<ShapeModel3D> getShapeModels(){
-		return new ArrayList<ShapeModel3D>(shapeModels);
+		return new ArrayList<ShapeModel3D>(shape_models);
 	}
 	
 	@Override
@@ -480,16 +570,16 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 	}
 	
 	/*******************************************
-	 * Returns the model with the given name, if it exists.
+	 * Returns the model with the given name, if it exists; returns {@code null} otherwise.
 	 * 
 	 * @param name
 	 * @return
 	 */
 	public ShapeModel3D getShapeModel(String name){
 		
-		for (int i = 0; i < shapeModels.size(); i++)
-			if (shapeModels.get(i).getName().equals(name))
-				return shapeModels.get(i);
+		for (int i = 0; i < shape_models.size(); i++)
+			if (shape_models.get(i).getName().equals(name))
+				return shape_models.get(i);
 		
 		return null;
 		
@@ -585,12 +675,12 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 	
 	//**************Data Streams****************************
 	public void addInputStream(DataInputStream<?> s){
-		inputStreams.add(s);
+		input_streams.add(s);
 		//update tree node
 	}
 	
 	public void addOutputStream(DataOutputStream<?> s){
-		outputStreams.add(s);
+		output_streams.add(s);
 	}
 	
 	//**************Plots****************************
@@ -980,8 +1070,8 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 				}
 				
 				};
-		for (int i = 0; i < shapeModels.size(); i++){
-			ShapeModel3D thisModel = shapeModels.get(i);
+		for (int i = 0; i < shape_models.size(); i++){
+			ShapeModel3D thisModel = shape_models.get(i);
 			InterfaceTreeNode shapeNode = thisModel.issueTreeNode();
 			shapeModelNode.add(shapeNode);
 			}
@@ -1223,8 +1313,8 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 		// 4. Shape models
 		writer.write(_tab2 + "<ShapeModels>\n");
 		
-		for (int i = 0; i < shapeModels.size(); i++)
-			shapeModels.get(i).writeXML(tab + 2, writer, options, progressBar);
+		for (int i = 0; i < shape_models.size(); i++)
+			shape_models.get(i).writeXML(tab + 2, writer, options, progressBar);
 		
 		writer.write(_tab2 + "</ShapeModels>\n");
 		

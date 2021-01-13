@@ -187,3 +187,6 @@ loadIOType Wavefront_surface_out output mgui.io.foreign.wavefront.WavefrontSurfa
 
 # Pipeline Process Libraries
 loadPipelineProcessLibraries pipeline_process_libraries
+
+# Load sections
+loadDataFile data/sections.smod.gz ShapeModel3D_in

@@ -21,7 +21,6 @@ package mgui.interfaces;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
@@ -32,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,6 +66,8 @@ import mgui.interfaces.maps.DiscreteColourMap;
 import mgui.interfaces.maps.NameMap;
 import mgui.interfaces.pipelines.libraries.PipelineProcessLibrary;
 import mgui.interfaces.plots.InterfacePlot;
+import mgui.interfaces.shapes.ShapeModel3D;
+import mgui.io.FileLoader;
 import mgui.io.InterfaceIO;
 import mgui.io.InterfaceIOOptions;
 import mgui.io.domestic.datasources.DataSourceLoader;
@@ -74,6 +76,10 @@ import mgui.io.domestic.maps.ContinuousColourMapLoader;
 import mgui.io.domestic.maps.DiscreteColourMapLoader;
 import mgui.io.domestic.maps.NameMapLoader;
 import mgui.io.domestic.pipelines.PipelineProcessLibraryLoader;
+import mgui.io.domestic.shapes.InterfaceShapeLoader;
+import mgui.io.domestic.shapes.ShapeInputOptions;
+import mgui.io.domestic.shapes.ShapeModel3DInputOptions;
+import mgui.io.domestic.shapes.ShapeModel3DLoader;
 import mgui.io.util.ParallelOutputStream;
 import mgui.io.util.WildcardFileFilter;
 import mgui.pipelines.PipelineProcess;
@@ -351,6 +357,19 @@ public class InterfaceEnvironment implements Environment {
 					setApplicationDataDir(s);
 					}
 				
+				}
+			if (command.startsWith("loadDataFile")){
+				String s = line.substring(c_index + 1);
+				String[] parts = s.split(" ");
+				if (parts.length < 2) {
+					InterfaceSession.log("InterfaceEnvironment: loadDataFile must have at least two arguments (file path, loader).");
+					return false;
+					}
+				String[] args = null;
+				if (parts.length > 2) {
+					args = Arrays.copyOfRange(parts, 2, parts.length);
+					}
+				loadDataFile(parts[0], parts[1], args);
 				}
 			if (command.startsWith("setLogFile")){
 				int p = c_index;
@@ -744,6 +763,21 @@ public class InterfaceEnvironment implements Environment {
 		return true;
 	}
 	
+	/*************************
+	 * This method should be called once a Workspace is instantiated and the Session is
+	 * ready for use.
+	 * 
+	 */
+	public static void ready() {
+		
+		for (DataFile file : files_to_load) {
+			loadDataFile(file.file_path, file.loader, file.args);
+			}
+		
+		files_to_load.clear();
+		
+	}
+	
 	public static void setLookAndFeel(String s){
 		look_and_feel = s;
 	}
@@ -776,6 +810,127 @@ public class InterfaceEnvironment implements Environment {
 		}catch (MalformedURLException ex){
 			InterfaceSession.log("Malformed URL for data source key: " + key_urlstr, LoggingType.Errors);
 			}
+	}
+	
+	private static class DataFile {
+		
+		String file_path;
+		String loader;
+		String[] args;
+		
+		public DataFile( String file_path, String loader, String[] args ) {
+			this.file_path = file_path;
+			this.loader = loader;
+			this.args = args;
+		}
+		
+	}
+	
+	private static ArrayList<DataFile> files_to_load = new ArrayList<DataFile>();
+	
+	// Load a data file into the current session
+	private static void loadDataFile( String file_path, String loader, String[] args ) {
+		
+		if (InterfaceSession.getWorkspace() == null) {
+			files_to_load.add(new DataFile( file_path, loader, args));
+			return;
+			}
+		
+		File file = new File(file_path);
+		if (!file.exists()) {
+			InterfaceSession.log("InterfaceEnvironment: loadDataFile: File " + file_path + " does not exist.", LoggingType.Errors);
+			return;
+			}
+		
+		InterfaceIOType type = getIOType(loader);
+		if (type == null) {
+			InterfaceSession.log("InterfaceEnvironment: loadDataFile: No IO type " + loader + " found.", LoggingType.Errors);
+			return;
+			}
+		
+		InterfaceIOOptions options = type.getOptionsInstance();
+		InterfaceIO io = type.getIOInstance();
+		if (!(io instanceof FileLoader)) {
+			InterfaceSession.log("InterfaceEnvironment: loadDataFile: IO type " + loader + " is not a loader.", LoggingType.Errors);
+			return;
+			}
+		
+		io.setFile(new File(file_path));
+		
+		try {
+			if (io instanceof InterfaceShapeLoader) {
+				String shape_model = null;
+				if (args != null && args.length > 0) {
+					shape_model = args[0];
+					}
+				loadShape((InterfaceShapeLoader)io, file, (ShapeInputOptions)options, shape_model);
+				return;
+				}
+			if (io instanceof ShapeModel3DLoader) {
+				String shape_model = null;
+				if (args != null && args.length > 0) {
+					shape_model = args[0];
+					}
+				loadShapeModel((ShapeModel3DLoader)io, file, (ShapeModel3DInputOptions)options, shape_model);
+				}
+			
+		
+		} catch (IOException ex) {
+			InterfaceSession.log("InterfaceEnvironment: loadDataFile: Error loading " + file_path + ".\nWith exception:\n", LoggingType.Errors);
+			InterfaceSession.handleException(ex);
+			return;
+			}
+		
+	}
+	
+	// Load a shape into {@code shape_model}, or the default model, if {@code shape_model == null}.
+	private static void loadShape(InterfaceShapeLoader loader, File file, ShapeInputOptions options, String shape_model) throws IOException {
+		
+		if (shape_model == null) {
+			shape_model = "Default Model"; 
+			}
+		
+		ShapeModel3D model = InterfaceSession.getWorkspace().getShapeModel(shape_model);
+		if (model == null) {
+			InterfaceSession.log("InterfaceEnvironment: loadShape: Shape model not found: " + shape_model, LoggingType.Errors);
+			return;
+			}
+
+		options.setFiles(new File[] {file});
+		options.setShapeSet(model.getModelSet());
+		
+		if (!loader.load(options, null)) {
+			InterfaceSession.log("Could not load shape " + file.getName() + " into shape model " + shape_model + ".", LoggingType.Errors);
+		} else {
+			InterfaceSession.log("Loaded shape " + file.getName() + " into shape model " + shape_model + ".", LoggingType.Verbose);
+			}
+
+	}
+	
+	// Load and merge a shape model into {@code shape_model}, pr as a new model, if {@code shape_model == null}.
+	private static void loadShapeModel(ShapeModel3DLoader loader, File file, ShapeModel3DInputOptions options, String shape_model) throws IOException {
+		
+		ShapeModel3D merge_model = null;
+		
+		if (shape_model != null) {
+			merge_model = InterfaceSession.getWorkspace().getShapeModel(shape_model);
+		} else {
+			merge_model = InterfaceSession.getWorkspace().getCurrentShapeModel();
+			}
+		
+		options.setFiles(new File[] {file});
+		options.setObject(merge_model);
+		
+		if (!loader.load(options, null)) {
+			InterfaceSession.log("Could not load shape model " + file.getName() + ".", LoggingType.Errors);
+		} else {
+			if (merge_model != null) {
+				InterfaceSession.log("Loaded and merged shape model " + file.getName() + " with shape model " + merge_model.getName() + ".", LoggingType.Verbose);
+			} else {
+				InterfaceSession.log("Loaded shape model " + file.getName() + ".", LoggingType.Verbose);
+				}
+			}
+		
 	}
 	
 	/*******************************

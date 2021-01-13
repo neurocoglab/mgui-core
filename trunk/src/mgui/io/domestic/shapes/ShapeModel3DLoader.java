@@ -83,7 +83,7 @@ public class ShapeModel3DLoader extends FileLoader {
 			if (model == null)
 				success = false;
 			else{
-				if (_options.merge_with_model != null){
+				if (_options.merge_with_model != null ){
 					ShapeModel3D merge_model = _options.merge_with_model; //.getModelSet().addShape(model.getModelSet());
 					ShapeSet3DInt model_set = merge_model.getModelSet();
 					// If they have the same name or options.merge_model_set, merge
