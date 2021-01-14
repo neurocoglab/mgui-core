@@ -35,7 +35,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
+import javax.swing.JTree;
 import javax.swing.TransferHandler.TransferSupport;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.Group;
@@ -952,6 +955,41 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		return true;
 	}
 	
+	public boolean moveShapeAfter(InterfaceShape inserted_shape, InterfaceShape target_shape){
+		return moveShapeAfter((Shape3DInt)inserted_shape, (Shape3DInt)target_shape, true);
+	}
+	
+	/*************************************************
+	 * Inserts <code>inserted_shape</code> at a position after <code>target_shape</code> in this list. 
+	 * Both shapes must already be in this set. To add a new shape at a specific position, use 
+	 * {@link addShape}.
+	 * 
+	 * 
+	 * @param inserted_shape
+	 * @param target_shape
+	 * @param update
+	 * @return
+	 */
+	public boolean moveShapeAfter(Shape3DInt moved_shape, Shape3DInt target_shape, boolean update){
+		if (!this.hasShape(target_shape) || !this.hasShape(moved_shape)) return false;
+				
+				int insert = members.indexOf(target_shape);
+				members.remove(moved_shape);
+				int ins = members.indexOf(target_shape);
+				members.add(ins+1, moved_shape);
+				
+				if (update){
+					updateShape();
+					last_inserted = moved_shape;
+					last_insert = insert;
+					ShapeEvent e = new ShapeEvent(this, ShapeEvent.EventType.ShapeMoved);
+					fireShapeListeners(e);
+					last_inserted = null;
+					}
+				
+				return true;
+	}
+	
 	/************************************************
 	 * Determines whether <code>set</code> is an ancestor of this set.
 	 * @param set
@@ -1067,9 +1105,9 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 			if (node.isDestroyed()) {
 				tree_nodes.remove(node);
 			} else if (node instanceof ShapeTreeNode) {
-				if (!members.contains(((ShapeTreeNode)node).getShape())) {
-					tree_nodes.remove(node);
-					}
+//				if (!members.contains(((ShapeTreeNode)node).getShape())) {
+//					tree_nodes.remove(node);
+//					}
 				}
 			}
 		
@@ -2121,6 +2159,28 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		Transferable transferable = support.getTransferable();
 		
 		try{
+			int index = 0;
+			if (support.getDropLocation() instanceof JTree.DropLocation) {
+				JTree.DropLocation dropLocation = (JTree.DropLocation)support.getDropLocation();
+				TreePath drop_path = dropLocation.getPath();
+				int childIndex = dropLocation.getChildIndex();
+				
+				if (childIndex >= 0) {
+					// This is an insert event (otherwise it is an add event)
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode)drop_path.getLastPathComponent();
+					if (childIndex == node.getChildCount()) {
+						// Insert at end
+						index = members.size();
+					} else {
+						node = (DefaultMutableTreeNode)node.getChildAt(childIndex);
+						Object obj = node.getUserObject();
+						if (obj instanceof Shape3DInt) {
+							index = members.indexOf(obj);
+							}
+						}
+					}
+				}
+			
 			//get list of transferables (i.e., shapes to be moved into this set)
 			Object obj = transferable.getTransferData(this.getTransferDataFlavors()[0]);
 			ArrayList<Transferable> transferables = (ArrayList<Transferable>)obj;
@@ -2133,13 +2193,17 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 					success = false;
 				}else{
 					Shape3DInt shape = (Shape3DInt)transferables.get(i);
-					//if this is already the parent shape, do nothing
-					if (shape.getParentSet() != null && shape.getParentSet() == this)
-						success = false;
-					// TODO: avoid adding containing set to child set...
-					else
+					//if this is already the parent shape, simply move it
+					if (shape.getParentSet() != null && shape.getParentSet() == this) {
+						if (index == members.size()) {
+							success &= moveShapeAfter(shape, members.get(index-1), true);
+						} else {
+							success &= moveShapeBefore(shape, members.get(index), true);
+							}
+					} else {
 						//otherwise add shape to this set
-						success &= addShape(shape, true);
+						success &= addShape(shape, index, true);
+						}
 					}
 				}
 			

@@ -117,6 +117,7 @@ import mgui.interfaces.maps.ContinuousColourMap;
 import mgui.interfaces.menus.InterfacePopupMenu;
 import mgui.interfaces.shapes.SectionSet3DInt;
 import mgui.interfaces.shapes.Shape3DInt;
+import mgui.interfaces.shapes.ShapeSet;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.shapes.Volume3DInt;
 import mgui.interfaces.shapes.util.ShapeEvent;
@@ -2375,6 +2376,68 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 			updateAnything = true;
 			updateButtons();
 			return;
+			}
+		
+		// DELETE current column
+		if (e.getActionCommand().equals("Delete")) {
+			
+			GridVertexDataColumn current_column = getSelectedColumn();
+			
+			if (current_column == null) {
+				JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
+						  "No current volume/column selected!", 
+						  "Delete Column", 
+						  JOptionPane.ERROR_MESSAGE);
+				return;
+				}
+			
+			if (currentVolume.getVertexDataColumnCount() == 1) {
+				
+				// There is only one column, so delete this volume
+				if (JOptionPane.showConfirmDialog(InterfaceSession.getSessionFrame(), "Really delete volume?", 
+					  	  "Delete Volume3D", 
+					      JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+					ShapeSet3DInt parent_set = (ShapeSet3DInt)currentVolume.getParentSet();
+					parent_set.removeShape(currentVolume);
+					
+					// Listeners should take care of the rest...
+					JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
+							  "Volume3D deleted.", 
+							  "Delete Volume3D", 
+							  JOptionPane.INFORMATION_MESSAGE);
+					return;
+
+					}
+				
+			} else {
+				
+				// Just delete the current column
+				if (JOptionPane.showConfirmDialog(InterfaceSession.getSessionFrame(), "Really delete column '" + 
+																					  current_column.getName() + "'?", 
+					  	  "Delete Data Column", 
+					      JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+					currentVolume.removeVertexData(current_column.getName());
+					
+					// Listeners should take care of the rest...
+					JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
+							  "Column '" + current_column.getName() + "' deleted.", 
+							  "Delete Data Column", 
+							  JOptionPane.INFORMATION_MESSAGE);
+					
+					return;
+
+					}
+				
+				
+				// Set the first remaining column as current
+				
+				
+				}
+			
+			
+			
+			
+			
 			}
 		
 		// UPDATE existing column check box changed

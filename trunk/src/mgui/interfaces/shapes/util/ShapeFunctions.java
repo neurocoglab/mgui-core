@@ -51,6 +51,7 @@ import org.jogamp.vecmath.Point2d;
 import org.jogamp.vecmath.Point2f;
 import org.jogamp.vecmath.Point3d;
 import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.SingularMatrixException;
 import org.jogamp.vecmath.Vector2f;
 import org.jogamp.vecmath.Vector3d;
 import org.jogamp.vecmath.Vector3f;
@@ -2164,8 +2165,12 @@ public class ShapeFunctions extends Utility {
 		
 		for (int i = 0; i < extended_vertices.size() - 1; i++) {
 			Point3f[] pts = extended_vertices.get(i);
-			group.addChild(getCylinderSegment(pts[0], pts[1],
-											  radius, res, app));
+			
+			BranchGroup segment = getCylinderSegment(pts[0], pts[1], radius, res, app);
+			
+			if (segment != null) {
+				group.addChild(segment);
+				}
 			}
 		
 		/*
@@ -2289,7 +2294,12 @@ public class ShapeFunctions extends Utility {
 						     uZ.x, uZ.y, uZ.z, 0,
 						     0,  0,  0,  1));
 		    // invert the matrix; need to rotate it off of the Z axis
-		    rotateMatrix.invert();
+		    try {
+		    	rotateMatrix.invert();
+		    }catch (SingularMatrixException ex) {
+		    	InterfaceSession.log("CylinderCreator: Could not create cylinder; matrix is singular", LoggingType.Errors);
+		    	return null;
+		    	}
 		    // rotate the cylinder into correct orientation
 		    transMatrix.mul(rotateMatrix);
 		    transMatrix.mul(rotateFix);
@@ -2306,6 +2316,7 @@ public class ShapeFunctions extends Utility {
 		    BranchGroup cylBg = new BranchGroup();
 		    cylBg.addChild(tg);
 		    return cylBg;
+		    
 		  }
 
 		}

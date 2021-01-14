@@ -105,6 +105,7 @@ public class Polygon3DInt extends Shape3DInt {
 		attributes.add(new Attribute<MguiBoolean>("3D.AsCylinder", new MguiBoolean(false)));
 		attributes.add(new Attribute<MguiFloat>("3D.CylRadius", new MguiFloat(1.0f)));
 		attributes.add(new Attribute<MguiInteger>("3D.CylEdges", new MguiInteger(8)));
+		attributes.add(new Attribute<MguiBoolean>("3D.Antialiasing", new MguiBoolean(true)));
 		
 		updateShape();
 	}
@@ -146,12 +147,40 @@ public class Polygon3DInt extends Shape3DInt {
 		return poly2dint;
 	}
 	
-	public void setClosed(boolean b){
-		attributes.setValue("IsClosed", new MguiBoolean(b));
+	/*************************
+	 * Sets whether this polygon will be rendered with anti-aliasing.
+	 * 
+	 * @param antialiasing
+	 */
+	public void setAntialiasing(boolean antialiasing) {
+		this.setAttribute("3D.Antialiasing", new MguiBoolean(antialiasing));
 	}
 	
+	/*************************
+	 * Gets the current anti-aliasing policy.
+	 * 
+	 * @return {@code true} if anti-aliasing is currently on
+	 */
+	public boolean getAntialiasing() {
+		return ((MguiBoolean)getInheritedAttribute("3D.Antialiasing").getValue()).getTrue();
+	}
+	
+	/*************************
+	 * Sets whether this polygon's end vertices are to be connected.
+	 * 
+	 * @param closed
+	 */
+	public void setClosed(boolean closed){
+		setAttribute("IsClosed", new MguiBoolean(closed));
+	}
+	
+	/*************************
+	 * Determines whether this polygon's end vertices are to be connected.
+	 * 
+	 * @return {@code true} if this polygon is closed
+	 */
 	public boolean isClosed(){
-		return ((MguiBoolean)attributes.getValue("IsClosed")).getTrue();
+		return ((MguiBoolean)getInheritedAttribute("IsClosed").getValue()).getTrue();
 	}
 	
 	@Override
@@ -170,7 +199,8 @@ public class Polygon3DInt extends Shape3DInt {
 		//change edge appearance?
 		if ((e.getAttribute().getName().equals("LineColour") ||
 			 e.getAttribute().getName().equals("LineStyle") ||
-			 e.getAttribute().getName().equals("EdgeWidth"))
+			 e.getAttribute().getName().equals("EdgeWidth") ||
+			 e.getAttribute().getName().equals("3D.Antialiasing"))
 				&& edge_appearance != null){
 		
 			setEdgeAppearance();
@@ -370,9 +400,10 @@ public class Polygon3DInt extends Shape3DInt {
 		
 		//TODO: set dash
 		float width = ((BasicStroke)getInheritedAttribute("3D.LineStyle").getValue()).getLineWidth();
+		boolean antialiasing = this.getAntialiasing();
 		LineAttributes lAtt = new LineAttributes(width,
 												 LineAttributes.PATTERN_SOLID,
-												 true);
+												 antialiasing);
 		PolygonAttributes pAtt = new PolygonAttributes();
 		pAtt.setPolygonMode(PolygonAttributes.POLYGON_LINE);
 		pAtt.setCullFace(PolygonAttributes.CULL_NONE);

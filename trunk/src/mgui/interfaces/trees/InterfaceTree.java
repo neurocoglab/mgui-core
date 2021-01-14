@@ -136,11 +136,13 @@ public class InterfaceTree extends JTree {
 			int childIndex = dropLocation.getChildIndex();
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)drop_path.getLastPathComponent();
 			
-			if (childIndex < 0){
+			if (childIndex < 0 || childIndex == node.getChildCount()){
 				//this is a drop onto a node
 			}else{
 				//this is an insert into a node's children; find child and insert before it
-				node = (DefaultMutableTreeNode)node.getChildAt(childIndex);
+				
+				//node = (DefaultMutableTreeNode)node.getChildAt(childIndex);
+				//node = (DefaultMutableTreeNode)node.getChildAt(childIndex);
 				}
 			
 			DataFlavor[] flavors = support.getDataFlavors();
@@ -166,11 +168,13 @@ public class InterfaceTree extends JTree {
 			int childIndex = dropLocation.getChildIndex();
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)drop_path.getLastPathComponent();
 			
-			if (childIndex < 0){
+			if (childIndex < 0 || childIndex == node.getChildCount()){
 				//this is a drop onto a node; same as inserting above it
+				//childIndex = tree.getModel().getChildCount(drop_path.getLastPathComponent());
+				
 			}else{
 				//this is an insert into a node's children; find child and insert before it
-				node = (DefaultMutableTreeNode)node.getChildAt(childIndex);
+				//node = (DefaultMutableTreeNode)node.getChildAt(childIndex);
 				}
 				
 			if (!(node.getUserObject() instanceof InterfaceTransferable)) return false;

@@ -72,6 +72,7 @@ import mgui.interfaces.shapes.ShapeModelEvent.EventType;
 import mgui.interfaces.shapes.selection.ShapeSelectionEvent;
 import mgui.interfaces.shapes.selection.ShapeSelectionListener;
 import mgui.interfaces.shapes.selection.ShapeSelectionSet;
+import mgui.interfaces.shapes.trees.Shape3DTreeNode;
 import mgui.interfaces.shapes.trees.ShapeModel3DTreeNode;
 import mgui.interfaces.shapes.util.ShapeEvent;
 import mgui.interfaces.shapes.util.ShapeListener;
@@ -636,16 +637,21 @@ public class ShapeModel3D extends AbstractInterfaceObject implements ShapeListen
 		super.setTreeNode(treeNode);
 		
 		if (modelSet == null) return;
-		InterfaceTreeNode set_root = modelSet.issueTreeNode();
+		//InterfaceTreeNode set_root = modelSet.issueTreeNode();
 		//treeNode.addChild(set_root);
+		
+		Shape3DTreeNode set_root = new Shape3DTreeNode(modelSet);
+		modelSet.setTreeNode(set_root);
+		
+		//setTreeNode(treeNode);
 		
 		treeNode.add(getSelectionSetNode());
 		ArrayList<TreeNode> children = set_root.getChildren();
 		for (int i = 0; i < children.size(); i++)
 			treeNode.addChild((InterfaceTreeNode)children.get(i));
 		
-		set_root.removeAllChildren();
-		set_root.destroy(false);
+//		set_root.removeAllChildren();
+//		set_root.destroy(false);
 	}
 
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
@@ -763,6 +769,7 @@ public class ShapeModel3D extends AbstractInterfaceObject implements ShapeListen
 				return;
 				
 			case ShapeAdded:
+			case ShapeInserted:
 				//add new camera listener to all cameras
 				if (e.getSource() instanceof Shape3DInt){
 					shape = (Shape3DInt)e.getSource();
@@ -780,6 +787,7 @@ public class ShapeModel3D extends AbstractInterfaceObject implements ShapeListen
 					
 					return;
 					}
+				break;
 				
 			case ShapeRemoved:
 				//remove listener from all cameras
@@ -793,6 +801,7 @@ public class ShapeModel3D extends AbstractInterfaceObject implements ShapeListen
 					fireShapeListeners(e);
 					return;
 					}
+				break;
 				
 			case ShapeSetModified:
 				fireShapeListeners(e);

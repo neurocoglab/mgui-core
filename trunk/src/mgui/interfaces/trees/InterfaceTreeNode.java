@@ -36,6 +36,13 @@ import mgui.interfaces.InterfaceObjectListener;
 import mgui.interfaces.menus.InterfacePopupMenu;
 import mgui.interfaces.menus.PopupMenuObject;
 
+/******************************
+ * 
+ * Base class for tree nodes representing ModelGUI objects (instances of {@linkplain InterfaceObject}).
+ * 
+ * @author Andrew Ried
+ *
+ */
 public class InterfaceTreeNode extends DefaultMutableTreeNode implements Cloneable,
 																		 InterfaceObjectListener,
 																		 PopupMenuObject {
