@@ -39,8 +39,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.jogamp.vecmath.Point2f;
 
+import mgui.interfaces.InterfaceDisplayPanel;
 import mgui.interfaces.InterfaceMouseListener;
 import mgui.interfaces.InterfaceMouseObject;
 import mgui.interfaces.InterfacePanel;
@@ -438,12 +440,13 @@ public abstract class InterfaceGraphic<T extends Tool> extends InterfacePanel im
 			return;
 			}
 		
-//		if (item.getText().equals("Close")){
-//			
-//			this.destroy();
-//			
-//			return;
-//			}
+		if (item.getText().equals("Close")){
+			
+			InterfaceDisplayPanel display_panel = InterfaceSession.getDisplayPanel();
+			
+			
+			return;
+			}
 		
 	}
 	
@@ -475,13 +478,20 @@ public abstract class InterfaceGraphic<T extends Tool> extends InterfacePanel im
 	 * @return
 	 */
 	public boolean writeSnapshotToFile(final File file){
-		BufferedImage image = new  BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
-		Graphics g = image.createGraphics();
-		paint(g);
-		g.dispose();
-		return ImagingIOFunctions.writeImageToPng(image, file);
+		is_snapshot = true;
+		try {
+			BufferedImage image = new  BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+			Graphics g = image.createGraphics();
+			paint(g);
+			g.dispose();
+			is_snapshot = false;
+			return ImagingIOFunctions.writeImageToPng(image, file);
+		} catch (Exception ex) {}
+		is_snapshot = false;
+		return false;
 	}
 	
+	protected boolean is_snapshot = false;
 	
 	@Override
 	public void writeXML(int tab, Writer writer) throws IOException {

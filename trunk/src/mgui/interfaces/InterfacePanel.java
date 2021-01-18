@@ -93,7 +93,7 @@ public abstract class InterfacePanel extends JPanel implements InterfaceObject,
 	public String type = "Unspecified Panel";
 	
 	protected transient boolean isDestroyed = false;
-	protected transient ArrayList<InterfaceTreeNode> treeNodes = new ArrayList<InterfaceTreeNode>();
+	protected transient ArrayList<InterfaceTreeNode> tree_nodes = new ArrayList<InterfaceTreeNode>();
 	protected Point last_click_point;
 	
 	protected void _init(){
@@ -222,10 +222,11 @@ public abstract class InterfacePanel extends JPanel implements InterfaceObject,
 	public InterfaceTreeNode issueTreeNode(){
 		InterfaceTreeNode treeNode = new InterfaceTreeNode(this);
 		setTreeNode(treeNode);
-		treeNodes.add(treeNode);
+		tree_nodes.add(treeNode);
 		return treeNode;
 	}
 	
+	@Override
 	public void setTreeNode(InterfaceTreeNode treeNode){
 		
 		//destroy and remove existing children
@@ -240,10 +241,13 @@ public abstract class InterfacePanel extends JPanel implements InterfaceObject,
 	}
 	
 	protected void updateTreeNodes(){
-		ArrayList<InterfaceTreeNode> nodes = new ArrayList<InterfaceTreeNode>(treeNodes);
-		for (int i = 0; i < nodes.size(); i++){
-			InterfaceTreeNode node = nodes.get(i);
-			node.objectChanged();
+		ArrayList<InterfaceTreeNode> nodes = new ArrayList<InterfaceTreeNode>(tree_nodes);
+		for (InterfaceTreeNode node : nodes){
+			if (node.isDestroyed) {
+				tree_nodes.remove(node);
+			} else {
+				node.objectChanged();
+				}
 			}
 	}
 	
@@ -280,6 +284,15 @@ public abstract class InterfacePanel extends JPanel implements InterfaceObject,
 	
 	public void destroy(){
 		isDestroyed = true;
+		// Destroy tree nodes
+		ArrayList<InterfaceTreeNode> nodes = new ArrayList<InterfaceTreeNode>(tree_nodes);
+		for (int i = 0; i < nodes.size(); i++){
+			nodes.get(i).destroy();
+			if (nodes.get(i).getParent() != null)
+				nodes.get(i).removeFromParent();
+			//tree_nodes.remove(nodes.get(i));
+			}
+		tree_nodes.clear();
 	}
 	
 	public boolean isDestroyed(){

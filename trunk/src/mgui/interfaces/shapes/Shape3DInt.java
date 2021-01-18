@@ -165,6 +165,7 @@ public abstract class Shape3DInt extends InterfaceShape
 		render_modes.add("Nicest");
 		render_modes.add("Fastest");
 		render_modes.add("Screen Door");
+		render_modes.add("Blended");
 		
 		attributes.add(new AttributeSelection<String>("3D.AlphaMode", render_modes, String.class, "Nicest"));
 		

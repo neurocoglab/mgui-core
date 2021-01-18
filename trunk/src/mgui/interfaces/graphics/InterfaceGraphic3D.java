@@ -200,7 +200,7 @@ public class InterfaceGraphic3D extends InterfaceGraphic<Tool3D> implements Shap
 	
 	@Override
 	public void destroy(){
-		isDestroyed = true;
+		super.destroy();
 		if (model != null){
 			model.removeGraphics3D(this);
 			}

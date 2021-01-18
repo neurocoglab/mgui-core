@@ -165,7 +165,7 @@ public class InterfaceGraphicWindow extends InterfacePanel implements XMLObject,
 	public InterfacePopupMenu getPopupMenu(){
 				
 		InterfacePopupMenu menu = new InterfacePopupMenu(this);
-		popup_length = 8;
+		popup_length = 9;
 		
 		menu.addMenuItem(new JMenuItem("Graphic Window", getIcon()));
 		menu.add(new JSeparator(), 1);
@@ -207,7 +207,7 @@ public class InterfaceGraphicWindow extends InterfacePanel implements XMLObject,
 			menu.addMenuItem(new JMenuItem("Maximize"));
 		else
 			menu.addMenuItem(new JMenuItem("Unmaximize"));
-		//menu.addMenuItem(new JMenuItem("Close"));
+		menu.addMenuItem(new JMenuItem("Close"));
 		menu.addMenuItem(new JMenuItem("Snapshot.."));
 		
 		return menu;
@@ -221,6 +221,16 @@ public class InterfaceGraphicWindow extends InterfacePanel implements XMLObject,
 		JMenuItem item = (JMenuItem)e.getSource();
 		String command = item.getActionCommand();
 	
+		if (command.equals("Close")) {
+			
+			InterfaceDisplayPanel display_panel = getDisplayPanel();
+			if (display_panel == null) return;
+			
+			display_panel.removeWindow(this);
+			
+			return;
+			}
+		
 		if (command.equals("Maximize") || command.equals("Unmaximize")){
 			InterfaceDisplayPanel d_panel = getDisplayPanel();
 			if (d_panel == null) return;

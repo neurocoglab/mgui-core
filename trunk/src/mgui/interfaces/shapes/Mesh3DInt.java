@@ -524,6 +524,8 @@ public class Mesh3DInt extends PointSet3DInt {
 			ta.setTransparencyMode(TransparencyAttributes.SCREEN_DOOR);
 		}else if (trans_type.equals("Fastest")){
 			ta.setTransparencyMode(TransparencyAttributes.FASTEST);
+		}else if (trans_type.equals("Blended")){
+			ta.setTransparencyMode(TransparencyAttributes.BLENDED);
 		}else{
 			ta.setTransparencyMode(TransparencyAttributes.NICEST);
 			}

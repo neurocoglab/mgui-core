@@ -364,14 +364,6 @@ public class InterfaceTabbedDisplayPanel extends InterfaceDisplayPanel implement
 		
 	}
 	
-	/*
-	public void addGraphicMouseListener(GraphicMouseListener listener){
-		ArrayList<InterfaceDisplayPanel> tabs = new ArrayList<InterfaceDisplayPanel>(tabbed_panels.values());
-		for (int i = 0; i < tabs.size(); i++)
-			tabs.get(i).addGraphicMouseListener(listener);
-	}
-	*/
-	
 	@Override
 	public void addGraphicMouseListener(GraphicMouseListener s){
 		this.mouse_listeners.add(s);

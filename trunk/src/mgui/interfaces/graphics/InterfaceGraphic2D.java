@@ -33,7 +33,6 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -44,6 +43,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+import javax.swing.border.Border;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jogamp.vecmath.Point2f;
@@ -328,7 +328,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 	
 	@Override
 	public void destroy(){
-		isDestroyed = true;
+		super.destroy();
 		if (this.currentSections != null)
 			this.currentSections.removeShapeListener(this);
 		//update window listeners
@@ -440,7 +440,18 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 			return;
 			}
 
+		Border border = this.getBorder();
+		if (is_snapshot) {
+			// Don't paint border for snapshot
+			this.setBorder(null);
+			}
+		
 		super.paintComponent(g2);
+		
+		if (is_snapshot) {
+			this.setBorder(border);
+			}
+		
 		if (this.getCurrentSectionSet() == null) return;
 		
 		SectionSet3DInt sectionSet = getCurrentSectionSet();
@@ -1438,7 +1449,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 	
 	@Override
 	protected int getPopupLength(){
-		return super.getPopupLength() + 14; 
+		return super.getPopupLength() + 15; 
 	}
 	
 	/*

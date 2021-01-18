@@ -39,6 +39,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 
+import mgui.interfaces.DisplayPanelEvent.EventType;
 import mgui.interfaces.attributes.AttributeDialogBox;
 import mgui.interfaces.frames.SessionFrame;
 import mgui.interfaces.graphics.GraphicMouseListener;
@@ -159,7 +160,6 @@ public class InterfaceDisplayPanel extends InterfacePanel implements ActionListe
 		//set attributes
 		//setCurrentShapeSet(new ShapeSet3DInt());
 	}
-	
 	
 	
 	@Override
@@ -369,6 +369,7 @@ public class InterfaceDisplayPanel extends InterfacePanel implements ActionListe
 	
 	
 	/**********************************************************
+	 * 
 	 * Returns a new split panel, determined as the first non-split window encountered, searching through
 	 * the nested stack of split panels. This ensures that the highest-level window is always the next to be
 	 * split by default.
@@ -382,7 +383,7 @@ public class InterfaceDisplayPanel extends InterfacePanel implements ActionListe
 		if (!(window instanceof InterfaceSplitPanel)){
 			InterfaceSplitPanel split_panel = new InterfaceSplitPanel(JSplitPane.HORIZONTAL_SPLIT, window, new_window);
 			split_panel.addSplitPanelListener(this);
-			split_panel.setParentPanel(this);
+			split_panel.setParentPanel(this); 
 			window = split_panel;
 			return split_panel;
 			}
@@ -622,6 +623,11 @@ public class InterfaceDisplayPanel extends InterfacePanel implements ActionListe
 		return InterfaceEnvironment.getNameMaps();
 	}
 	
+	/********************************
+	 * 
+	 * Instructs this display panel to regenerate based on its current state.
+	 * 
+	 */
 	public void updatePanels(){
 		
 		this.removeAll();
@@ -911,6 +917,80 @@ public class InterfaceDisplayPanel extends InterfacePanel implements ActionListe
 			window.destroy();
 		window = null;
 		//windows.clear();
+	}
+	
+	@Override
+	public void removeWindow(InterfaceGraphicWindow child) {
+		removeWindow(child, true);
+	}
+	
+	@Override
+	public void removeWindow(InterfaceGraphicWindow child, boolean notify) {
+		
+		// In the case there is no current window
+		if (this.window == null) return;
+		
+		// In the case that there is only one current window
+		if (this.window == child) {
+			this.last_removed_panel = this.window.getPanel();
+			this.remove(window);
+			this.window.destroy();
+			this.window = null;
+			if (notify) {
+				fireDisplayPanelChanged(new DisplayPanelEvent(this, EventType.WindowRemoved));
+				}
+			updatePanels();
+
+		// In the case there is a split panel
+		} else if (this.window instanceof InterfaceSplitPanel) {
+			
+			InterfaceGraphicWindow window_to_remove = child;
+		
+			InterfaceSplitPanel split_panel = (InterfaceSplitPanel)this.window;
+			
+			// In the subcase the window to remove is in this split panel
+			if (split_panel.getWindow(0) == window_to_remove || 
+					split_panel.getWindow(1) == window_to_remove) {
+				
+				InterfaceGraphicWindow window_to_keep = split_panel.getOtherWindow(window_to_remove);
+				
+				this.last_removed_panel = window_to_remove.getPanel();
+				split_panel.destroy();
+				
+				if (window_to_keep != null) {
+					window_to_keep.isDestroyed = false;
+					this.window = window_to_keep;
+					}
+				
+				if (notify) {
+					fireDisplayPanelChanged(new DisplayPanelEvent(this, EventType.WindowRemoved));
+					}
+				
+			// In the subcase the window to remove is deeper
+			} else if (split_panel.findWindow(window_to_remove.getName()) != null) {
+				
+				split_panel = (InterfaceSplitPanel)window_to_remove.getParentPanel();
+				InterfaceSplitPanel parent = (InterfaceSplitPanel)split_panel.getParentPanel();
+				InterfaceGraphicWindow window_to_keep = split_panel.getOtherWindow(window_to_remove);
+				
+				if (window_to_keep != null) {
+					split_panel.removeWindow(window_to_keep,  false);
+					parent.replace(split_panel, window_to_keep);
+					} 
+				
+				split_panel.destroy();
+				this.last_removed_panel = window_to_remove.getPanel();
+		
+				} 
+			
+			if (notify) {
+				fireDisplayPanelChanged(new DisplayPanelEvent(this, EventType.WindowRemoved));
+				}
+				
+			}
+		
+		updatePanels();
+			
 	}
 	
 	

@@ -28,5 +28,20 @@ package mgui.interfaces.graphics;
  *
  */
 public interface WindowContainer extends WindowListener{
+	
+	/*******************
+	 * Remove {@code child} from this container, and notify listeners.
+	 * 
+	 * @param child
+	 */
+	public void removeWindow(InterfaceGraphicWindow child);
+	
+	/*******************
+	 * Remove {@code child} from this container.
+	 * 
+	 * @param child
+	 * @param notify Whether to notify listeners
+	 */
+	public void removeWindow(InterfaceGraphicWindow child, boolean notify);
 
 }

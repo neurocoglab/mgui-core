@@ -114,8 +114,30 @@ public class InterfaceSplitPanel extends InterfaceGraphicWindow implements Compo
 			listeners.get(i).splitPanelChanged(event);
 	}
 	
+	/***************************
+	 * Returns the current orientation for this split panel; see {@linkplain JSplitPane.VERTICAL_SPLIT}.
+	 * 
+	 * @return
+	 */
 	public int getSplitOrientation(){
 		return split_orientation;
+	}
+	
+	/****************************
+	 * Returns the window that is not {@code window}, if one exists.
+	 * 
+	 * @param window
+	 * @return The other window, or {@code null} if there is none, or if {@code window} is not a
+	 * 			child of this split panel
+	 */
+	public InterfaceGraphicWindow getOtherWindow(InterfaceGraphicWindow window) {
+		
+		if (this.panel1 == window) return panel2;
+		
+		if (this.panel2 == window) return panel1;
+		
+		return null;
+		
 	}
 	
 	@Override
@@ -254,6 +276,36 @@ public class InterfaceSplitPanel extends InterfaceGraphicWindow implements Compo
 			}
 		
 		return false;
+	}
+	
+	@Override
+	public void removeWindow(InterfaceGraphicWindow window) {
+		removeWindow(window, true);
+	}
+	
+	@Override
+	public void removeWindow(InterfaceGraphicWindow window, boolean notify) {
+		
+		if (window == panel1) {
+			panel1.setParentPanel(null);
+			panel1 = null;
+			split_pane.setLeftComponent(null);
+			if (notify) {
+				firePanelChanged();
+				}
+			
+		} else if (window == panel2) {
+			panel2.setParentPanel(null);
+			panel2 = null;
+			split_pane.setRightComponent(null);
+			if (notify) {
+				firePanelChanged();
+				}
+			
+			}
+		
+		
+		
 	}
 	
 	/*********************************************
