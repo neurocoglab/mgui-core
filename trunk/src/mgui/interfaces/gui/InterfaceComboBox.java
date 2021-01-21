@@ -33,7 +33,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
@@ -46,6 +45,8 @@ import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.plaf.basic.ComboPopup;
 
+import org.apache.commons.collections15.Transformer;
+
 import mgui.interfaces.InterfaceObject;
 import mgui.interfaces.NamedObject;
 import mgui.interfaces.shapes.InterfaceShape;
@@ -53,9 +54,6 @@ import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.trees.TreeObject;
 import mgui.resources.icons.IconObject;
-
-import org.apache.commons.collections15.Transformer;
-
 import sun.swing.DefaultLookup;
 
 /***********************
@@ -347,7 +345,7 @@ class SteppedComboBoxUI extends BasicComboBoxUI {
 		LineBorder border = new LineBorder(Color.gray, 1, true);
 		Border margin = new EmptyBorder(2,2,2,2);
 		background_panel.setBorder(new CompoundBorder(margin, border));
-		background_panel.setOpaque(false);
+		background_panel.setOpaque(true);
 		background_padding = padding;
 	}
 	
@@ -439,13 +437,13 @@ class SteppedComboBoxUI extends BasicComboBoxUI {
     	  Dimension popupSize = i_box.getPopupSize();
 	      popupSize.setSize( popupSize.width, getPopupHeightForRowCount( comboBox.getMaximumRowCount() ) );
 	      Rectangle popupBounds = computePopupBounds(0, 
-	    		  									 comboBox.getBounds().height, 
+	    		  									 comboBox.getBounds().height-1, 
 	    		  									 popupSize.width, 
 	    		  									 popupSize.height);
 	      scroller.setMaximumSize( popupBounds.getSize() );
 	      scroller.setPreferredSize( popupBounds.getSize() );
 	      scroller.setMinimumSize( popupBounds.getSize() );
-	      list.invalidate();
+	      //list.invalidate();
 	      int selectedIndex = comboBox.getSelectedIndex();
 	      if ( selectedIndex == -1 ) {
 	    	  list.clearSelection();
@@ -454,7 +452,7 @@ class SteppedComboBoxUI extends BasicComboBoxUI {
 	      	  }
 	      
 	      list.ensureIndexIsVisible( list.getSelectedIndex() );
-	      setLightWeightPopupEnabled( comboBox.isLightWeightPopupEnabled() );
+	      setLightWeightPopupEnabled( false ); // comboBox.isLightWeightPopupEnabled() );
 	
 	      show( comboBox, popupBounds.x, popupBounds.y );
       	}

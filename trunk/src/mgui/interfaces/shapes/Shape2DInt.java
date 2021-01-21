@@ -679,6 +679,10 @@ public abstract class Shape2DInt extends InterfaceShape
 		menu.addMenuItem(item);
 		item.setActionCommand("Edit Shape Attributes");
 		menu.addMenuItem(new JMenuItem("Hide"));
+		menu.addMenuItem(new JMenuItem("Move up"));
+		menu.addMenuItem(new JMenuItem("Move down"));
+		menu.addMenuItem(new JMenuItem("Move to top"));
+		menu.addMenuItem(new JMenuItem("Move to bottom"));
 		menu.addMenuItem(new JMenuItem("Clear selection"));
 		
 	}
