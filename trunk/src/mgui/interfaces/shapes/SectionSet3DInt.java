@@ -124,6 +124,7 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 	ShapeSet2DInt last_removed = null;
 	ShapeSet2DInt last_modified = null;
 	ShapeSet2DInt last_inserted = null;
+	ShapeSet2DInt last_moved = null;
 
 	public SectionSet3DInt() {
 		shape3d = new Plane3D();
@@ -1313,6 +1314,10 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 
 	public InterfaceShape getLastInserted() {
 		return last_inserted;
+	}
+	
+	public InterfaceShape getLastMoved() {
+		return last_moved;
 	}
 
 	@Override

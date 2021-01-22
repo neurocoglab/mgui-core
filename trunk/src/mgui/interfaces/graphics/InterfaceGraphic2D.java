@@ -1186,12 +1186,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 		fireDisplayListeners();
 	}
 	
-	/**************************************
-	 * Required for the <code>ShapeListener</code> interface. This method responds to a shape update event
-	 * by adding, removing, or swapping drawables, or simply triggering a redraw request by setting
-	 * the <code>needs_update</code> flag to <code>true</code> - as necessary. 
-	 * 
-	 */
+	
 	@Override
 	public void shapeUpdated(ShapeEvent e){
 	
@@ -1208,7 +1203,8 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 				case AttributeModified:
 				case ShapeModified:
 					//regen the current section to reflect the changes in the section set
-					regenerateDisplay();
+					needs_regen = true;
+					//regenerateDisplay();
 					
 					return;
 				case ShapeRemoved:
@@ -1250,7 +1246,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 					if (!(set.getLastRemoved().equals(shape)) || 
 						(shape3DObjects.getLastRemoved() != null && 
 								shape3DObjects.getLastRemoved().equals(shape))) return;
-					needs_update = true;
+					needs_regen = true;
 					return;
 				}
 			
@@ -1264,6 +1260,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 				switch (e.eventType){
 					case AttributeModified:
 						//regen the display if a parent set's attributes have changed
+						//needs_regen = true;
 						regenerateDisplay();
 						return;
 					case ShapeRemoved:
@@ -1281,8 +1278,10 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 						shape = (Shape3DInt)set3d.getLastInserted();
 						break;
 					case ShapeModified:
-					case ShapeMoved:
 						shape = (Shape3DInt)set3d.getLastModified();
+						break;
+					case ShapeMoved:
+						shape = (Shape3DInt)set3d.getLastMoved();
 						break;
 					default:
 						return;
@@ -1319,7 +1318,11 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 													  section_set.getClipDistDown(), 
 													  false));
 					fireGraphicListeners(new GraphicEvent(this, EventType.Updated));
-					needs_update = true;
+					needs_regen = true;
+					return;
+					
+				case ShapeMoved:
+					needs_regen = true;
 					return;
 					
 				case ShapeAdded:
@@ -1330,24 +1333,20 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 								  section_set.getClipDistUp(), 
 								  section_set.getClipDistDown(), 
 								  false));
-					//fireGraphicListeners(new GraphicEvent(this, EventType.Modified));
-					needs_update = true;
-					//updateDisplay();
+					
+					needs_regen = true;
 					return;
 				
 				case ShapeRemoved:
 				case ShapeDestroyed:
 					//does current set contain a shape for which this shape is a parent?
 					ArrayList<Shape2DInt> children = find3DChildren(shape);
-					//shape2D = find3DChild(shape);
-					//if (shape2D == null) return;
 					if (children.size() == 0) return;
 					//remove object from drawables
 					for (int i = 0; i < children.size(); i++)
 						removeShape3D(children.get(i));
 					fireGraphicListeners(new GraphicEvent(this, EventType.Updated));
 					needs_update = true;
-					//updateDisplay();
 					return;
 					
 				}
@@ -1606,15 +1605,20 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 			return;
 			}
 		
-		ArrayList<PickInfoShape2D> infos = getPickShapes(last_click_point);
-		
-		if (infos != null && infos.size() > 0) {
-			// Use top shape
+		if (e.getActionCommand().startsWith("Shape")) {
+			ArrayList<PickInfoShape2D> infos = getPickShapes(last_click_point);
 			
-			PickInfoShape2D info = infos.get(0);
-			Shape2DInt shape = info.shape;
-			shape.handlePopupEvent(e);
+			if (infos != null && infos.size() > 0) {
+				// Use top shape
+				
+				PickInfoShape2D info = infos.get(0);
+				Shape2DInt shape = info.shape;
+				shape.handlePopupEvent(e);
+				
+				}
 			
+			updateDisplay();
+			return;
 			}
 		
 		super.handlePopupEvent(e);

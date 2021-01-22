@@ -27,6 +27,29 @@ import mgui.interfaces.shapes.InterfaceShape;
 /**********************************************************
  * Event on an {@linkplain InterfaceShape} object.
  * 
+ * The following events are defined by the {@code EventType} enum:
+ * 
+ * <p>
+ * <ul>
+ * <li>General
+ * <li>ShapeAdded
+ * <li>ShapeRemoved
+ * <li>ShapeModified
+ * <li>ShapeSetModified
+ * <li>AttributeModified
+ * <li>ShapeDestroyed
+ * <li>ShapeInserted
+ * <li>ShapeMoved
+ * <li>TextureModified
+ * <li>SectionAdded
+ * <li>SectionRemoved
+ * <li>VertexColumnAdded
+ * <li>VertexColumnRemoved
+ * <li>VertexColumnChanged
+ * <li>VertexColumnRenamed
+ * <li>ClipModified
+ * </ul>
+ * 
  * @version 1.0
  * @since 1.0
  * @author Andrew Reid
@@ -34,6 +57,12 @@ import mgui.interfaces.shapes.InterfaceShape;
  */
 public class ShapeEvent extends EventObject {
 
+
+	/**
+	 * Serial version UID
+	 */
+	private static final long serialVersionUID = 7383217668410306626L;
+	
 	boolean is_consumed;		//indicates that some process has already consumed this event
 	boolean modifies_shape_set = false;
 	

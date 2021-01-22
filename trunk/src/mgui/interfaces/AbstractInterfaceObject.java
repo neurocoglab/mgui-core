@@ -67,7 +67,9 @@ public abstract class AbstractInterfaceObject implements InterfaceObject{
 	public void setTreeNode(InterfaceTreeNode tree_node){
 		tree_node.destroyAllChildren();
 		tree_node.removeAllChildren();
-		tree_node.setUserObject(this);
+		if (tree_node.getUserObject() != this) {
+			tree_node.setUserObject(this);
+			}
 	}
 	
 	public String getTreeLabel(){

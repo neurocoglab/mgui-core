@@ -65,6 +65,9 @@ import mgui.numbers.MguiFloat;
  */
 public class VolumeInputDialogBox extends InterfaceIODialogBox 
 								   implements ActionListener {
+	
+	static String preferred_filter = "";
+	
 	//controls
 	//file
 	JLabel lblFileName = new JLabel("File name:");
@@ -180,6 +183,7 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 		chkGeomDim.setSelected(true);
 		chkImgOrigin.setSelected(true);
 		chkDataType.setSelected(false);
+		chkSetAlpha.setSelected(true);
 		
 		//set IO types (available formats)
 		setIOTypes();
@@ -455,6 +459,7 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 		options.set_type = chkDataType.isSelected();
 		
 		options.input_type = getCurrentIOType();
+		preferred_filter = (String)cmbFileFormat.getSelectedItem();
 		
 		options.colour_map = null;
 		if (cmbColourMap.isEnabled())
@@ -467,10 +472,17 @@ public class VolumeInputDialogBox extends InterfaceIODialogBox
 	//fill format combo box
 	private void fillFormatCombo(){
 		cmbFileFormat.removeAllItems();
-		for (int i = 0; i < filters.size(); i++)
+		for (int i = 0; i < filters.size(); i++) {
 			cmbFileFormat.addItem(filters.get(i).getDescription());
-		if (filters.size() > 0)
-			cmbFileFormat.setSelectedIndex(0);
+			}
+		
+		if (filters.size() > 0) {
+			if (preferred_filter.length() > 0) {
+				cmbFileFormat.setSelectedItem(preferred_filter);
+			} else {
+				cmbFileFormat.setSelectedIndex(0);
+				}
+			}
 	}
 	
 	private void fillColourMapCombo(){

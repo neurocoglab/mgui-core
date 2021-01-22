@@ -1463,6 +1463,7 @@ public abstract class Shape3DInt extends InterfaceShape
 				}else{
 					if (getParentSet() == null) return;	//shouldn't happen
 					getParentSet().removeShape(this);
+					InterfaceSession.getDisplayPanel().updateDisplays();
 					this.destroy();
 					return;
 					}
@@ -1514,6 +1515,42 @@ public abstract class Shape3DInt extends InterfaceShape
 				}
 			
 			return;
+			}
+		
+		if (item.getText().startsWith("Move")) {
+			
+			ShapeSet3DInt parent = (ShapeSet3DInt)getParentSet();
+			if (parent == null) return;
+			
+			if (item.getText().endsWith("up")) {
+				if (!parent.moveShapeUp(this)) {
+					InterfaceSession.log("Shape '" + this.getName() + "' was not moved.", LoggingType.Debug);
+					}
+				return;
+				}
+			
+			if (item.getText().endsWith("down")) {
+				if (!parent.moveShapeDown(this)) {
+					InterfaceSession.log("Shape '" + this.getName() + "' was not moved.", LoggingType.Debug);
+					}
+				return;
+				}
+			
+			if (item.getText().endsWith("top")) {
+				if (!parent.moveShapeTop(this)) {
+					InterfaceSession.log("Shape '" + this.getName() + "' was not moved.", LoggingType.Debug);
+					}
+				return;
+				}
+			
+			if (item.getText().endsWith("bottom")) {
+				if (!parent.moveShapeBottom(this)) {
+					InterfaceSession.log("Shape '" + this.getName() + "' was not moved.", LoggingType.Debug);
+					}
+				return;
+				}
+			
+			
 			}
 		
 		if (item.getText().equals("Hide")){

@@ -86,12 +86,12 @@ import mgui.resources.icons.IconObject;
  */
 
 public abstract class InterfaceGraphic<T extends Tool> extends InterfacePanel implements Toolable<T>,
-																		 InterfaceMouseObject,
-																		 IconObject,
-																		 MapListener,
-																		 ToolListener,
-																		 XMLObject,
-																		 Comparable<InterfaceGraphic<T>>{
+																						 InterfaceMouseObject,
+																						 IconObject,
+																						 MapListener,
+																						 ToolListener,
+																						 XMLObject,
+																						 Comparable<InterfaceGraphic<T>>{
 
 		//public GraphicType type = GraphicType.Graphic2D;
 	protected ArrayList<GraphicMouseListener> status_listeners = new ArrayList<GraphicMouseListener>();

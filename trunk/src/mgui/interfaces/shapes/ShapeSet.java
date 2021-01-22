@@ -85,6 +85,7 @@ public interface ShapeSet extends ShapeListener, NamedObject{
 	public InterfaceShape getLastInserted();
 	public int getLastInsert();
 	public InterfaceShape getLastModified();
+	public InterfaceShape getLastMoved();
 	public SpatialUnit getUnit();
 	public void setUnit(SpatialUnit unit);
 	public ShapeModel3D getModel();

@@ -581,6 +581,14 @@ public class ShapeSelectionSet extends AbstractInterfaceObject implements ShapeS
 	 * Not implemented.
 	 */
 	@Override
+	public InterfaceShape getLastMoved(){
+		return null;
+	}
+	
+	/*********************
+	 * Not implemented.
+	 */
+	@Override
 	public int getLastInsert(){
 		return -1;
 	}

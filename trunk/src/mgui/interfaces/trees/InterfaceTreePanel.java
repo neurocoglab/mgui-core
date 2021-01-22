@@ -27,13 +27,16 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Stack;
+import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -178,6 +181,16 @@ public class InterfaceTreePanel extends InterfacePanel implements TreeListener,
 			TreeNode parent = null;
 			switch (e.eventType){
 			
+				case NodeObjectChanged:
+					if (e.getNode() != null){
+						model.nodeStructureChanged(e.getNode());
+						}
+					break;
+					
+				case NodeWillBeModified:
+					setCurrentState();
+					break;
+			
 				case NodeAdded:
 					//append node
 					model.insertNodeInto(e.getChildNode(), e.getParentNode(), e.getParentNode().getChildCount());
@@ -211,15 +224,72 @@ public class InterfaceTreePanel extends InterfacePanel implements TreeListener,
 					if (e.getNode() != null){
 						model.nodeStructureChanged(e.getNode());
 						model.nodesWereInserted(e.getNode(), null);
-						tree.scrollPathToVisible(new TreePath(e.getNode().getPath()));
+						this.restorePreviousState();
+						//tree.scrollPathToVisible(new TreePath(e.getNode().getPath()));
 						}
 					break;
 					
 				}
 		}catch (Exception ex){
 			//ex.printStackTrace();
-			InterfaceSession.log("Tree update exception..");
+			InterfaceSession.handleException(ex);
 			}
+		
+	}
+	
+	protected ArrayList<Object> expanded_nodes = new ArrayList<Object>();
+	
+	/*************
+	 * Sets the current state of expanded nodes. If a tree's structure is changed,
+	 * the expansion state if its nodes can be restored to this state by calling
+	 * {@code restorePreviousState()}.
+	 * 
+	 */
+	protected void setCurrentState() {
+		expanded_nodes.clear();
+		
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			if (tree.isExpanded(i)) {
+				Object obj = tree.getPathForRow(i).getLastPathComponent();
+				if (obj instanceof InterfaceTreeNode) {
+					Object user_obj = ((InterfaceTreeNode)obj).getUserObject();
+					if (!expanded_nodes.contains(user_obj)) {
+						expanded_nodes.add(user_obj);
+						}
+					}
+				}
+			}
+		
+	}
+	
+	/**************
+	 * Restores the expanded state of nodes as of the last call to 
+	 * {@code setCurrentState()}. Calling this function will also clear the 
+	 * current state.
+	 * 
+	 */
+	protected void restorePreviousState() {
+		
+		if (expanded_nodes.size() == 0) return;
+		
+		DefaultMutableTreeNode root_node = (DefaultMutableTreeNode)tree.getModel().getRoot();
+		
+		Stack<TreeNode> nodes = new Stack<TreeNode>();
+		nodes.push(root_node);
+		
+		while (!nodes.isEmpty()) {
+			TreeNode node = nodes.pop();
+			for (TreeNode child : Collections.list(node.children())) {
+				if (expanded_nodes.contains(child)) {
+					tree.expandPath(new TreePath(child));
+					}
+				if (child.getChildCount() > 0) {
+					nodes.push(child);
+					}
+				}
+			}
+		
+		expanded_nodes.clear();
 		
 	}
 

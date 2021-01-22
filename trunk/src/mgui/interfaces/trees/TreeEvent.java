@@ -30,7 +30,9 @@ public class TreeEvent extends EventObject {
 		NodeRemoved,
 		NodeModified,
 		NodeDestroyed,
-		NodeInserted;
+		NodeInserted,
+		NodeWillBeModified,
+		NodeObjectChanged;
 		}
 	
 	public EventType eventType = EventType.General; 

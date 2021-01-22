@@ -19,11 +19,34 @@
 
 package mgui.interfaces.shapes.util;
 
-
+/***********************************
+ * Specifies an object that listens to events on an {@linkplain InterfaceShape}.
+ * 
+ * 
+ * @author Andrew Reid
+ *
+ */
 public interface ShapeListener {
 
-	public void shapeUpdated(ShapeEvent e);
+	/******************************
+	 * A shape that this object is listening to has been updated. The specific type of event is
+	 * defined by {@linkplain ShapeEvent.EventType}.
+	 * 
+	 * @param event
+	 */
+	public void shapeUpdated(ShapeEvent event);
+	
+	/**********************
+	 * Returns {@code true} if this listener has been destroyed.
+	 * 
+	 * @return
+	 */
 	public boolean isDestroyed();
+	
+	/**********************
+	 * Destroys this listener. Once this is called, {@linkplain isDestroyed()} must return {@code true}. 
+	 * 
+	 */
 	public void destroy();
 	
 }

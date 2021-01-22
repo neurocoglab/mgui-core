@@ -129,6 +129,8 @@ addGraphicsWindow Graphic3D "3D Window"
 loadIOType Workspace_out output mgui.io.domestic.WorkspaceWriter null mgui.io.domestic.WorkspaceOutputOptions "Mgui Workspaces (*.workspace)" workspace
 loadIOType ShapeModel3D_out output mgui.io.domestic.shapes.ShapeModel3DWriter mgui.io.domestic.shapes.ShapeModel3DOutputDialog mgui.io.domestic.shapes.ShapeModel3DOutputOptions "Mgui shape models (*.smod, *.smod.gz, *.smodz, *.xml)" smod smod.gz smodz xml
 loadIOType ShapeModel3D_in input mgui.io.domestic.shapes.ShapeModel3DLoader null mgui.io.domestic.shapes.ShapeModel3DInputOptions "Mgui shape models (*.smod, *.smod.gz, *.smodz, *.xml)" smod smod.gz smodz xml
+loadIOType Nifti_volume_in input mgui.io.standard.nifti.NiftiVolumeLoader mgui.io.domestic.shapes.VolumeInputDialogBox mgui.io.domestic.shapes.VolumeInputOptions "Nifti volumes (*.hdr, *.nii, *.gz)" nii hdr gz
+loadIOType Nifti_volume_out output mgui.io.standard.nifti.NiftiVolumeWriter mgui.io.domestic.shapes.VolumeOutputDialogBox mgui.io.domestic.shapes.VolumeOutputOptions "Nifti volumes (*.hdr, *.nii, *.gz)" nii gz
 loadIOType Minc_surf_in input mgui.io.foreign.minc.MincSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Minc surfaces (*.obj)" obj
 loadIOType Minc_surf_out output mgui.io.foreign.minc.MincSurfaceWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox mgui.io.domestic.shapes.SurfaceOutputOptions "Minc surfaces (*.obj)" obj
 loadIOType Minc_surf_data_out output mgui.io.foreign.minc.MincSurfaceDataWriter mgui.io.foreign.minc.MincSurfaceDataOutDialogBox mgui.io.foreign.minc.MincSurfaceDataOutOptions "Minc surface data (*.txt)" txt
@@ -147,8 +149,6 @@ loadIOType Network_in input mgui.io.domestic.network.CorticalNetworkMatrixLoader
 loadIOType Mesh3D_in input mgui.io.domestic.shapes.Mesh3DLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Tri surfaces (*.tri)" tri
 loadIOType Mesh3D_out output mgui.io.domestic.shapes.Mesh3DWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox mgui.io.domestic.shapes.SurfaceOutputOptions "Tri surfaces (*.tri)" tri
 loadIOType Duff_surface_in input mgui.io.foreign.duff.DuffSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Duff surfaces (*.dfs)" dfs
-loadIOType Nifti_volume_in input mgui.io.standard.nifti.NiftiVolumeLoader mgui.io.domestic.shapes.VolumeInputDialogBox mgui.io.domestic.shapes.VolumeInputOptions "Nifti volumes (*.hdr, *.nii, *.gz)" nii hdr gz
-loadIOType Nifti_volume_out output mgui.io.standard.nifti.NiftiVolumeWriter mgui.io.domestic.shapes.VolumeOutputDialogBox mgui.io.domestic.shapes.VolumeOutputOptions "Nifti volumes (*.hdr, *.nii, *.gz)" nii gz
 loadIOType FSL_surface_in input mgui.io.foreign.fsl.FSLSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "FSL surfaces (*.off)" off
 loadIOType Freesurfer_surface_in input mgui.io.foreign.freesurfer.FreesurferSurfaceLoader mgui.io.domestic.shapes.SurfaceInputDialogBox mgui.io.domestic.shapes.SurfaceInputOptions "Freesurfer surfaces (*.*)" *
 loadIOType Freesurfer_surface_out output mgui.io.foreign.freesurfer.FreesurferSurfaceWriter mgui.io.domestic.shapes.SurfaceOutputDialogBox  mgui.io.foreign.freesurfer.FreesurferSurfaceOutputOptions "Freesurfer surfaces (*.*)" *

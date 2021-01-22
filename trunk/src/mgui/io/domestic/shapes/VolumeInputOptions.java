@@ -68,7 +68,7 @@ public class VolumeInputOptions extends ShapeInputOptions {
 	public boolean flip_x, flip_y, flip_z;
 	public Vector3f axis_x, axis_y, axis_z;
 	
-	public boolean has_alpha;
+	public boolean has_alpha = true;
 	public double scale = 1;
 	public double intercept;
 	public double window_width = 1;

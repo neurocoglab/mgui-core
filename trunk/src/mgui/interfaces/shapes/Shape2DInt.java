@@ -674,19 +674,31 @@ public abstract class Shape2DInt extends InterfaceShape
 	 */
 	public void setGraphic2DPopupMenu(InterfacePopupMenu menu){
 		
-		JMenuItem item = new JMenuItem("Edit attributes..");
-		
+		JMenuItem item = new JMenuItem("Edit attributes..");	
 		menu.addMenuItem(item);
-		item.setActionCommand("Edit Shape Attributes");
-		menu.addMenuItem(new JMenuItem("Hide"));
-		menu.addMenuItem(new JMenuItem("Move up"));
-		menu.addMenuItem(new JMenuItem("Move down"));
-		menu.addMenuItem(new JMenuItem("Move to top"));
-		menu.addMenuItem(new JMenuItem("Move to bottom"));
-		menu.addMenuItem(new JMenuItem("Clear selection"));
+		item.setActionCommand("Shape");
+		item = new JMenuItem("Hide");
+		menu.addMenuItem(item);
+		item.setActionCommand("Shape");
+		item = new JMenuItem("Move up");
+		menu.addMenuItem(item);
+		item.setActionCommand("Shape");
+		item = new JMenuItem("Move down");
+		menu.addMenuItem(item);
+		item.setActionCommand("Shape");
+		item = new JMenuItem("Move to top");
+		menu.addMenuItem(item);
+		item.setActionCommand("Shape");
+		item = new JMenuItem("Move to bottom");
+		menu.addMenuItem(item);
+		item.setActionCommand("Shape");
+		item = new JMenuItem("Clear selection");
+		menu.addMenuItem(item);
+		item.setActionCommand("Shape");
 		
 	}
 	
+	@Override
 	public void handlePopupEvent(ActionEvent e) {
 		
 		if (this.hasParentShape()) {
@@ -699,6 +711,25 @@ public abstract class Shape2DInt extends InterfaceShape
 		
 		if (item.getText().equals("Edit attributes..")){
 			InterfaceSession.getWorkspace().showAttributeDialog(this);
+			return;
+			}
+		
+		if (item.getText().equals("Hide")){
+			this.setVisible(false);
+			return;
+			}
+		
+		if (item.getText().startsWith("Move")){
+			//TODO: implement move shape on popup
+			//ShapeSet2DInt parent = (ShapeSet2DInt)getParentSet();
+			
+			
+			
+			return;
+			}
+		
+		if (item.getText().equals("Clear selection")){
+			//TODO: implement clear selection on popup
 			return;
 			}
 		

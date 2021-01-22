@@ -122,6 +122,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	Shape3DInt last_removed = null;
 	Shape3DInt last_modified = null;
 	Shape3DInt last_inserted = null;
+	Shape3DInt last_moved = null;
 	int last_insert = -1;
 	
 	public ShapeSet3DInt(){
@@ -230,6 +231,11 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	@Override
 	public InterfaceShape getLastModified(){
 		return last_modified;
+	}
+	
+	@Override
+	public InterfaceShape getLastMoved(){
+		return last_moved;
 	}
 	
 	/****************************************
@@ -920,6 +926,110 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		
 	}
 	
+	/*************************
+	 * Moves {@code shape} up one in the rendering order
+	 * 
+	 * @param shape
+	 * @return {@code true} if shape has been moved
+	 */
+	public boolean moveShapeUp(Shape3DInt shape){
+		
+		if (!this.hasShape(shape)) return false;
+		
+		int idx = members.indexOf(shape);
+		if (idx == 0) return false;
+		
+		members.remove(shape);
+		members.add(idx-1, shape);
+		
+		updateTreeNodes();
+		
+		last_moved = shape;
+		this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
+		last_moved = null;
+		
+		return true;
+		
+	}
+	
+	/*************************
+	 * Moves {@code shape} down one in the rendering order
+	 * 
+	 * @param shape
+	 * @return
+	 */
+	public boolean moveShapeDown(Shape3DInt shape){
+		
+		if (!this.hasShape(shape)) return false;
+		
+		int idx = members.indexOf(shape);
+		if (idx == members.size()-1) return false;
+		
+		members.remove(shape);
+		members.add(idx+1, shape);
+		
+		updateTreeNodes();
+		
+		last_moved = shape;
+		this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
+		last_moved = null;
+		
+		return true;
+		
+	}
+	
+	/*************************
+	 * Moves {@code shape} to the top of the rendering order
+	 * 
+	 * @param shape
+	 * @return
+	 */
+	public boolean moveShapeTop(Shape3DInt shape){
+		
+		if (!this.hasShape(shape)) return false;
+		
+		int idx = members.indexOf(shape);
+		if (idx == 0) return false;
+		
+		members.remove(shape);
+		members.add(0, shape);
+		
+		updateTreeNodes();
+		
+		last_moved = shape;
+		this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
+		last_moved = null;
+		
+		return true;
+		
+	}
+	
+	/*************************
+	 * Moves {@code shape} to the bottom of the rendering order
+	 * 
+	 * @param shape
+	 * @return
+	 */
+	public boolean moveShapeBottom(Shape3DInt shape){
+		
+		if (!this.hasShape(shape)) return false;
+		
+		int idx = members.indexOf(shape);
+		if (idx == members.size()-1) return false;
+		
+		members.remove(shape);
+		members.add(shape);
+		
+		updateTreeNodes();
+		
+		last_moved = shape;
+		this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
+		last_moved = null;
+		
+		return true;
+	}
+	
+	@Override
 	public boolean moveShapeBefore(InterfaceShape inserted_shape, InterfaceShape target_shape){
 		return moveShapeBefore((Shape3DInt)inserted_shape, (Shape3DInt)target_shape, true);
 	}
@@ -938,18 +1048,15 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	public boolean moveShapeBefore(Shape3DInt moved_shape, Shape3DInt target_shape, boolean update){
 		if (!this.hasShape(target_shape) || !this.hasShape(moved_shape)) return false;
 		
-		int insert = members.indexOf(target_shape);
 		members.remove(moved_shape);
 		int ins = members.indexOf(target_shape);
 		members.add(ins, moved_shape);
 		
 		if (update){
-			updateShape();
-			last_inserted = moved_shape;
-			last_insert = insert;
-			ShapeEvent e = new ShapeEvent(this, ShapeEvent.EventType.ShapeMoved);
-			fireShapeListeners(e);
-			last_inserted = null;
+			//updateShape();
+			last_moved = moved_shape;
+			this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
+			last_moved = null;
 			}
 		
 		return true;
@@ -973,18 +1080,15 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	public boolean moveShapeAfter(Shape3DInt moved_shape, Shape3DInt target_shape, boolean update){
 		if (!this.hasShape(target_shape) || !this.hasShape(moved_shape)) return false;
 				
-				int insert = members.indexOf(target_shape);
 				members.remove(moved_shape);
 				int ins = members.indexOf(target_shape);
 				members.add(ins+1, moved_shape);
 				
 				if (update){
-					updateShape();
-					last_inserted = moved_shape;
-					last_insert = insert;
-					ShapeEvent e = new ShapeEvent(this, ShapeEvent.EventType.ShapeMoved);
-					fireShapeListeners(e);
-					last_inserted = null;
+					//updateShape();
+					last_moved = moved_shape;
+					this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
+					last_moved = null;
 					}
 				
 				return true;
@@ -1077,6 +1181,8 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 	 * @param shape The shape to remove
 	 * @param updateShape Specifies whether to update this set's bounds
 	 * @param updateListeners Specifies whether to fire this set's shape listeners
+	 * 
+	 * @deprecated Remove update arguments
 	 */
 	public void removeShape(Shape3DInt shape, boolean updateShape, boolean updateListeners){
 		members.remove(shape);
@@ -1092,10 +1198,18 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		last_removed = shape;
 		fireShapeListeners(new ShapeEvent(this, ShapeEvent.EventType.ShapeRemoved));
 		last_removed = null;
+		
+		
 	}
 	
 	@Override
 	public void updateTreeNodes(){
+		
+		if (model != null && model.getModelSet() == this) {
+			model.updateTreeNodes();
+			return;
+			}
+		
 		ArrayList<InterfaceTreeNode> nodes = new ArrayList<InterfaceTreeNode>(tree_nodes);
 		for (int i = 0; i < nodes.size(); i++){
 			nodes.get(i).objectChanged();

@@ -83,6 +83,7 @@ public class ShapeSet2DInt extends Shape2DInt
 	Shape2DInt last_added;
 	Shape2DInt last_modified;
 	Shape2DInt last_inserted;
+	Shape2DInt last_moved;
 	int last_insert = -1;
 	
 	protected Shape2DSectionNode section_node;
@@ -374,12 +375,32 @@ public class ShapeSet2DInt extends Shape2DInt
 			}
 	}
 	
+	@Override
 	public boolean moveShapeBefore(InterfaceShape shape, InterfaceShape target){
-		return false;
+		
+		if (!(members.contains(shape) && members.contains(target))) return false;
+		
+		Shape2DInt shape2d = (Shape2DInt)shape;
+		
+		members.remove(shape2d);
+		int idx = members.indexOf(target);
+		members.add(idx, shape2d);
+		
+		last_moved = shape2d;
+		fireShapeListeners(new ShapeEvent(shape2d, ShapeEvent.EventType.ShapeMoved));
+		last_moved = null;
+		
+		return true;
 	}
 	
+	@Override
 	public InterfaceShape getLastRemoved(){
 		return last_removed;
+	}
+	
+	@Override
+	public InterfaceShape getLastMoved(){
+		return last_moved;
 	}
 	
 	public void removeShape(int index){
@@ -509,6 +530,10 @@ public class ShapeSet2DInt extends Shape2DInt
 		switch (e.eventType){
 			case AttributeModified:
 			case ShapeModified:
+			case ShapeMoved:
+			case ShapeRemoved:
+			case ShapeInserted:
+			case ShapeAdded:
 			case VertexColumnChanged:
 				fireShapeListeners(e);
 				return;

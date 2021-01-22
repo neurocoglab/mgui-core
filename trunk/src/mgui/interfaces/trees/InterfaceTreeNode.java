@@ -186,7 +186,7 @@ public class InterfaceTreeNode extends DefaultMutableTreeNode implements Cloneab
 	
 	public void setUserObject(InterfaceObject thisObj){
 		super.setUserObject(thisObj);
-		fireTreeListeners(new TreeEvent(this, TreeEvent.EventType.NodeModified));
+		fireTreeListeners(new TreeEvent(this, TreeEvent.EventType.NodeObjectChanged));
 	}
 	
 	public boolean isDestroyed(){
@@ -223,8 +223,12 @@ public class InterfaceTreeNode extends DefaultMutableTreeNode implements Cloneab
 	}
 	
 	public void objectChanged(){
-		if (getUserObject() instanceof InterfaceObject)
+		// Set current state, to restore after update
+		fireTreeListeners(new TreeEvent(this, TreeEvent.EventType.NodeWillBeModified));
+		if (getUserObject() instanceof InterfaceObject) {
+			// Get current expanded nodes
 			((InterfaceObject)getUserObject()).setTreeNode(this);
+			}
 		fireTreeListeners(new TreeEvent(this, TreeEvent.EventType.NodeModified));
 	}
 	
