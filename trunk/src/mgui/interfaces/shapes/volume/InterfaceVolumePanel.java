@@ -1985,7 +1985,8 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 	protected GridVertexDataColumn getSelectedColumn(){
 		if (currentVolume == null) return null;
 		int row = vertex_data_model.is_current;
-		if (row < 0) return null;
+		if (row < 0 || row == vertex_data_model.columns.size()) return null;
+		
 		return (GridVertexDataColumn)currentVolume.getVertexDataColumn(vertex_data_model.columns.get(row));
 	}
 	
@@ -3628,7 +3629,7 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 		}
 		
 		ColourMap map =  null;
-		if (imgIntensity != null)
+		if (imgIntensity != null && imgIntensity.model != null)
 			map = imgIntensity.model.getColourMap();
 		
 		if (map != null)
