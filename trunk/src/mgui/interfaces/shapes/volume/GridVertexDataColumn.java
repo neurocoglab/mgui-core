@@ -35,8 +35,6 @@ import java.util.StringTokenizer;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
-
 import mgui.datasources.DataType;
 import mgui.datasources.DataTypes;
 import mgui.geometry.Grid3D;
@@ -988,7 +986,7 @@ public class GridVertexDataColumn extends VertexDataColumn {
 			// Decode
 			Charset charset = Charset.forName("UTF-8");
 			byte[] utf8_bytes = string_data.getBytes(charset);
-			byte[] b_data = Base64.decode(utf8_bytes);
+			byte[] b_data = java.util.Base64.getDecoder().decode(utf8_bytes);
 			
 			xml_data_min = Double.MAX_VALUE;
 			xml_data_max = -Double.MAX_VALUE;

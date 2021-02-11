@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
 
 import Jama.Matrix;
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
+import java.util.Base64;
 
 /****************************************
  * Base class to be extended by all 3D shapes.
@@ -313,7 +313,7 @@ public abstract class Shape3D implements Shape, Cloneable {
 		
 		// Now encode as Base64
 		// Finally, write string to file
-		String out = Base64.encode(data_out.array());
+		String out = Base64.getEncoder().encodeToString(data_out.array());
 		writer.write(out);
 		
 	}
@@ -417,7 +417,7 @@ public abstract class Shape3D implements Shape, Cloneable {
 			// Decode
 			Charset charset = Charset.forName("UTF-8");
 			byte[] utf8_bytes = data.getBytes(charset);
-			byte[] b_data = Base64.decode(utf8_bytes);
+			byte[] b_data = Base64.getDecoder().decode(utf8_bytes);
 			
 			// Decompress
 			switch (compression){

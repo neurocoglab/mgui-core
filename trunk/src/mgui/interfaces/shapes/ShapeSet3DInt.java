@@ -997,6 +997,7 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		updateTreeNodes();
 		
 		last_moved = shape;
+		last_insert = 0;
 		this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
 		last_moved = null;
 		
@@ -1023,7 +1024,9 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		updateTreeNodes();
 		
 		last_moved = shape;
+		last_insert = members.size();
 		this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
+		last_insert = 0;
 		last_moved = null;
 		
 		return true;
@@ -1055,7 +1058,9 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 		if (update){
 			//updateShape();
 			last_moved = moved_shape;
+			last_insert = ins;
 			this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
+			last_insert = 0;
 			last_moved = null;
 			}
 		
@@ -1087,7 +1092,9 @@ public class ShapeSet3DInt extends Shape3DInt implements ShapeSet,
 				if (update){
 					//updateShape();
 					last_moved = moved_shape;
+					last_insert = ins+1;
 					this.fireShapeListeners(new ShapeEvent(this, EventType.ShapeMoved));
+					last_insert = 0;
 					last_moved = null;
 					}
 				

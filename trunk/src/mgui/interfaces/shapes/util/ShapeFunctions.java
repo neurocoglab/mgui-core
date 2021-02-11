@@ -2297,7 +2297,7 @@ public class ShapeFunctions extends Utility {
 		    try {
 		    	rotateMatrix.invert();
 		    }catch (SingularMatrixException ex) {
-		    	InterfaceSession.log("CylinderCreator: Could not create cylinder; matrix is singular", LoggingType.Errors);
+		    	InterfaceSession.log("CylinderCreator: Could not create cylinder; matrix is singular", LoggingType.Debug);
 		    	return null;
 		    	}
 		    // rotate the cylinder into correct orientation

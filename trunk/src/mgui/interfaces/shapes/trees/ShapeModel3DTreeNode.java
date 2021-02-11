@@ -98,8 +98,8 @@ public class ShapeModel3DTreeNode extends InterfaceTreeNode implements ShapeList
 				if (!(e.getShape() instanceof ShapeSet)) return;
 				
 				set = (ShapeSet)e.getShape();
-				if (set.getLastInserted() == null) return;
-				shape = set.getLastInserted();
+				if (set.getLastMoved() == null) return;
+				shape = set.getLastMoved();
 				ShapeTreeNode child_node = getChildForShape(shape);
 				if (child_node == null) return;
 				moveChild(child_node, set.getLastInsert() + offset);

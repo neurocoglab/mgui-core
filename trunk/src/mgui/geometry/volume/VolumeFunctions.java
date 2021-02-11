@@ -1930,12 +1930,12 @@ public class VolumeFunctions {
 	/*********************************************************
 	 * Returns a histogram for the vertex column {@code column} of {@code volume}. 
 	 * 
-	 * @param volume
-	 * @param column
-	 * @param t
-	 * @param bins
-	 * @param min
-	 * @param max
+	 * @param volume  	The volume for which to produce a histogram
+	 * @param column	The name of the column for which to produce a histogram
+	 * @param t			The temporal index (0 for 3D volumes)
+	 * @param bins		The number of bins in the histogram
+	 * @param min		The minimum of the range to use
+	 * @param max		The maximum of the range to use
 	 * @return
 	 */
 	public static Histogram getHistogram(Volume3DInt volume, String column, int t, int bins, double min, double max){	

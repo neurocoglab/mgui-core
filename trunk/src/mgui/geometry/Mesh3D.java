@@ -32,7 +32,7 @@ import org.jogamp.vecmath.Point3f;
 import org.jogamp.vecmath.Vector3f;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
+import java.util.Base64;
 
 import mgui.geometry.mesh.MeshFunctions;
 import mgui.geometry.util.GeometryFunctions;
@@ -787,7 +787,7 @@ public class Mesh3D extends Shape3D {
 		
 		// Now encode as Base64
 		// Finally, write string to file
-		writer.write(Base64.encode(data_out.array()));
+		writer.write(java.util.Base64.getEncoder().encodeToString(data_out.array()));
 		
 	}
 	
@@ -831,7 +831,7 @@ public class Mesh3D extends Shape3D {
 			// Decode
 			Charset charset = Charset.forName("UTF-8");
 			byte[] utf8_bytes = data.getBytes(charset);
-			byte[] b_data = Base64.decode(utf8_bytes);
+			byte[] b_data = Base64.getDecoder().decode(utf8_bytes);
 			
 			// Decompress
 			switch (compression){

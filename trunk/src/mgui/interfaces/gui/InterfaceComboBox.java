@@ -54,7 +54,7 @@ import mgui.interfaces.shapes.ShapeModel3D;
 import mgui.interfaces.shapes.ShapeSet3DInt;
 import mgui.interfaces.trees.TreeObject;
 import mgui.resources.icons.IconObject;
-import sun.swing.DefaultLookup;
+
 
 /***********************
  * Combo box which implements a variable width popup, which depends on the render mode and the
@@ -391,10 +391,8 @@ class SteppedComboBoxUI extends BasicComboBoxUI {
                 c.setBackground(comboBox.getBackground());
             }
             else {
-                c.setForeground(DefaultLookup.getColor(
-                         comboBox, this, "ComboBox.disabledForeground", null));
-                c.setBackground(DefaultLookup.getColor(
-                         comboBox, this, "ComboBox.disabledBackground", null));
+                c.setForeground(UIManager.getDefaults().getColor("ComboBox.disabledForeground"));
+                c.setBackground(UIManager.getDefaults().getColor("ComboBox.disabledBackground"));
             }
         }
 

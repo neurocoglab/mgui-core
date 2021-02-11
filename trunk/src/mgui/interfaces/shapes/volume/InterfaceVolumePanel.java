@@ -1982,6 +1982,11 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 		txtHistMax.setText("" + column.getDataMax());
 	}
 	
+	/*******************
+	 * Returns the currently selected column, or {@code null} if no column is selected.
+	 * 
+	 * @return
+	 */
 	protected GridVertexDataColumn getSelectedColumn(){
 		if (currentVolume == null) return null;
 		int row = vertex_data_model.is_current;
@@ -1990,6 +1995,11 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 		return (GridVertexDataColumn)currentVolume.getVertexDataColumn(vertex_data_model.columns.get(row));
 	}
 	
+	/*******************
+	 * Sets the current selected column.
+	 * 
+	 * @param column
+	 */
 	protected void setSelectedColumn(String column){
 		if (currentVolume == null) return;
 		
@@ -2001,13 +2011,13 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 	}
 	
 	/**************************************
+	 * Produces a histogram for the currently selected column of {@code volume}.
 	 * 
-	 * 
-	 * @param grid
-	 * @param t
-	 * @param bins
-	 * @param min
-	 * @param max
+	 * @param volume  	The volume for which to produce a histogram
+	 * @param t			The temporal index (0 for 3D volumes)
+	 * @param bins		The number of bins in the histogram
+	 * @param min		The minimum of the range to use
+	 * @param max		The maximum of the range to use
 	 */
 	protected Histogram getHistogramBlocking(Volume3DInt volume, int t, int bins, double min, double max){
 		if (volume == null){
@@ -2021,11 +2031,19 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 
 	}
 	
+	/***************************
+	 * Instructs the histogram panel to repaint itself
+	 * 
+	 */
 	protected void updateHistogram(){
 		if (pnlHistPanel.histogram != null && pnlHistPanel.colour_model != null)
 			pnlHistPanel.repaint();
 	}
 	
+	/*****************************
+	 * Updates the intensity values for the current volume / column
+	 * 
+	 */
 	protected void updateIntensity(){
 		
 		GridVertexDataColumn v_column = getSelectedColumn();

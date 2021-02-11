@@ -363,6 +363,8 @@ public class InterfaceSession {
 		
 				LoggingType log_type = InterfaceEnvironment.getLoggingType();
 				String message = _message;
+				if (timestamp)
+					message = InterfaceEnvironment.getNow("yyyy.MM.dd hh:mm:ss z") + ": " + message;
 				
 				//only log if type is right
 				switch (log_type){
@@ -380,10 +382,8 @@ public class InterfaceSession {
 							return false;
 						break;
 					case Debug:
+						message = "DEBUG: " + message;
 					}
-				
-				if (timestamp)
-					message = InterfaceEnvironment.getNow("yyyy.MM.dd hh:mm:ss z") + ": " + message;
 				
 				LoggingTarget target = InterfaceEnvironment.getLoggingTarget();
 				
