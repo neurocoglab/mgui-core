@@ -1209,6 +1209,10 @@ public class InterfaceWorkspace extends AbstractInterfaceObject implements IconO
 		
 	}
 	
+	@Override
+	public String getName() {
+		return "Workspace";
+	}
 	
 	
 	

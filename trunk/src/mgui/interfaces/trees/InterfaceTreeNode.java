@@ -123,9 +123,11 @@ public class InterfaceTreeNode extends DefaultMutableTreeNode implements Cloneab
 		
 		if (listeners.size() == 0){
 			remove(node);
+			if (pos >= this.getChildCount()) pos--;
 			insert(node, pos + 1);
 		}else{
 			fireTreeListeners(new TreeEvent(this, node, TreeEvent.EventType.NodeRemoved));
+			if (pos >= this.getChildCount()) pos--;
 			fireTreeListeners(new TreeEvent(this, node, TreeEvent.EventType.NodeInserted, pos + 1));
 			}
 		node.listeners = listeners;

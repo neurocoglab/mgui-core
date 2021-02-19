@@ -801,6 +801,7 @@ public class InterfaceSectionSetPanel extends InterfacePanel implements ShapeLis
 				updateSet.setScene3DObject();
 				updateSet.updateShape();
 				updateSet.fireShapeModified();
+				InterfaceSession.getDisplayPanel().updateDisplays();
 				InterfaceSession.log("Section set '" + updateSet.getName() + "' updated.");
 				
 				return;

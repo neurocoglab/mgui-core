@@ -25,7 +25,7 @@ import org.jogamp.vecmath.Point2f;
 import org.jogamp.vecmath.Vector2f;
 
 /***********************************
- * Represents a 2D vector, defined by an end-point and a vector.
+ * Represents a 2D geometric vector shape, defined by an start-point and a vector.
  * 
  * @author Andrew Reid
  * @version 1.0
@@ -37,30 +37,65 @@ public class Vector2D extends Shape2D {
 	public Point2f start;
 	public Vector2f vector;
 	
+	/*************************
+	 * Instantiate a 2D geometric vector with a start point and heading vector.
+	 * 
+	 * @param start
+	 * @param vector
+	 */
 	public Vector2D(Point2f start, Vector2f vector){
 		this.start = start;
 		this.vector = vector;
 	}
 	
+	/*************************
+	 * Instantiate a 2D geometric vector from an existing vector shape.
+	 * 
+	 * @param start
+	 * @param vector
+	 */
 	public Vector2D(Vector2D vector){
 		this.start = vector.start;
 		this.vector = vector.vector;
 	}
 	
+	/*************************
+	 * Instantiate a 2D geometric vector with a start point and heading vector.
+	 * 
+	 * @param x_start	X coordinate of start point
+	 * @param y_start	Y coordinate of start point
+	 * @param x_vector 	X coordinate of heading vector
+	 * @param y_vector	Y coordinate of heading vector
+	 */
 	public Vector2D(float x_start,  float y_start, 
 					float x_vector, float y_vector){
 		vector = new Vector2f(x_vector, y_vector);
 		start = new Point2f(x_start, y_start);
 	}
 	
+	/***************************
+	 * Gets this vector's start point
+	 * 
+	 * @return
+	 */
 	public Point2f getStart(){
 		return new Point2f(start);
 	}
 	
+	/***************************
+	 * Gets this vector's heading vector
+	 * 
+	 * @return
+	 */
 	public Vector2f getVector(){
 		return new Vector2f(vector);
 	}
 	
+	/***************************
+	 * Gets this vector's end point (start point + heading vector)
+	 * 
+	 * @return
+	 */
 	public Point2f getEndPoint(){
 		Point2f p = new Point2f(start);
 		p.add(vector);

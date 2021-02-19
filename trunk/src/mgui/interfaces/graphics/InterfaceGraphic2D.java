@@ -1014,7 +1014,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 			}
 		attributes.getAttribute("CurrentSectSet").setValue(set);
 		setCurrentSection(0);
-		set.addShapeListener(this);
+		//set.addShapeListener(this);
 	}
 	
 	/**************************
@@ -1204,6 +1204,7 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 				case ShapeModified:
 					//regen the current section to reflect the changes in the section set
 					needs_regen = true;
+					this.fireGraphicListeners(new GraphicEvent(this, EventType.Modified));
 					//regenerateDisplay();
 					
 					return;

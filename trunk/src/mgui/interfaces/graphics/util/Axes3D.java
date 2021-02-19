@@ -173,6 +173,11 @@ public class Axes3D extends AbstractInterfaceObject implements AttributeListener
 		return (Color)attributes.getValue("BorderColour");
 	}
 	
+	/**************************
+	 * Sets the current axes orientation to match that of {@code camera}.
+	 * 
+	 * @param camera
+	 */
 	public void setFromCamera(Camera3D camera){
 		
 		//y axis is up vector
@@ -201,6 +206,11 @@ public class Axes3D extends AbstractInterfaceObject implements AttributeListener
 		
 	}
 	
+	/***************************
+	 * Render this axes object.
+	 * 
+	 * @param canvas
+	 */
 	public void render(Canvas3D canvas){
 		int width = canvas.getWidth();
 		int height = canvas.getHeight();

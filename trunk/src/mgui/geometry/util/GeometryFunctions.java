@@ -2249,17 +2249,19 @@ public class GeometryFunctions extends Utility {
 	}
 	
 	/*************************
-	 * Project point <code>pt</code> onto plane <code>plane</code>, along <code>plane</code>'s 
-	 * normal vector. Return a Point2f whose coordinates are relative to <code>plane</code>'s base 
+	 * Project point <code>pt</code> onto plane <code>plane</code>, along <code>proj</code>.
+	 * Return a Point2f whose coordinates are relative to <code>plane</code>'s base 
 	 * point and x- and y-axes.
 	 * 
 	 * @status experimental
-	 * @param pt
-	 * @param plane
-	 * @return
+	 * @param pt		The 3D point to project onto {@code plane}
+	 * @param proj		The vector along which to project
+	 * @param plane		The plane on which to project
+	 * @return Point2f Projected point in {@code plane}'s coordinates.
 	 */
 	public static Point2f getProjectedPoint(Point3f pt, Vector3f proj, Plane3D plane){
 		Point3f p3d = getProjectedPoint3D(pt, proj, plane);
+		if (p3d == null) return null;
 		Vector3f v = new Vector3f(p3d);
 		v.sub(plane.origin);
 		float x_dist = v.dot(plane.xAxis);
@@ -2288,7 +2290,8 @@ public class GeometryFunctions extends Utility {
 	 * @status experimental
 	 * @param pt
 	 * @param plane
-	 * @return Point3f
+	 * @return Point3f the projected point, or {@code null} in the degenerate case where {@code v}
+	 * 				   is orthogonal to the normal vector of {@code plane}.
 	 */
 	public static Point3f getProjectedPoint3D(Point3f pt, Vector3f v, Plane3D plane){
 		
@@ -2296,6 +2299,8 @@ public class GeometryFunctions extends Utility {
 		P.sub(plane.origin);
 		Vector3f proj = new Vector3f(v);
 		proj.normalize();
+		Vector3f N = plane.getNormal();
+		if (compareFloat(v.dot(N),0) == 0) return null;
 		
 		//flip projection vector if necessary
 		if (P.angle(proj) > Math.PI / 2.0) proj.scale(-1);
@@ -2305,11 +2310,12 @@ public class GeometryFunctions extends Utility {
 		Point3f proj_pt = new Point3f(pt);
 		proj_pt.add(proj);
 		
-		return pt;
+		return proj_pt;
 	}
 	
 	/*******************
-	 * Returns -1 if a < b, 0 if a = b, +1 if a > b,  within the limits of {@code error}.
+	 * Returns -1 if a < b, 0 if a = b, +1 if a > b,  within the limits of {@code GeometryFunctions.error}.
+	 * 
 	 * @param a
 	 * @param b
 	 * @return
@@ -2320,6 +2326,7 @@ public class GeometryFunctions extends Utility {
 	
 	/*******************
 	 * Returns -1 if a < b, 0 if a = b, +1 if a > b,  within the limits of {@code error}.
+	 * 
 	 * @param a
 	 * @param b
 	 * @return
@@ -2332,7 +2339,7 @@ public class GeometryFunctions extends Utility {
 	}
 	
 	/*******************
-	 * Returns -1 if a < b, 0 if a = b, +1 if a > b, within the limits of {@code error}.
+	 * Returns -1 if a < b, 0 if a = b, +1 if a > b, within the limits of {@code GeometryFunctions.error}.
 	 * @param a
 	 * @param b
 	 * @return
@@ -2354,7 +2361,14 @@ public class GeometryFunctions extends Utility {
 		return -1;
 	}
 	
-	//TODO: make more efficient, i.e., plane sweep algorithm...
+	/*************************
+	 * Determines whether pairs of segments from {@code poly1} and {@code poly2} intersection.
+	 * 
+	 * @param poly1
+	 * @param poly2
+	 * @return Matrix of type {@code boolean} and size {@code poly1.N} X {@code poly2.N},
+	 * 			where each element {@code i,j} is {@code true} if those segments intersect.
+	 */
 	public static boolean[][] getSegmentsIntersect(Polygon2D poly1, Polygon2D poly2){
 		
 		boolean[][] intersects = new boolean[poly1.vertices.size()][poly2.vertices.size()];
@@ -2517,8 +2531,12 @@ public class GeometryFunctions extends Utility {
 		A.cross(N1, N2);
 		Vector2f a = getProjectedToPlane2D(A, plane2);
 		
-		//project origin1 to plane2 for a point in plane
-		Point2f X = getProjectedPoint(plane1.getOrigin(), plane2);
+		//project origin1 to plane2 along X-axis for a point in plane
+		Point2f X = getProjectedPoint(plane1.getOrigin(), plane1.getAxisX(), plane2);
+		if (X == null) {
+			// Try to Y-axis instead
+			X = getProjectedPoint(plane1.getOrigin(), plane1.getAxisY(), plane2);
+			}
 		if (X == null || a == null) return null;
 		return new Vector2D(X, a);
 		

@@ -161,6 +161,11 @@ public class Volume3DRenderer implements Camera3DListener,
 		this.ref_camera = camera;
 	}
 	
+	/*****************************
+	 * Sets the current render mode for this renderer; one of "As volume" or "As sections".
+	 * 
+	 * @param mode
+	 */
 	public void setRenderMode(String mode){
 		if (mode.equals("As volume"))
 			setRenderMode(Mode.AsVolume);
@@ -168,15 +173,34 @@ public class Volume3DRenderer implements Camera3DListener,
 			setRenderMode(Mode.AsSections);
 	}
 	
+	/****************************
+	 * Sets the current render mode for this renderer; one of: 
+	 * 
+	 * <p>{@code Mode.AsVolume}: render as a 3D volume
+	 * 
+	 * <p>{@code Mode.AsSections}: render as 2D slices (one for each visible section set in the parent model.
+	 * 
+	 * @param mode
+	 */
 	public void setRenderMode(Mode mode){
 		render_mode = mode;
 		section_nodes.clear();
 		if (mode != Mode.AsSections && sections_group != null){
 			sections_group.removeAllChildren();
 			sections_group.detach();
+			ShapeSet3DInt set = volume3D.getModel().getModelSet();
+			ArrayList<InterfaceGraphic2D> windows = set.getSectionWindows();
+			for (InterfaceGraphic2D window : windows) {
+				window.removeGraphicListener(this);
+				}
 			}
 	}
 	
+	/**************************
+	 * Get the current render mode as a {@code String}.
+	 * 
+	 * @return
+	 */
 	public String getRenderModeStr(){
 		switch (render_mode){
 			case AsVolume:
@@ -440,6 +464,8 @@ public class Volume3DRenderer implements Camera3DListener,
 		ArrayList<InterfaceGraphic2D> windows = set.getSectionWindows();
 		
 		for (int i = 0; i < windows.size(); i++){
+			windows.get(i).addGraphicListener(this);
+			
 			//for each member, get intersection with volume bounds and render
 			volume3D.getBoundBox();
 			InterfaceGraphic2D window = windows.get(i);
@@ -564,6 +590,7 @@ public class Volume3DRenderer implements Camera3DListener,
 			quad_shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
 			window_nodes.put(window, quad_shape);
 			window.addGraphicListener(this);
+			
 			BranchGroup section_group = new BranchGroup();
 			section_group.setCapability(BranchGroup.ALLOW_DETACH);
 			section_group.setCapability(Group.ALLOW_CHILDREN_READ);

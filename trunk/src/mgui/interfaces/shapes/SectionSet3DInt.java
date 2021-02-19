@@ -379,6 +379,7 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 	 */
 	public void setRefPlane(Plane3D thisPlane) {
 		shape3d = thisPlane;
+		this.fireShapeModified();
 	}
 
 	public float getSpacing() {
@@ -785,16 +786,18 @@ public class SectionSet3DInt extends Shape3DInt implements ShapeListener,
 		}
 	}
 
-	public Shape2DInt getShape2DInt(Plane3D p, float above_dist,float below_dist, boolean listen) {
-		if (!isVisible() || !show2D() || !crossesPlane(p))
+	@Override
+	public Shape2DInt getShape2DInt(Plane3D plane, float above_dist,float below_dist, boolean listen) {
+		if (!isVisible() || !show2D() || !crossesPlane(plane))
 			return null;
-		Shape2DInt shape = getShape2D(p, above_dist, below_dist);
+		Shape2DInt shape = getShape2D(plane, above_dist, below_dist);
 		if (shape == null)
 			return null;
 		shape.setParentShape(this);
 		return shape;
 	}
 
+	@Override
 	public Shape2DInt getShape2D(Plane3D plane, float above_dist, float below_dist) {
 		if (!getShowSection3D())
 			return null;

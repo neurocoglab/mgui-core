@@ -89,6 +89,7 @@ public abstract class AbstractInterfaceObject implements InterfaceObject{
 		
 	}
 
+	@Override
 	public void destroy(){
 		isDestroyed = true;
 		ArrayList<InterfaceTreeNode> nodes = new ArrayList<InterfaceTreeNode>(tree_nodes);
@@ -101,15 +102,18 @@ public abstract class AbstractInterfaceObject implements InterfaceObject{
 		tree_nodes = null;
 	}
 	
+	@Override
 	public boolean isDestroyed(){
 		return isDestroyed;
 	}
 	
+	@Override
 	public String getName(){
 		if (name == null) return toString();
 		return name;
 	}
 	
+	@Override
 	public void setName(String name){
 		this.name = name;
 	}

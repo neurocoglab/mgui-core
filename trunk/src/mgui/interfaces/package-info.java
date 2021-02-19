@@ -18,7 +18,7 @@
 */
 
 /*****
- * This package contains all main interface objects (object which provides user interations) 
+ * This package contains all main/abstract interface objects (object which provides user interations) 
  * for ModelGUI. See <a href='http://mgui.wikidot.com/interface-objects' target='_blank'>
  * http://mgui.wikidot.com/interface-objects</a>.
  * 

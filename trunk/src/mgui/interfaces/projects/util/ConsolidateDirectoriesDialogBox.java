@@ -43,7 +43,6 @@ import mgui.interfaces.gui.InterfaceProgressBar;
 import mgui.interfaces.layouts.LineLayout;
 import mgui.interfaces.layouts.LineLayoutConstraints;
 import mgui.interfaces.logs.LoggingType;
-import mgui.projects.ProjectFunctions;
 import mgui.util.StringFunctions;
 import foxtrot.Task;
 import foxtrot.Worker;
