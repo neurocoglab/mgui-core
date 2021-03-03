@@ -417,7 +417,7 @@ public abstract class Shape3D implements Shape, Cloneable {
 			// Decode
 			Charset charset = Charset.forName("UTF-8");
 			byte[] utf8_bytes = data.getBytes(charset);
-			byte[] b_data = Base64.getDecoder().decode(utf8_bytes);
+			byte[] b_data = Base64.getMimeDecoder().decode(utf8_bytes);
 			
 			// Decompress
 			switch (compression){

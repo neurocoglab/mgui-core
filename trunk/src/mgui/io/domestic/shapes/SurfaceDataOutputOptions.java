@@ -47,6 +47,7 @@ public abstract class SurfaceDataOutputOptions extends InterfaceIOOptions {
 	public Vector<String> formats;
 	public Vector<String> filenames;
 	public String extension = ".txt";
+	public String prefix = "";
 	
 	public InterfaceDisplayPanel displayPanel;
 	

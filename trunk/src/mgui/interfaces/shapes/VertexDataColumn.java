@@ -1103,7 +1103,7 @@ public class VertexDataColumn extends AbstractInterfaceObject implements Compara
 		
 		// Now encode as Base64
 		// Finally, write string to file
-		writer.write(Base64.getEncoder().encodeToString(data_out.array()));
+		writer.write(Base64.getMimeEncoder().encodeToString(data_out.array()));
 		
 	}
 	
@@ -1143,7 +1143,7 @@ public class VertexDataColumn extends AbstractInterfaceObject implements Compara
 			// Decode
 			Charset charset = Charset.forName("UTF-8");
 			byte[] utf8_bytes = string_data.getBytes(charset);
-			byte[] b_data = Base64.getDecoder().decode(utf8_bytes);
+			byte[] b_data = Base64.getMimeDecoder().decode(utf8_bytes);
 			
 			DataType type = DataTypes.getType(DataTypes.DOUBLE);
 			if (xml_data_type.equals("MguiInteger"))

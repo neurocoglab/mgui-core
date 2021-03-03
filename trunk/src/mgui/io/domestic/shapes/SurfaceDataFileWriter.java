@@ -60,7 +60,7 @@ public abstract class SurfaceDataFileWriter extends FileWriter {
 		
 		boolean success = true;
 		for (int j = 0; j < opts.columns.size(); j++){
-			setFile(new File(dir.getAbsolutePath() + File.separator + opts.filenames.get(j)));
+			setFile(new File(dir.getAbsolutePath() + File.separator + opts.prefix + opts.filenames.get(j)));
 			setFormat(opts.formats.get(j));
 			try{
 				if (!writeValues(opts.mesh.getVertexData(opts.columns.get(j)), progress_bar))

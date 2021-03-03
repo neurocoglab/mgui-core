@@ -2036,8 +2036,10 @@ public class InterfaceVolumePanel extends InterfacePanel implements InterfaceIOP
 	 * 
 	 */
 	protected void updateHistogram(){
-		if (pnlHistPanel.histogram != null && pnlHistPanel.colour_model != null)
-			pnlHistPanel.repaint();
+		if (pnlHistPanel.histogram != null && pnlHistPanel.colour_model != null) {
+			pnlHistPanel.setBusy(false);
+			//pnlHistPanel.repaint();
+			}
 	}
 	
 	/*****************************

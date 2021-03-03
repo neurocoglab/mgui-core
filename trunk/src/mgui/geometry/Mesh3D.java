@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -829,9 +830,10 @@ public class Mesh3D extends Shape3D {
 		
 		try{
 			// Decode
-			Charset charset = Charset.forName("UTF-8");
-			byte[] utf8_bytes = data.getBytes(charset);
-			byte[] b_data = Base64.getDecoder().decode(utf8_bytes);
+//			Charset charset = Charset.forName("UTF-8");
+//			byte[] utf8_bytes = data.getBytes(charset);
+			byte[] utf8_bytes = data.getBytes(StandardCharsets.UTF_8);
+			byte[] b_data = Base64.getMimeDecoder().decode(utf8_bytes);
 			
 			// Decompress
 			switch (compression){
@@ -855,7 +857,8 @@ public class Mesh3D extends Shape3D {
 			this.setFaces(faces);
 			
 		}catch (Exception ex){
-			InterfaceSession.handleException(ex);
+			InterfaceSession.log("Bad Base64 string!");
+			//InterfaceSession.handleException(ex);
 			}
 		
 	}

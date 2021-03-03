@@ -60,7 +60,7 @@ public class SurfaceDataOutputDialogBox extends MeshOptionsDialogBox {
 	@Override
 	protected void init(){
 		super.init();
-		updateDialog();
+		
 		
 		this.setDialogSize(550,380);
 		this.setTitle("Surface Data Output Options");
@@ -72,7 +72,8 @@ public class SurfaceDataOutputDialogBox extends MeshOptionsDialogBox {
 		c = new LineLayoutConstraints(3, 3, 0.05, 0.5, 1);
 		mainPanel.add(lblColumns, c);
 		
-		updateTable();
+		updateDialog();
+		
 	}
 	
 	@Override
@@ -80,8 +81,12 @@ public class SurfaceDataOutputDialogBox extends MeshOptionsDialogBox {
 		if (options != null){
 			SurfaceDataOutputOptions _options = (SurfaceDataOutputOptions)options;
 			currentMesh = _options.mesh;
+			txtPrefix.setText(_options.prefix);
 			}
 		fillMeshCombo();
+		updateTable();
+		
+		
 		return true;
 	}
 	
@@ -175,6 +180,7 @@ public class SurfaceDataOutputDialogBox extends MeshOptionsDialogBox {
 					}
 				
 			ops.mesh = currentMesh;
+			ops.prefix = txtPrefix.getText();
 			io_panel.updateFromDialog(this);
 			setVisible(false);
 			}

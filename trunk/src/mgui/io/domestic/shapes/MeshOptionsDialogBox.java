@@ -84,7 +84,7 @@ public class MeshOptionsDialogBox extends InterfaceIODialogBox {
 			cmbMesh.addItem(mesh);
 			}
 		
-		if (currentMesh != null)
+		if (currentMesh == null)
 			currentMesh = (Mesh3DInt)cmbMesh.getSelectedItem();
 		else
 			cmbMesh.setSelectedItem(currentMesh);
