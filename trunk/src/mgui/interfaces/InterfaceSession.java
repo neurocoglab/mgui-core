@@ -382,7 +382,11 @@ public class InterfaceSession {
 							return false;
 						break;
 					case Debug:
-						message = "DEBUG: " + message;
+						//message = "DEBUG: " + message;
+					}
+				
+				if (type.equals(LoggingType.Debug)) {
+					message = "DEBUG: " + message;
 					}
 				
 				LoggingTarget target = InterfaceEnvironment.getLoggingTarget();
