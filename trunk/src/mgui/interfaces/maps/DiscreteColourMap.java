@@ -230,8 +230,9 @@ public class DiscreteColourMap extends ColourMap {
 		HashMap<Integer,Integer> idx_map = new HashMap<Integer,Integer>();
 		ArrayList<Integer> indices = new ArrayList<Integer>(colours.keySet());
 		Collections.sort(indices);
-		for (int i = 0; i < indices.size(); i++)
+		for (int i = 0; i < indices.size(); i++) {
 			idx_map.put(indices.get(i),i);
+			}
 		return idx_map;
 	}
 	

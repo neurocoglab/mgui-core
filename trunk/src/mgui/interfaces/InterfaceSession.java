@@ -382,7 +382,7 @@ public class InterfaceSession {
 							return false;
 						break;
 					case Debug:
-						//message = "DEBUG: " + message;
+					default:
 					}
 				
 				if (type.equals(LoggingType.Debug)) {
@@ -421,6 +421,7 @@ public class InterfaceSession {
 							return false;
 							}
 					case None:
+					default:
 					}
 		
 		return false;

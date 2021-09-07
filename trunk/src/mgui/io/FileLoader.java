@@ -49,6 +49,7 @@ public abstract class FileLoader implements InterfaceIO {
 	protected File dataFile;
 	protected URL dataURL;
 	protected InterfaceIOOptions options;
+	protected String object_name;
 	
 	/**********************************************
 	 * Sets the current File for this loader. Sets the URL to {@code null}.
@@ -57,6 +58,16 @@ public abstract class FileLoader implements InterfaceIO {
 	public void setFile(File file) {
 		dataFile = file;
 		dataURL = null;
+	}
+	
+	/*********************************************
+	 * Set the current object's name
+	 * 
+	 * @param name
+	 */
+	public void setObjectName(String name) {
+		if (name.contains(".")) name = name.replace(".", "_");
+		this.object_name = name;
 	}
 
 	/**********************************************
@@ -75,6 +86,15 @@ public abstract class FileLoader implements InterfaceIO {
 	 */
 	public File getFile(){
 		return dataFile;
+	}
+	
+	/*********************************************
+	 * Get the current object's name
+	 * 
+	 * @return
+	 */
+	public String getObjectName() {
+		return this.object_name;
 	}
 	
 	@Override

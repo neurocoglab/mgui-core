@@ -143,6 +143,7 @@ public class VertexDataColumn extends AbstractInterfaceObject implements Compara
 		attributes.add(list);
 		
 		list = new AttributeSelection<ColourMap>("ColourMap", InterfaceEnvironment.getColourMaps(), ColourMap.class);
+		list.allowUnlisted(true);
 		attributes.add(list);
 		
 		attributes.addAttributeListener(this);

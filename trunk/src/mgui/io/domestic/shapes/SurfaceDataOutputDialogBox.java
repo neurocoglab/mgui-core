@@ -20,6 +20,7 @@
 package mgui.io.domestic.shapes;
 
 import java.awt.event.ActionEvent;
+import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -124,7 +125,14 @@ public class SurfaceDataOutputDialogBox extends MeshOptionsDialogBox {
 			}else{
 				v_files.add(txtPrefix.getText() + (v_cols.get(i)) + _options.extension);
 				v_out.add(false);
-				v_formats.add("0.000#####");
+				int dtype = currentMesh.getVertexDataColumn(v_cols.get(i)).getDataTransferType();
+				if (dtype == DataBuffer.TYPE_INT || dtype == DataBuffer.TYPE_SHORT) {
+					v_formats.add("0");
+				} else {
+					v_formats.add("0.000#####");
+					}
+				
+				
 				}
 			}
 		

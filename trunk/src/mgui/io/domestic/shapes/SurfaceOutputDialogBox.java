@@ -45,7 +45,7 @@ public class SurfaceOutputDialogBox extends InterfaceIODialogBox {
 
 	//controls
 	JLabel lblMesh = new JLabel("Mesh to output:");
-	JComboBox cmbMesh = new JComboBox();
+	protected JComboBox cmbMesh = new JComboBox();
 		
 	LineLayout lineLayout;
 	

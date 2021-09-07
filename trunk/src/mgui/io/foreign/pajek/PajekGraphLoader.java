@@ -410,7 +410,7 @@ public class PajekGraphLoader extends GraphFileLoader {
 	                case 3:         // ID, no label, coordinates
 	                    coord_idx = 1;
 	                    break;
-	                case 4:         // ID, label, (x,y) coordinates
+	                case 4:         // ID, label, (x,y) coordinates OR values
 	                    coord_idx = 2;
 	                    break;
 	            }
