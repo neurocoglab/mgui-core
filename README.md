@@ -1,7 +1,7 @@
 # mgui-core
  Core implementation of ModelGUI API
 
-Javadoc for release 1.0.29: [http://resources.modelgui.org/javadoc/](http://resources.modelgui.org/javadoc/)
+Javadoc for release 1.0.33: [http://resources.modelgui.org/javadoc/](http://resources.modelgui.org/javadoc/)
 
 Website for ModelGUI: [http://www.modelgui.org/](http://www.modelgui.org/)
 
