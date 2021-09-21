@@ -44,10 +44,10 @@ import mgui.io.InterfaceIOPanel;
 public class SurfaceOutputDialogBox extends InterfaceIODialogBox {
 
 	//controls
-	JLabel lblMesh = new JLabel("Mesh to output:");
+	protected JLabel lblMesh = new JLabel("Mesh to output:");
 	protected JComboBox cmbMesh = new JComboBox();
 		
-	LineLayout lineLayout;
+	protected LineLayout lineLayout;
 	
 	public SurfaceOutputDialogBox(){
 		super();
