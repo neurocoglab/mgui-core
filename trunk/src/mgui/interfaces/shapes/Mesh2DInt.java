@@ -298,24 +298,14 @@ public class Mesh2DInt extends Shape2DInt {
 							found = k;
 							delta = pt.distance(k);
 							}
-						//continue;
 						} 
 					}
 				
 				if (found != null) {
-					
 					setk.add(found);
-					
-					if (setk.size() == 1) {
-						endpoints.add(pt);
-					} else {
-						connected.get(found).add(pt);
-						}
+					connected.get(found).add(pt);
 					unprocessed.remove(found);
-				} else {
-					orphans.add(pt);
 					}
-//				if (!unprocessed.isEmpty()) pt = unprocessed.pop();
 				}
 			
 			unconnected.clear();
