@@ -242,17 +242,12 @@ public class Mesh2DInt extends Shape2DInt {
 		HashMap<Point2f,Set<Point2f>> connected = new HashMap<Point2f,Set<Point2f>>();
 		Set<Point2f> vset = new TreeSet<Point2f>(pt_comp);
 		
-		ArrayList<Point2f[]> bad_edges = new ArrayList<Point2f[]>();
-		Set<Point2f> kset;
-		int wtf = 0; int wtf2 = edges.size();
-		
 		// For each edge, sort points, add p1 -> p2
 		for (Point2f[] edge : edges) {
 			
 			if (pt_comp.compare(edge[0], edge[1]) == 0) {
 				// Edge is a single point; discard it
-				tolerance = tolerance * 1;
-				bad_edges.add(edge);
+
 			} else {
 				
 				if (connected.get(edge[0]) == null) {
@@ -263,29 +258,11 @@ public class Mesh2DInt extends Shape2DInt {
 					connected.put(edge[1], new TreeSet<Point2f>(pt_comp));
 					}
 				
-//				if (connected.get(edge[0]).contains(edge[1]) || 
-//						connected.get(edge[1]).contains(edge[0])) {
-//					bad_edges.add(edge);
-//					}
-				
-				int ksz = connected.get(edge[0]).size();
 				connected.get(edge[0]).add(edge[1]);
-				
-				
-				if (ksz == connected.get(edge[0]).size()) {
-					bad_edges.add(edge);
-					}
-				
-				ksz = connected.get(edge[1]).size();
 				connected.get(edge[1]).add(edge[0]);
-				if (ksz == connected.get(edge[1]).size()) {
-					bad_edges.add(edge);
-					}
 				
 				vset.add(edge[0]);
 				vset.add(edge[1]);
-				wtf++;
-				wtf2 += 0;
 				}
 			
 			}
@@ -303,8 +280,6 @@ public class Mesh2DInt extends Shape2DInt {
 		TreeSet<Point2f> endpoints = new TreeSet<Point2f>(pt_comp);
 		
 		join_tolerance = 10;
-		int wtf3 = vset.size();
-		wtf3+=0;
 		
 		while (unconnected.size() > 1) {
 			Stack<Point2f> unprocessed = new Stack<Point2f>();
