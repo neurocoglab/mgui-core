@@ -24,15 +24,16 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
 import org.jogamp.vecmath.Point2f;
 
+import mgui.geometry.PointSet2D;
 import mgui.geometry.Polygon2D;
 import mgui.geometry.Rect2D;
+import mgui.geometry.util.NodeShape;
 import mgui.interfaces.InterfaceSession;
 import mgui.interfaces.attributes.Attribute;
 import mgui.interfaces.graphics.util.DrawingEngine;
@@ -79,6 +80,7 @@ public class Mesh2DInt extends Shape2DInt {
 	 */
 	public Mesh2DInt(ArrayList<Point2f[]> edges, ArrayList<Integer[]> indices){
 		super();
+		
 		this.edges = edges;
 		this.indices = indices;
 		init();
@@ -87,6 +89,15 @@ public class Mesh2DInt extends Shape2DInt {
 	private void init(){
 		//add attributes here
 		
+	}
+	
+	public ArrayList<Point2f> getVertices(){
+		TreeSet<Point2f> vertices = new TreeSet<Point2f>(pt_comp);
+		for (Point2f[] pts : edges) {
+			vertices.add(pts[0]);
+			vertices.add(pts[1]);
+			}
+		return new ArrayList<Point2f>(vertices);
 	}
 	
 	@Override
@@ -109,7 +120,7 @@ public class Mesh2DInt extends Shape2DInt {
 				for (Polygon2D polygon : polygons) {
 					d.drawPolygon2D(g, polygon);
 					}
-				return;
+				//return;
 				}
 			}
 		
@@ -117,7 +128,30 @@ public class Mesh2DInt extends Shape2DInt {
 			d.drawMesh2D(g, edges, alpha);
 		else
 			d.drawMesh2D(g, edges, colours, alpha);
+		
+		if (((MguiBoolean)attributes.getValue("2D.ShowVertices")).getTrue()){
+			PointSet2D points = new PointSet2D(getCoords());
+			float scale = (((MguiFloat)attributes.getValue("2D.VertexScale")).getFloat());
+			NodeShape shape = this.getVertexShape();
+			d.drawPointSet2D(g, points, scale, shape, null, alpha);
+		}
 	
+	}
+	
+	protected float[] getCoords() {
+		TreeSet<Point2f> vertices = new TreeSet<Point2f>(pt_comp);
+		for (Point2f[] pts : edges) {
+			vertices.add(pts[0]);
+			vertices.add(pts[1]);
+			}
+		float[] coords = new float[vertices.size()*2];
+		int i = 0;
+		for (Point2f p : vertices) {
+			coords[i] = p.x;
+			coords[i+1] = p.y;
+			i+=2;
+			}
+		return coords;
 	}
 	
 	class PolyNode {
@@ -175,31 +209,51 @@ public class Mesh2DInt extends Shape2DInt {
 		
 	}
 	
+	double tolerance = 0; //.0000001;
+	double join_tolerance = 1;
+	
+	Comparator<Point2f> pt_comp = new Comparator<Point2f>() {
+		public int compare(Point2f p1, Point2f p2) {
+			if (p1.x - p2.x > tolerance) return 1;
+			if (p2.x - p1.x > tolerance) return -1;
+			if (p1.y - p2.y > tolerance) return 1;
+			if (p2.y - p1.y > tolerance) return -1;
+			if (!p1.equals(p2)) {
+				tolerance = tolerance * 1;
+				}
+			return 0;
+		}
+	};
+	
+	Comparator<Point2f> pt_comp_join = new Comparator<Point2f>() {
+		public int compare(Point2f p1, Point2f p2) {
+			if (p1.x - p2.x > join_tolerance) return 1;
+			if (p2.x - p1.x > join_tolerance) return -1;
+			if (p1.y - p2.y > join_tolerance) return 1;
+			if (p2.y - p1.y > join_tolerance) return -1;
+			return 0;
+		}
+	};
+	
 	private ArrayList<Polygon2D> getAsPolygons() {
 		
 		ArrayList<Polygon2D> polygons = new ArrayList<Polygon2D>();
-		double tolerance = 0.00001;
-		
-		Comparator<Point2f> pt_comp = new Comparator<Point2f>() {
-			public int compare(Point2f p1, Point2f p2) {
-				if (p1.x - p2.x > tolerance) return 1;
-				if (p2.x - p1.x > tolerance) return -1;
-				if (p1.y - p2.y > tolerance) return 1;
-				if (p2.y - p1.y > tolerance) return -1;
-				return 0;
-			}
-		};
 		
 		HashMap<Point2f,Set<Point2f>> connected = new HashMap<Point2f,Set<Point2f>>();
 		Set<Point2f> vset = new TreeSet<Point2f>(pt_comp);
+		
+		ArrayList<Point2f[]> bad_edges = new ArrayList<Point2f[]>();
+		Set<Point2f> kset;
+		int wtf = 0; int wtf2 = edges.size();
 		
 		// For each edge, sort points, add p1 -> p2
 		for (Point2f[] edge : edges) {
 			
 			if (pt_comp.compare(edge[0], edge[1]) == 0) {
 				// Edge is a single point; discard it
-				
-			}else {
+				tolerance = tolerance * 1;
+				bad_edges.add(edge);
+			} else {
 				
 				if (connected.get(edge[0]) == null) {
 					connected.put(edge[0], new TreeSet<Point2f>(pt_comp));
@@ -209,12 +263,94 @@ public class Mesh2DInt extends Shape2DInt {
 					connected.put(edge[1], new TreeSet<Point2f>(pt_comp));
 					}
 				
+//				if (connected.get(edge[0]).contains(edge[1]) || 
+//						connected.get(edge[1]).contains(edge[0])) {
+//					bad_edges.add(edge);
+//					}
+				
+				int ksz = connected.get(edge[0]).size();
 				connected.get(edge[0]).add(edge[1]);
+				
+				
+				if (ksz == connected.get(edge[0]).size()) {
+					bad_edges.add(edge);
+					}
+				
+				ksz = connected.get(edge[1]).size();
 				connected.get(edge[1]).add(edge[0]);
+				if (ksz == connected.get(edge[1]).size()) {
+					bad_edges.add(edge);
+					}
 				
 				vset.add(edge[0]);
 				vset.add(edge[1]);
+				wtf++;
+				wtf2 += 0;
 				}
+			
+			}
+		
+		// Find vertices with only one connected vertex 
+		// If unconnected points are within a search distance, connect them
+		TreeSet<Point2f> unconnected = new TreeSet<Point2f>(pt_comp);
+		//TreeSet<Point2f> overconnected = new TreeSet<Point2f>(pt_comp);
+		for (Point2f k : connected.keySet()) {
+			if (connected.get(k).size() == 1) {
+				unconnected.add(k);
+				}
+			}
+		TreeSet<Point2f> orphans = new TreeSet<Point2f>(pt_comp);
+		TreeSet<Point2f> endpoints = new TreeSet<Point2f>(pt_comp);
+		
+		join_tolerance = 10;
+		int wtf3 = vset.size();
+		wtf3+=0;
+		
+		while (unconnected.size() > 1) {
+			Stack<Point2f> unprocessed = new Stack<Point2f>();
+			unprocessed.addAll(unconnected);
+			//Point2f pt = unprocessed.pop();
+			while (!unprocessed.isEmpty()) {
+				Point2f pt = unprocessed.pop();
+				Point2f found = null;
+				float delta = (float)join_tolerance;
+				Set<Point2f> setk = connected.get(pt);
+				for (Point2f k : vset) {
+					if (pt_comp.compare(pt, k) != 0 &&
+							pt_comp_join.compare(pt, k) == 0) {
+						// Find nearest
+						if (pt.distance(k) < delta && !setk.contains(k)) {
+							found = k;
+							delta = pt.distance(k);
+							}
+						//continue;
+						} 
+					}
+				
+				if (found != null) {
+					
+					setk.add(found);
+					
+					if (setk.size() == 1) {
+						endpoints.add(pt);
+					} else {
+						connected.get(found).add(pt);
+						}
+					unprocessed.remove(found);
+				} else {
+					orphans.add(pt);
+					}
+//				if (!unprocessed.isEmpty()) pt = unprocessed.pop();
+				}
+			
+			unconnected.clear();
+			for (Point2f k : connected.keySet()) {
+				Set<Point2f> setk = connected.get(k);
+				if (!endpoints.contains(k) && !orphans.contains(k) && setk.size() == 1) {
+					unconnected.add(k);
+					}
+				}
+			
 			}
 		
 		Stack<Point2f> unprocessed = new Stack<Point2f>();
@@ -246,6 +382,10 @@ public class Mesh2DInt extends Shape2DInt {
 							nodes_to_process.push(nbr);
 							}
 						}
+					}
+				
+				if (nodes_to_process.isEmpty()) {
+					tolerance = tolerance + 0;
 					}
 				
 				}

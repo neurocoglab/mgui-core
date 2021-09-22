@@ -559,7 +559,7 @@ public class DrawingEngine implements Engine {
 	 */
 	public void drawPointSet2D(Graphics2D g, PointSet2D point_set, float size, 
 							   NodeShape shape, ArrayList<Colour> colours, float alpha){
-		drawPointSet2D(g, point_set, size, shape, colours, alpha, null);
+		drawPointSet2D(g, point_set, size, shape, colours, alpha, null, size);
 	}
 	
 	/*************************
@@ -575,6 +575,46 @@ public class DrawingEngine implements Engine {
 	public void drawPointSet2D(Graphics2D g, PointSet2D point_set, float size, 
 							   NodeShape shape, ArrayList<Colour> colours, float alpha,
 							   ArrayList<String> labels){
+		
+		drawPointSet2D(g, point_set, size, shape, colours, alpha, labels, size);
+		
+	}
+	
+	/*************************
+	 * Draws a {@linkplain PointSet3D} with the specified parameters
+	 * 
+	 * @param g
+	 * @param point_set
+	 * @param size
+	 * @param shape
+	 * @param colours
+	 * @param alpha
+	 */
+	public void drawPointSet2D(Graphics2D g, PointSet2D point_set, float size, 
+							   NodeShape shape, ArrayList<Colour> colours, float alpha,
+							   ArrayList<String> labels, float label_scale){
+		// Uniform scales
+		ArrayList<Float> scales = new ArrayList<Float>(point_set.getSize());
+		for (int i = 0; i < point_set.getSize(); i++) {
+			scales.add(size);
+			}
+		
+		drawPointSet2D(g, point_set, scales, shape, colours, alpha, labels, label_scale);
+	}
+	
+	/*************************
+	 * Draws a {@linkplain PointSet3D} with the specified parameters
+	 * 
+	 * @param g
+	 * @param point_set
+	 * @param size
+	 * @param shape
+	 * @param colours
+	 * @param alpha
+	 */
+	public void drawPointSet2D(Graphics2D g, PointSet2D point_set, ArrayList<Float> scales, 
+							   NodeShape shape, ArrayList<Colour> colours, float alpha,
+							   ArrayList<String> labels, float label_scale){
 		
 		boolean has_alpha = (alpha >= 0f && alpha <= 1f);
 		
@@ -592,19 +632,26 @@ public class DrawingEngine implements Engine {
 		Rectangle2D bounds = g_shape.getBounds2D();
 		// Size is the maximal dimension in x or y
 		double max_dim = Math.max(bounds.getWidth(), bounds.getHeight());
-		double scale = size / max_dim;
 		
+		AffineTransform base_transform = g.getTransform();
 		
 		for (int i = 0; i < point_set.n; i++){
 			Point point = getScreenPoint(point_set.getVertex(i));
-			if (colours != null)
+			if (colours != null) {
 				g.setPaint(colours.get(i).getColor());
+			} else {
+				g.setPaint((Color)drawing_attributes.getValue("2D.VertexColour"));
+				}
 			
-			transform = new AffineTransform();
+			double scale = scales.get(i); // / max_dim;
+			
+			transform = new AffineTransform(base_transform);
+			
 			transform.translate(point.getX(), point.getY());
 			transform.scale(scale, scale);
+			
 			g.setTransform(transform);
-			g.setPaint((Color)drawing_attributes.getValue("2D.VertexColour"));
+			
 			g.fill(g_shape);
 			g.setPaint((Color)drawing_attributes.getValue("2D.VertexOutlineColour"));
 			g.draw(g_shape);
@@ -612,7 +659,7 @@ public class DrawingEngine implements Engine {
 		
 		
 		if (labels != null){
-			bounds.setRect(0,0, bounds.getWidth()*scale, bounds.getHeight()*scale);
+			bounds.setRect(0,0, bounds.getWidth()*label_scale, bounds.getHeight()*label_scale);
 			drawLabels2D(g, bounds, point_set.getVertices(), labels, alpha);
 			}
 		

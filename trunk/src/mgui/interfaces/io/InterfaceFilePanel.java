@@ -344,16 +344,20 @@ public class InterfaceFilePanel extends InterfacePanel implements ActionListener
 			InterfaceProgressBar progress_bar = new InterfaceProgressBar(loader.getProgressMessage());
 			
 			progress_bar.register();
-			if (loader.load(currentInputOptions, progress_bar)){
-				JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
-											  loader.getSuccessMessage(), 
-											  loader.getTitle(), 
-											  JOptionPane.INFORMATION_MESSAGE);
-			}else{
-				JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
-											  loader.getFailureMessage(), 
-											  loader.getTitle(), 
-											  JOptionPane.INFORMATION_MESSAGE);
+			try {
+				if (loader.load(currentInputOptions, progress_bar)){
+					JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
+												  loader.getSuccessMessage(), 
+												  loader.getTitle(), 
+												  JOptionPane.INFORMATION_MESSAGE);
+				}else{
+					JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
+												  loader.getFailureMessage(), 
+												  loader.getTitle(), 
+												  JOptionPane.INFORMATION_MESSAGE);
+					}
+			} catch (Exception ex) {
+				InterfaceSession.handleException(ex);
 				}
 			
 			//ensure progress bar has been deregistered
@@ -371,16 +375,20 @@ public class InterfaceFilePanel extends InterfacePanel implements ActionListener
 			
 			progress_bar.register();
 			
-			if (writer.write(currentOutputOptions, progress_bar))
-				JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
-											  writer.getSuccessMessage(), 
-											  writer.getTitle(), 
-											  JOptionPane.INFORMATION_MESSAGE);
-			else
-				JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
-											  writer.getFailureMessage(), 
-											  writer.getTitle(), 
-											  JOptionPane.ERROR_MESSAGE);
+			try {
+				if (writer.write(currentOutputOptions, progress_bar))
+					JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
+												  writer.getSuccessMessage(), 
+												  writer.getTitle(), 
+												  JOptionPane.INFORMATION_MESSAGE);
+				else
+					JOptionPane.showMessageDialog(InterfaceSession.getSessionFrame(), 
+												  writer.getFailureMessage(), 
+												  writer.getTitle(), 
+												  JOptionPane.ERROR_MESSAGE);
+			} catch (Exception ex) {
+				InterfaceSession.handleException(ex);
+				}
 			
 			//ensure progress bar has been deregistered
 			if (progress_bar.isRegistered()) progress_bar.deregister();

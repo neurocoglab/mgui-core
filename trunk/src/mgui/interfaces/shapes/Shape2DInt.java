@@ -110,13 +110,7 @@ public abstract class Shape2DInt extends InterfaceShape
 	private void init(){
 		_init();
 		
-		HashMap<String, NodeShape> node_shapes = InterfaceEnvironment.getVertexShapes();
-		AttributeSelectionMap<NodeShape> shapes = 
-			new AttributeSelectionMap<NodeShape>("2D.VertexShape", node_shapes, NodeShape.class);
-		shapes.setComboMode(ComboMode.AsValues);
-		shapes.setComboRenderer(new NodeShapeComboRenderer());
-		shapes.setComboWidth(100);
-		attributes.add(shapes);
+		
 		
 	}
 	
@@ -149,7 +143,7 @@ public abstract class Shape2DInt extends InterfaceShape
 	}
 	
 	public NodeShape getVertexShape(){
-		return (NodeShape)attributes.getValue("VertexShape");
+		return (NodeShape)attributes.getValue("2D.VertexShape");
 	}
 	
 	public void setVertexShape(NodeShape shape){
