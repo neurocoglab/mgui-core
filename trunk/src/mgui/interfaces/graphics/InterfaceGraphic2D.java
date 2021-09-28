@@ -653,10 +653,11 @@ public class InterfaceGraphic2D extends InterfaceGraphic<Tool2D> implements Shap
 			((ShapeSet2DInt)shape).notifyListeners = true;
 			return;
 			}
-		if (shape.isImageShape()) 
+		if (shape.isImageShape()) {
 			shape3DObjects.addShape(shape, 0, true, false);
-		else
+		} else {
 			shape3DObjects.addShape(shape, true, false);
+			}
 		
 	}
 	

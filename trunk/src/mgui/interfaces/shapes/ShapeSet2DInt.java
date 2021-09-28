@@ -431,6 +431,9 @@ public class ShapeSet2DInt extends Shape2DInt
 		for (int i = 0; i < members.size(); i++)
 			if (members.get(i).isVisible() && members.get(i).show2D())
 				members.get(i).drawShape2D(g, d);
+		if (((MguiBoolean)attributes.getValue("2D.ShowBounds")).getTrue()) {
+			drawBounds(g,d);
+			}
 	}
 	
 	public Shape2DInt getMember(int i){

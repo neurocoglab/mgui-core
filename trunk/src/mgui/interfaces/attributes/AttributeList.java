@@ -408,7 +408,7 @@ public class AttributeList extends AbstractInterfaceObject
 		for (Attribute<?> attribute : list) {
 			Attribute<?> attr = getAttribute(attribute.getName());
 			if (attr != null)
-				attr.setValue(attribute.getValue(), fire, true);
+				attr.setValue(attribute.getValue(), false, true);
 			}
 		
 	}

@@ -241,7 +241,8 @@ public abstract class InterfaceShape extends AbstractInterfaceObject
 		attributes.add(new ShapeAttribute<MguiFloat>("2D.Alpha", new MguiFloat(1.0f), true));
 		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowBounds", new MguiBoolean(false), false, true));
 		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowBounds", new MguiBoolean(false), true, false));
-		attributes.add(new ShapeAttribute<Color>("3D.BoundsColour", Color.BLUE));
+		attributes.add(new ShapeAttribute<Color>("3D.BoundsColour", Color.GREEN, false, true));
+		attributes.add(new ShapeAttribute<Color>("2D.BoundsColour", Color.GREEN, true, false));
 		attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowVertices", new MguiBoolean(false)));
 		attributes.add(new ShapeAttribute<MguiBoolean>("3D.ShowVertices", new MguiBoolean(false)));
 		HashMap<String, NodeShape> node_shapes = InterfaceEnvironment.getVertexShapes();

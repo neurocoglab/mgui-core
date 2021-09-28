@@ -1605,7 +1605,9 @@ public abstract class Shape3DInt extends InterfaceShape
 			// Don't fail if columns don't copy perfectly
 			for (VertexDataColumn source_column : source_shape.getVertexDataColumns()) {
 				VertexDataColumn target_column = this.getVertexDataColumn(source_column.getName());
-				target_column.copyAttributes(source_column);
+				if (target_column != null) {
+					target_column.copyAttributes(source_column);
+					}
 				}
 			
 			this.setLive(true);

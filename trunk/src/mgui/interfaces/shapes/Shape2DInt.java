@@ -19,6 +19,7 @@
 
 package mgui.interfaces.shapes;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -317,7 +318,22 @@ public abstract class Shape2DInt extends InterfaceShape
 		if (isOverridden)
 			d.setAttributes(overrideAttr);
 		draw(g, d);
+		if (((MguiBoolean)attributes.getValue("2D.ShowBounds")).getTrue()) {
+			drawBounds(g,d);
+			}
 		d.reset(g);
+	}
+	
+	protected void drawBounds(Graphics2D g, DrawingEngine d) {
+		
+		Color clr = (Color)attributes.getValue("2D.BoundsColour");
+		d.setAttribute("2D.HasFill", new MguiBoolean(false));
+		d.setAttribute("2D.LineColour", clr);
+		d.setAttribute("2D.LineStyle", new BasicStroke());
+		Rect2D bounds = this.getBounds();
+		
+		d.drawRect2D(g, bounds);
+		
 	}
 	
 	//override this method to draw the object

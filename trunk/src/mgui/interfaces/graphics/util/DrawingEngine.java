@@ -54,6 +54,7 @@ import org.jogamp.vecmath.Vector2f;
 
 import mgui.geometry.Circle2D;
 import mgui.geometry.LineSegment2D;
+import mgui.geometry.Mesh2D;
 import mgui.geometry.PointSet2D;
 import mgui.geometry.PointSet3D;
 import mgui.geometry.Polygon2D;
@@ -153,6 +154,7 @@ public class DrawingEngine implements Engine {
 		drawing_attributes.add(new Attribute<MguiBoolean>("2D.HasFill", new MguiBoolean(false), false));
 		drawing_attributes.add(new Attribute<MguiBoolean>("2D.ShowVertices", new MguiBoolean(false), false));
 		drawing_attributes.add(new Attribute<MguiInteger>("2D.VertexScale", new MguiInteger(1), true));
+		drawing_attributes.add(new Attribute<Color>("2D.BoundsColour", Color.GREEN, true));
 		drawing_attributes.add(new Attribute<Color>("2D.VertexColour", Color.BLUE, true));
 		drawing_attributes.add(new Attribute<Color>("2D.VertexOutlineColour", Color.BLACK, true));
 		drawing_attributes.add(new Attribute<Color>("2D.FillColour", Color.BLUE, true));
@@ -162,6 +164,7 @@ public class DrawingEngine implements Engine {
 		drawing_attributes.add(new Attribute<MguiBoolean>("LabelNodes", new MguiBoolean(false)));
 		drawing_attributes.add(new ShapeAttribute<Font>("2D.LabelFont", new Font("Arial", Font.PLAIN, 5), true));
 		drawing_attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelScale", new MguiFloat(1f), true));
+		drawing_attributes.add(new ShapeAttribute<MguiBoolean>("2D.ShowBounds", new MguiBoolean(false), true));
 		drawing_attributes.add(new ShapeAttribute<Color>("2D.LabelColour", Color.BLACK, true));
 		drawing_attributes.add(new ShapeAttribute<Color>("2D.LabelOutlineColour", Color.WHITE, true));
 		drawing_attributes.add(new ShapeAttribute<MguiFloat>("2D.LabelOutlineWidth", new MguiFloat(0), true));
@@ -468,7 +471,10 @@ public class DrawingEngine implements Engine {
 	 * @param g
 	 * @param edges
 	 */
-	public void drawMesh2D(Graphics2D g, ArrayList<Point2f[]> edges, float alpha){
+	public void drawMesh2D(Graphics2D g, Mesh2D mesh, float alpha){
+		
+		ArrayList<Point2f[]> edges = mesh.getEdges();
+		
 		g.setPaint((Color)drawing_attributes.getValue("2D.LineColour"));
 		BasicStroke bs = (BasicStroke)drawing_attributes.getValue("2D.LineStyle");
 		g.setStroke(bs);
@@ -501,7 +507,10 @@ public class DrawingEngine implements Engine {
 	 * @param edges
 	 * @param colours
 	 */
-	public void drawMesh2D(Graphics2D g, ArrayList<Point2f[]> edges, ArrayList<Colour> colours, float alpha){
+	public void drawMesh2D(Graphics2D g, Mesh2D mesh, ArrayList<Colour> colours, float alpha){
+		
+		ArrayList<Point2f[]> edges = mesh.getEdges();
+		
 		Paint p;
 		//g.setPaint((Color)drawingAttr.getValue("LineColour"));
 		BasicStroke bs = (BasicStroke)drawing_attributes.getValue("2D.LineStyle");

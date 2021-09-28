@@ -19,6 +19,7 @@
 
 package mgui.interfaces.graphs.util;
 
+import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.io.IOException;
@@ -28,28 +29,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jogamp.vecmath.Point3f;
-
-import mgui.geometry.Mesh3D;
-import mgui.geometry.mesh.NeighbourhoodMesh;
-import mgui.geometry.util.NodeShape;
-import mgui.interfaces.InterfaceSession;
-import mgui.interfaces.Utility;
-import mgui.interfaces.graphs.AbstractGraphEdge;
-import mgui.interfaces.graphs.AbstractGraphNode;
-import mgui.interfaces.graphs.DefaultGraph;
-import mgui.interfaces.graphs.DefaultGraphEdge;
-import mgui.interfaces.graphs.DefaultGraphNode;
-import mgui.interfaces.graphs.InterfaceAbstractGraph;
-import mgui.interfaces.graphs.InterfaceGraphDisplay;
-import mgui.interfaces.graphs.layouts.Coordinate3DLayout;
-import mgui.interfaces.graphs.layouts.CoordinateLayout;
-import mgui.interfaces.logs.LoggingType;
-import mgui.util.IDFactory;
-
 import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
+import org.jogamp.vecmath.Point3f;
 
 import Jama.Matrix;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -67,7 +50,25 @@ import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.renderers.BasicEdgeLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer;
+import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
+import edu.uci.ics.jung.visualization.renderers.VertexLabelRenderer;
+import mgui.geometry.Mesh3D;
+import mgui.geometry.mesh.NeighbourhoodMesh;
+import mgui.geometry.util.NodeShape;
+import mgui.interfaces.InterfaceSession;
+import mgui.interfaces.Utility;
+import mgui.interfaces.graphs.AbstractGraphEdge;
+import mgui.interfaces.graphs.AbstractGraphNode;
+import mgui.interfaces.graphs.DefaultGraph;
+import mgui.interfaces.graphs.DefaultGraphEdge;
+import mgui.interfaces.graphs.DefaultGraphNode;
+import mgui.interfaces.graphs.InterfaceAbstractGraph;
+import mgui.interfaces.graphs.InterfaceGraphDisplay;
+import mgui.interfaces.graphs.layouts.Coordinate3DLayout;
+import mgui.interfaces.graphs.layouts.CoordinateLayout;
+import mgui.interfaces.logs.LoggingType;
+import mgui.util.IDFactory;
 
 /*******************************************
  * Provides utility functions for Graphs.
@@ -564,8 +565,8 @@ public class GraphFunctions extends Utility {
 	 * @param position
 	 * @return
 	 */
-	public static GraphNodeLabelRenderer getNodeLabelRenderer(Position position){
-		return new GraphNodeLabelRenderer(position);
+	public static GraphNodeLabelRenderer getNodeLabelRenderer(Position position, Color clr){
+		return new GraphNodeLabelRenderer(position, clr);
 	}
 	
 	/******************
@@ -579,14 +580,25 @@ public class GraphFunctions extends Utility {
 	public static class GraphNodeLabelRenderer extends BasicVertexLabelRenderer<AbstractGraphNode,AbstractGraphEdge>{
 		
 		protected boolean show = true;
+//		DefaultVertexLabelRenderer renderer; // = new DefaultVertexLabelRenderer();
 		
 		public GraphNodeLabelRenderer() {
 			super();
+//			renderer = new DefaultVertexLabelRenderer(Color.BLACK);
 		}
 
-		public GraphNodeLabelRenderer(Position position) {
+		public GraphNodeLabelRenderer(Position position, Color clr) {
 			super(position);
+//			renderer = new DefaultVertexLabelRenderer(clr);
 		}
+		
+//		public void setColour(Color clr) {
+//			renderer.setForeground(clr);
+//		}
+//		
+//		public VertexLabelRenderer getRenderer() {
+//			return renderer;
+//		}
 		
 		public void labelVertex(RenderContext<AbstractGraphNode,AbstractGraphEdge> rc, 
 								Layout<AbstractGraphNode,AbstractGraphEdge> layout, 

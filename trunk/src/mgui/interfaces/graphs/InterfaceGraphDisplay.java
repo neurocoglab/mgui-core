@@ -54,8 +54,23 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.tree.DefaultMutableTreeNode;
-import org.jogamp.vecmath.Point2f;
 
+import org.apache.commons.collections15.Transformer;
+import org.jogamp.vecmath.Point2f;
+import org.xml.sax.Attributes;
+
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.ObservableGraph;
+import edu.uci.ics.jung.graph.event.GraphEvent;
+import edu.uci.ics.jung.graph.event.GraphEventListener;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
+import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
+import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import mgui.geometry.Plane3D;
 import mgui.geometry.util.NodeShape;
 import mgui.geometry.util.NodeShapeComboRenderer;
@@ -98,22 +113,6 @@ import mgui.numbers.MguiDouble;
 import mgui.numbers.MguiFloat;
 import mgui.util.Colour;
 
-import org.apache.commons.collections15.Transformer;
-import org.xml.sax.Attributes;
-
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.ObservableGraph;
-import edu.uci.ics.jung.graph.event.GraphEvent;
-import edu.uci.ics.jung.graph.event.GraphEventListener;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
-import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
-import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
-
 
 /********************************************
  * Displays graphs and allows user interaction with them. Interfaces with the JUNG API
@@ -144,6 +143,7 @@ public class InterfaceGraphDisplay extends InterfaceGraphic<ToolGraph>
 	protected Position label_position = Position.SE;
 	protected GraphNodeLabelRenderer node_label_renderer;
 	protected GraphEdgeLabelRenderer edge_label_renderer;
+//	protected DefaultVertexLabelRenderer node_label_renderer;
 	
 	Layout<AbstractGraphNode, AbstractGraphEdge> current_layout;
 	
@@ -203,9 +203,6 @@ public class InterfaceGraphDisplay extends InterfaceGraphic<ToolGraph>
 		
 		ArrayList<ColourMap> cmaps = InterfaceEnvironment.getColourMaps();
 		
-		node_label_renderer = GraphFunctions.getNodeLabelRenderer(Position.SE);
-		edge_label_renderer = GraphFunctions.getEdgeLabelRenderer();
-		
 		//add some attributes?
 		HashMap<String, Class> layout_types = GraphFunctions.getLayoutTypes2();
 		AttributeSelectionMap<Class> layouts = 
@@ -250,6 +247,9 @@ public class InterfaceGraphDisplay extends InterfaceGraphic<ToolGraph>
 		shapes.setComboRenderer(new NodeShapeComboRenderer());
 		shapes.setComboWidth(100);
 		attributes.add(shapes);
+		
+		node_label_renderer = GraphFunctions.getNodeLabelRenderer(Position.SE, (Color)attributes.getValue("NodeLabelColour"));
+		edge_label_renderer = GraphFunctions.getEdgeLabelRenderer();
 		
 		//set default tool
 		setDefaultTool(new ToolGraphTransform());
@@ -544,7 +544,9 @@ public class InterfaceGraphDisplay extends InterfaceGraphic<ToolGraph>
 			Position position = getLabelPosition();
 			this.node_label_renderer.setPosition(position);
 			}
-		
+		if (e.getAttribute().getName().equals("NodeLabelColour")){
+			viewer.setForeground((Color)attributes.getValue("NodeLabelColour"));
+			}
 		
 		if (e.getAttribute().getName().equals("LabelNodes")){
 			node_label_renderer.show(((MguiBoolean)attributes.getValue("LabelNodes")).getTrue());
@@ -609,6 +611,7 @@ public class InterfaceGraphDisplay extends InterfaceGraphic<ToolGraph>
 			viewer = new VisualizationViewer<AbstractGraphNode, AbstractGraphEdge>(layout);
 			
 			viewer.setBackground((Color)attributes.getValue("Background"));
+			viewer.setForeground((Color)attributes.getValue("NodeLabelColour"));
 			scrollPane = new GraphZoomScrollPane(viewer);
 			add(scrollPane, BorderLayout.CENTER);
 			if (this.currentTool != null)
@@ -621,6 +624,7 @@ public class InterfaceGraphDisplay extends InterfaceGraphic<ToolGraph>
 			// Node stuff
 			viewer.getRenderContext().setVertexIncludePredicate(show_nodes);
 			viewer.getRenderer().setVertexLabelRenderer(node_label_renderer);
+//			viewer.getRenderContext().setVertexLabelRenderer(node_label_renderer.getRenderer());
 			viewer.getRenderContext().setVertexLabelTransformer(vertex_label_transformer);
 			viewer.getRenderContext().setVertexFontTransformer(node_font_transformer);
 			viewer.getRenderContext().setVertexFillPaintTransformer(node_fill_transformer);
