@@ -135,51 +135,42 @@ public class InterfaceSectionSetPanel extends InterfacePanel implements ShapeLis
 	//JComboBox cmbUpdateSet = new JComboBox();
 	InterfaceComboBox cmbUpdateSet = new InterfaceComboBox(InterfaceComboBox.RenderMode.LongestItem, 
 														   true, 500);
-	JLabel lblUpdateName = new JLabel("Name:"); 
+	JLabel lblUpdateName = new JLabel("Name:  "); 
 	JTextField txtUpdateName = new JTextField("New Section Set");
-	JLabel lblOrigin = new JLabel("Origin:");
-	JLabel lblOriginX = new JLabel(" X "); 
+	JLabel lblOrigin = new JLabel("Origin  ");
+	JLabel lblX = new JLabel(" X "); 
+	JLabel lblY = new JLabel(" Y "); 
+	JLabel lblZ = new JLabel(" Z "); 
+	
 	JTextField txtOriginX = new JTextField("0");
-	JLabel lblOriginY = new JLabel(" Y "); 
 	JTextField txtOriginY = new JTextField("0");
-	JLabel lblOriginZ = new JLabel(" Z "); 
 	JTextField txtOriginZ = new JTextField("0");
-	JLabel lblAxisX = new JLabel("X-Axis");
-	JButton cmdDefX = new JButton("Def");
-	JLabel lblAxisX_X = new JLabel(" X "); 
+	JLabel lblAxisX = new JLabel("X-Axis  ");
 	JTextField txtAxisX_X = new JTextField("1");
-	JLabel lblAxisX_Y = new JLabel(" Y "); 
 	JTextField txtAxisX_Y = new JTextField("0");
-	JLabel lblAxisX_Z = new JLabel(" Z "); 
 	JTextField txtAxisX_Z = new JTextField("0");
-	JLabel lblAxisY = new JLabel("Y-Axis");
-	JButton cmdDefY = new JButton("Def");
-	JLabel lblAxisY_X = new JLabel(" X "); 
+	JLabel lblAxisY = new JLabel("Y-Axis  ");
 	JTextField txtAxisY_X = new JTextField("0");
-	JLabel lblAxisY_Y = new JLabel(" Y "); 
 	JTextField txtAxisY_Y = new JTextField("1");
-	JLabel lblAxisY_Z = new JLabel(" Z "); 
 	JTextField txtAxisY_Z = new JTextField("0");
-	JLabel lblAxisZ = new JLabel("Normal");
-	JButton cmdDefZ = new JButton("Def");
-	JLabel lblAxisZ_X = new JLabel(" X "); 
+	JLabel lblAxisZ = new JLabel("Normal  ");
 	JTextField txtAxisZ_X = new JTextField("0");
-	JLabel lblAxisZ_Y = new JLabel(" Y "); 
 	JTextField txtAxisZ_Y = new JTextField("0");
-	JLabel lblAxisZ_Z = new JLabel(" Z "); 
 	JTextField txtAxisZ_Z = new JTextField("1");
+	
 	JCheckBox chkAxisZ_flip = new JCheckBox(" Flip");
-	JLabel lblUpdateSpacing = new JLabel("Spacing:");
+	JLabel lblUpdateSpacing = new JLabel("Spacing:  ");
+	
 	JTextField txtUpdateSpacing = new JTextField("1.0");
 	
-	JLabel lblRotation = new JLabel("Rotate:");
+	JLabel lblRotation = new JLabel("Rotate (deg):");
 	JTextField txtRotation = new JTextField("0.0");
-	JButton cmdRotX = new JButton("rotX");
-	JButton cmdRotY = new JButton("rotY");
-	JButton cmdRotZ = new JButton("rotZ");
+	JButton cmdRotX = new JButton("X");
+	JButton cmdRotY = new JButton("Y");
+	JButton cmdRotZ = new JButton("Z");
 	
 	JButton cmdUpdate = new JButton("Create");
-	JButton cmdDelete = new JButton("Delete");
+	JButton cmdReset = new JButton("Reset");
 	
 //	item listener toggle
 	boolean blnItemListen = true;
@@ -234,13 +225,6 @@ public class InterfaceSectionSetPanel extends InterfacePanel implements ShapeLis
 		txtCurrentSection = new JTextField("0");
 		txtCurrentSection.setHorizontalAlignment(JTextField.CENTER);
 		txtCurrentSection.setFont(new Font("Arial", Font.BOLD, 16));
-		
-		/*
-		lblCurrentSubSection.setHorizontalAlignment(JLabel.CENTER);
-		txtCurrentSubSection = new JTextField("-1");
-		txtCurrentSubSection.setHorizontalAlignment(JTextField.CENTER);
-		txtCurrentSubSection.setFont(new Font("Arial", Font.BOLD, 16));
-		*/
 		
 		//listeners setup
 		cmdNextSection.setActionCommand(CMD_NEXT);
@@ -329,110 +313,85 @@ public class InterfaceSectionSetPanel extends InterfacePanel implements ShapeLis
 		add(cmbUpdateSet, c);
 		c = new CategoryLayoutConstraints("CREATE/UPDATE", 5, 5, 0.05, .3, 1);
 		add(lblUpdateName, c);
+		lblUpdateName.setHorizontalAlignment(SwingConstants.RIGHT);
 		c = new CategoryLayoutConstraints("CREATE/UPDATE", 5, 5, 0.35, .6, 1);
 		add(txtUpdateName, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 6, 6, 0.05, .7, 1);
-		add(lblOrigin, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 7, 7, 0.05, .1, 1);
-		add(lblOriginX, c);
-		lblOriginX.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 7, 7, 0.15, .2, 1);
-		add(txtOriginX, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 7, 7, 0.35, .1, 1);
-		add(lblOriginY, c);
-		lblOriginY.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 7, 7, 0.45, .2, 1);
-		add(txtOriginY, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 7, 7, 0.65, .1, 1);
-		add(lblOriginZ, c);
-		lblOriginZ.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 7, 7, 0.75, .2, 1);
-		add(txtOriginZ, c);
 		
-		//X-axis
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 8, 8, 0.05, 0.2, 1);
-		add(lblAxisX, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 8, 8, 0.55, 0.4, 1);
-		add(cmdDefX, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.05, .1, 1);
-		add(lblAxisX_X, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.15, .2, 1);
-		add(txtAxisX_X, c);
-		lblAxisX_X.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.35, .1, 1);
-		add(lblAxisX_Y, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.45, .2, 1);
-		add(txtAxisX_Y, c);
-		lblAxisX_Y.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.65, .1, 1);
-		add(lblAxisX_Z, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.75, .2, 1);
-		add(txtAxisX_Z, c);
-		lblAxisX_Z.setHorizontalAlignment(SwingConstants.RIGHT);
-		
-		//Y-Axis
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 10, 10, 0.05, 0.2, 1);
-		add(lblAxisY, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 10, 10, 0.55, 0.4, 1);
-		add(cmdDefY, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.05, .1, 1);
-		add(lblAxisY_X, c);
-		lblAxisY_X.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.15, .2, 1);
-		add(txtAxisY_X, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.35, .1, 1);
-		add(lblAxisY_Y, c);
-		lblAxisY_Y.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.45, .2, 1);
-		add(txtAxisY_Y, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.65, .1, 1);
-		add(lblAxisY_Z, c);
-		lblAxisY_Z.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.75, .2, 1);
-		add(txtAxisY_Z, c);
-		
-		//Z-Axis
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 12, 12, 0.05, 0.2, 1);
-		add(lblAxisZ, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 12, 12, 0.55, 0.4, 1);
-		add(chkAxisZ_flip, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.05, .1, 1);
-		add(lblAxisZ_X, c);
-		lblAxisZ_X.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.15, .2, 1);
-		add(txtAxisZ_X, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.35, .1, 1);
-		add(lblAxisZ_Y, c);
-		lblAxisZ_Y.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.45, .2, 1);
-		add(txtAxisZ_Y, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.65, .1, 1);
-		add(lblAxisZ_Z, c);
-		lblAxisZ_Z.setHorizontalAlignment(SwingConstants.RIGHT);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.75, .2, 1);
-		add(txtAxisZ_Z, c);
-		
-	
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 14, 14, 0.05, .4, 1);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 6, 6, 0.05, .3, 1);
 		add(lblUpdateSpacing, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 14, 14, 0.50, .45, 1);
+		lblUpdateSpacing.setHorizontalAlignment(SwingConstants.RIGHT);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 6, 6, 0.35, .6, 1);
 		add(txtUpdateSpacing, c);
 		
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 15, 15, 0.05, .43, 1);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 7, 7, 0.25, .23, 1);
+		add(lblX, c);
+		lblX.setHorizontalAlignment(SwingConstants.CENTER);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 7, 7, 0.48, .23, 1);
+		add(lblY, c);
+		lblY.setHorizontalAlignment(SwingConstants.CENTER);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 7, 7, 0.71, .23, 1);
+		add(lblZ, c);
+		lblZ.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 8, 8, 0.05, .2, 1);
+		add(lblOrigin, c);
+		lblOrigin.setHorizontalAlignment(SwingConstants.RIGHT);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 8, 8, 0.25, .23, 1);
+		add(txtOriginX, c);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 8, 8, 0.48, .23, 1);
+		add(txtOriginY, c);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 8, 8, 0.71, .23, 1);
+		add(txtOriginZ, c);
+		
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.05, .2, 1);
+		add(lblAxisX, c);
+		lblAxisX.setHorizontalAlignment(SwingConstants.RIGHT);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.25, .23, 1);
+		add(txtAxisX_X, c);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.48, .23, 1);
+		add(txtAxisX_Y, c);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 9, 9, 0.71, .23, 1);
+		add(txtAxisX_Z, c);
+		
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 10, 10, 0.05, .2, 1);
+		add(lblAxisY, c);
+		lblAxisY.setHorizontalAlignment(SwingConstants.RIGHT);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 10, 10, 0.25, .23, 1);
+		add(txtAxisY_X, c);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 10, 10, 0.48, .23, 1);
+		add(txtAxisY_Y, c);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 10, 10, 0.71, .23, 1);
+		add(txtAxisY_Z, c);
+		
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.05, .2, 1);
+		add(lblAxisZ, c);
+		lblAxisZ.setHorizontalAlignment(SwingConstants.RIGHT);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.25, .23, 1);
+		add(txtAxisZ_X, c);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.48, .23, 1);
+		add(txtAxisZ_Y, c);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 11, 11, 0.71, .23, 1);
+		add(txtAxisZ_Z, c);
+
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 12, 12, 0.50, .45, 1);
+		add(chkAxisZ_flip, c);
+		chkAxisZ_flip.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 12, 12, 0.05, .43, 1);
 		add(lblRotation, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 16, 16, 0.05, .43, 1);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.05, .3, 1);
 		add(txtRotation, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 15, 15, 0.52, .43, 1);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.35, .2, 1);
 		add(cmdRotX, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 16, 16, 0.52, .43, 1);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.55, .2, 1);
 		add(cmdRotY, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 17, 17, 0.52, .43, 1);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 13, 13, 0.75, .2, 1);
 		add(cmdRotZ, c);
 		
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 18, 19, 0.52, 0.43, 1);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 14, 15, 0.52, 0.43, 1);
 		add(cmdUpdate, c);
-		c = new CategoryLayoutConstraints("CREATE/UPDATE", 18, 19, 0.05, 0.43, 1);
-		add(cmdDelete, c);
+		c = new CategoryLayoutConstraints("CREATE/UPDATE", 14, 15, 0.05, 0.43, 1);
+		add(cmdReset, c);
 		
 		updateDisplay();
 	}
