@@ -28,8 +28,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Stack;
-import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -279,7 +279,10 @@ public class InterfaceTreePanel extends InterfacePanel implements TreeListener,
 		
 		while (!nodes.isEmpty()) {
 			TreeNode node = nodes.pop();
-			for (TreeNode child : Collections.list(node.children())) {
+			//for (TreeNode child : Collections.list(node.children())) {
+			Enumeration<? extends TreeNode> children = node.children();
+			while (children.hasMoreElements()) {
+				TreeNode child = children.nextElement();
 				if (expanded_nodes.contains(child)) {
 					tree.expandPath(new TreePath(child));
 					}

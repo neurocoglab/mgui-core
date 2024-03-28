@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/OpenJDK-15.0.1">
+	<classpathentry kind="src" path="trunk/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="trunk/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/java3d"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jogl"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mgui-lib-minimal"/>
-	<classpathentry kind="lib" path="/Users/lpzatr/Documents/java/java3d/vecmath.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="https://jogamp.org/deployment/java3d/1.7.0-pre1/vecmath/javadoc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/java3d-core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/java3d-utils"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mgui-lib"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_202"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

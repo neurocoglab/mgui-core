@@ -129,11 +129,12 @@ public class SurfaceInputDialogBox extends InterfaceIODialogBox {
 		updateShapeSets();
 		if (opts.shapeSet != null)
 			cmbShapeSet.setSelectedItem(opts.shapeSet);
-		chkMergeShapes.setSelected(opts.merge_shapes);
 		
-		txtMergeShape.setEnabled(opts.merge_shapes);
 		
 		updateTable();
+		
+		
+		
 		setVisible(true);
 	}
 	
@@ -147,6 +148,7 @@ public class SurfaceInputDialogBox extends InterfaceIODialogBox {
 		
 		if (opts.getFiles() == null){
 			lblSurfaces.setVisible(false);
+			updateControls();
 			return;
 		}
 		
@@ -184,8 +186,26 @@ public class SurfaceInputDialogBox extends InterfaceIODialogBox {
 		
 		mainPanel.add(scrColumns, c);
 		lineLayout.setFlexibleComponent(scrColumns);
+		
+		updateControls();
+		
 		mainPanel.updateUI();
 		
+	}
+	
+	protected void updateControls() {
+		SurfaceInputOptions opts = (SurfaceInputOptions)options;
+		
+		chkMergeShapes.setSelected(opts.merge_shapes);
+		txtMergeShape.setEnabled(opts.merge_shapes);
+		txtMergeShape.setText(opts.merge_name);
+		if (table == null || table.getRowCount() == 1) {
+			chkMergeShapes.setVisible(false);
+			txtMergeShape.setVisible(false);
+		} else {
+			chkMergeShapes.setVisible(true);
+			txtMergeShape.setVisible(true);
+			}
 	}
 	
 	@Override

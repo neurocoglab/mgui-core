@@ -1832,6 +1832,7 @@ public class MeshFunctions extends Utility {
 	 * Adds an IndexedTriangleArray to the current mesh. Coincident nodes from either object
 	 * will be represented as two seperate nodes, however. To merge these nodes into a single
 	 * node, call decimateByLength with a minimal length threshold. 
+	 * 
 	 * @param mesh Mesh object to which nodes and faces will be added.
 	 * @param tris IndexedTriangleArray object from which nodes and face indices will be extracted.
 	 */

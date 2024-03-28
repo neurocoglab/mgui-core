@@ -47,7 +47,7 @@ public abstract class Shape2D implements Shape, Cloneable {
 
 	public float getProximity(Point2f thisPoint) {
 		// TODO Auto-generated method stub
-		return 0;
+		return Float.NaN;
 	}
 	
 	public Point2f getProximityPoint(Point2f thisPoint) {

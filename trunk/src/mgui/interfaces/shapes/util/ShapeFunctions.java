@@ -2709,5 +2709,20 @@ public class ShapeFunctions extends Utility {
 		return X.getAttributes();
 	}
 	
+	/***************************************************
+	 * Appends {@code shape1} to {@code shape2}, including geometry and associated vertex-wise data.
+	 * 
+	 * @param shape1
+	 * @param shape2
+	 */
+	public static InterfaceShape getCombinedShape(InterfaceShape shape1, InterfaceShape shape2) {
+		
+		
+		
+		
+		return null;
+		
+	}
+	
 	
 }
